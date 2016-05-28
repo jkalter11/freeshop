@@ -6,7 +6,6 @@
 #include <cpp3ds/Graphics/Sprite.hpp>
 #include <cpp3ds/Graphics/Text.hpp>
 #include <TweenEngine/TweenManager.h>
-#include <git2/oid.h>
 #include <cpp3ds/System/Thread.hpp>
 #include <cpp3ds/System/Clock.hpp>
 #include <cpp3ds/Audio/Sound.hpp>
