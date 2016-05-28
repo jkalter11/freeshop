@@ -11,5 +11,4 @@ before_install:
   - docker pull thecruel/cpp3ds
 
 script:
-  - mkdir build
-  - docker run --rm -v "$PWD":/usr/project -w /usr/project/build thecruel/cpp3ds bash -c "cmake ..; make -j4"
+  - docker run --rm -v "$PWD":/usr/project -w /usr/project thecruel/cpp3ds sh .build.sh
