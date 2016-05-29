@@ -3,7 +3,7 @@
 #include <cpp3ds/Window/Window.hpp>
 #include <cpp3ds/System/I18n.hpp>
 #include <cpp3ds/System/Service.hpp>
-#include "../version.h"
+#include "../Config.hpp"
 
 using namespace TweenEngine;
 using namespace util3ds;
@@ -13,7 +13,7 @@ namespace FreeShop {
 TitleState::TitleState(StateStack& stack, Context& context)
 : State(stack, context)
 {
-	m_textVersion.setString(FREESHOP_VERSION);
+	m_textVersion.setString(Config::get("version").GetString());
 	m_textVersion.setCharacterSize(12);
 	m_textVersion.setFillColor(cpp3ds::Color::White);
 	m_textVersion.setOutlineColor(cpp3ds::Color(0, 0, 0, 100));

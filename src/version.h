@@ -1,6 +1,0 @@
-#ifndef FREESHOP_VERSION_H
-#define FREESHOP_VERSION_H
-
-#define FREESHOP_VERSION "1.0"
-
-#endif // FREESHOP_VERSION_H
