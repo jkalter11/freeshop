@@ -15,6 +15,7 @@
 #include <TweenEngine/TweenManager.h>
 #include <cpp3ds/Audio/SoundBuffer.hpp>
 #include <cpp3ds/Audio/Sound.hpp>
+#include <cpp3ds/Audio/Music.hpp>
 
 namespace FreeShop {
 
@@ -36,6 +37,8 @@ private:
 		Search,
 	};
 
+	void initialize();
+	void playMusic();
 	void setMode(Mode mode);
 	void setItemIndex(int index);
 	void loadApp();
@@ -50,7 +53,8 @@ private:
 
 	float m_appListPositionX;
 
-	cpp3ds::Thread m_loadThread;
+	cpp3ds::Thread m_threadInitialize;
+	cpp3ds::Thread m_threadLoadApp;
 
 	IconSet m_iconSet;
 	int m_iconSelectedIndex;
@@ -62,6 +66,10 @@ private:
 	cpp3ds::Sound  m_soundBlip;
 	cpp3ds::Sound  m_soundClick;
 	cpp3ds::Sound  m_soundLoading;
+
+	cpp3ds::Music m_musicIntro;
+	cpp3ds::Music m_musicLoop;
+	cpp3ds::Thread m_threadMusic;
 
 	// Keyboard
 	util3ds::Keyboard m_keyboard;

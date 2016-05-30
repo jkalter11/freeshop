@@ -1,9 +1,9 @@
 #include "SyncState.hpp"
 #include "../Download.hpp"
 #include "../Installer.hpp"
-#include "../version.h"
 #include "../Util.hpp"
 #include "../AssetManager.hpp"
+#include "../Config.hpp"
 #include <TweenEngine/Tween.h>
 #include <cpp3ds/Window/Window.hpp>
 #include <cpp3ds/System/I18n.hpp>
@@ -42,12 +42,12 @@ int copy_data(struct archive *ar, struct archive *aw)
 	}
 }
 
-int extract(const std::string &filename, const std::string &destDir)
+bool extract(const std::string &filename, const std::string &destDir)
 {
 	struct archive *a;
 	struct archive *ext;
 	struct archive_entry *entry;
-	int r = 0;
+	int r = ARCHIVE_FAILED;
 
 	a = archive_read_new();
 	archive_read_support_format_zip(a);
@@ -68,6 +68,9 @@ int extract(const std::string &filename, const std::string &destDir)
 			fprintf(stderr, "%s\n", archive_error_string(a));
 		// TODO: handle these fatal error
 		std::string path = cpp3ds::FileSystem::getFilePath(destDir + archive_entry_pathname(entry));
+
+		if (FreeShop::pathExists(path.c_str(), false))
+			unlink(path.c_str());
 
 		archive_entry_set_pathname(entry, path.c_str());
 		r = archive_write_header(ext, entry);
@@ -90,18 +93,24 @@ int extract(const std::string &filename, const std::string &destDir)
 	archive_write_close(ext);
 	archive_write_free(ext);
 
-	return r;
+	return r == ARCHIVE_EOF;
 }
 
 }
 
 namespace FreeShop {
 
+bool g_syncComplete = false;
+bool g_browserLoaded = false;
+
 SyncState::SyncState(StateStack& stack, Context& context)
 : State(stack, context)
 , m_threadSync(&SyncState::sync, this)
 , m_threadStartupSound(&SyncState::startupSound, this)
 {
+	g_syncComplete = false;
+	g_browserLoaded = false;
+
 	m_soundStartup.setBuffer(AssetManager<cpp3ds::SoundBuffer>::get("sounds/startup.ogg"));
 
 	m_soundLoading.setBuffer(AssetManager<cpp3ds::SoundBuffer>::get("sounds/loading.ogg"));
@@ -119,7 +128,6 @@ SyncState::SyncState(StateStack& stack, Context& context)
 
 	m_threadSync.launch();
 	m_threadStartupSound.launch();
-//	sync();
 }
 
 
@@ -157,35 +165,47 @@ void SyncState::sync()
 
 	if (!cpp3ds::Service::isEnabled(cpp3ds::Httpc))
 	{
-		setStatus("No internet connection.\nClosing BrewMan...");
+		setStatus("No internet connection.\nClosing freeShop...");
 		while (m_timer.getElapsedTime() < cpp3ds::seconds(4.f))
 			cpp3ds::sleep(cpp3ds::milliseconds(50));
 		requestStackClear();
 		return;
 	}
 
-	// Set up directory structure, if necessary
-	std::string path = cpp3ds::FileSystem::getFilePath("sdmc:/freeShop");
-	if (!pathExists(path.c_str(), false))
-		mkdir(path.c_str(), 0777);
-
-	path = cpp3ds::FileSystem::getFilePath("sdmc:/freeShop/tmp");
-	if (pathExists(path.c_str(), false))
-		removeDirectory(path.c_str());
-	mkdir(path.c_str(), 0777);
-
-	path = cpp3ds::FileSystem::getFilePath("sdmc:/freeShop/cache");
-	if (!pathExists(path.c_str(), false))
-		mkdir(path.c_str(), 0777);
-
-	// If auto-dated, boot into newest BrewMan
-	if (autoUpdate())
+	// If auto-dated, boot into launch newest freeShop
+	if (updateFreeShop())
 	{
-		// Install CIA update and boot to it.
+		// TODO: Install CIA update and boot to it.
 		requestStackClear();
 		return;
 	}
 
+	updateCache();
+
+	Config::saveToFile();
+
+	std::cout << "time: " << m_timer.getElapsedTime().asSeconds() << std::endl;
+
+	if (m_timer.getElapsedTime() < cpp3ds::seconds(6.5f))
+		setStatus(_("Loading game list..."));
+
+	requestStackPush(States::Browse);
+
+	while (m_timer.getElapsedTime() < cpp3ds::seconds(7.f))
+		cpp3ds::sleep(cpp3ds::milliseconds(50));
+
+	g_syncComplete = true;
+}
+
+
+bool SyncState::updateFreeShop()
+{
+	return false;
+}
+
+
+bool SyncState::updateCache()
+{
 	setStatus(_("Checking latest cache..."));
 	const char *url = "https://api.github.com/repos/Repo3DS/shop-cache/releases/latest";
 	const char *latestJsonFilename = "sdmc:/freeShop/tmp/latest.json";
@@ -203,7 +223,7 @@ void SyncState::sync()
 		doc.Parse(json.c_str());
 
 		std::string tag = doc["tag_name"].GetString();
-		if (!tag.empty())
+		if (!tag.empty() && tag.compare(Config::get("cache_version").GetString()) != 0)
 		{
 			std::string cacheFile = "sdmc:/freeShop/tmp/cache.zip";
 			std::string cacheUrl = _("https://github.com/Repo3DS/shop-cache/releases/download/%s/cache-%s-etc1.zip", tag.c_str(), tag.c_str());
@@ -212,25 +232,15 @@ void SyncState::sync()
 			cacheDownload.run();
 
 			setStatus(_("Extracting latest cache..."));
-			extract(cacheFile, "sdmc:/freeShop/cache/");
+			if (extract(cacheFile, "sdmc:/freeShop/cache/"))
+			{
+				Config::set("cache_version", tag.c_str());
+				Config::saveToFile();
+				return true;
+			}
 		}
 	}
 
-	std::cout << "time: " << m_timer.getElapsedTime().asSeconds() << std::endl;
-
-	setStatus(_("Loading game list..."));
-
-	// Give the Title animation time to finish if necessary
-	while (m_timer.getElapsedTime() < cpp3ds::seconds(7.f))
-		cpp3ds::sleep(cpp3ds::milliseconds(50));
-
-	requestStackClear();
-	requestStackPush(States::Browse);
-}
-
-
-bool SyncState::autoUpdate()
-{
 	return false;
 }
 
@@ -245,12 +255,12 @@ void SyncState::setStatus(const std::string &message)
 void SyncState::startupSound()
 {
 	cpp3ds::Clock clock;
-	while (clock.getElapsedTime() < cpp3ds::seconds(3.5f))
+	while (clock.getElapsedTime() < cpp3ds::seconds(3.f))
 		cpp3ds::sleep(cpp3ds::milliseconds(50));
 	m_soundStartup.play();
-	while (clock.getElapsedTime() < cpp3ds::seconds(7.f))
-		cpp3ds::sleep(cpp3ds::milliseconds(50));
-	m_soundLoading.play();
+//	while (clock.getElapsedTime() < cpp3ds::seconds(7.f))
+//		cpp3ds::sleep(cpp3ds::milliseconds(50));
+//	m_soundLoading.play();
 }
 
 } // namespace FreeShop

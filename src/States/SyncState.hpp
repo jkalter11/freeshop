@@ -13,6 +13,9 @@
 
 namespace FreeShop {
 
+extern bool g_syncComplete;
+extern bool g_browserLoaded;
+
 class SyncState : public State
 {
 public:
@@ -27,7 +30,8 @@ public:
 	void sync();
 
 private:
-	bool autoUpdate();
+	bool updateFreeShop();
+	bool updateCache();
 	void setStatus(const std::string& message);
 
 	cpp3ds::Thread m_threadSync;

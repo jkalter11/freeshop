@@ -1,9 +1,12 @@
+#include <sys/stat.h>
 #include "FreeShop.hpp"
 #include "States/TitleState.hpp"
 #include "Notification.hpp"
 #include "States/LoadingState.hpp"
 #include "States/SyncState.hpp"
 #include "States/BrowseState.hpp"
+#include "Config.hpp"
+#include "Util.hpp"
 
 
 using namespace cpp3ds;
@@ -27,6 +30,22 @@ FreeShop::FreeShop()
 
 	textFPS.setFillColor(cpp3ds::Color::Red);
 	textFPS.setCharacterSize(20);
+
+	// Set up directory structure, if necessary
+	std::string path = cpp3ds::FileSystem::getFilePath("sdmc:/freeShop");
+	if (!pathExists(path.c_str(), false))
+		mkdir(path.c_str(), 0777);
+
+	path = cpp3ds::FileSystem::getFilePath("sdmc:/freeShop/tmp");
+	if (pathExists(path.c_str(), false))
+		removeDirectory(path.c_str());
+	mkdir(path.c_str(), 0777);
+
+	path = cpp3ds::FileSystem::getFilePath("sdmc:/freeShop/cache");
+	if (!pathExists(path.c_str(), false))
+		mkdir(path.c_str(), 0777);
+
+	Config::loadFromFile();
 }
 
 FreeShop::~FreeShop()

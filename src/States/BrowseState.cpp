@@ -6,7 +6,6 @@
 #include "../Installer.hpp"
 #include <TweenEngine/Tween.h>
 #include <cpp3ds/Window/Window.hpp>
-#include <iostream>
 #include <sstream>
 #include <cpp3ds/System/I18n.hpp>
 #include <cpp3ds/System/FileSystem.hpp>
@@ -18,11 +17,20 @@ BrowseState::BrowseState(StateStack& stack, Context& context)
 : State(stack, context)
 , m_appList("sdmc:/freeShop/cache/data.json")
 , m_appListPositionX(0.f)
-, m_loadThread(&BrowseState::loadApp, this)
+, m_threadInitialize(&BrowseState::initialize, this)
+, m_threadLoadApp(&BrowseState::loadApp, this)
+, m_threadMusic(&BrowseState::playMusic, this)
 , m_iconSelectedIndex(-1)
 , m_busy(false)
 , m_activeDownloadCount(0)
 {
+	m_threadInitialize.launch();
+}
+
+void BrowseState::initialize()
+{
+	m_appList.refresh();
+
 	m_iconSet.addIcon(L"\uf11b");
 	m_iconSet.addIcon(L"\uf019");
 	m_iconSet.addIcon(L"\uf013");
@@ -55,10 +63,21 @@ BrowseState::BrowseState(StateStack& stack, Context& context)
 	setMode(App);
 
 	m_soundBlip.setBuffer(AssetManager<cpp3ds::SoundBuffer>::get("sounds/blip.ogg"));
+
+	m_musicIntro.openFromFile("sounds/shop-intro.ogg");
+	m_musicLoop.openFromFile("sounds/shop-loop.ogg");
+	m_musicLoop.setLoop(true);
+
+	g_browserLoaded = true;
+
+	requestStackClearUnder();
 }
 
 void BrowseState::renderTopScreen(cpp3ds::Window& window)
 {
+	if (!g_syncComplete || !g_browserLoaded)
+		return;
+
 	window.draw(m_appList);
 
 	// Special draw method to draw top screenshot if selected
@@ -67,6 +86,9 @@ void BrowseState::renderTopScreen(cpp3ds::Window& window)
 
 void BrowseState::renderBottomScreen(cpp3ds::Window& window)
 {
+	if (!g_syncComplete || !g_browserLoaded)
+		return;
+
 	if (m_keyboard.getPosition().y < 240.f)
 	{
 		window.draw(m_keyboard);
@@ -89,6 +111,9 @@ void BrowseState::renderBottomScreen(cpp3ds::Window& window)
 
 bool BrowseState::update(float delta)
 {
+	if (!g_syncComplete || !g_browserLoaded)
+		return true;
+
 	int iconIndex = m_iconSet.getSelectedIndex();
 	if (m_iconSelectedIndex != iconIndex && m_mode != iconIndex)
 	{
@@ -117,7 +142,7 @@ bool BrowseState::update(float delta)
 
 bool BrowseState::processEvent(const cpp3ds::Event& event)
 {
-	if (m_busy)
+	if (m_busy || !g_syncComplete || !g_browserLoaded)
 		return false;
 
 	if (m_mode == App) {
@@ -212,7 +237,7 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 				return true;
 			case cpp3ds::Keyboard::A: {
 				m_busy = true;
-				m_loadThread.launch();
+				m_threadLoadApp.launch();
 //				loadApp();
 				break;
 			}
@@ -229,6 +254,9 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 
 void BrowseState::setItemIndex(int index)
 {
+	if (m_appList.getVisibleCount() == 0)
+		return;
+
 	if (index < 0)
 		index = 0;
 	else if (index >= m_appList.getVisibleCount())
@@ -253,6 +281,9 @@ void BrowseState::setItemIndex(int index)
 void BrowseState::loadApp()
 {
 	AppItem* item = m_appList.getSelected();
+	if (!item)
+		return;
+
 	m_iconSet.setSelectedIndex(App);
 	if (m_appInfo.getAppItem() == item)
 	{
@@ -265,7 +296,7 @@ void BrowseState::loadApp()
 		.start(m_tweenManager);
 
 	// No cache to load, so show loading state
-	bool showLoading = true; //!item->isCached();
+	bool showLoading = g_browserLoaded; //!item->isCached();
 	if (showLoading)
 		requestStackPush(States::Loading);
 
@@ -348,6 +379,17 @@ void BrowseState::setMode(BrowseState::Mode mode)
 	}
 
 	m_mode = mode;
+}
+
+void BrowseState::playMusic()
+{
+	while (!g_syncComplete || !g_browserLoaded)
+		cpp3ds::sleep(cpp3ds::milliseconds(50));
+	cpp3ds::Clock clock;
+	m_musicIntro.play();
+	while (clock.getElapsedTime() < m_musicIntro.getDuration())
+		cpp3ds::sleep(cpp3ds::milliseconds(5));
+	m_musicLoop.play();
 }
 
 } // namespace FreeShop
