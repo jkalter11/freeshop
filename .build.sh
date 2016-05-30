@@ -14,5 +14,5 @@ make libarchive
 make install
 
 cd ../build
-cmake ..
+cmake -DCMAKE_BUILD_TYPE=Release ..
 make -j4
