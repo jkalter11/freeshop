@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <TweenEngine/TweenManager.h>
+#include <cpp3ds/System/Thread.hpp>
 #include "AppItem.hpp"
 #include "RichText.hpp"
 

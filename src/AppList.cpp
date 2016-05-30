@@ -7,21 +7,20 @@
 #include <TweenEngine/Tween.h>
 #include <fstream>
 #include <cpp3ds/System/Clock.hpp>
+#include <cpp3ds/System/Sleep.hpp>
 #include "AppList.hpp"
 #include "Util.hpp"
+#include "Installer.hpp"
 
 
 namespace FreeShop {
 
 AppList::AppList(std::string jsonFilename)
 : m_sortType(AlphaNumericAsc)
-, m_selectedIndex(0)
+, m_selectedIndex(-1)
 , m_collapsed(false)
 {
-//	cpp3ds::Clock clock;
 	m_jsonFilename = jsonFilename;
-	refresh();
-//	std::cout << "applist:" << clock.getElapsedTime().asSeconds();
 }
 
 AppList::~AppList()
@@ -47,13 +46,22 @@ void AppList::refresh()
 		int i = 0;
 		for (rapidjson::Value::ConstMemberIterator iter = doc.MemberBegin(); iter != doc.MemberEnd(); ++iter)
 		{
-			std::unique_ptr<AppItem> item(new AppItem());
-			// Move offscreen to avoid everything being drawn at once and crashing
-			item->setPosition(500.f, 100.f);
-			item->loadFromJSON(iter->name.GetString(), iter->value);
-			m_list.emplace_back(std::move(item));
+			std::string id = iter->name.GetString();
+			cpp3ds::Uint64 titleId = strtoull(id.c_str(), 0, 16);
+			if (Installer::titleKeyExists(titleId))
+			{
+				std::unique_ptr<AppItem> item(new AppItem());
+				// Move offscreen to avoid everything being drawn at once and crashing
+				item->setPosition(500.f, 100.f);
+				item->loadFromJSON(iter->name.GetString(), iter->value);
+				m_list.emplace_back(std::move(item));
+				cpp3ds::sleep(cpp3ds::microseconds(300));
+			}
 		}
 	}
+
+	if (m_selectedIndex < 0 && getVisibleCount() > 0)
+		m_selectedIndex = 0;
 
 	sort();
 	resize();
@@ -124,9 +132,11 @@ void AppList::resize()
 
 void AppList::setSelectedIndex(int index)
 {
-	m_list[m_selectedIndex]->deselect();
+	if (m_selectedIndex >= 0)
+		m_list[m_selectedIndex]->deselect();
 	m_selectedIndex = index;
-	m_list[m_selectedIndex]->select();
+	if (m_selectedIndex >= 0)
+		m_list[m_selectedIndex]->select();
 }
 
 int AppList::getSelectedIndex() const
@@ -136,6 +146,8 @@ int AppList::getSelectedIndex() const
 
 AppItem *AppList::getSelected()
 {
+	if (m_selectedIndex < 0 || m_selectedIndex > m_list.size()-1)
+		return nullptr;
 	return m_list[m_selectedIndex].get();
 }
 
@@ -207,13 +219,16 @@ void AppList::setCollapsed(bool collapsed)
 						.target(255.f)
 						.start(m_tweenManager);
 				}
-				TweenEngine::Tween::to(*getSelected(), AppItem::BACKGROUND_ALPHA, 0.3f)
-					.target(255.f)
-					.setCallback(TweenEngine::TweenCallback::COMPLETE, [this](TweenEngine::BaseTween *source) {
-						setSelectedIndex(m_selectedIndex);
-					})
-					.delay(0.3f)
-					.start(m_tweenManager);
+
+				AppItem *item = getSelected();
+				if (item)
+					TweenEngine::Tween::to(*item, AppItem::BACKGROUND_ALPHA, 0.3f)
+						.target(255.f)
+						.setCallback(TweenEngine::TweenCallback::COMPLETE, [this](TweenEngine::BaseTween *source) {
+							setSelectedIndex(m_selectedIndex);
+						})
+						.delay(0.3f)
+						.start(m_tweenManager);
 			})
 			.start(m_tweenManager);
 	}
@@ -253,7 +268,8 @@ void AppList::filterBySearch(const std::string &searchTerm, std::vector<util3ds:
 		}
 	}
 
-	m_list[m_selectedIndex]->deselect();
+	if (m_selectedIndex >= 0)
+		m_list[m_selectedIndex]->deselect();
 	sort();
 	resize();
 
@@ -264,52 +280,56 @@ void AppList::filterBySearch(const std::string &searchTerm, std::vector<util3ds:
 		if (searchTerm.empty())
 			continue;
 
-		auto item = m_list[i].get();
-		if (item->getMatchScore() > -99)
+		if (i < getVisibleCount())
 		{
-			bool matching = false;
-			const char *str = item->getNormalizedTitle().c_str();
-			const char *pattern = searchTerm.c_str();
-			const char *strLastPos = str;
+			auto item = m_list[i].get();
+			if (item->getMatchScore() > -99)
+			{
+				bool matching = false;
+				const char *str = item->getNormalizedTitle().c_str();
+				const char *pattern = searchTerm.c_str();
+				const char *strLastPos = str;
 
-			auto title = item->getTitle().toUtf8();
-			auto titleCurPos = title.begin();
-			auto titleLastPos = title.begin();
+				auto title = item->getTitle().toUtf8();
+				auto titleCurPos = title.begin();
+				auto titleLastPos = title.begin();
 
-			textMatch << cpp3ds::Color(150,150,150);
-			while (*str != '\0')  {
-				if (tolower(*pattern) == tolower(*str)) {
-					if (!matching) {
-						matching = true;
-						if (str != strLastPos) {
-							textMatch << cpp3ds::String::fromUtf8(titleLastPos, titleCurPos);
-							titleLastPos = titleCurPos;
-							strLastPos = str;
+				textMatch << cpp3ds::Color(150,150,150);
+				while (*str != '\0')  {
+					if (tolower(*pattern) == tolower(*str)) {
+						if (!matching) {
+							matching = true;
+							if (str != strLastPos) {
+								textMatch << cpp3ds::String::fromUtf8(titleLastPos, titleCurPos);
+								titleLastPos = titleCurPos;
+								strLastPos = str;
+							}
+							textMatch << cpp3ds::Color::Black;
 						}
-						textMatch << cpp3ds::Color::Black;
-					}
-					++pattern;
-				} else {
-					if (matching) {
-						matching = false;
-						if (str != strLastPos) {
-							textMatch << cpp3ds::String::fromUtf8(titleLastPos, titleCurPos);
-							titleLastPos = titleCurPos;
-							strLastPos = str;
+						++pattern;
+					} else {
+						if (matching) {
+							matching = false;
+							if (str != strLastPos) {
+								textMatch << cpp3ds::String::fromUtf8(titleLastPos, titleCurPos);
+								titleLastPos = titleCurPos;
+								strLastPos = str;
+							}
+							textMatch << cpp3ds::Color(150,150,150);
 						}
-						textMatch << cpp3ds::Color(150,150,150);
 					}
+					++str;
+					titleCurPos = cpp3ds::Utf8::next(titleCurPos, title.end());
 				}
-				++str;
-				titleCurPos = cpp3ds::Utf8::next(titleCurPos, title.end());
+				if (str != strLastPos)
+					textMatch << cpp3ds::String::fromUtf8(titleLastPos, title.end());
 			}
-			if (str != strLastPos)
-				textMatch << cpp3ds::String::fromUtf8(titleLastPos, title.end());
+			i++;
 		}
-		i++;
 	}
 
-	setSelectedIndex(0);
+	if (m_list.size() > 0 && textMatches.size() > 0)
+		setSelectedIndex(0);
 }
 
 } // namespace FreeShop
