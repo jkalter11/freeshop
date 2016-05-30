@@ -20,6 +20,7 @@ public:
 		Push,
 		Pop,
 		Clear,
+		ClearUnder,
 	};
 
 public:
@@ -36,6 +37,7 @@ public:
 	void pushState(States::ID stateID);
 	void popState();
 	void clearStates();
+	void clearStatesUnder();
 
 	bool isEmpty() const;
 

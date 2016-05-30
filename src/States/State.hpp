@@ -43,6 +43,7 @@ protected:
 	void requestStackPush(States::ID stateID);
 	void requestStackPop(States::ID stateID = States::None);
 	void requestStackClear();
+	void requestStackClearUnder();
 
 	Context getContext() const;
 

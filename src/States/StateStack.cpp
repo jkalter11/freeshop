@@ -65,6 +65,11 @@ void StateStack::clearStates()
 	m_pendingList.push_back(PendingChange(Clear));
 }
 
+void StateStack::clearStatesUnder()
+{
+	m_pendingList.push_back(PendingChange(ClearUnder));
+}
+
 bool StateStack::isEmpty() const
 {
 	return m_stack.empty();
@@ -94,6 +99,11 @@ void StateStack::applyPendingChanges()
 
 			case Clear:
 				m_stack.clear();
+				break;
+
+			case ClearUnder:
+				if (m_stack.size() > 1)
+					m_stack.erase(m_stack.begin(), m_stack.end() - 1);
 				break;
 		}
 	}

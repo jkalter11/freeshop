@@ -35,6 +35,11 @@ void State::requestStackClear()
 	m_stack->clearStates();
 }
 
+void State::requestStackClearUnder()
+{
+	m_stack->clearStatesUnder();
+}
+
 State::Context State::getContext() const
 {
 	return m_context;
