@@ -25,6 +25,11 @@ bool Installer::installTicket(cpp3ds::Uint64 titleId, cpp3ds::Uint16 titleVersio
 	return true;
 }
 
+bool Installer::titleKeyExists(cpp3ds::Uint64 titleId)
+{
+	return true;
+}
+
 void Installer::start()
 {
 	//

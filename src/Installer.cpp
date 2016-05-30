@@ -82,6 +82,7 @@ bool Installer::installTicket(cpp3ds::Uint64 titleId, cpp3ds::Uint16 titleVersio
 	memcpy(tikData + sigSize + 0x7F, titleKeys[titleId], 16);
 
 	AM_QueryAvailableExternalTitleDatabase(nullptr);
+	AM_DeleteTicket(titleId);
 
 	if (R_SUCCEEDED(ret = AM_InstallTicketBegin(&ticket)))
 	{
@@ -96,6 +97,12 @@ bool Installer::installTicket(cpp3ds::Uint64 titleId, cpp3ds::Uint16 titleVersio
 
 	cpp3ds::err() << _("Failed to install ticket: 0x%08lX", ret).toAnsiString() << std::endl;
 	return false;
+}
+
+bool Installer::titleKeyExists(cpp3ds::Uint64 titleId)
+{
+	ensureTitleKeys();
+	return titleKeys.find(__builtin_bswap64(titleId)) != titleKeys.end();
 }
 
 void Installer::start()
@@ -164,13 +171,12 @@ bool Installer::finalizeContent()
 bool Installer::installTmd(const void *data, size_t size)
 {
 	Result ret;
-	u32 bytesWritten;
 
 	if (!m_isInstallingTmd && R_SUCCEEDED(ret = AM_InstallTmdBegin(&m_handleTmd)))
 		m_isInstallingTmd = true;
 
 	if (m_isInstallingTmd)
-		if (R_SUCCEEDED(ret = FSFILE_Write(m_handleTmd, &bytesWritten, 0, data, size, 0)))
+		if (R_SUCCEEDED(ret = FSFILE_Write(m_handleTmd, nullptr, 0, data, size, 0)))
 			return true;
 
 	cpp3ds::err() << _("Failed to install TMD: 0x%08lX", ret).toAnsiString() << std::endl;

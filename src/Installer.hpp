@@ -15,6 +15,7 @@ public:
 	~Installer();
 
 	static bool installTicket(cpp3ds::Uint64 titleId, cpp3ds::Uint16 titleVersion);
+	static bool titleKeyExists(cpp3ds::Uint64 titleId);
 
 	void start();
 //	void resume();
