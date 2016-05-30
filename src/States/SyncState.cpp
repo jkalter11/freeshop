@@ -117,12 +117,13 @@ SyncState::SyncState(StateStack& stack, Context& context)
 	m_soundLoading.setLoop(true);
 
 	m_textStatus.setCharacterSize(14);
-	m_textStatus.setFillColor(cpp3ds::Color::White);
+	m_textStatus.setFillColor(cpp3ds::Color::Black);
 	m_textStatus.setOutlineColor(cpp3ds::Color(0, 0, 0, 70));
 	m_textStatus.setOutlineThickness(2.f);
 	m_textStatus.setPosition(160.f, 155.f);
-	TweenEngine::Tween::to(m_textStatus, util3ds::TweenText::OUTLINE_COLOR_ALPHA, 0.15f)
-			.target(90)
+	m_textStatus.useSystemFont();
+	TweenEngine::Tween::to(m_textStatus, util3ds::TweenText::FILL_COLOR_ALPHA, 0.15f)
+			.target(180)
 			.repeatYoyo(-1, 0)
 			.start(m_tweenManager);
 
@@ -175,9 +176,20 @@ void SyncState::sync()
 	// If auto-dated, boot into launch newest freeShop
 	if (updateFreeShop())
 	{
-		// TODO: Install CIA update and boot to it.
+#ifndef EMULATION
+		Result res = 0;
+		aptOpenSession();
+
+		if (R_SUCCEEDED(res = APT_PrepareToDoAppJump(0, 0x400000F12EE00, MEDIATYPE_SD))) {
+			u8 buf0[0x300];
+			u8 buf1[0x20];
+			res = APT_DoAppJump(0x300, 0x20, buf0, buf1);
+		}
+
+		aptCloseSession();
 		requestStackClear();
 		return;
+#endif
 	}
 
 	updateCache();
@@ -200,6 +212,69 @@ void SyncState::sync()
 
 bool SyncState::updateFreeShop()
 {
+	setStatus(_("Looking for freeShop update..."));
+	const char *url = "https://api.github.com/repos/Cruel/freeShop/releases/latest";
+	const char *latestJsonFilename = "sdmc:/freeShop/tmp/latest.json";
+	Download cache(url, latestJsonFilename);
+	cache.run();
+
+	cpp3ds::FileInputStream jsonFile;
+	if (jsonFile.open(latestJsonFilename))
+	{
+		std::string json;
+		rapidjson::Document doc;
+		int size = jsonFile.getSize();
+		json.resize(size);
+		jsonFile.read(&json[0], size);
+		if (json.empty())
+			return false;
+		doc.Parse(json.c_str());
+
+		if (!doc.HasMember("tag_name"))
+			return false;
+		std::string tag = doc["tag_name"].GetString();
+
+		if (!tag.empty() && tag.compare(Config::get("version").GetString()) != 0)
+		{
+#ifndef EMULATION
+			Result ret;
+			Handle cia;
+			bool suceeded = false;
+			size_t total = 0;
+			std::string freeShopFile = "sdmc:/freeShop/tmp/freeShop.cia";
+			std::string freeShopUrl = _("https://github.com/Cruel/freeShop/releases/download/%s/freeShop-%s.cia", tag.c_str(), tag.c_str());
+			setStatus(_("Installing freeShop %s ...", tag.c_str()));
+			Download freeShopDownload(freeShopUrl, freeShopFile);
+			AM_QueryAvailableExternalTitleDatabase(nullptr);
+
+			freeShopDownload.run();
+			cpp3ds::Int64 bytesRead;
+			cpp3ds::FileInputStream f;
+			f.open(freeShopFile);
+			char *buf = new char[128*1024];
+
+			AM_StartCiaInstall(MEDIATYPE_SD, &cia);
+			while (bytesRead = f.read(buf, 128*1024))
+			{
+				if (R_FAILED(ret = FSFILE_Write(cia, nullptr, total, buf, bytesRead, 0)))
+					break;
+				total += bytesRead;
+			}
+			delete[] buf;
+
+			if (R_FAILED(ret))
+				setStatus(_("Failed to install update: 0x%08lX", ret));
+			suceeded = R_SUCCEEDED(ret = AM_FinishCiaInstall(cia));
+			if (suceeded) {
+				Config::set("version", tag.c_str());
+				Config::saveToFile();
+			} else
+				setStatus(_("Failed to install update: 0x%08lX", ret));
+
+			return suceeded;
+#endif
+		}
+	}
 	return false;
 }
 

@@ -7,6 +7,7 @@ set(APP_TITLE "freeShop")
 set(APP_DESCRIPTION "Open source eShop clone")
 set(APP_AUTHOR "Cruel")
 set(APP_ICON ${PROJECT_SOURCE_DIR}/res/app/icon.png)
+set(APP_VERSION 1)
 
 # CIA settings
 set(APP_UNIQUE_ID 0xF12EE) # This must be unique for your CIA project
