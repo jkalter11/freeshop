@@ -9,8 +9,9 @@ before_install:
 script:
 - docker run --rm -v "$PWD":/usr/project -w /usr/project thecruel/cpp3ds sh .build.sh
 before_deploy:
-- export $RELEASE_FILENAME=freeShop-$TRAVIS_TAG.cia
-- mv bin/freeshop.cia $RELEASE_FILENAME
+- export RELEASE_FILENAME=freeShop-$TRAVIS_TAG.cia
+- sudo chmod 777 bin/freeshop.cia
+- sudo mv bin/freeshop.cia $RELEASE_FILENAME
 deploy:
   provider: releases
   api_key:
