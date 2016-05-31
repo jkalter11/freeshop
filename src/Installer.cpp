@@ -1,6 +1,7 @@
 #include <cpp3ds/System/Err.hpp>
 #include <cpp3ds/System/I18n.hpp>
 #include <cpp3ds/System/FileInputStream.hpp>
+#include <cpp3ds/Network/Http.hpp>
 #include "Installer.hpp"
 #include "ticket.h"
 
@@ -30,6 +31,22 @@ void ensureTitleKeys()
 				titleKeys[titleId][j] = titleKey[j];
 		}
 	}
+}
+
+Result FSUSER_AddSeed(u64 titleId, const void* seed)
+{
+	u32 *cmdbuf = getThreadCommandBuffer();
+
+	cmdbuf[0] = 0x087a0180;
+	cmdbuf[1] = (u32) (titleId & 0xFFFFFFFF);
+	cmdbuf[2] = (u32) (titleId >> 32);
+	memcpy(&cmdbuf[3], seed, 16);
+
+	Result ret = 0;
+	if(R_FAILED(ret = svcSendSyncRequest(*fsGetSessionHandle()))) return ret;
+
+	ret = cmdbuf[1];
+	return ret;
 }
 
 }
@@ -96,6 +113,33 @@ bool Installer::installTicket(cpp3ds::Uint64 titleId, cpp3ds::Uint16 titleVersio
 	}
 
 	cpp3ds::err() << _("Failed to install ticket: 0x%08lX", ret).toAnsiString() << std::endl;
+	return false;
+}
+
+bool Installer::installSeed(cpp3ds::Uint64 titleId, const std::string &countryCode)
+{
+	std::string seedUri = _("title/0x%016llX/ext_key?country=%s", titleId, countryCode.c_str());
+	cpp3ds::Http http("https://kagiya-ctr.cdn.nintendo.net");
+	cpp3ds::Http::Request request(seedUri);
+	cpp3ds::Http::Response response = http.sendRequest(request);
+	auto status = response.getStatus();
+	if (status == cpp3ds::Http::Response::Ok)
+	{
+		std::string seed = response.getBody();
+		if (seed.size() == 16)
+		{
+			Result ret = 0;
+			if (R_FAILED(ret = FSUSER_AddSeed(titleId, seed.c_str())))
+			{
+				cpp3ds::err() << _("Failed to add seed: %016llX", ret).toAnsiString() << std::endl;
+				return false;
+			}
+			return true;
+		}
+	}
+	else if (status == cpp3ds::Http::Response::NotFound)
+		return true; // Title has no seed, so it's fine
+
 	return false;
 }
 

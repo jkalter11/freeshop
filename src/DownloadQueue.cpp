@@ -3,6 +3,7 @@
 #include <cpp3ds/System/I18n.hpp>
 #include <TweenEngine/Tween.h>
 #include <cpp3ds/System/Sleep.hpp>
+#include <cpp3ds/System/Err.hpp>
 #include "DownloadQueue.hpp"
 #include "Notification.hpp"
 #include "Installer.hpp"
@@ -76,10 +77,16 @@ void DownloadQueue::addDownload(AppItem* app)
 					download->pushUrl(_("http://ccs.cdn.c.shop.nintendowifi.net/ccs/download/%016llX/%08lX", titleId, contentId));
 				}
 
-				if (Installer::installTicket(titleId, titleVersion))
-					std::cout << "ticket installed" << std::endl;
-				else
-					std::cout << "ticket failed!" << std::endl;
+				if (!Installer::installTicket(titleId, titleVersion))
+				{
+					cpp3ds::err() << "Failed to install ticket." << std::endl;
+					return false;
+				}
+				else if (!Installer::installSeed(titleId, app->getUriRegion()))
+				{
+					cpp3ds::err() << "Failed to install seed." << std::endl;
+					return false;
+				}
 
 				installer->start();
 				if (!installer->installTmd(&buf[0], dataOffsets[sigType] + 0x9C4 + (contentCount * 0x30)))
