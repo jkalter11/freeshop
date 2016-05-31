@@ -234,7 +234,7 @@ bool SyncState::updateFreeShop()
 			return false;
 		std::string tag = doc["tag_name"].GetString();
 
-		if (!tag.empty() && tag.compare(Config::get("version").GetString()) != 0)
+		if (!tag.empty() && tag.compare(FREESHOP_VERSION) != 0)
 		{
 #ifndef EMULATION
 			Result ret;
