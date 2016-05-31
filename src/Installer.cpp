@@ -88,15 +88,15 @@ bool Installer::installTicket(cpp3ds::Uint64 titleId, cpp3ds::Uint16 titleVersio
 	Handle ticket;
 	u8 tikData[sizeof(tikTemp)];
 	const u16 sigSize = 0x140;
-	titleId = __builtin_bswap64(titleId);
+	cpp3ds::Uint64 titleIdBE = __builtin_bswap64(titleId);
 
 	ensureTitleKeys();
 
 	// Build ticket
 	memcpy(tikData, tikTemp, sizeof(tikData));
-	memcpy(tikData + sigSize + 0x9C, &titleId, 8);
+	memcpy(tikData + sigSize + 0x9C, &titleIdBE, 8);
 	memcpy(tikData + sigSize + 0xA6, &titleVersion, 2);
-	memcpy(tikData + sigSize + 0x7F, titleKeys[titleId], 16);
+	memcpy(tikData + sigSize + 0x7F, titleKeys[titleIdBE], 16);
 
 	AM_QueryAvailableExternalTitleDatabase(nullptr);
 	AM_DeleteTicket(titleId);
