@@ -59,7 +59,7 @@ const rapidjson::Value &Config::get(const std::string &key)
 void Config::loadDefaults()
 {
 	m_json.SetObject();
-	m_json.AddMember("version", "1.0", m_json.GetAllocator());
+	m_json.AddMember("version", rapidjson::StringRef(FREESHOP_VERSION), m_json.GetAllocator());
 	m_json.AddMember("cache_version", "", m_json.GetAllocator());
 }
 

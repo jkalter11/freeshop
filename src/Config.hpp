@@ -4,6 +4,9 @@
 #include <string>
 #include <rapidjson/document.h>
 
+#ifndef FREESHOP_VERSION
+#error "No version defined"
+#endif
 
 namespace FreeShop {
 
