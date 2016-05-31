@@ -67,6 +67,8 @@ void AppItem::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) co
 			target.draw(m_icon, states);
 			target.draw(m_titleText, states);
 			target.draw(m_filesizeText, states);
+			for (const auto& flag : m_regionFlags)
+				target.draw(flag, states);
 		} else {
 			target.draw(m_icon, states);
 		}
@@ -173,11 +175,20 @@ void AppItem::loadFromJSON(const char* titleId, const rapidjson::Value &json)
 	{
 		std::string region = it->GetString();
 		if (region == "US")
-			m_regions.push_back(USA);
+			addRegion(USA);
 		else if (region == "EU")
-			m_regions.push_back(Europe);
+			addRegion(Europe);
 		else
-			m_regions.push_back(Japan);
+			addRegion(Japan);
+	}
+
+	float posX = 55.f;
+	for (auto& flag : m_regionFlags)
+	{
+		flag.setColor(cpp3ds::Color(255, 255, 255, 150));
+		flag.setScale(0.7f, 0.7f);
+		flag.setPosition(posX, 37.f);
+		posX += 21.f;
 	}
 
 	int iconIndex = json[6].GetInt();
@@ -372,6 +383,24 @@ void AppItem::setVersion(int version)
 int AppItem::getVersion() const
 {
 	return m_version;
+}
+
+void AppItem::addRegion(AppItem::Region region)
+{
+	cpp3ds::Sprite flag;
+	cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get("images/flags.png");
+	texture.setSmooth(true);
+	flag.setTexture(texture);
+
+	if (region == Europe)
+		flag.setTextureRect(cpp3ds::IntRect(0, 0, 30, 20));
+	if (region == Japan)
+		flag.setTextureRect(cpp3ds::IntRect(30, 0, 30, 20));
+	else if (region == USA)
+		flag.setTextureRect(cpp3ds::IntRect(0, 20, 30, 20));
+
+	m_regionFlags.push_back(flag);
+	m_regions.push_back(region);
 }
 
 } // namespace FreeShop

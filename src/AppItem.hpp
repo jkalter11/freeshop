@@ -78,6 +78,8 @@ protected:
 	virtual void setValues(int tweenType, float *newValues);
 	virtual int getValues(int tweenType, float *returnValues);
 
+	void addRegion(Region region);
+
 private:
 	gui3ds::NinePatch m_background;
 
@@ -97,6 +99,7 @@ private:
 	std::string m_uriRegion;
 	int m_version;
 	std::vector<Region> m_regions;
+	std::vector<cpp3ds::Sprite> m_regionFlags;
 
 	int m_matchScore;
 
