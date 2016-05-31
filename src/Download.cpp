@@ -89,6 +89,7 @@ void Download::start()
 void Download::run()
 {
 	cpp3ds::Http::Response response;
+	size_t bufferSize = 128*1024;
 
 	if (!m_destination.empty())
 	{
@@ -128,11 +129,11 @@ void Download::run()
 	while (1)
 	{
 		// Follow all redirects
-		response = m_http.sendRequest(m_request, cpp3ds::Time::Zero, dataCallback);
+		response = m_http.sendRequest(m_request, cpp3ds::Time::Zero, dataCallback, bufferSize);
 		while (response.getStatus() == 301 || response.getStatus() == 302)
 		{
 			setUrl(response.getField("Location"));
-			response = m_http.sendRequest(m_request, cpp3ds::Time::Zero, dataCallback);
+			response = m_http.sendRequest(m_request, cpp3ds::Time::Zero, dataCallback, bufferSize);
 		}
 
 		if (response.getStatus() != 200)
