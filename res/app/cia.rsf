@@ -166,7 +166,7 @@ AccessControlInfo:
    - ir:u
    - ir:rst
    - ldr:ro
-   - mic:u
+   - gsp::Lcd
    - news:u
    - nim:aoc
    - nwm::UDS

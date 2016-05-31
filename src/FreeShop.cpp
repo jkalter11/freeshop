@@ -7,6 +7,7 @@
 #include "States/BrowseState.hpp"
 #include "Config.hpp"
 #include "Util.hpp"
+#include "States/SleepState.hpp"
 
 
 using namespace cpp3ds;
@@ -23,6 +24,7 @@ FreeShop::FreeShop()
 	m_stateStack.registerState<LoadingState>(States::Loading);
 	m_stateStack.registerState<SyncState>(States::Sync);
 	m_stateStack.registerState<BrowseState>(States::Browse);
+	m_stateStack.registerState<SleepState>(States::Sleep);
 //	m_stateStack.pushState(States::Browse);
 	m_stateStack.pushState(States::Loading);
 	m_stateStack.pushState(States::Sync);

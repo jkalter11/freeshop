@@ -10,6 +10,8 @@
 #include <cpp3ds/System/I18n.hpp>
 #include <cpp3ds/System/FileSystem.hpp>
 
+#define SECONDS_TO_SLEEP 30.f
+
 
 namespace FreeShop {
 
@@ -69,6 +71,7 @@ void BrowseState::initialize()
 
 	g_browserLoaded = true;
 
+	m_sleepClock.restart();
 	requestStackClearUnder();
 }
 
@@ -112,6 +115,14 @@ bool BrowseState::update(float delta)
 {
 	if (!g_syncComplete || !g_browserLoaded)
 		return true;
+	if (m_busy)
+		m_sleepClock.restart();
+
+	if (m_sleepClock.getElapsedTime() > cpp3ds::seconds(SECONDS_TO_SLEEP))
+	{
+		requestStackPush(States::Sleep);
+		return false;
+	}
 
 	int iconIndex = m_iconSet.getSelectedIndex();
 	if (m_iconSelectedIndex != iconIndex && m_mode != iconIndex)
@@ -141,6 +152,12 @@ bool BrowseState::update(float delta)
 
 bool BrowseState::processEvent(const cpp3ds::Event& event)
 {
+	cpp3ds::Clock clock = m_sleepClock;
+	m_sleepClock.restart();
+	// Recovering from sleep, so don't process event
+	if (clock.getElapsedTime() > cpp3ds::seconds(SECONDS_TO_SLEEP))
+		return false;
+
 	if (m_busy || !g_syncComplete || !g_browserLoaded)
 		return false;
 

@@ -49,6 +49,7 @@ set(SOURCE_FILES
 	${PROJECT_SOURCE_DIR}/src/GUI/Button.cpp
 	${PROJECT_SOURCE_DIR}/src/GUI/NinePatch.cpp
 	${PROJECT_SOURCE_DIR}/src/States/State.cpp
+	${PROJECT_SOURCE_DIR}/src/States/SleepState.cpp
 	${PROJECT_SOURCE_DIR}/src/States/StateStack.cpp
 	${PROJECT_SOURCE_DIR}/src/States/LoadingState.cpp
 	${PROJECT_SOURCE_DIR}/src/States/TitleState.cpp

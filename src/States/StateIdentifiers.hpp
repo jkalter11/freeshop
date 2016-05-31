@@ -9,6 +9,7 @@ namespace FreeShop {
 			Loading,
 			Sync,
 			Browse,
+			Sleep,
 		};
 	}
 }
