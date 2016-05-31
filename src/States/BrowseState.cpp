@@ -59,7 +59,6 @@ void BrowseState::initialize()
 		text.useSystemFont();
 	}
 
-	loadApp();
 	setMode(App);
 
 	m_soundBlip.setBuffer(AssetManager<cpp3ds::SoundBuffer>::get("sounds/blip.ogg"));
