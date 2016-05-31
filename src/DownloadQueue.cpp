@@ -121,7 +121,7 @@ void DownloadQueue::addDownload(AppItem* app)
 		count += len;
 		if (clock.getElapsedTime() > cpp3ds::seconds(1.f))
 		{
-			download->setProgressMessage(_("Installing... %.1f%% (%.1fkb/s)",
+			download->setProgressMessage(_("Installing... %.1f%% (%.0f KB/s)",
 										   download->getProgress() * 100.f,
 										   count / clock.getElapsedTime().asSeconds() / 1024.f));
 			count = 0;
