@@ -49,7 +49,6 @@ private:
 	AppList m_appList;
 	AppInfo m_appInfo;
 
-	cpp3ds::Clock m_sleepClock;
 
 	TweenEngine::TweenManager m_tweenManager;
 

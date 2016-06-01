@@ -6,6 +6,9 @@
 
 namespace FreeShop {
 
+bool SleepState::isSleeping = false;
+cpp3ds::Clock SleepState::clock;
+
 SleepState::SleepState(StateStack& stack, Context& context)
 : State(stack, context)
 {
@@ -16,6 +19,7 @@ SleepState::SleepState(StateStack& stack, Context& context)
 		gspLcdExit();
 	}
 #endif
+	isSleeping = true;
 }
 
 SleepState::~SleepState()
@@ -27,6 +31,7 @@ SleepState::~SleepState()
 		gspLcdExit();
 	}
 #endif
+	isSleeping = false;
 }
 
 void SleepState::renderTopScreen(cpp3ds::Window& window)
@@ -39,13 +44,19 @@ void SleepState::renderBottomScreen(cpp3ds::Window& window)
 
 bool SleepState::update(float delta)
 {
+	if (!isSleeping)
+	{
+		requestStackPop();
+		clock.restart();
+	}
 	return false;
 }
 
 bool SleepState::processEvent(const cpp3ds::Event& event)
 {
 	requestStackPop();
-	return true;
+	clock.restart();
+	return false;
 }
 
 } // namespace FreeShop

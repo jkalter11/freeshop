@@ -1,4 +1,33 @@
 #include "FreeShop.hpp"
+#include "States/SleepState.hpp"
+
+#ifndef EMULATION
+namespace {
+
+aptHookCookie cookie;
+
+void aptHookFunc(APT_HookType hookType, void *param)
+{
+	switch (hookType) {
+		case APTHOOK_ONSUSPEND:
+			if (FreeShop::SleepState::isSleeping && R_SUCCEEDED(gspLcdInit()))
+			{
+				GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);
+				gspLcdExit();
+			}
+			break;
+		case APTHOOK_ONRESTORE:
+		case APTHOOK_ONWAKEUP:
+			FreeShop::SleepState::isSleeping = false;
+			break;
+		default:
+			break;
+	}
+}
+
+}
+#endif
+
 
 int main(int argc, char** argv)
 {
@@ -14,6 +43,7 @@ int main(int argc, char** argv)
 	cpp3ds::Service::enable(cpp3ds::AM);
 
 #ifndef EMULATION
+	aptHook(&cookie, aptHookFunc, nullptr);
 	AM_InitializeExternalTitleDatabase(false);
 #endif
 

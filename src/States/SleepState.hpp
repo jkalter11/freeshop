@@ -1,6 +1,7 @@
 #ifndef FREESHOP_SLEEPSTATE_HPP
 #define FREESHOP_SLEEPSTATE_HPP
 
+#include <cpp3ds/System/Clock.hpp>
 #include "State.hpp"
 
 namespace FreeShop {
@@ -10,6 +11,9 @@ class SleepState : public State
 public:
 	SleepState(StateStack& stack, Context& context);
 	~SleepState();
+
+	static bool isSleeping;
+	static cpp3ds::Clock clock;
 
 	virtual void renderTopScreen(cpp3ds::Window& window);
 	virtual void renderBottomScreen(cpp3ds::Window& window);
