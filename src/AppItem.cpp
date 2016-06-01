@@ -280,6 +280,9 @@ void AppItem::setValues(int tweenType, float *newValues)
 			SET_ALPHA(m_background.getColor, m_background.setColor, 40.f);
 			SET_ALPHA(m_titleText.getFillColor, m_titleText.setFillColor, 255.f);
 			SET_ALPHA(m_filesizeText.getFillColor, m_filesizeText.setFillColor, 255.f);
+			for (auto& flag : m_regionFlags) {
+				SET_ALPHA(flag.getColor, flag.setColor, 150.f);
+			}
 			break;
 		}
 		case BACKGROUND_ALPHA: {
