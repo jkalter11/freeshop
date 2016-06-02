@@ -1,6 +1,16 @@
-# freeShop [![Build Status](https://travis-ci.org/Cruel/freeShop.png?branch=master)](https://travis-ci.org/Cruel/freeShop)
+![freeShop](https://raw.githubusercontent.com/Cruel/freeShop/master/res/app/banner.png)
+
+[![Build Status](https://travis-ci.org/Cruel/freeShop.png?branch=master)](https://travis-ci.org/Cruel/freeShop)
 
 Open source eShop clone for the Nintendo 3DS. Allows you to browse and install titles you own (i.e. titles for which you have the titlekey).
+
+### Usage Instructions
+
+1. Install the CIA file on your CFW of choice (preferably one removing region restrictions)
+
+2. Put a encTitleKeys.bin file in the directory `sdmc:/freeShop/`
+
+3. Launch freeShop and enjoy
 
 ### Credit & Thanks
 
