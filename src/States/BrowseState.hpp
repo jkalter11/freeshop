@@ -48,7 +48,7 @@ private:
 	Mode m_mode;
 	AppList m_appList;
 	AppInfo m_appInfo;
-
+	util3ds::TweenText m_textListEmpty;
 
 	TweenEngine::TweenManager m_tweenManager;
 

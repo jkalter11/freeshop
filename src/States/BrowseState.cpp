@@ -47,6 +47,12 @@ void BrowseState::initialize()
 	m_textActiveDownloads.setOutlineThickness(1.f);
 	m_textActiveDownloads.setPosition(246.f, 3.f);
 
+	m_textListEmpty.setString(_("No title keys found.\nMake sure you have encTitleKeys.bin\nin your sdmc:/freeShop/ directory."));
+	m_textListEmpty.setCharacterSize(16);
+	m_textListEmpty.setFillColor(cpp3ds::Color(80, 80, 80, 255));
+	m_textListEmpty.setPosition((400.f - m_textListEmpty.getLocalBounds().width) / 2, 70.f);
+	m_textListEmpty.useSystemFont();
+
 	m_whiteScreen.setSize(cpp3ds::Vector2f(320.f, 240.f));
 	m_whiteScreen.setFillColor(cpp3ds::Color::White);
 
@@ -81,7 +87,10 @@ void BrowseState::renderTopScreen(cpp3ds::Window& window)
 	if (!g_syncComplete || !g_browserLoaded)
 		return;
 
-	window.draw(m_appList);
+	if (AppList::getInstance().getList().size() == 0)
+		window.draw(m_textListEmpty);
+	else
+		window.draw(AppList::getInstance());
 
 	// Special draw method to draw top screenshot if selected
 	m_appInfo.drawTop(window);
