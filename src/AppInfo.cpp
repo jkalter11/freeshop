@@ -76,15 +76,9 @@ AppInfo::AppInfo()
 	m_textDescription.setFillColor(cpp3ds::Color(100, 100, 100, 255));
 	m_textDescription.useSystemFont();
 
-	m_textAuthor.setCharacterSize(11);
-	m_textAuthor.setFillColor(cpp3ds::Color(100, 100, 100, 255));
-	m_textAuthor.setPosition(4.f, 130.f);
-
-	m_textVersion.setCharacterSize(13);
-	m_textVersion.setFillColor(cpp3ds::Color::White);
-	m_textVersion.setOutlineColor(cpp3ds::Color(0, 0, 0, 150));
-	m_textVersion.setOutlineThickness(1.f);
-	m_textVersion.setPosition(5.f, 30.f);
+	m_textTitleId.setCharacterSize(10);
+	m_textTitleId.setFillColor(cpp3ds::Color(80, 80, 80, 255));
+	m_textTitleId.setPosition(2.f, 127.f);
 
 	m_fadeTextRect.setTexture(&AssetManager<cpp3ds::Texture>::get("images/fade.png"));
 	m_fadeTextRect.setSize(cpp3ds::Vector2f(250.f, 8.f));
@@ -133,8 +127,7 @@ void AppInfo::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) co
 		target.setView(defaultView);
 		target.draw(m_fadeTextRect, states);
 
-		target.draw(m_textAuthor, states);
-		target.draw(m_textVersion, states);
+		target.draw(m_textTitleId, states);
 
 		if (m_appItem->isInstalled())
 		{
@@ -213,33 +206,43 @@ void AppInfo::loadApp(AppItem *appItem)
 			download.run();
 		}
 
-		rapidjson::Document doc;
-		std::string json;
-		cpp3ds::FileInputStream file;
-		file.open(jsonFilename);
-		json.resize(file.getSize());
-		file.read(&json[0], json.size());
-		doc.Parse(json.c_str());
-
-		if (doc["title"].HasMember("screenshots"))
-			setScreenshots(doc["title"]["screenshots"]["screenshot"]);
-		else {
-			m_screenshotTops.clear();
-			m_screenshotTopTextures.clear();
-			m_screenshotBottoms.clear();
-			m_screenshotBottomTextures.clear();
-		}
-
-		setDescription(doc["title"]["description"]);
-		m_textDescription.setPosition(102.f, 49.f);
+		m_textTitle.setString("");
+		m_textDescription.setString("");
+		m_textTitleId.setString(appItem->getTitleId());
 
 		cpp3ds::IntRect textureRect;
 		m_icon.setTexture(*appItem->getIcon(textureRect), true);
 		m_icon.setTextureRect(textureRect);
-		m_textTitle.setString(appItem->getTitle());
-		m_textTitle.setOrigin(std::min(m_textTitle.getLocalBounds().width, 205.f) / 2.f, 0.f);
 
-		m_textDownload.setFillColor(cpp3ds::Color::White);
+		m_screenshotTops.clear();
+		m_screenshotTopTextures.clear();
+		m_screenshotBottoms.clear();
+		m_screenshotBottomTextures.clear();
+
+		rapidjson::Document doc;
+		std::string json;
+		cpp3ds::FileInputStream file;
+		if (file.open(jsonFilename))
+		{
+			json.resize(file.getSize());
+			file.read(&json[0], json.size());
+			doc.Parse(json.c_str());
+			if (!doc.HasParseError())
+			{
+
+				if (doc["title"].HasMember("screenshots"))
+					setScreenshots(doc["title"]["screenshots"]["screenshot"]);
+
+				setDescription(doc["title"]["description"]);
+				m_textDescription.setPosition(102.f, 49.f);
+
+				m_textTitle.setString(appItem->getTitle());
+				m_textTitle.setOrigin(std::min(m_textTitle.getLocalBounds().width, 205.f) / 2.f, 0.f);
+
+				m_textDownload.setFillColor(cpp3ds::Color::White);
+			}
+
+		}
 	}
 }
 
@@ -499,19 +502,12 @@ void AppInfo::setDescription(const rapidjson::Value &jsonDescription)
 
 void AppInfo::setScreenshots(const rapidjson::Value &jsonScreenshots)
 {
-	int oldSize = m_screenshotTops.size();
-
 	if (jsonScreenshots.IsArray())
 		for (int i = 0; i < jsonScreenshots.Size(); ++i)
 		{
 			addScreenshot(i, jsonScreenshots[i]["image_url"][0]);
 			addScreenshot(i, jsonScreenshots[i]["image_url"][1]);
 		}
-
-	m_screenshotTops.erase(m_screenshotTops.begin(), m_screenshotTops.begin() + oldSize);
-	m_screenshotTopTextures.erase(m_screenshotTopTextures.begin(), m_screenshotTopTextures.begin() + oldSize);
-	m_screenshotBottoms.erase(m_screenshotBottoms.begin(), m_screenshotBottoms.begin() + oldSize);
-	m_screenshotBottomTextures.erase(m_screenshotBottomTextures.begin(), m_screenshotBottomTextures.begin() + oldSize);
 
 	float startX = std::round((320.f - 61.f * m_screenshotTops.size()) / 2.f);
 	for (int i = 0; i < m_screenshotTops.size(); ++i)
@@ -527,8 +523,6 @@ void AppInfo::addScreenshot(int index, const rapidjson::Value &jsonScreenshot)
 	std::string type = jsonScreenshot["type"].GetString();
 	std::string filename = _("sdmc:/freeShop/tmp/%s/screen%d%s.jpg", m_appItem->getTitleId().c_str(), index, type.c_str());
 	bool isUpper = type == "upper";
-//	std::cout << filename << std::endl;
-//	std::cout << type << " : " << url << std::endl;
 
 	if (!pathExists(filename.c_str()))
 	{

@@ -45,8 +45,7 @@ private:
 	cpp3ds::Sprite m_icon;
 	cpp3ds::Text m_textTitle;
 	cpp3ds::Text m_textDescription;
-	cpp3ds::Text m_textAuthor;
-	cpp3ds::Text m_textVersion;
+	cpp3ds::Text m_textTitleId;
 	float m_descriptionVelocity;
 	cpp3ds::RectangleShape m_fadeTextRect;
 	cpp3ds::View m_descriptionView;
