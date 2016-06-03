@@ -27,14 +27,13 @@ Config &Config::getInstance()
 bool Config::loadFromFile(const std::string &filename)
 {
 	std::string path = cpp3ds::FileSystem::getFilePath(filename);
-	if (!pathExists(path.c_str(), false))
-		return false;
 	cpp3ds::FileInputStream file;
-	file.open(filename);
+	if (!file.open(filename))
+		return false;
 	getInstance().m_jsonString.resize(file.getSize());
 	file.read(&getInstance().m_jsonString[0], getInstance().m_jsonString.size());
 	getInstance().m_json.Parse(getInstance().m_jsonString.c_str());
-	return true;
+	return !getInstance().m_json.HasParseError();
 }
 
 void Config::saveToFile(const std::string &filename)
