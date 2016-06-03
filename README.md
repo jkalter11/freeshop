@@ -21,3 +21,5 @@ Open source eShop clone for the Nintendo 3DS. Allows you to browse and install t
 - [Plailect](https://github.com/Plailect/) - also for CDN/ticket related info
 
 - [yellows8](https://github.com/yellows8) - for all the incredible REing
+
+- [Noroxuz](https://github.com/Noroxuz) - help with banner

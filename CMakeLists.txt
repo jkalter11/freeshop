@@ -15,6 +15,7 @@ add_definitions(-DFREESHOP_VERSION="1.1")
 # CIA settings
 set(APP_UNIQUE_ID 0xF12EE) # This must be unique for your CIA project
 set(APP_PRODUCT_CODE ${PROJECT_NAME})
+set(BANNER ${PROJECT_SOURCE_DIR}/res/app/banner.bnr)
 set(BANNER_IMAGE ${PROJECT_SOURCE_DIR}/res/app/banner.png)
 set(BANNER_SOUND ${PROJECT_SOURCE_DIR}/res/app/banner.wav)
 set(CIA_CONFIG ${PROJECT_SOURCE_DIR}/res/app/cia.rsf)
