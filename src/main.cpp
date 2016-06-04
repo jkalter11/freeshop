@@ -19,6 +19,7 @@ void aptHookFunc(APT_HookType hookType, void *param)
 		case APTHOOK_ONRESTORE:
 		case APTHOOK_ONWAKEUP:
 			FreeShop::SleepState::isSleeping = false;
+			FreeShop::SleepState::clock.restart();
 			break;
 		default:
 			break;
