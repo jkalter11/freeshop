@@ -20,12 +20,12 @@ Installer::~Installer()
 	//
 }
 
-bool Installer::installTicket(cpp3ds::Uint64 titleId, cpp3ds::Uint16 titleVersion)
+bool Installer::installTicket(cpp3ds::Uint16 titleVersion)
 {
 	return true;
 }
 
-bool Installer::installSeed(cpp3ds::Uint64 titleId, const std::string &countryCode)
+bool Installer::installSeed(const std::string &countryCode)
 {
 	return true;
 }
@@ -36,6 +36,17 @@ bool Installer::titleKeyExists(cpp3ds::Uint64 titleId)
 }
 
 void Installer::start()
+{
+	//
+}
+
+
+void Installer::resume()
+{
+	//
+}
+
+void Installer::suspend()
 {
 	//
 }
@@ -68,6 +79,16 @@ bool Installer::installTmd(const void *data, size_t size)
 bool Installer::installContent(const void *data, size_t size, cpp3ds::Uint16 index)
 {
 	return true;
+}
+
+cpp3ds::Int32 Installer::getErrorCode() const
+{
+	return 0;
+}
+
+const cpp3ds::String &Installer::getErrorString() const
+{
+	return m_errorStr;
 }
 
 } // namespace FreeShop
