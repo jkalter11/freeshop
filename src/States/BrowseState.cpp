@@ -18,7 +18,6 @@ namespace FreeShop {
 
 BrowseState::BrowseState(StateStack& stack, Context& context)
 : State(stack, context)
-, m_appList("sdmc:/freeShop/cache/data.json")
 , m_appListPositionX(0.f)
 , m_threadInitialize(&BrowseState::initialize, this)
 , m_threadLoadApp(&BrowseState::loadApp, this)
@@ -32,7 +31,7 @@ BrowseState::BrowseState(StateStack& stack, Context& context)
 
 void BrowseState::initialize()
 {
-	m_appList.refresh();
+	AppList::getInstance().refresh();
 
 	m_iconSet.addIcon(L"\uf11b");
 	m_iconSet.addIcon(L"\uf019");
@@ -40,7 +39,6 @@ void BrowseState::initialize()
 	m_iconSet.addIcon(L"\uf002");
 	m_iconSet.setPosition(210.f, 15.f);
 
-	m_textActiveDownloads.setString("23");
 	m_textActiveDownloads.setCharacterSize(8);
 	m_textActiveDownloads.setFillColor(cpp3ds::Color::Black);
 	m_textActiveDownloads.setOutlineColor(cpp3ds::Color::White);
@@ -153,7 +151,7 @@ bool BrowseState::update(float delta)
 	}
 
 	m_iconSet.update(delta);
-	m_appList.update(delta);
+	AppList::getInstance().update(delta);
 	m_keyboard.update(delta);
 	DownloadQueue::getInstance().update(delta);
 	m_tweenManager.update(delta);
@@ -194,8 +192,8 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 			if (m_lastKeyboardInput != currentInput)
 			{
 				m_lastKeyboardInput = currentInput;
-				m_appList.filterBySearch(currentInput, m_textMatches);
-				TweenEngine::Tween::to(m_appList, AppList::POSITION_XY, 0.3f)
+				AppList::getInstance().filterBySearch(currentInput, m_textMatches);
+				TweenEngine::Tween::to(AppList::getInstance(), AppList::POSITION_XY, 0.3f)
 					.target(0.f, 0.f)
 					.start(m_tweenManager);
 			}
@@ -206,7 +204,7 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 		// Events for all modes except Search
 		if (event.type == cpp3ds::Event::KeyPressed)
 		{
-			int index = m_appList.getSelectedIndex();
+			int index = AppList::getInstance().getSelectedIndex();
 
 			switch (event.key.code)
 			{
@@ -250,7 +248,7 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 
 	if (event.type == cpp3ds::Event::KeyPressed)
 	{
-		int index = m_appList.getSelectedIndex();
+		int index = AppList::getInstance().getSelectedIndex();
 
 		switch (event.key.code)
 		{
@@ -276,13 +274,13 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 
 void BrowseState::setItemIndex(int index)
 {
-	if (m_appList.getVisibleCount() == 0)
+	if (AppList::getInstance().getVisibleCount() == 0)
 		return;
 
 	if (index < 0)
 		index = 0;
-	else if (index >= m_appList.getVisibleCount())
-		index = m_appList.getVisibleCount() - 1;
+	else if (index >= AppList::getInstance().getVisibleCount())
+		index = AppList::getInstance().getVisibleCount() - 1;
 
 	float extra = 1.0f; //std::abs(m_appList.getSelectedIndex() - index) == 8.f ? 2.f : 1.f;
 
@@ -292,17 +290,17 @@ void BrowseState::setItemIndex(int index)
 	else if (pos <= m_appListPositionX - 400.f)
 		m_appListPositionX = pos + 200.f * extra;
 
-	TweenEngine::Tween::to(m_appList, AppList::POSITION_X, 0.3f)
+	TweenEngine::Tween::to(AppList::getInstance(), AppList::POSITION_X, 0.3f)
 			.target(m_appListPositionX)
 			.start(m_tweenManager);
 
-	m_appList.setSelectedIndex(index);
+	AppList::getInstance().setSelectedIndex(index);
 }
 
 
 void BrowseState::loadApp()
 {
-	AppItem* item = m_appList.getSelected();
+	AppItem* item = AppList::getInstance().getSelected();
 	if (!item)
 		return;
 
@@ -353,7 +351,7 @@ void BrowseState::setMode(BrowseState::Mode mode)
 			delay += 0.05f;
 		}
 
-		m_appList.setCollapsed(false);
+		AppList::getInstance().setCollapsed(false);
 	}
 
 	TweenEngine::Tween::to(m_keyboard, util3ds::Keyboard::POSITION_XY, 0.5f)
@@ -390,7 +388,7 @@ void BrowseState::setMode(BrowseState::Mode mode)
 			text.setPosition(5.f, posY);
 			posY += 13.f;
 		}
-		m_appList.setCollapsed(true);
+		AppList::getInstance().setCollapsed(true);
 		TweenEngine::Tween::to(m_keyboard, util3ds::Keyboard::POSITION_XY, 0.3f)
 			.target(0.f, 0.f)
 			.delay(0.3f)

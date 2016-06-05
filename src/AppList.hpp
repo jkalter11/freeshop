@@ -19,7 +19,8 @@ public:
 		AlphaNumericDesc,
 	};
 
-	AppList(std::string jsonFilename);
+	static AppList &getInstance();
+
 	~AppList();
 	void refresh();
 	void setSortType(SortType sortType);
@@ -32,6 +33,7 @@ public:
 	size_t getVisibleCount() const;
 
 	AppItem* getSelected();
+	std::vector<std::unique_ptr<AppItem>> &getList();
 
 	void setCollapsed(bool collapsed);
 	bool isCollapsed() const;
@@ -41,6 +43,7 @@ public:
 	void update(float delta);
 
 protected:
+	AppList(std::string jsonFilename);
 	virtual void draw(cpp3ds::RenderTarget& target, cpp3ds::RenderStates states) const;
 	void sort();
 	void resize();

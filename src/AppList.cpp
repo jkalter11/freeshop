@@ -332,4 +332,15 @@ void AppList::filterBySearch(const std::string &searchTerm, std::vector<util3ds:
 		setSelectedIndex(0);
 }
 
+std::vector<std::unique_ptr<AppItem>> &AppList::getList()
+{
+	return m_list;
+}
+
+AppList &AppList::getInstance()
+{
+	static AppList list("sdmc:/freeShop/cache/data.json");
+	return list;
+}
+
 } // namespace FreeShop
