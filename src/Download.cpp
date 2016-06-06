@@ -1,8 +1,11 @@
 #include <iostream>
 #include <stdio.h>
 #include <cpp3ds/System/FileSystem.hpp>
+#include <cpp3ds/System/I18n.hpp>
+#include <cpp3ds/System/Lock.hpp>
 #include "Download.hpp"
 #include "AssetManager.hpp"
+#include "DownloadQueue.hpp"
 
 namespace FreeShop {
 
@@ -10,9 +13,12 @@ namespace FreeShop {
 Download::Download(const std::string &url, const std::string &destination)
 : m_thread(&Download::run, this)
 , m_progress(0.f)
+, m_canSendTop(true)
 , m_markedForDelete(false)
 , m_cancelFlag(false)
-, m_isActive(false)
+, m_status(Queued)
+, m_downloadPos(0)
+, m_appItem(nullptr)
 {
 	setUrl(url);
 	setDestination(destination);
@@ -20,7 +26,7 @@ Download::Download(const std::string &url, const std::string &destination)
 //	m_thread.setStackSize(64*1024);
 //	m_thread.setAffinity(1);
 
-	setProgressMessage("Queued");
+	setProgressMessage(_("Queued"));
 
 	m_icon.setSize(cpp3ds::Vector2f(48.f, 48.f));
 	m_icon.setTexture(&AssetManager<cpp3ds::Texture>::get("images/missing-icon.png"), true);
@@ -37,6 +43,14 @@ Download::Download(const std::string &url, const std::string &destination)
 	m_textCancel.setOutlineColor(cpp3ds::Color(0, 0, 0, 200));
 	m_textCancel.setOutlineThickness(1.f);
 	m_textCancel.setPosition(294.f, 4.f);
+
+	m_textSendTop = m_textCancel;
+	m_textSendTop.setString(L"\uf077");
+	m_textSendTop.setPosition(272.f, 4.f);
+
+	m_textRestart = m_textCancel;
+	m_textRestart.setString(L"\uf01e");
+	m_textRestart.setPosition(272.f, 4.f);
 
 	m_textTitle.setCharacterSize(10);
 	m_textTitle.setPosition(35.f, 2.f);
@@ -82,7 +96,7 @@ void Download::setUrl(const std::string &url)
 void Download::start()
 {
 	m_buffer.clear();
-	m_thread.launch();
+	m_thread.launch(); // run()
 }
 
 
@@ -98,15 +112,18 @@ void Download::run()
 			return;
 	}
 
-	m_isActive = true;
+	m_status = Downloading;
 	m_cancelFlag = false;
 	bool failed = false;
+	m_request.setField("Range", _("bytes=%u-", m_downloadPos));
 
 	cpp3ds::Http::RequestCallback dataCallback = [&](const void* data, size_t len, size_t processed, const cpp3ds::Http::Response& response)
 	{
+		cpp3ds::Lock lock(m_mutex);
+
 		if (!m_destination.empty())
 		{
-			if (response.getStatus() == 200)
+			if (response.getStatus() == cpp3ds::Http::Response::Ok || response.getStatus() == cpp3ds::Http::Response::PartialContent)
 			{
 				const char *bufdata = reinterpret_cast<const char*>(data);
 				m_buffer.insert(m_buffer.end(), bufdata, bufdata + len);
@@ -119,38 +136,43 @@ void Download::run()
 			}
 		}
 
+		if (getStatus() != Suspended)
+			m_downloadPos += len;
+
 		if (!m_cancelFlag && m_onData)
 			failed = !m_onData(data, len, processed, response);
 
-		return !m_cancelFlag && !failed;
+		return !m_cancelFlag && !failed && getStatus() == Downloading;
 	};
 
-	// Loop in case there are URLs push to queue
+	// Loop in case there are URLs pushed to queue later
 	while (1)
 	{
 		// Follow all redirects
 		response = m_http.sendRequest(m_request, cpp3ds::Time::Zero, dataCallback, bufferSize);
-		while (response.getStatus() == 301 || response.getStatus() == 302)
+		while (response.getStatus() == cpp3ds::Http::Response::MovedPermanently || response.getStatus() == cpp3ds::Http::Response::MovedTemporarily)
 		{
 			setUrl(response.getField("Location"));
 			response = m_http.sendRequest(m_request, cpp3ds::Time::Zero, dataCallback, bufferSize);
 		}
 
-		if (response.getStatus() != 200)
+		if (response.getStatus() != cpp3ds::Http::Response::Ok && response.getStatus() != cpp3ds::Http::Response::PartialContent)
 			break;
-		if (m_cancelFlag || failed)
+		if (m_cancelFlag || failed || getStatus() == Suspended)
 			break;
 
 		if (m_urlQueue.size() > 0)
 		{
 			setUrl(m_urlQueue.front());
 			m_urlQueue.pop();
+			m_request.setField("Range", "bytes=0-");
+			m_downloadPos = 0;
 		}
 		else
 			break;
 	}
 
-	if (m_urlQueue.size() > 0)
+	if (m_urlQueue.size() > 0 && getStatus() != Suspended)
 		std::queue<std::string>().swap(m_urlQueue);
 
 	// Write remaining buffer and close downloaded file
@@ -161,13 +183,24 @@ void Download::run()
 		fclose(m_file);
 	}
 
+	if (getStatus() != Suspended)
+	{
+		m_canSendTop = false;
+		if (m_cancelFlag)
+		{
+			m_markedForDelete = true;
+			m_status = Canceled;
+		}
+		else if (failed)
+			m_status = Failed;
+		else
+			m_status = Finished;
+	}
+
 	if (m_onFinish)
 		m_onFinish(m_cancelFlag, failed);
 
-	if (m_cancelFlag)
-		m_markedForDelete = true;
-
-	m_isActive = false;
+	m_http.close();
 }
 
 
@@ -176,7 +209,7 @@ void Download::cancel(bool wait)
 	m_cancelFlag = true;
 	if (wait)
 		m_thread.wait();
-	m_isActive = false;
+	m_status = Canceled;
 }
 
 
@@ -221,6 +254,11 @@ void Download::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) c
 	target.draw(m_textTitle, states);
 	target.draw(m_textProgress, states);
 	target.draw(m_textCancel, states);
+
+	if (m_canSendTop && (m_status == Queued || m_status == Suspended || m_status == Downloading))
+		target.draw(m_textSendTop, states);
+	else if (m_status == Failed)
+		target.draw(m_textRestart, states);
 	if (m_progress > 0.f && m_progress < 1.f)
 		target.draw(m_progressBar, states);
 }
@@ -239,6 +277,7 @@ void Download::setSize(float width, float height)
 
 void Download::fillFromAppItem(AppItem *app)
 {
+	m_appItem = app;
 	cpp3ds::IntRect textureRect;
 	m_icon.setTexture(app->getIcon(textureRect), true);
 	m_icon.setTextureRect(textureRect);
@@ -250,18 +289,39 @@ void Download::processEvent(const cpp3ds::Event &event)
 {
 	if (event.type == cpp3ds::Event::TouchBegan)
 	{
-		cpp3ds::FloatRect cancelBounds = m_textCancel.getGlobalBounds();
-		cancelBounds.left += getPosition().x;
-		cancelBounds.top += getPosition().y;
-		if (cancelBounds.contains(event.touch.x, event.touch.y))
+		cpp3ds::FloatRect bounds = m_textCancel.getGlobalBounds();
+		bounds.left += getPosition().x;
+		bounds.top += getPosition().y;
+		if (bounds.contains(event.touch.x, event.touch.y))
 		{
 			// If download is already finished, just mark it for deletion
-			if (!isActive())
+			if (getStatus() != Downloading)
 				m_markedForDelete = true;
 			else
 			{
-				setProgressMessage("Canceling...");
+				setProgressMessage(_("Canceling..."));
 				cancel(false);
+			}
+		}
+		else if (m_canSendTop && m_onSendTop && (getStatus() == Queued || getStatus() == Suspended || getStatus() == Downloading))
+		{
+			bounds = m_textSendTop.getGlobalBounds();
+			bounds.left += getPosition().x;
+			bounds.top += getPosition().y;
+			if (bounds.contains(event.touch.x, event.touch.y))
+			{
+				m_onSendTop(this);
+			}
+		}
+		else if (getStatus() == Failed)
+		{
+			bounds = m_textRestart.getGlobalBounds();
+			bounds.left += getPosition().x;
+			bounds.top += getPosition().y;
+			if (bounds.contains(event.touch.x, event.touch.y))
+			{
+				// Restart failed download
+				DownloadQueue::getInstance().restartDownload(m_appItem);
 			}
 		}
 	}
@@ -287,6 +347,11 @@ void Download::setFinishCallback(DownloadFinishCallback onFinish)
 	m_onFinish = onFinish;
 }
 
+void Download::setSendTopCallback(SendTopCallback onSendTop)
+{
+	m_onSendTop = onSendTop;
+}
+
 void Download::setField(const std::string &field, const std::string &value)
 {
 	m_request.setField(field, value);
@@ -297,9 +362,25 @@ void Download::pushUrl(const std::string &url)
 	m_urlQueue.push(url);
 }
 
-bool Download::isActive() const
+Download::Status Download::getStatus() const
 {
-	return m_isActive;
+	return m_status;
+}
+
+void Download::suspend()
+{
+	if (getStatus() != Downloading)
+		return;
+	cpp3ds::Lock lock(m_mutex);
+	m_status = Suspended;
+}
+
+void Download::resume()
+{
+	if (getStatus() == Suspended || getStatus() == Queued)
+	{
+		start();
+	}
 }
 
 } // namespace FreeShop

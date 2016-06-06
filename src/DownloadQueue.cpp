@@ -4,28 +4,52 @@
 #include <TweenEngine/Tween.h>
 #include <cpp3ds/System/Sleep.hpp>
 #include <cpp3ds/System/Err.hpp>
+#include <cpp3ds/System/FileSystem.hpp>
+#include <fstream>
+#include <rapidjson/ostreamwrapper.h>
+#include <rapidjson/writer.h>
+#include <cpp3ds/System/FileInputStream.hpp>
+#include <cpp3ds/System/Lock.hpp>
 #include "DownloadQueue.hpp"
 #include "Notification.hpp"
-#include "Installer.hpp"
+#include "AppList.hpp"
 
 namespace FreeShop {
 
 
+DownloadQueue::DownloadQueue()
+: m_threadRefresh(&DownloadQueue::refresh, this)
+, m_refreshEnd(false)
+{
+	load();
+	m_threadRefresh.launch();
+}
+
+
 DownloadQueue::~DownloadQueue()
 {
+	m_refreshEnd = true;
+	suspend();
+	save();
 	// Cancel all downloads
 	for (auto& download : m_downloads)
 		delete download.second;
+	for (auto& installer : m_installers)
+		delete installer.second;
 }
 
 
 void DownloadQueue::addDownload(AppItem* app)
 {
+	cpp3ds::Lock lock(m_mutexRefresh);
 	std::string url = "http://ccs.cdn.c.shop.nintendowifi.net/ccs/download/" + app->getTitleId() + "/tmd";
 
 	Download* download = new Download(url);
 	download->fillFromAppItem(app);
 	download->setPosition(3.f, 240.f);
+	download->setSendTopCallback([this](Download *d){
+		sendTop(d);
+	});
 
 	std::vector<char> buf;
 	cpp3ds::Clock clock;
@@ -77,16 +101,12 @@ void DownloadQueue::addDownload(AppItem* app)
 					download->pushUrl(_("http://ccs.cdn.c.shop.nintendowifi.net/ccs/download/%016llX/%08lX", titleId, contentId));
 				}
 
-				if (!Installer::installTicket(titleId, titleVersion))
-				{
-					cpp3ds::err() << "Failed to install ticket." << std::endl;
+				download->setProgressMessage(_("Installing ticket..."));
+				if (!installer->installTicket(titleVersion))
 					return false;
-				}
-				else if (!Installer::installSeed(titleId, app->getUriRegion()))
-				{
-					cpp3ds::err() << "Failed to install seed." << std::endl;
+				download->setProgressMessage(_("Installing seed..."));
+				if (!installer->installSeed(app->getUriRegion()))
 					return false;
-				}
 
 				installer->start();
 				if (!installer->installTmd(&buf[0], dataOffsets[sigType] + 0x9C4 + (contentCount * 0x30)))
@@ -101,11 +121,18 @@ void DownloadQueue::addDownload(AppItem* app)
 		}
 		else // is a Content file
 		{
+			if (!installer->installContent(data, len, contentIndices[fileIndex-1]))
+			{
+				if (download->getStatus() == Download::Suspended)
+				{
+					fileSize = 0;
+					return true;
+				}
+				return false;
+			}
+
 			totalProcessed += len;
 			download->setProgress(static_cast<double>(totalProcessed) / titleFileSize);
-
-			if (!installer->installContent(data, len, contentIndices[fileIndex-1]))
-				return false;
 
 			if (processed == fileSize && fileSize != 0)
 			{
@@ -133,51 +160,55 @@ void DownloadQueue::addDownload(AppItem* app)
 
 	download->setFinishCallback([=](bool canceled, bool failed) mutable
 	{
-		download->setProgress(1.f);
-
 		cpp3ds::String notification = app->getTitle();
 
-		if (canceled && !failed)
+		switch (download->getStatus())
 		{
-			download->setProgressMessage("Canceled");
-		}
-		else if (!failed && installer->commit())
-		{
-			notification.insert(0, "Completed: ");
-			Notification::spawn(notification);
-			download->setProgressMessage("Installed!");
-		}
-		else
-		{
-			notification.insert(0, "Failed: ");
-			Notification::spawn(notification);
-			download->setProgressMessage("Failed?");
+			case Download::Suspended:
+				download->setProgressMessage(_("Suspended"));
+				return;
+			case Download::Finished:
+				if (installer->commit())
+				{
+					notification.insert(0, _("Completed: "));
+					Notification::spawn(notification);
+					download->setProgressMessage(_("Installed"));
+					break;
+				}
+				download->m_status = Download::Failed;
+				// Fall through
+			case Download::Failed:
+				notification.insert(0, _("Failed: "));
+				Notification::spawn(notification);
+				download->setProgressMessage(installer->getErrorString());
+				break;
+			case Download::Canceled:
+				download->setProgressMessage(_("Canceled"));
+				break;
 		}
 
-		delete installer;
-		// Start next download in queue
-		for (auto it = m_downloads.begin(); it < m_downloads.end(); ++it)
-			if (it->first == app && ++it != m_downloads.end())
-				it->second->start();
+		download->setProgress(1.f);
+
+		// Reset CanSendTop state
+		for (auto& download : m_downloads)
+			download.second->m_canSendTop = true;
+
+		for (auto it = m_installers.begin(); it < m_installers.end(); ++it)
+			if (it->second == installer) {
+				m_installers.erase(it);
+				delete installer;
+				break;
+			}
 	});
 
-	download->setProgressMessage("Queued");
+	download->setProgressMessage(_("Queued"));
 
 	cpp3ds::String s = app->getTitle();
-	s.insert(0, "Queued install: ");
+	s.insert(0, _("Queued install: "));
 	Notification::spawn(s);
 
-	// Only start download if none others are running
-	bool busy = false;
-	for (auto& dl : m_downloads)
-		if (dl.second->isActive()) {
-			busy = true;
-			break;
-		}
-	if (!busy)
-		download->start();
-
 	m_downloads.emplace_back(std::make_pair(app, download));
+	m_installers.emplace_back(std::make_pair(app, installer));
 	realign();
 }
 
@@ -199,11 +230,17 @@ void DownloadQueue::cancelDownload(AppItem *app)
 	{
 		if (it->first == app)
 		{
-//			Notification::spawn(_("Canceled: %s", app->getTitle().c_str()));
 			it->second->cancel(false);
 			break;
 		}
 	}
+}
+
+
+void DownloadQueue::restartDownload(AppItem *app)
+{
+	cancelDownload(app);
+	addDownload(app);
 }
 
 
@@ -227,9 +264,22 @@ bool DownloadQueue::processEvent(const cpp3ds::Event &event)
 
 void DownloadQueue::realign()
 {
+	bool processedFirstItem = false;
 	for (int i = 0; i < m_downloads.size(); ++i)
 	{
-		TweenEngine::Tween::to(*m_downloads[i].second, util3ds::TweenSprite::POSITION_Y, 0.2f)
+		Download *download = m_downloads[i].second;
+		Download::Status status = download->getStatus();
+		if (processedFirstItem)
+		{
+			download->m_canSendTop = (status == Download::Queued || status == Download::Suspended || status == Download::Downloading);
+		}
+		else if (status == Download::Queued || status == Download::Suspended || status == Download::Downloading)
+		{
+			processedFirstItem = true;
+			download->m_canSendTop = false;
+		}
+
+		TweenEngine::Tween::to(*download, util3ds::TweenSprite::POSITION_Y, 0.2f)
 			.target(33.f + i * 35.f)
 			.start(m_tweenManager);
 	};
@@ -275,6 +325,138 @@ DownloadQueue &DownloadQueue::getInstance()
 {
 	static DownloadQueue downloadQueue;
 	return downloadQueue;
+}
+
+void DownloadQueue::sendTop(Download *download)
+{
+	cpp3ds::Lock lock(m_mutexRefresh);
+	auto iterTopDownload = m_downloads.end();
+	auto iterBottomDownload = m_downloads.end();
+	for (auto it = m_downloads.begin(); it != m_downloads.end(); ++it)
+	{
+		if (iterTopDownload == m_downloads.end())
+		{
+			Download::Status status = it->second->getStatus();
+			if (status == Download::Downloading || status == Download::Queued || status == Download::Suspended)
+				iterTopDownload = it;
+		}
+		else if (iterBottomDownload == m_downloads.end())
+		{
+			if (it->second == download)
+				iterBottomDownload = it;
+		}
+	}
+
+	if (iterTopDownload != m_downloads.end() && iterBottomDownload != m_downloads.end())
+	{
+		std::rotate(iterTopDownload, iterBottomDownload, iterBottomDownload + 1);
+		realign();
+		m_clockRefresh.restart();
+	}
+}
+
+void DownloadQueue::refresh()
+{
+	while (!m_refreshEnd)
+	{
+		m_clockRefresh.restart();
+		while (m_clockRefresh.getElapsedTime() < cpp3ds::seconds(1.f))
+			cpp3ds::sleep(cpp3ds::milliseconds(200));
+
+		cpp3ds::Lock lock(m_mutexRefresh);
+		AppItem *activeDownload = nullptr;
+		AppItem *firstQueued = nullptr;
+		bool activeNeedsSuspension = false;
+		for (auto& download : m_downloads)
+		{
+			Download::Status status = download.second->getStatus();
+			if (!firstQueued && (status == Download::Queued || status == Download::Suspended))
+			{
+				firstQueued = download.first;
+			}
+			else if (!activeDownload && status == Download::Downloading)
+			{
+				activeDownload = download.first;
+				if (firstQueued)
+					activeNeedsSuspension = true;
+			}
+		}
+
+		if ((!activeDownload && firstQueued) || activeNeedsSuspension)
+		{
+			if (activeNeedsSuspension)
+			{
+				for (auto& download : m_downloads)
+					if (download.first == activeDownload)
+						download.second->suspend();
+				for (auto& installer : m_installers)
+					if (installer.first == activeDownload)
+						installer.second->suspend();
+			}
+
+			for (auto& installer : m_installers)
+				if (installer.first == firstQueued)
+					installer.second->resume();
+			for (auto& download : m_downloads)
+				if (download.first == firstQueued)
+					download.second->resume();
+		}
+	}
+}
+
+void DownloadQueue::suspend()
+{
+	for (auto& pair : m_downloads)
+		pair.second->suspend();
+	for (auto& pair : m_installers)
+		pair.second->suspend();
+	m_refreshEnd = true;
+}
+
+void DownloadQueue::resume()
+{
+	m_refreshEnd = false;
+	m_threadRefresh.launch();
+}
+
+void DownloadQueue::save()
+{
+	rapidjson::Document json;
+	std::string filepath = cpp3ds::FileSystem::getFilePath("sdmc:/freeShop/queue.json");
+	std::ofstream file(filepath);
+	rapidjson::OStreamWrapper osw(file);
+	rapidjson::Writer<rapidjson::OStreamWrapper> writer(osw);
+
+	json.SetArray();
+	for (auto& pair : m_installers)
+	{
+		AppItem *item = pair.first;
+		Installer *installer = pair.second;
+
+		rapidjson::Value obj(rapidjson::kObjectType);
+		obj.AddMember("id", rapidjson::StringRef(item->getTitleId().c_str()), json.GetAllocator());
+		json.PushBack(obj, json.GetAllocator());
+	}
+
+	json.Accept(writer);
+}
+
+void DownloadQueue::load()
+{
+	cpp3ds::FileInputStream file;
+	if (file.open("sdmc:/freeShop/queue.json"))
+	{
+		rapidjson::Document json;
+		std::string jsonStr;
+		jsonStr.resize(file.getSize());
+		file.read(&jsonStr[0], jsonStr.size());
+		json.Parse(jsonStr.c_str());
+		if (!json.HasParseError())
+		{
+			auto &list = AppList::getInstance().getList();
+
+		}
+	}
 }
 
 } // namespace FreeShop

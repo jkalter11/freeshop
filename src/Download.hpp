@@ -8,6 +8,7 @@
 #include <cpp3ds/System/Clock.hpp>
 #include <cpp3ds/Graphics/Sprite.hpp>
 #include <cpp3ds/Window/Event.hpp>
+#include <cpp3ds/System/Mutex.hpp>
 #include "TweenObjects.hpp"
 #include "GUI/NinePatch.hpp"
 #include "AppItem.hpp"
@@ -15,11 +16,25 @@
 
 namespace FreeShop {
 
+class Download;
 typedef std::function<bool(const void*,size_t,size_t)> DownloadDataCallback;
 typedef std::function<void(bool,bool)> DownloadFinishCallback;
+typedef std::function<void(Download*)> SendTopCallback;
 
 class Download : public cpp3ds::Drawable, public util3ds::TweenTransformable<cpp3ds::Transformable>{
+
+friend class DownloadQueue;
+
 public:
+	enum Status {
+		Queued,
+		Downloading,
+		Finished,
+		Failed,
+		Canceled,
+		Suspended,
+	};
+
 	Download(const std::string& url, const std::string& destination = std::string());
 	~Download();
 
@@ -44,15 +59,18 @@ public:
 
 	void setDataCallback(cpp3ds::Http::RequestCallback onData);
 	void setFinishCallback(DownloadFinishCallback onFinish);
+	void setSendTopCallback(SendTopCallback onSendTop);
 
 	void setField(const std::string &field, const std::string &value);
 
 	void run();
+	void suspend();
+	void resume();
 
 	void cancel(bool wait = true);
 	bool isCanceled();
 
-	bool isActive() const;
+	Status getStatus() const;
 
 	bool markedForDelete();
 
@@ -70,9 +88,14 @@ private:
 	DownloadFinishCallback m_onFinish;
 	cpp3ds::Thread m_thread;
 
-	bool m_isActive;
+	AppItem *m_appItem;
+
+	cpp3ds::Mutex m_mutex;
+	Status m_status;
+	bool m_canSendTop;
 	bool m_cancelFlag;
 	bool m_markedForDelete;
+	SendTopCallback m_onSendTop;
 	FILE* m_file;
 	std::vector<char> m_buffer;
 
@@ -85,7 +108,10 @@ private:
 	cpp3ds::Text m_textProgress;
 
 	util3ds::TweenText m_textCancel;
+	util3ds::TweenText m_textSendTop;
+	util3ds::TweenText m_textRestart;
 
+	size_t m_downloadPos;
 	float m_progress;
 	cpp3ds::Vector2f m_size;
 	std::string m_progressMessage;
