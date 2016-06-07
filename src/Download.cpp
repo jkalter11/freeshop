@@ -163,9 +163,10 @@ void Download::run()
 
 		if (m_urlQueue.size() > 0)
 		{
-			setUrl(m_urlQueue.front());
+			auto nextUrl = m_urlQueue.front();
+			setUrl(nextUrl.first);
 			m_urlQueue.pop();
-			m_request.setField("Range", "bytes=0-");
+			m_request.setField("Range", _("bytes=%llu-", nextUrl.second));
 			m_downloadPos = 0;
 		}
 		else
@@ -173,7 +174,7 @@ void Download::run()
 	}
 
 	if (m_urlQueue.size() > 0 && getStatus() != Suspended)
-		std::queue<std::string>().swap(m_urlQueue);
+		std::queue<std::pair<std::string,cpp3ds::Uint64>>().swap(m_urlQueue);
 
 	// Write remaining buffer and close downloaded file
 	if (!m_destination.empty())
@@ -357,9 +358,9 @@ void Download::setField(const std::string &field, const std::string &value)
 	m_request.setField(field, value);
 }
 
-void Download::pushUrl(const std::string &url)
+void Download::pushUrl(const std::string &url, cpp3ds::Uint64 position)
 {
-	m_urlQueue.push(url);
+	m_urlQueue.push(std::make_pair(url, position));
 }
 
 Download::Status Download::getStatus() const

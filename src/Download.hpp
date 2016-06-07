@@ -53,7 +53,7 @@ public:
 	void setUrl(const std::string& url);
 	void setDestination(const std::string& destination);
 
-	void pushUrl(const std::string& url);
+	void pushUrl(const std::string& url, cpp3ds::Uint64 position = 0);
 
 	void start();
 
@@ -83,7 +83,7 @@ private:
 	std::string m_host;
 	std::string m_uri;
 	std::string m_destination;
-	std::queue<std::string> m_urlQueue;
+	std::queue<std::pair<std::string, cpp3ds::Uint64>> m_urlQueue;
 	cpp3ds::Http::RequestCallback m_onData;
 	DownloadFinishCallback m_onFinish;
 	cpp3ds::Thread m_thread;

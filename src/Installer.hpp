@@ -12,7 +12,7 @@ namespace FreeShop {
 
 class Installer {
 public:
-	Installer(cpp3ds::Uint64 titleId);
+	Installer(cpp3ds::Uint64 titleId, cpp3ds::Uint64 contentPosition = 0, int contentIndex = -1);
 	~Installer();
 
 	bool installTicket(cpp3ds::Uint16 titleVersion);
@@ -33,6 +33,9 @@ public:
 
 	cpp3ds::Int32 getErrorCode() const;
 	const cpp3ds::String &getErrorString() const;
+
+	cpp3ds::Uint16 getCurrentContentIndex() const;
+	cpp3ds::Uint64 getCurrentContentPosition() const;
 
 private:
 

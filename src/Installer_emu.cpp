@@ -6,11 +6,14 @@
 
 namespace FreeShop {
 
-Installer::Installer(cpp3ds::Uint64 titleId)
+Installer::Installer(cpp3ds::Uint64 titleId, cpp3ds::Uint64 contentPosition, int contentIndex)
 : m_titleId(titleId)
+, m_isSuspended(false)
 , m_isInstalling(false)
 , m_isInstallingTmd(false)
 , m_isInstallingContent(false)
+, m_currentContentIndex(0)
+, m_currentContentPosition(contentPosition)
 {
 
 }
@@ -68,6 +71,7 @@ bool Installer::finalizeTmd()
 
 bool Installer::finalizeContent()
 {
+	m_currentContentPosition = 0;
 	return true;
 }
 
@@ -78,6 +82,8 @@ bool Installer::installTmd(const void *data, size_t size)
 
 bool Installer::installContent(const void *data, size_t size, cpp3ds::Uint16 index)
 {
+	m_currentContentPosition += size;
+	m_currentContentIndex = index;
 	return true;
 }
 
@@ -89,6 +95,16 @@ cpp3ds::Int32 Installer::getErrorCode() const
 const cpp3ds::String &Installer::getErrorString() const
 {
 	return m_errorStr;
+}
+
+cpp3ds::Uint16 Installer::getCurrentContentIndex() const
+{
+	return m_currentContentIndex;
+}
+
+cpp3ds::Uint64 Installer::getCurrentContentPosition() const
+{
+	return m_currentContentPosition;
 }
 
 } // namespace FreeShop

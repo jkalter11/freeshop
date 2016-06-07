@@ -1,4 +1,5 @@
 #include "FreeShop.hpp"
+#include "DownloadQueue.hpp"
 #include "States/SleepState.hpp"
 
 #ifndef EMULATION
@@ -15,11 +16,15 @@ void aptHookFunc(APT_HookType hookType, void *param)
 				GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);
 				gspLcdExit();
 			}
+			// Fall through
+		case APTHOOK_ONSLEEP:
+			FreeShop::DownloadQueue::getInstance().suspend();
 			break;
 		case APTHOOK_ONRESTORE:
 		case APTHOOK_ONWAKEUP:
 			FreeShop::SleepState::isSleeping = false;
 			FreeShop::SleepState::clock.restart();
+			FreeShop::DownloadQueue::getInstance().resume();
 			break;
 		default:
 			break;
@@ -50,5 +55,7 @@ int main(int argc, char** argv)
 
 	FreeShop::FreeShop game;
 	game.run();
+	FreeShop::DownloadQueue::getInstance().suspend();
+	FreeShop::DownloadQueue::getInstance().save();
 	return 0;
 }
