@@ -166,14 +166,20 @@ void SyncState::sync()
 
 	if (!cpp3ds::Service::isEnabled(cpp3ds::Httpc))
 	{
-		setStatus("No internet connection.\nClosing freeShop...");
-		while (m_timer.getElapsedTime() < cpp3ds::seconds(4.f))
-			cpp3ds::sleep(cpp3ds::milliseconds(50));
-		requestStackClear();
-		return;
+		while (!cpp3ds::Service::isEnabled(cpp3ds::Httpc) && m_timer.getElapsedTime() < cpp3ds::seconds(30.f))
+		{
+			setStatus(_("Waiting for internet connection... %.0fs", 31.f - m_timer.getElapsedTime().asSeconds()));
+			cpp3ds::sleep(cpp3ds::milliseconds(200));
+		}
+		if (!cpp3ds::Service::isEnabled(cpp3ds::Httpc))
+		{
+			requestStackClear();
+			return;
+		}
 	}
 
 	// If auto-dated, boot into launch newest freeShop
+#ifdef NDEBUG
 	if (updateFreeShop())
 	{
 #ifndef EMULATION
@@ -191,6 +197,7 @@ void SyncState::sync()
 		return;
 #endif
 	}
+#endif
 
 	updateCache();
 
