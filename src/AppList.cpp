@@ -31,6 +31,13 @@ AppList::~AppList()
 
 void AppList::refresh()
 {
+#ifdef EMULATION
+	uint8_t isNew3DS = 1;
+#else
+	uint8_t isNew3DS = 0;
+	APT_CheckNew3DS(&isNew3DS);
+#endif
+
 	cpp3ds::FileInputStream file;
 	if (file.open(m_jsonFilename))
 	{
@@ -48,6 +55,10 @@ void AppList::refresh()
 		{
 			std::string id = iter->name.GetString();
 			cpp3ds::Uint64 titleId = strtoull(id.c_str(), 0, 16);
+
+			if (!isNew3DS && ((titleId >> 24) & 0xF) == 0xF)
+				continue;
+
 			if (Installer::titleKeyExists(titleId))
 			{
 				std::unique_ptr<AppItem> item(new AppItem());
