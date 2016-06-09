@@ -22,9 +22,9 @@ BrowseState::BrowseState(StateStack& stack, Context& context)
 , m_threadInitialize(&BrowseState::initialize, this)
 , m_threadLoadApp(&BrowseState::loadApp, this)
 , m_threadMusic(&BrowseState::playMusic, this)
-, m_iconSelectedIndex(-1)
 , m_busy(false)
 , m_activeDownloadCount(0)
+, m_mode(Downloads)
 {
 	m_threadInitialize.launch();
 }
@@ -133,11 +133,8 @@ bool BrowseState::update(float delta)
 	}
 
 	int iconIndex = m_iconSet.getSelectedIndex();
-	if (m_iconSelectedIndex != iconIndex && m_mode != iconIndex)
-	{
-		m_iconSelectedIndex = iconIndex;
+	if (m_mode != iconIndex)
 		setMode((Mode)iconIndex);
-	}
 
 	if (m_mode == App)
 	{
@@ -251,8 +248,15 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 				return true;
 			case cpp3ds::Keyboard::A: {
 				m_busy = true;
-				m_threadLoadApp.launch();
-//				loadApp();
+				if (!m_appInfo.getAppItem())
+					m_threadLoadApp.launch();
+				else
+					TweenEngine::Tween::to(m_appInfo, AppInfo::ALPHA, 0.3f)
+						.target(0.f)
+						.setCallback(TweenEngine::TweenCallback::COMPLETE, [this](TweenEngine::BaseTween* source) {
+							m_threadLoadApp.launch();
+						})
+						.start(m_tweenManager);
 				break;
 			}
 			case cpp3ds::Keyboard::B:
@@ -316,9 +320,7 @@ void BrowseState::loadApp()
 		return;
 	}
 
-	TweenEngine::Tween::to(m_appInfo, AppInfo::ALPHA, 0.5f)
-		.target(0.f)
-		.start(m_tweenManager);
+	setMode(App);
 
 	// No cache to load, so show loading state
 	bool showLoading = g_browserLoaded; //!item->isCached();

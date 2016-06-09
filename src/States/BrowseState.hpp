@@ -57,7 +57,6 @@ private:
 	cpp3ds::Thread m_threadLoadApp;
 
 	IconSet m_iconSet;
-	int m_iconSelectedIndex;
 
 	size_t m_activeDownloadCount;
 	util3ds::TweenText m_textActiveDownloads;
