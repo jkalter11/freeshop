@@ -147,6 +147,7 @@ void DownloadQueue::addDownload(AppItem* app, int contentIndex, float progress)
 		}
 		else // is a Content file
 		{
+			int oldIndex = installer->getCurrentContentIndex();
 			if (!installer->installContent(data, len, contentIndices[fileIndex-1]))
 			{
 				if (download->getStatus() == Download::Suspended)
@@ -156,6 +157,10 @@ void DownloadQueue::addDownload(AppItem* app, int contentIndex, float progress)
 				}
 				return false;
 			}
+
+			// Save index change to help recover queue from crash
+			if (oldIndex != installer->getCurrentContentIndex())
+				save();
 
 			totalProcessed += len;
 			download->setProgress(static_cast<double>(totalProcessed) / titleFileSize);
@@ -406,6 +411,7 @@ void DownloadQueue::refresh()
 
 				firstQueued->installer->resume();
 				firstQueued->download->resume();
+				save();
 			}
 		}
 
