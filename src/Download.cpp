@@ -210,7 +210,6 @@ void Download::cancel(bool wait)
 	m_cancelFlag = true;
 	if (wait)
 		m_thread.wait();
-	m_status = Canceled;
 }
 
 

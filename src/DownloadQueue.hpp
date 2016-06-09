@@ -10,13 +10,21 @@
 
 namespace FreeShop {
 
+struct DownloadItem {
+	DownloadItem(AppItem *appItem, Download *download, Installer *installer);
+	~DownloadItem();
+	AppItem *appItem;
+	Download *download;
+	Installer *installer;
+};
+
 class DownloadQueue : public cpp3ds::Drawable, public util3ds::TweenTransformable<cpp3ds::Transformable> {
 public:
 	~DownloadQueue();
 
 	static DownloadQueue &getInstance();
 
-	void addDownload(AppItem* app, cpp3ds::Uint64 contentPosition = 0, int contentIndex = -1, float progress = 0.f);
+	void addDownload(AppItem* app, int contentIndex = -1, float progress = 0.f);
 	void cancelDownload(AppItem* app);
 	void restartDownload(AppItem* app);
 	bool isDownloading(AppItem* app);
@@ -43,8 +51,7 @@ protected:
 	void refresh();
 
 private:
-	std::vector<std::pair<AppItem*, Download*>> m_downloads;
-	std::vector<std::pair<AppItem*, Installer*>> m_installers;
+	std::vector<std::unique_ptr<DownloadItem>> m_downloads;
 	TweenEngine::TweenManager m_tweenManager;
 
 	cpp3ds::Thread m_threadRefresh;
