@@ -221,16 +221,10 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 					setItemIndex(index + 1);
 					break;
 				case cpp3ds::Keyboard::DPadLeft:
-#ifdef EMULATION
-				case cpp3ds::Keyboard::X:
-#endif
 					m_soundBlip.play();
 					setItemIndex(index - 4);
 					break;
 				case cpp3ds::Keyboard::DPadRight:
-#ifdef EMULATION
-				case cpp3ds::Keyboard::Y:
-#endif
 					m_soundBlip.play();
 					setItemIndex(index + 4);
 					break;
@@ -263,6 +257,17 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 			}
 			case cpp3ds::Keyboard::B:
 				break;
+			case cpp3ds::Keyboard::X: {
+				AppItem *app = AppList::getInstance().getSelected();
+				if (app && !DownloadQueue::getInstance().isDownloading(app))
+				{
+					DownloadQueue::getInstance().addDownload(app);
+					cpp3ds::String s = app->getTitle();
+					s.insert(0, _("Queued install: "));
+					Notification::spawn(s);
+				}
+				break;
+			}
 			default:
 				break;
 		}
