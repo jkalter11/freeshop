@@ -6,14 +6,14 @@
 
 namespace FreeShop {
 
-Installer::Installer(cpp3ds::Uint64 titleId, cpp3ds::Uint64 contentPosition, int contentIndex)
+Installer::Installer(cpp3ds::Uint64 titleId, int contentIndex)
 : m_titleId(titleId)
 , m_isSuspended(false)
 , m_isInstalling(false)
 , m_isInstallingTmd(false)
 , m_isInstallingContent(false)
 , m_currentContentIndex(0)
-, m_currentContentPosition(contentPosition)
+, m_currentContentPosition(0)
 {
 
 }
@@ -38,15 +38,15 @@ bool Installer::titleKeyExists(cpp3ds::Uint64 titleId)
 	return true;
 }
 
-void Installer::start()
+bool Installer::start()
 {
-	//
+	return true;
 }
 
 
-void Installer::resume()
+bool Installer::resume()
 {
-	//
+	return true;
 }
 
 void Installer::suspend()

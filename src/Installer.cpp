@@ -57,14 +57,14 @@ Result FSUSER_AddSeed(u64 titleId, const void* seed)
 
 namespace FreeShop {
 
-Installer::Installer(cpp3ds::Uint64 titleId, cpp3ds::Uint64 contentPosition, int contentIndex)
+Installer::Installer(cpp3ds::Uint64 titleId, int contentIndex)
 : m_titleId(titleId)
 , m_isSuspended(false)
 , m_isInstalling(false)
 , m_isInstallingTmd(false)
 , m_isInstallingContent(false)
 , m_currentContentIndex(0)
-, m_currentContentPosition(contentPosition)
+, m_currentContentPosition(0)
 {
 	if (contentIndex >= 0)
 	{
@@ -72,8 +72,8 @@ Installer::Installer(cpp3ds::Uint64 titleId, cpp3ds::Uint64 contentPosition, int
 		m_isSuspended = true;
 		m_isInstalling = true;
 		m_isInstallingContent = true;
-		resume();
 	}
+	m_mediaType = ((titleId >> 32) & 0x8010) != 0 ? MEDIATYPE_NAND : MEDIATYPE_SD;
 }
 
 Installer::~Installer()
@@ -160,33 +160,38 @@ bool Installer::titleKeyExists(cpp3ds::Uint64 titleId)
 	return titleKeys.find(__builtin_bswap64(titleId)) != titleKeys.end();
 }
 
-void Installer::start()
+bool Installer::start()
 {
 	if (!m_isInstalling)
 	{
-		AM_DeleteTitle(MEDIATYPE_SD, m_titleId);
+		AM_DeleteTitle(m_mediaType, m_titleId);
 		AM_QueryAvailableExternalTitleDatabase(nullptr);
-		if (R_SUCCEEDED(m_result = AM_InstallTitleBegin(MEDIATYPE_SD, m_titleId, false)))
-			std::cout << _("Begin installing %016llX", m_titleId).toAnsiString() << std::endl;
-		m_isInstalling = true;
+		if (R_SUCCEEDED(m_result = AM_InstallTitleBegin(m_mediaType, m_titleId, false)))
+		{
+			m_isInstalling = true;
+			return true;
+		}
+		m_errorStr = _("Failed to start: 0x%08lX", m_result);
+		return false;
 	}
 }
 
-void Installer::resume()
+bool Installer::resume()
 {
 	if (!m_isSuspended)
-		return;
+		return true;
 
 	AM_QueryAvailableExternalTitleDatabase(nullptr);
-	if (m_isInstalling && R_SUCCEEDED(m_result = AM_InstallTitleResume(MEDIATYPE_SD, m_titleId)))
+	if (m_isInstalling && R_SUCCEEDED(m_result = AM_InstallTitleResume(m_mediaType, m_titleId)))
 		if (m_isInstallingContent && R_SUCCEEDED(m_result = AM_InstallContentResume(&m_handleContent, &m_currentContentPosition, m_currentContentIndex)))
 		{
 			m_isSuspended = false;
-			return;
+			return true;
 		}
 
 	m_errorStr = _("Failed to resume: 0x%08lX", m_result);
 	abort();
+	return false;
 }
 
 void Installer::suspend()
@@ -212,7 +217,7 @@ bool Installer::commit()
 
 	m_isInstalling = false;
 	if (R_SUCCEEDED(m_result = AM_InstallTitleFinish()))
-		if (R_SUCCEEDED(m_result = AM_CommitImportTitles(MEDIATYPE_SD, 1, false, &m_titleId)))
+		if (R_SUCCEEDED(m_result = AM_CommitImportTitles(m_mediaType, 1, false, &m_titleId)))
 			return true;
 
 	AM_InstallTitleAbort();

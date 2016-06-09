@@ -12,15 +12,15 @@ namespace FreeShop {
 
 class Installer {
 public:
-	Installer(cpp3ds::Uint64 titleId, cpp3ds::Uint64 contentPosition = 0, int contentIndex = -1);
+	Installer(cpp3ds::Uint64 titleId, int contentIndex = -1);
 	~Installer();
 
 	bool installTicket(cpp3ds::Uint16 titleVersion);
 	bool installSeed(const std::string &countryCode);
 	static bool titleKeyExists(cpp3ds::Uint64 titleId);
 
-	void start();
-	void resume();
+	bool start();
+	bool resume();
 	void suspend();
 	void abort();
 
@@ -50,6 +50,7 @@ private:
 	Result m_result;
 	Handle m_handleTmd;
 	Handle m_handleContent;
+	FS_MediaType m_mediaType;
 #endif
 
 	bool m_isSuspended;
