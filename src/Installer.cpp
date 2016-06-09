@@ -84,17 +84,24 @@ Installer::~Installer()
 
 void Installer::abort()
 {
-	if (m_isInstallingContent)
-		AM_InstallContentCancel(m_handleContent);
-	if (m_isInstallingTmd)
-		AM_InstallTmdAbort(m_handleTmd);
-	if (m_isInstalling)
-		AM_InstallTitleAbort();
+	if (m_isSuspended)
+		AM_DeletePendingTitle(m_mediaType, m_titleId);
+	else
+	{
+		if (m_isInstallingContent)
+			AM_InstallContentCancel(m_handleContent);
+		if (m_isInstallingTmd)
+			AM_InstallTmdAbort(m_handleTmd);
+		if (m_isInstalling)
+			AM_InstallTitleAbort();
+	}
 
 	m_isInstallingContent = false;
 	m_isInstallingTmd = false;
 	m_isInstalling = false;
 	m_isSuspended = false;
+	m_currentContentIndex = -1;
+	m_currentContentPosition = 0;
 }
 
 bool Installer::installTicket(cpp3ds::Uint16 titleVersion)
@@ -192,8 +199,8 @@ bool Installer::resume()
 			return true;
 		}
 
-	m_errorStr = _("Failed to resume: 0x%08lX", m_result);
 	abort();
+	m_errorStr = _("Failed to resume: 0x%08lX", m_result);
 	return false;
 }
 
@@ -216,12 +223,14 @@ bool Installer::commit()
 	if (!m_isInstalling || m_isInstallingTmd || m_isInstallingContent)
 		return false;
 
-	m_isInstalling = false;
 	if (R_SUCCEEDED(m_result = AM_InstallTitleFinish()))
 		if (R_SUCCEEDED(m_result = AM_CommitImportTitles(m_mediaType, 1, false, &m_titleId)))
+		{
+			m_isInstalling = false;
 			return true;
+		}
 
-	AM_InstallTitleAbort();
+	abort();
 	m_errorStr = _("Failed to commit title install: 0x%08lX", m_result);
 	return false;
 }
@@ -231,11 +240,13 @@ bool Installer::finalizeTmd()
 	if (!m_isInstallingTmd)
 		return false;
 
-	m_isInstallingTmd = false;
 	if (R_SUCCEEDED(m_result = AM_InstallTmdFinish(m_handleTmd, true)))
+	{
+		m_isInstallingTmd = false;
 		return true;
+	}
 
-	AM_InstallTmdAbort(m_handleTmd);
+	abort();
 	m_errorStr = _("Failed to finalize TMD install: 0x%08lX", m_result);
 	return false;
 }
@@ -245,11 +256,13 @@ bool Installer::finalizeContent()
 	if (!m_isInstallingContent)
 		return false;
 
-	m_isInstallingContent = false;
 	if (R_SUCCEEDED(m_result = AM_InstallContentFinish(m_handleContent)))
+	{
+		m_isInstallingContent = false;
 		return true;
+	}
 
-	AM_InstallContentCancel(m_handleContent);
+	abort();
 	m_errorStr = _("Failed to finalize Content install: 0x%08lX", m_result);
 	return false;
 }
@@ -265,6 +278,7 @@ bool Installer::installTmd(const void *data, size_t size)
 		if (R_SUCCEEDED(m_result = FSFILE_Write(m_handleTmd, nullptr, 0, data, size, 0)))
 			return true;
 
+	abort();
 	m_errorStr = _("Failed to install TMD: 0x%08lX", m_result);
 	return false;
 }
@@ -290,6 +304,7 @@ bool Installer::installContent(const void *data, size_t size, cpp3ds::Uint16 ind
 			return true;
 		}
 
+	abort();
 	m_errorStr = _("Failed to install Content: 0x%08lX", m_result);
 	return false;
 }
