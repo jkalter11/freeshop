@@ -34,16 +34,16 @@ public:
 	cpp3ds::Int32 getErrorCode() const;
 	const cpp3ds::String &getErrorString() const;
 
-	cpp3ds::Uint16 getCurrentContentIndex() const;
+	int getCurrentContentIndex() const;
 	cpp3ds::Uint64 getCurrentContentPosition() const;
 
 private:
 
 private:
 	cpp3ds::Uint64 m_titleId;
-	cpp3ds::Uint16 m_currentContentIndex;
+	int            m_currentContentIndex;
 	cpp3ds::Uint64 m_currentContentPosition;
-	cpp3ds::Mutex m_mutex;
+	cpp3ds::Mutex  m_mutex;
 	cpp3ds::String m_errorStr;
 
 #ifndef EMULATION

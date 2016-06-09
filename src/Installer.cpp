@@ -63,7 +63,7 @@ Installer::Installer(cpp3ds::Uint64 titleId, int contentIndex)
 , m_isInstalling(false)
 , m_isInstallingTmd(false)
 , m_isInstallingContent(false)
-, m_currentContentIndex(0)
+, m_currentContentIndex(-1)
 , m_currentContentPosition(0)
 {
 	if (contentIndex >= 0)
@@ -183,7 +183,7 @@ bool Installer::resume()
 
 	AM_QueryAvailableExternalTitleDatabase(nullptr);
 	if (m_isInstalling && R_SUCCEEDED(m_result = AM_InstallTitleResume(m_mediaType, m_titleId)))
-		if (m_isInstallingContent && R_SUCCEEDED(m_result = AM_InstallContentResume(&m_handleContent, &m_currentContentPosition, m_currentContentIndex)))
+		if (!m_isInstallingContent || R_SUCCEEDED(m_result = AM_InstallContentResume(&m_handleContent, &m_currentContentPosition, m_currentContentIndex)))
 		{
 			m_isSuspended = false;
 			return true;
@@ -201,10 +201,8 @@ void Installer::suspend()
 	if (m_isInstalling && !m_isSuspended)
 	{
 		if (m_isInstallingContent)
-		{
 			AM_InstallContentStop(m_handleContent);
-			AM_InstallTitleStop();
-		}
+		AM_InstallTitleStop();
 
 		m_isSuspended = true;
 	}
@@ -303,7 +301,7 @@ const cpp3ds::String &Installer::getErrorString() const
 	return m_errorStr;
 }
 
-cpp3ds::Uint16 Installer::getCurrentContentIndex() const
+int Installer::getCurrentContentIndex() const
 {
 	return m_currentContentIndex;
 }
