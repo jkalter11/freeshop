@@ -31,13 +31,13 @@ void LoadingState::renderTopScreen(cpp3ds::Window& window)
 
 void LoadingState::renderBottomScreen(cpp3ds::Window& window)
 {
-	window.draw(m_background);
+//	window.draw(m_background);
 	window.draw(m_icon);
 }
 
 bool LoadingState::update(float delta)
 {
-	if (m_rotateClock.getElapsedTime() > cpp3ds::milliseconds(100))
+	if (m_rotateClock.getElapsedTime() > cpp3ds::milliseconds(80))
 	{
 		m_icon.rotate(45);
 		m_rotateClock.restart();
