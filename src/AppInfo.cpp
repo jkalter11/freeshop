@@ -7,6 +7,7 @@
 #include "Download.hpp"
 #include "Util.hpp"
 #include "DownloadQueue.hpp"
+#include "Notification.hpp"
 #include <sstream>
 #include <TweenEngine/Tween.h>
 #include <cpp3ds/System/FileInputStream.hpp>
@@ -426,6 +427,10 @@ bool AppInfo::processEvent(const cpp3ds::Event &event)
 				TweenEngine::Tween::to(m_textDownload, util3ds::TweenText::FILL_COLOR_RGB, 0.5f)
 					.target(230, 20, 20)
 					.start(m_tweenManager);
+
+				cpp3ds::String s = m_appItem->getTitle();
+				s.insert(0, _("Queued install: "));
+				Notification::spawn(s);
 			}
 		}
 	}
