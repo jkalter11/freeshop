@@ -253,12 +253,15 @@ void Download::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) c
 	target.draw(m_icon, states);
 	target.draw(m_textTitle, states);
 	target.draw(m_textProgress, states);
-	target.draw(m_textCancel, states);
 
-	if (m_canSendTop && (m_status == Queued || m_status == Suspended || m_status == Downloading))
-		target.draw(m_textSendTop, states);
-	else if (m_status == Failed)
-		target.draw(m_textRestart, states);
+	if (!m_cancelFlag)
+	{
+		target.draw(m_textCancel, states);
+		if (m_canSendTop && (m_status == Queued || m_status == Suspended || m_status == Downloading))
+			target.draw(m_textSendTop, states);
+		else if (m_status == Failed)
+			target.draw(m_textRestart, states);
+	}
 	if (m_progress > 0.f && m_progress < 1.f)
 		target.draw(m_progressBar, states);
 }

@@ -124,20 +124,29 @@ void DownloadQueue::addDownload(AppItem* app, int contentIndex, float progress)
 
 				if (!isResuming)
 				{
-					download->setProgressMessage(_("Installing ticket..."));
-					if (!installer->installTicket(titleVersion))
-						return false;
-					download->setProgressMessage(_("Installing seed..."));
-					if (!installer->installSeed(app->getUriRegion()))
-						return false;
-
-					if (!installer->start())
-						return false;
-					download->setProgressMessage(_("Installing TMD..."));
-					if (!installer->installTmd(&buf[0], dataOffsets[sigType] + 0x9C4 + (contentCount * 0x30)))
-						return false;
-					if (!installer->finalizeTmd())
-						return false;
+					// Check for cancel at each stage in case it changes
+					if (!download->isCanceled())
+					{
+						download->setProgressMessage(_("Installing ticket..."));
+						if (!installer->installTicket(titleVersion))
+							return false;
+					}
+					if (!download->isCanceled())
+					{
+						download->setProgressMessage(_("Installing seed..."));
+						if (!installer->installSeed(app->getUriRegion()))
+							return false;
+					}
+					if (!download->isCanceled())
+					{
+						if (!installer->start())
+							return false;
+						download->setProgressMessage(_("Installing TMD..."));
+						if (!installer->installTmd(&buf[0], dataOffsets[sigType] + 0x9C4 + (contentCount * 0x30)))
+							return false;
+						if (!installer->finalizeTmd())
+							return false;
+					}
 				}
 
 				buf.clear();
@@ -213,7 +222,6 @@ void DownloadQueue::addDownload(AppItem* app, int contentIndex, float progress)
 				download->setProgressMessage(installer->getErrorString());
 				break;
 			case Download::Canceled:
-				download->setProgressMessage(_("Canceled"));
 				break;
 		}
 
@@ -314,8 +322,11 @@ void DownloadQueue::update(float delta)
 	bool changed = false;
 	for (auto it = m_downloads.begin(); it != m_downloads.end();)
 	{
-		if (it->get()->download->markedForDelete())
+		Download *download = it->get()->download;
+		if (download->markedForDelete())
 		{
+			if (download->getStatus() == Download::Suspended)
+				it->get()->installer->abort();
 			m_downloads.erase(it);
 			changed = true;
 		}
@@ -411,6 +422,7 @@ void DownloadQueue::refresh()
 
 				firstQueued->installer->resume();
 				firstQueued->download->resume();
+				realign();
 				save();
 			}
 		}
