@@ -97,7 +97,7 @@ const cpp3ds::String &Installer::getErrorString() const
 	return m_errorStr;
 }
 
-cpp3ds::Uint16 Installer::getCurrentContentIndex() const
+int Installer::getCurrentContentIndex() const
 {
 	return m_currentContentIndex;
 }

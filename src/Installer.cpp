@@ -131,6 +131,9 @@ bool Installer::installTicket(cpp3ds::Uint16 titleVersion)
 
 bool Installer::installSeed(const std::string &countryCode)
 {
+	if (((m_titleId >> 32) & 0x8010) != 0)
+		return true;
+
 	cpp3ds::Http http("https://kagiya-ctr.cdn.nintendo.net");
 	cpp3ds::Http::Request request(_("title/0x%016llX/ext_key?country=%s", m_titleId, countryCode.c_str()));
 	cpp3ds::Http::Response response = http.sendRequest(request);
