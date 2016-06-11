@@ -14,5 +14,6 @@ make libarchive
 make install
 
 cd ../build
-cmake -DCMAKE_BUILD_TYPE=Release ..
+cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_EMULATOR=ON -DBUILD_TESTS=ON ..
 make -j4
+../bin/freeshop-tests
