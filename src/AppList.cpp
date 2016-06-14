@@ -104,9 +104,9 @@ void AppList::sort()
 			switch(m_sortType)
 			{
 				case AlphaNumericDesc:
-					return a->getTitle() > b->getTitle();
+					return a->getNormalizedTitle() > b->getNormalizedTitle();
 				default:
-					return a->getTitle() < b->getTitle();
+					return a->getNormalizedTitle() < b->getNormalizedTitle();
 			}
 		}
 	});
