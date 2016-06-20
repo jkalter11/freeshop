@@ -50,10 +50,10 @@ bool extract(const std::string &filename, const std::string &destDir)
 	int r = ARCHIVE_FAILED;
 
 	a = archive_read_new();
-	archive_read_support_format_zip(a);
-	archive_read_support_compression_compress(a);
+	archive_read_support_format_tar(a);
+	archive_read_support_compression_gzip(a);
 	ext = archive_write_disk_new();
-	if ((r = archive_read_open_filename(a, cpp3ds::FileSystem::getFilePath(filename).c_str(), 10240))) {
+	if ((r = archive_read_open_filename(a, cpp3ds::FileSystem::getFilePath(filename).c_str(), 32*1024))) {
 		std::cout << "failure! " << r << std::endl;
 		return r;
 	}
@@ -307,8 +307,8 @@ bool SyncState::updateCache()
 		std::string tag = doc["tag_name"].GetString();
 		if (!tag.empty() && tag.compare(Config::get("cache_version").GetString()) != 0)
 		{
-			std::string cacheFile = "sdmc:/freeShop/tmp/cache.zip";
-			std::string cacheUrl = _("https://github.com/Repo3DS/shop-cache/releases/download/%s/cache-%s-etc1.zip", tag.c_str(), tag.c_str());
+			std::string cacheFile = "sdmc:/freeShop/tmp/cache.tar.gz";
+			std::string cacheUrl = _("https://github.com/Repo3DS/shop-cache/releases/download/%s/cache-%s-etc1.tar.gz", tag.c_str(), tag.c_str());
 			setStatus(_("Downloading latest cache: %s...", tag.c_str()));
 			Download cacheDownload(cacheUrl, cacheFile);
 			cacheDownload.run();
