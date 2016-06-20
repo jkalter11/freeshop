@@ -3,6 +3,8 @@
 #include <cpp3ds/System/FileSystem.hpp>
 #include <cpp3ds/System/I18n.hpp>
 #include <cpp3ds/System/Lock.hpp>
+#include <cpp3ds/System/Service.hpp>
+#include <cpp3ds/System/Sleep.hpp>
 #include "Download.hpp"
 #include "AssetManager.hpp"
 #include "DownloadQueue.hpp"
@@ -115,6 +117,7 @@ void Download::run()
 	m_status = Downloading;
 	m_cancelFlag = false;
 	bool failed = false;
+	int retryCount = 0;
 	m_request.setField("Range", _("bytes=%u-", m_downloadPos));
 
 	cpp3ds::Http::RequestCallback dataCallback = [&](const void* data, size_t len, size_t processed, const cpp3ds::Http::Response& response)
@@ -136,11 +139,11 @@ void Download::run()
 			}
 		}
 
-		if (getStatus() != Suspended)
-			m_downloadPos += len;
-
 		if (!m_cancelFlag && m_onData)
 			failed = !m_onData(data, len, processed, response);
+
+		if (getStatus() != Suspended)
+			m_downloadPos += len;
 
 		return !m_cancelFlag && !failed && getStatus() == Downloading;
 	};
@@ -148,19 +151,44 @@ void Download::run()
 	// Loop in case there are URLs pushed to queue later
 	while (1)
 	{
-		// Follow all redirects
-		response = m_http.sendRequest(m_request, cpp3ds::Time::Zero, dataCallback, bufferSize);
-		while (response.getStatus() == cpp3ds::Http::Response::MovedPermanently || response.getStatus() == cpp3ds::Http::Response::MovedTemporarily)
-		{
-			setUrl(response.getField("Location"));
-			response = m_http.sendRequest(m_request, cpp3ds::Time::Zero, dataCallback, bufferSize);
-		}
+		// Retry loop in case of connection failures
+		do {
+			// Wait in case of internet loss, but exit when canceled or suspended
+			while (!cpp3ds::Service::isEnabled(cpp3ds::Httpc) && !m_cancelFlag && getStatus() != Suspended)
+			{
+				setProgressMessage(_("Waiting for internet..."));
+				cpp3ds::sleep(cpp3ds::milliseconds(200));
+			}
+
+			response = m_http.sendRequest(m_request, cpp3ds::seconds(1), dataCallback, bufferSize);
+			// Follow all redirects
+			while (response.getStatus() == cpp3ds::Http::Response::MovedPermanently || response.getStatus() == cpp3ds::Http::Response::MovedTemporarily)
+			{
+				setUrl(response.getField("Location"));
+				response = m_http.sendRequest(m_request, cpp3ds::seconds(1), dataCallback, bufferSize);
+			}
+
+			// Retry failed connection up to 10 times
+			if (response.getStatus() == cpp3ds::Http::Response::ConnectionFailed)
+			{
+				if (retryCount >= 10)
+				{
+					setProgressMessage(_("Retry attempts exceeded"));
+					failed = true;
+					break;
+				}
+				setProgressMessage(_("Retrying... %d", ++retryCount));
+				cpp3ds::sleep(cpp3ds::seconds(2));
+			}
+		} while (response.getStatus() == cpp3ds::Http::Response::ConnectionFailed &&
+		         !m_cancelFlag && getStatus() != Suspended);
 
 		if (response.getStatus() != cpp3ds::Http::Response::Ok && response.getStatus() != cpp3ds::Http::Response::PartialContent)
 			break;
 		if (m_cancelFlag || failed || getStatus() == Suspended)
 			break;
 
+		// Download next in queue
 		if (m_urlQueue.size() > 0)
 		{
 			auto nextUrl = m_urlQueue.front();
@@ -297,7 +325,6 @@ void Download::processEvent(const cpp3ds::Event &event)
 		bounds.top += getPosition().y;
 		if (bounds.contains(event.touch.x, event.touch.y))
 		{
-			// If download is already finished, just mark it for deletion
 			if (getStatus() != Downloading)
 				m_markedForDelete = true;
 			else

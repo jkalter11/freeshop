@@ -156,6 +156,16 @@ void DownloadQueue::addDownload(AppItem* app, int contentIndex, float progress)
 		}
 		else // is a Content file
 		{
+			// Conditions indicate download issue (e.g. internet is down)
+			// with either an empty length or one not 64-byte aligned
+			if (len == 0 || len % 64 > 0)
+			{
+				suspend();
+				m_refreshEnd = false; // Refresh to resume after suspension
+				fileSize = 0;
+				return true;
+			}
+
 			int oldIndex = installer->getCurrentContentIndex();
 			if (!installer->installContent(data, len, contentIndices[fileIndex-1]))
 			{
@@ -219,7 +229,8 @@ void DownloadQueue::addDownload(AppItem* app, int contentIndex, float progress)
 			case Download::Failed:
 				notification.insert(0, _("Failed: "));
 				Notification::spawn(notification);
-				download->setProgressMessage(installer->getErrorString());
+				if (installer->getErrorCode() != 0)
+					download->setProgressMessage(installer->getErrorString());
 				break;
 			case Download::Canceled:
 				break;
@@ -313,7 +324,8 @@ void DownloadQueue::realign()
 		TweenEngine::Tween::to(*download, util3ds::TweenSprite::POSITION_Y, 0.2f)
 			.target(33.f + i * 35.f)
 			.start(m_tweenManager);
-	};
+	}
+	save();
 }
 
 void DownloadQueue::update(float delta)
@@ -423,7 +435,6 @@ void DownloadQueue::refresh()
 				firstQueued->installer->resume();
 				firstQueued->download->resume();
 				realign();
-				save();
 			}
 		}
 
