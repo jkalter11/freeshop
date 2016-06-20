@@ -16,9 +16,13 @@ public:
 	static const int BACKGROUND_ALPHA = 12;
 
 	enum Region {
-		USA,
-		Europe,
-		Japan,
+		Japan     = 1 << 0,
+		USA       = 1 << 1,
+		Europe    = 1 << 2,
+		Australia = 1 << 3,
+		China     = 1 << 4,
+		Korea     = 1 << 5,
+		Taiwan    = 1 << 6,
 	};
 
 	AppItem();
@@ -38,10 +42,8 @@ public:
 	const std::string &getContentId() const;
 	void setUriRegion(const std::string &region);
 	const std::string &getUriRegion() const;
-	void setVersion(int version);
-	int getVersion() const;
 
-	const std::vector<Region> &getRegions() const;
+	const int getRegions() const;
 
 	void setFilesize(cpp3ds::Uint64 filesize);
 	cpp3ds::Uint64 getFilesize() const;
@@ -78,7 +80,7 @@ protected:
 	virtual void setValues(int tweenType, float *newValues);
 	virtual int getValues(int tweenType, float *returnValues);
 
-	void addRegion(Region region);
+	void addRegionFlag(Region region);
 
 private:
 	gui3ds::NinePatch m_background;
@@ -97,8 +99,7 @@ private:
 	std::string m_titleId;
 	std::string m_contentId;
 	std::string m_uriRegion;
-	int m_version;
-	std::vector<Region> m_regions;
+	int m_regions;
 	std::vector<cpp3ds::Sprite> m_regionFlags;
 
 	int m_matchScore;

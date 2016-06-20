@@ -168,18 +168,14 @@ void AppItem::loadFromJSON(const char* titleId, const rapidjson::Value &json)
 	setContentId(json[2].GetString());
 	setUriRegion(json[4].GetString());
 	setFilesize(json[5].GetUint64());
-	setVersion(json[7].GetInt());
 
-	m_regions.clear();
-	for (auto it = json[3].Begin(); it != json[3].End(); it++)
+	m_regionFlags.clear();
+	m_regions = json[3].GetInt();
+	for (int i = 0; i < 3; ++i)
 	{
-		std::string region = it->GetString();
-		if (region == "US")
-			addRegion(USA);
-		else if (region == "EU")
-			addRegion(Europe);
-		else
-			addRegion(Japan);
+		Region region = static_cast<Region>(1 << i);
+		if (m_regions & region)
+			addRegionFlag(region);
 	}
 
 	float posX = 55.f;
@@ -362,7 +358,7 @@ const std::string &AppItem::getUriRegion() const
 	return m_uriRegion;
 }
 
-const std::vector<AppItem::Region> &AppItem::getRegions() const
+const int AppItem::getRegions() const
 {
 	return m_regions;
 }
@@ -378,17 +374,7 @@ const std::string AppItem::getJsonFilename() const
 	return filename;
 }
 
-void AppItem::setVersion(int version)
-{
-	m_version = version;
-}
-
-int AppItem::getVersion() const
-{
-	return m_version;
-}
-
-void AppItem::addRegion(AppItem::Region region)
+void AppItem::addRegionFlag(AppItem::Region region)
 {
 	cpp3ds::Sprite flag;
 	cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get("images/flags.png");
@@ -403,7 +389,6 @@ void AppItem::addRegion(AppItem::Region region)
 		flag.setTextureRect(cpp3ds::IntRect(0, 20, 30, 20));
 
 	m_regionFlags.push_back(flag);
-	m_regions.push_back(region);
 }
 
 } // namespace FreeShop
