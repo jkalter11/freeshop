@@ -1,6 +1,6 @@
 ![freeShop](https://raw.githubusercontent.com/Cruel/freeShop/master/res/app/banner.png)
 
-[![Build Status](https://travis-ci.org/Cruel/freeShop.png?branch=master)](https://travis-ci.org/Cruel/freeShop) [![Codecov branch](https://img.shields.io/codecov/c/github/Cruel/freeShop/master.svg?maxAge=86400)](https://codecov.io/gh/Cruel/freeShop) [![Github All Releases](https://img.shields.io/github/downloads/Cruel/freeShop/total.svg?maxAge=86400)](https://github.com/Cruel/freeShop/releases/latest)
+[![Build Status](https://travis-ci.org/Cruel/freeShop.png?branch=master)](https://travis-ci.org/Cruel/freeShop) [![Codecov branch](https://img.shields.io/codecov/c/github/Cruel/freeShop/master.svg?maxAge=86400)](https://codecov.io/gh/Cruel/freeShop) [![Github latest downloads](https://img.shields.io/github/downloads/Cruel/freeShop/latest/total.svg?maxAge=86400)](https://github.com/Cruel/freeShop/releases/latest)
 
 Open source eShop clone for the Nintendo 3DS. Allows you to browse and install titles you own (i.e. titles for which you have the titlekey).
 
