@@ -1,5 +1,7 @@
 #include "SleepState.hpp"
 #include <cpp3ds/Window/Window.hpp>
+#include <cpp3ds/System/I18n.hpp>
+#include <TweenEngine/Tween.h>
 #ifndef EMULATION
 #include <3ds.h>
 #endif
@@ -11,15 +13,38 @@ cpp3ds::Clock SleepState::clock;
 
 SleepState::SleepState(StateStack& stack, Context& context)
 : State(stack, context)
+, m_sleepEnding(false)
 {
 #ifndef EMULATION
 	if (R_SUCCEEDED(gspLcdInit()))
 	{
-		GSPLCD_PowerOffBacklight(GSPLCD_SCREEN_BOTH);
+		GSPLCD_PowerOffBacklight(GSPLCD_SCREEN_TOP);
 		gspLcdExit();
 	}
 #endif
 	isSleeping = true;
+
+	m_textSleep.setString(_("Sleeping"));
+	m_textSleep.setCharacterSize(30);
+	m_textSleep.setStyle(cpp3ds::Text::Bold);
+	m_textSleep.setFillColor(cpp3ds::Color(150, 150, 150, 0));
+	m_textSleep.setOutlineColor(cpp3ds::Color::Transparent);
+	m_textSleep.setOutlineThickness(1.f);
+	m_textSleep.setOrigin(m_textSleep.getLocalBounds().width / 2.f, m_textSleep.getLocalBounds().height / 2.f);
+	m_textSleep.setPosition(160.f, 120.f);
+
+	m_overlay.setSize(cpp3ds::Vector2f(320.f, 240.f));
+	m_overlay.setFillColor(cpp3ds::Color::Transparent);
+
+	TweenEngine::Tween::to(m_textSleep, util3ds::TweenText::FILL_COLOR_ALPHA, 0.5f)
+		.target(255.f)
+		.start(m_tweenManager);
+	TweenEngine::Tween::to(m_textSleep, util3ds::TweenText::OUTLINE_COLOR_ALPHA, 3.5f)
+		.target(200.f)
+		.start(m_tweenManager);
+	TweenEngine::Tween::to(m_overlay, util3ds::TweenRectangleShape::FILL_COLOR_ALPHA, 0.5f)
+		.target(200.f)
+		.start(m_tweenManager);
 }
 
 SleepState::~SleepState()
@@ -27,7 +52,7 @@ SleepState::~SleepState()
 #ifndef EMULATION
 	if (R_SUCCEEDED(gspLcdInit()))
 	{
-		GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);
+		GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_TOP);
 		gspLcdExit();
 	}
 #endif
@@ -40,6 +65,8 @@ void SleepState::renderTopScreen(cpp3ds::Window& window)
 
 void SleepState::renderBottomScreen(cpp3ds::Window& window)
 {
+	window.draw(m_overlay);
+	window.draw(m_textSleep);
 }
 
 bool SleepState::update(float delta)
@@ -49,13 +76,31 @@ bool SleepState::update(float delta)
 		requestStackPop();
 		clock.restart();
 	}
+	m_tweenManager.update(delta);
 	return false;
 }
 
 bool SleepState::processEvent(const cpp3ds::Event& event)
 {
-	requestStackPop();
-	clock.restart();
+	if (m_sleepEnding)
+		return false;
+
+	m_sleepEnding = true;
+
+	TweenEngine::Tween::to(m_textSleep, util3ds::TweenText::FILL_COLOR_ALPHA, 0.5f)
+		.target(0.f)
+		.start(m_tweenManager);
+	TweenEngine::Tween::to(m_textSleep, util3ds::TweenText::OUTLINE_COLOR_ALPHA, 0.5f)
+		.target(0.f)
+		.start(m_tweenManager);
+	TweenEngine::Tween::to(m_overlay, util3ds::TweenRectangleShape::FILL_COLOR_ALPHA, 0.5f)
+		.target(0.f)
+		.setCallback(TweenEngine::TweenCallback::COMPLETE, [&](TweenEngine::BaseTween* source) {
+			requestStackPop();
+			clock.restart();
+		})
+		.start(m_tweenManager);
+
 	return false;
 }
 

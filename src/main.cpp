@@ -13,7 +13,7 @@ void aptHookFunc(APT_HookType hookType, void *param)
 		case APTHOOK_ONSUSPEND:
 			if (FreeShop::SleepState::isSleeping && R_SUCCEEDED(gspLcdInit()))
 			{
-				GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);
+				GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_TOP);
 				gspLcdExit();
 			}
 			// Fall through
