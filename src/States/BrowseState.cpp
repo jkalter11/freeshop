@@ -260,6 +260,8 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 				break;
 			}
 			case cpp3ds::Keyboard::B:
+				AppList::getInstance().filterBySearch("", m_textMatches);
+				setItemIndex(0);
 				break;
 			case cpp3ds::Keyboard::X: {
 				AppItem *app = AppList::getInstance().getSelected();
