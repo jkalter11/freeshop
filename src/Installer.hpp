@@ -16,7 +16,7 @@ public:
 	~Installer();
 
 	bool installTicket(cpp3ds::Uint16 titleVersion);
-	bool installSeed(const std::string &countryCode);
+	bool installSeed(const void *seed);
 	static bool titleKeyExists(cpp3ds::Uint64 titleId);
 
 	bool start();

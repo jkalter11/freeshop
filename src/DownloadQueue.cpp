@@ -131,10 +131,10 @@ void DownloadQueue::addDownload(AppItem* app, int contentIndex, float progress)
 						if (!installer->installTicket(titleVersion))
 							return false;
 					}
-					if (!download->isCanceled())
+					if (!download->isCanceled() && !app->getSeed().empty())
 					{
 						download->setProgressMessage(_("Installing seed..."));
-						if (!installer->installSeed(app->getUriRegion()))
+						if (!installer->installSeed(&app->getSeed()[0]))
 							return false;
 					}
 					if (!download->isCanceled())
@@ -231,6 +231,8 @@ void DownloadQueue::addDownload(AppItem* app, int contentIndex, float progress)
 				Notification::spawn(notification);
 				if (installer->getErrorCode() != 0)
 					download->setProgressMessage(installer->getErrorString());
+				else
+					download->setProgressMessage(_("Failed"));
 				break;
 			case Download::Canceled:
 				break;

@@ -44,6 +44,7 @@ public:
 	const std::string &getUriRegion() const;
 
 	const int getRegions() const;
+	const std::vector<char> &getSeed() const;
 
 	void setFilesize(cpp3ds::Uint64 filesize);
 	cpp3ds::Uint64 getFilesize() const;
@@ -99,6 +100,7 @@ private:
 	std::string m_titleId;
 	std::string m_contentId;
 	std::string m_uriRegion;
+	std::vector<char> m_seed;
 	int m_regions;
 	std::vector<cpp3ds::Sprite> m_regionFlags;
 

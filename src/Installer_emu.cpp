@@ -28,7 +28,7 @@ bool Installer::installTicket(cpp3ds::Uint16 titleVersion)
 	return true;
 }
 
-bool Installer::installSeed(const std::string &countryCode)
+bool Installer::installSeed(const void *seed)
 {
 	return true;
 }

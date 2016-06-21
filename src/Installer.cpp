@@ -136,31 +136,42 @@ bool Installer::installTicket(cpp3ds::Uint16 titleVersion)
 	return false;
 }
 
-bool Installer::installSeed(const std::string &countryCode)
+bool Installer::installSeed(const void *seed)
 {
-	if (((m_titleId >> 32) & 0x8010) != 0)
-		return true;
-
-	cpp3ds::Http http("https://kagiya-ctr.cdn.nintendo.net");
-	cpp3ds::Http::Request request(_("title/0x%016llX/ext_key?country=%s", m_titleId, countryCode.c_str()));
-	cpp3ds::Http::Response response = http.sendRequest(request);
-	auto status = response.getStatus();
-	if (status == cpp3ds::Http::Response::Ok)
+	if (seed)
 	{
-		std::string seed = response.getBody();
-		if (seed.size() == 16)
-		{
-			if (R_FAILED(m_result = FSUSER_AddSeed(m_titleId, seed.c_str())))
-			{
-				m_errorStr = _("Failed to add seed: %016llX", m_result);
-				return false;
-			}
+		if (R_SUCCEEDED(m_result = FSUSER_AddSeed(m_titleId, seed)))
 			return true;
+	}
+	else // Retrieve from server
+	{
+		// DSiWare games can be skipped
+		if (((m_titleId >> 32) & 0x8010) != 0)
+			return true;
+
+		cpp3ds::Http http("https://kagiya-ctr.cdn.nintendo.net");
+		cpp3ds::Http::Request request(_("title/0x%016llX/ext_key?country=%s", m_titleId, "US"));
+		cpp3ds::Http::Response response = http.sendRequest(request);
+		auto status = response.getStatus();
+		if (status == cpp3ds::Http::Response::Ok)
+		{
+			std::string seedStr = response.getBody();
+			if (seedStr.size() == 16)
+			{
+				if (R_SUCCEEDED(m_result = FSUSER_AddSeed(m_titleId, seedStr.c_str())))
+					return true;
+			}
+		}
+		else if (status == cpp3ds::Http::Response::NotFound)
+			return true; // Title has no seed, so it's fine
+		else
+		{
+			m_errorStr = _("Failed to get seed: HTTP %d", (int)status);
+			return false;
 		}
 	}
-	else if (status == cpp3ds::Http::Response::NotFound)
-		return true; // Title has no seed, so it's fine
 
+	m_errorStr = _("Failed to add seed: %016llX", m_result);
 	return false;
 }
 

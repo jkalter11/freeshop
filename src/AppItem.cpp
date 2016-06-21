@@ -169,6 +169,7 @@ void AppItem::loadFromJSON(const char* titleId, const rapidjson::Value &json)
 	setUriRegion(json[4].GetString());
 	setFilesize(json[5].GetUint64());
 
+	// Regions and region flag sprites
 	m_regionFlags.clear();
 	m_regions = json[3].GetInt();
 	for (int i = 0; i < 3; ++i)
@@ -177,7 +178,6 @@ void AppItem::loadFromJSON(const char* titleId, const rapidjson::Value &json)
 		if (m_regions & region)
 			addRegionFlag(region);
 	}
-
 	float posX = 55.f;
 	for (auto& flag : m_regionFlags)
 	{
@@ -187,9 +187,23 @@ void AppItem::loadFromJSON(const char* titleId, const rapidjson::Value &json)
 		posX += 21.f;
 	}
 
+	// Icon index
 	int iconIndex = json[6].GetInt();
 	if (iconIndex != -1)
 		setIcon(iconIndex);
+
+	// Crypto seed
+	std::string seed = json[7].GetString();
+	if (!seed.empty())
+	{
+		m_seed.clear();
+		for (int i = 0; i < 16; ++i)
+		{
+			std::string byteStr = seed.substr(i*2, 2);
+			char byte = strtol(byteStr.c_str(), NULL, 16);
+			m_seed.push_back(byte);
+		}
+	}
 }
 
 void AppItem::select()
@@ -389,6 +403,11 @@ void AppItem::addRegionFlag(AppItem::Region region)
 		flag.setTextureRect(cpp3ds::IntRect(0, 20, 30, 20));
 
 	m_regionFlags.push_back(flag);
+}
+
+const std::vector<char> &AppItem::getSeed() const
+{
+	return m_seed;
 }
 
 } // namespace FreeShop
