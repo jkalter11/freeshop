@@ -85,7 +85,7 @@ void DownloadQueue::addDownload(AppItem* app, int contentIndex, float progress)
 		if (fileSize == 0) {
 			std::string length = response.getField("Content-Length");
 			if (!length.empty())
-				fileSize = atoi(length.c_str());
+				fileSize = strtoul(length.c_str(), 0, 10);
 		}
 
 		const char *bufdata = reinterpret_cast<const char*>(data);
