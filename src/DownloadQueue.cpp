@@ -158,6 +158,7 @@ void DownloadQueue::addDownload(AppItem* app, int contentIndex, float progress)
 		{
 			// Conditions indicate download issue (e.g. internet is down)
 			// with either an empty length or one not 64-byte aligned
+#ifndef EMULATION
 			if (len == 0 || len % 64 > 0)
 			{
 				suspend();
@@ -165,6 +166,7 @@ void DownloadQueue::addDownload(AppItem* app, int contentIndex, float progress)
 				fileSize = 0;
 				return true;
 			}
+#endif
 
 			int oldIndex = installer->getCurrentContentIndex();
 			if (!installer->installContent(data, len, contentIndices[fileIndex-1]))
@@ -333,24 +335,26 @@ void DownloadQueue::realign()
 void DownloadQueue::update(float delta)
 {
 	// Remove downloads marked for delete
-	bool changed = false;
-	for (auto it = m_downloads.begin(); it != m_downloads.end();)
 	{
-		Download *download = it->get()->download;
-		if (download->markedForDelete())
+		bool changed = false;
+		cpp3ds::Lock lock(m_mutexRefresh);
+		for (auto it = m_downloads.begin(); it != m_downloads.end();)
 		{
-			if (download->getStatus() == Download::Suspended)
-				it->get()->installer->abort();
-			m_downloads.erase(it);
-			changed = true;
+			Download *download = it->get()->download;
+			if (download->markedForDelete())
+			{
+				if (download->getStatus() == Download::Suspended)
+					it->get()->installer->abort();
+				m_downloads.erase(it);
+				changed = true;
+			}
+			else
+				++it;
 		}
-		else
-			++it;
+		if (changed)
+			realign();
 	}
-
-	if (changed)
-		realign();
-
+	
 	m_tweenManager.update(delta);
 }
 
