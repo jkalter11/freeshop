@@ -33,9 +33,11 @@ include(cpp3ds)
 
 include_directories(
 	${PROJECT_SOURCE_DIR}/external/tween-engine/include
+	${PROJECT_SOURCE_DIR}/external/GWEN/gwen/include
 	${PROJECT_SOURCE_DIR}/external/rapidjson/include
 )
 FILE(GLOB_RECURSE TWEEN_ENGINE_SOURCE ${PROJECT_SOURCE_DIR}/external/tween-engine/src/*.cpp)
+FILE(GLOB_RECURSE GWEN_SOURCE ${PROJECT_SOURCE_DIR}/external/GWEN/gwen/src/*.cpp)
 
 set(SOURCE_FILES
 	${PROJECT_SOURCE_DIR}/src/main.cpp
@@ -63,6 +65,8 @@ set(SOURCE_FILES
 	${PROJECT_SOURCE_DIR}/src/States/BrowseState.cpp
 	${PROJECT_SOURCE_DIR}/src/States/SyncState.cpp
 	${TWEEN_ENGINE_SOURCE}
+	${GWEN_SOURCE}
+	${PROJECT_SOURCE_DIR}/external/GWEN/gwen/Renderers/cpp3ds/cpp3ds.cpp
 )
 
 set(ARM_SOURCE_FILES
