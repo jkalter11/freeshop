@@ -4,3 +4,6 @@
 [submodule "external/rapidjson"]
 	path = external/rapidjson
 	url = https://github.com/miloyip/rapidjson.git
+[submodule "external/GWEN"]
+	path = external/GWEN
+	url = https://github.com/cpp3ds/GWEN.git
