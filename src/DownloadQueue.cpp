@@ -526,8 +526,8 @@ void DownloadQueue::load()
 					if (contentIndex == -1 || pendingTitleIds[i] == titleId)
 					{
 						for (auto& app : list)
-							if (app->getTitleId() == strTitleId)
-								addDownload(app.get(), contentIndex, progress);
+							if (app->getAppItem()->getTitleId() == strTitleId)
+								addDownload(app.get()->getAppItem(), contentIndex, progress);
 						break;
 					}
 			}

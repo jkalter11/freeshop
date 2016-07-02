@@ -61,11 +61,17 @@ void AppList::refresh()
 
 			if (Installer::titleKeyExists(titleId))
 			{
-				std::unique_ptr<AppItem> item(new AppItem());
+				std::unique_ptr<AppItem> appItem(new AppItem());
+				std::unique_ptr<GUI::AppItem> guiAppItem(new GUI::AppItem());
+
+				appItem->loadFromJSON(iter->name.GetString(), iter->value);
+				guiAppItem->setAppItem(appItem.get());
 				// Move offscreen to avoid everything being drawn at once and crashing
-				item->setPosition(500.f, 100.f);
-				item->loadFromJSON(iter->name.GetString(), iter->value);
-				m_list.emplace_back(std::move(item));
+				guiAppItem->setPosition(500.f, 100.f);
+
+				m_appItems.emplace_back(std::move(appItem));
+				m_guiAppItems.emplace_back(std::move(guiAppItem));
+
 				cpp3ds::sleep(cpp3ds::microseconds(300));
 			}
 		}
@@ -93,7 +99,7 @@ AppList::SortType AppList::getSortType() const
 
 void AppList::sort()
 {
-	std::sort(m_list.begin(), m_list.end(), [&](const std::unique_ptr<AppItem>& a, const std::unique_ptr<AppItem>& b)
+	std::sort(m_guiAppItems.begin(), m_guiAppItems.end(), [&](const std::unique_ptr<GUI::AppItem>& a, const std::unique_ptr<GUI::AppItem>& b)
 	{
 		if (a->getMatchScore() != b->getMatchScore())
 		{
@@ -104,9 +110,9 @@ void AppList::sort()
 			switch(m_sortType)
 			{
 				case AlphaNumericDesc:
-					return a->getNormalizedTitle() > b->getNormalizedTitle();
+					return a->getAppItem()->getNormalizedTitle() > b->getAppItem()->getNormalizedTitle();
 				default:
-					return a->getNormalizedTitle() < b->getNormalizedTitle();
+					return a->getAppItem()->getNormalizedTitle() < b->getAppItem()->getNormalizedTitle();
 			}
 		}
 	});
@@ -117,7 +123,7 @@ void AppList::resize()
 	float posY = 4.f;
 	int i = 0;
 
-	for (auto& app : m_list)
+	for (auto& app : m_guiAppItems)
 	{
 		if (!app->isVisible())
 			continue;
@@ -129,7 +135,7 @@ void AppList::resize()
 		}
 		else
 		{
-			TweenEngine::Tween::to(*app, AppItem::POSITION_XY, 0.3f)
+			TweenEngine::Tween::to(*app, GUI::AppItem::POSITION_XY, 0.3f)
 				.target(posX, posY)
 				.start(m_tweenManager);
 		}
@@ -144,10 +150,10 @@ void AppList::resize()
 void AppList::setSelectedIndex(int index)
 {
 	if (m_selectedIndex >= 0)
-		m_list[m_selectedIndex]->deselect();
+		m_guiAppItems[m_selectedIndex]->deselect();
 	m_selectedIndex = index;
 	if (m_selectedIndex >= 0)
-		m_list[m_selectedIndex]->select();
+		m_guiAppItems[m_selectedIndex]->select();
 }
 
 int AppList::getSelectedIndex() const
@@ -155,18 +161,18 @@ int AppList::getSelectedIndex() const
 	return m_selectedIndex;
 }
 
-AppItem *AppList::getSelected()
+GUI::AppItem *AppList::getSelected()
 {
-	if (m_selectedIndex < 0 || m_selectedIndex > m_list.size()-1)
+	if (m_selectedIndex < 0 || m_selectedIndex > m_guiAppItems.size()-1)
 		return nullptr;
-	return m_list[m_selectedIndex].get();
+	return m_guiAppItems[m_selectedIndex].get();
 }
 
 void AppList::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) const
 {
 	states.transform *= getTransform();
 
-	for (auto& app : m_list)
+	for (auto& app : m_guiAppItems)
 	{
 		if (app->isVisible())
 			target.draw(*app, states);
@@ -175,13 +181,13 @@ void AppList::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) co
 
 size_t AppList::getCount() const
 {
-	return m_list.size();
+	return m_guiAppItems.size();
 }
 
 size_t AppList::getVisibleCount() const
 {
 	size_t count = 0;
-	for (auto& item : m_list)
+	for (auto& item : m_guiAppItems)
 		if (item->isVisible())
 			count++;
 		else break;
@@ -199,9 +205,9 @@ void AppList::setCollapsed(bool collapsed)
 
 	if (collapsed)
 	{
-		for (auto &app : m_list)
+		for (auto &app : m_guiAppItems)
 		{
-			TweenEngine::Tween::to(*app, AppItem::INFO_ALPHA, 0.3f)
+			TweenEngine::Tween::to(*app, GUI::AppItem::INFO_ALPHA, 0.3f)
 				.target(0)
 				.setCallback(TweenEngine::TweenCallback::COMPLETE, [&](TweenEngine::BaseTween *source) {
 					app->setInfoVisible(false);
@@ -224,16 +230,16 @@ void AppList::setCollapsed(bool collapsed)
 		TweenEngine::Tween::to(*this, AppList::POSITION_X, 0.3f)
 			.target(-newX)
 			.setCallback(TweenEngine::TweenCallback::COMPLETE, [this](TweenEngine::BaseTween *source) {
-				for (auto &app : m_list) {
+				for (auto &app : m_guiAppItems) {
 					app->setInfoVisible(true);
-					TweenEngine::Tween::to(*app, AppItem::INFO_ALPHA, 0.3f)
+					TweenEngine::Tween::to(*app, GUI::AppItem::INFO_ALPHA, 0.3f)
 						.target(255.f)
 						.start(m_tweenManager);
 				}
 
-				AppItem *item = getSelected();
+				GUI::AppItem *item = getSelected();
 				if (item)
-					TweenEngine::Tween::to(*item, AppItem::BACKGROUND_ALPHA, 0.3f)
+					TweenEngine::Tween::to(*item, GUI::AppItem::BACKGROUND_ALPHA, 0.3f)
 						.target(255.f)
 						.setCallback(TweenEngine::TweenCallback::COMPLETE, [this](TweenEngine::BaseTween *source) {
 							setSelectedIndex(m_selectedIndex);
@@ -258,7 +264,7 @@ void AppList::update(float delta)
 void AppList::filterBySearch(const std::string &searchTerm, std::vector<util3ds::RichText> &textMatches)
 {
 	m_tweenManager.killAll();
-	for (auto& item : m_list)
+	for (auto& item : m_guiAppItems)
 	{
 		item->setMatchTerm(searchTerm);
 		if (item->getMatchScore() > -99)
@@ -269,7 +275,7 @@ void AppList::filterBySearch(const std::string &searchTerm, std::vector<util3ds:
 				.start(m_tweenManager);
 		}
 		else{
-			AppItem* itemptr = item.get();
+			GUI::AppItem* itemptr = item.get();
 			TweenEngine::Tween::to(*item, SCALE_XY, 0.3)
 				.target(0.f, 0.f)
 				.setCallback(TweenEngine::TweenCallback::COMPLETE, [itemptr](TweenEngine::BaseTween *source) {
@@ -280,7 +286,7 @@ void AppList::filterBySearch(const std::string &searchTerm, std::vector<util3ds:
 	}
 
 	if (m_selectedIndex >= 0)
-		m_list[m_selectedIndex]->deselect();
+		m_guiAppItems[m_selectedIndex]->deselect();
 	sort();
 	resize();
 
@@ -293,15 +299,15 @@ void AppList::filterBySearch(const std::string &searchTerm, std::vector<util3ds:
 
 		if (i < getVisibleCount())
 		{
-			auto item = m_list[i].get();
+			auto item = m_guiAppItems[i].get();
 			if (item->getMatchScore() > -99)
 			{
 				bool matching = false;
-				const char *str = item->getNormalizedTitle().c_str();
+				const char *str = item->getAppItem()->getNormalizedTitle().c_str();
 				const char *pattern = searchTerm.c_str();
 				const char *strLastPos = str;
 
-				auto title = item->getTitle().toUtf8();
+				auto title = item->getAppItem()->getTitle().toUtf8();
 				auto titleCurPos = title.begin();
 				auto titleLastPos = title.begin();
 
@@ -339,13 +345,13 @@ void AppList::filterBySearch(const std::string &searchTerm, std::vector<util3ds:
 		}
 	}
 
-	if (m_list.size() > 0 && textMatches.size() > 0)
+	if (m_guiAppItems.size() > 0 && textMatches.size() > 0)
 		setSelectedIndex(0);
 }
 
-std::vector<std::unique_ptr<AppItem>> &AppList::getList()
+std::vector<std::unique_ptr<GUI::AppItem>> &AppList::getList()
 {
-	return m_list;
+	return m_guiAppItems;
 }
 
 AppList &AppList::getInstance()

@@ -10,11 +10,8 @@
 
 namespace FreeShop {
 
-class AppItem : public cpp3ds::Drawable, public util3ds::TweenTransformable<cpp3ds::Transformable> {
+class AppItem {
 public:
-	static const int INFO_ALPHA = 11;
-	static const int BACKGROUND_ALPHA = 12;
-
 	enum Region {
 		Japan     = 1 << 0,
 		USA       = 1 << 1,
@@ -25,74 +22,41 @@ public:
 		Taiwan    = 1 << 6,
 	};
 
-	AppItem();
+	enum Language {
+		Japanese = 1 << 0,
+		English  = 1 << 1,
+	};
 
-	~AppItem();
+	AppItem();
 
 	void loadFromJSON(const char* titleId, const rapidjson::Value &json);
 
-	void setTitle(const cpp3ds::String &title);
 	const cpp3ds::String &getTitle() const;
-	void setNormalizedTitle(const std::string &title);
 	const std::string &getNormalizedTitle() const;
 
-	void setTitleId(const std::string &id);
 	const std::string &getTitleId() const;
-	void setContentId(const std::string &id);
 	const std::string &getContentId() const;
-	void setUriRegion(const std::string &region);
 	const std::string &getUriRegion() const;
 
-	const int getRegions() const;
+	int getRegions() const;
+	int getLanguages() const;
 	const std::vector<char> &getSeed() const;
-
-	void setFilesize(cpp3ds::Uint64 filesize);
 	cpp3ds::Uint64 getFilesize() const;
-
-	void setIcon(size_t iconIndex);
-	const cpp3ds::Texture* getIcon(cpp3ds::IntRect &outRect) const;
-
-	void setSize(float width, float height);
-
-	const cpp3ds::Vector2f &getSize() const;
 
 	void setInstalled(bool installed);
 	bool isInstalled() const;
-
-	void setVisible(bool visible);
-	bool isVisible() const;
-
-	void setInfoVisible(bool visible);
-	bool isInfoVisible() const;
-
-	void select();
-
-	void deselect();
-
-	void setMatchTerm(const std::string &string);
-	int getMatchScore() const;
-
 	const std::string getJsonFilename() const;
 	bool isCached() const;
 
-protected:
-	virtual void draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) const;
+	const cpp3ds::Texture* getIcon(cpp3ds::IntRect &outRect) const;
+	int getIconIndex() const;
 
-	virtual void setValues(int tweenType, float *newValues);
-	virtual int getValues(int tweenType, float *returnValues);
-
-	void addRegionFlag(Region region);
+	const std::vector<int> &getGenres() const;
+	int getPlatform() const;
+	int getPublisher() const;
 
 private:
-	gui3ds::NinePatch m_background;
-
-	cpp3ds::RectangleShape m_icon;
-	cpp3ds::RectangleShape m_progressBar;
-
-	cpp3ds::Text m_titleText;
-	cpp3ds::Text m_filesizeText;
-
-	cpp3ds::Vector2f m_size;
+	void setIconIndex(size_t iconIndex);
 
 	cpp3ds::String m_title;
 	std::string m_normalizedTitle;
@@ -101,14 +65,22 @@ private:
 	std::string m_contentId;
 	std::string m_uriRegion;
 	std::vector<char> m_seed;
+	std::vector<int> m_genres;
+	std::vector<int> m_features;
+	int m_platform;
+	int m_publisher;
+	int m_languages;
 	int m_regions;
-	std::vector<cpp3ds::Sprite> m_regionFlags;
 
-	int m_matchScore;
+	std::vector<cpp3ds::Uint64> m_updates;
+	std::vector<cpp3ds::Uint64> m_DLCs;
 
+	time_t m_releaseDate;
+	int m_iconIndex;
 	bool m_installed;
-	bool m_infoVisible;
-	mutable bool m_visible;
+
+	cpp3ds::Texture *m_iconTexture;
+	cpp3ds::IntRect m_iconRect;
 };
 
 } // namepace FreeShop

@@ -28,9 +28,6 @@ public:
 
 	void setCurrentScreenshot(int screenshotIndex);
 
-//	util3ds::TweenSprite *getTopScreenshot() const;
-//	util3ds::TweenSprite *getBottomScreenshot() const;
-
 protected:
 	virtual void draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) const;
 

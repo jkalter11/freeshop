@@ -46,10 +46,10 @@ void BrowseState::initialize()
 	m_textActiveDownloads.setPosition(246.f, 3.f);
 
 	m_textListEmpty.setString(_("No title keys found.\nMake sure you have encTitleKeys.bin\nin your sdmc:/freeShop/ directory."));
+	m_textListEmpty.useSystemFont();
 	m_textListEmpty.setCharacterSize(16);
 	m_textListEmpty.setFillColor(cpp3ds::Color(80, 80, 80, 255));
 	m_textListEmpty.setPosition((400.f - m_textListEmpty.getLocalBounds().width) / 2, 70.f);
-	m_textListEmpty.useSystemFont();
 
 	m_whiteScreen.setSize(cpp3ds::Vector2f(320.f, 240.f));
 	m_whiteScreen.setFillColor(cpp3ds::Color::White);
@@ -264,7 +264,7 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 				setItemIndex(0);
 				break;
 			case cpp3ds::Keyboard::X: {
-				AppItem *app = AppList::getInstance().getSelected();
+				AppItem *app = AppList::getInstance().getSelected()->getAppItem();
 				if (app && !DownloadQueue::getInstance().isDownloading(app))
 				{
 					DownloadQueue::getInstance().addDownload(app);
@@ -311,7 +311,7 @@ void BrowseState::setItemIndex(int index)
 
 void BrowseState::loadApp()
 {
-	AppItem* item = AppList::getInstance().getSelected();
+	AppItem* item = AppList::getInstance().getSelected()->getAppItem();
 	if (!item)
 		return;
 
@@ -354,9 +354,9 @@ void BrowseState::setMode(BrowseState::Mode mode)
 		for (auto& text : m_textMatches)
 		{
 			TweenEngine::Tween::to(text, util3ds::RichText::POSITION_X, 0.3f)
-					.target(-text.getLocalBounds().width)
-					.delay(delay)
-					.start(m_tweenManager);
+				.target(-text.getLocalBounds().width)
+				.delay(delay)
+				.start(m_tweenManager);
 			delay += 0.05f;
 		}
 

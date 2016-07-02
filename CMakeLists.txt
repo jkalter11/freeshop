@@ -55,6 +55,7 @@ set(SOURCE_FILES
 	${PROJECT_SOURCE_DIR}/src/Notification.cpp
 	${PROJECT_SOURCE_DIR}/src/Keyboard/Keyboard.cpp
 	${PROJECT_SOURCE_DIR}/src/Keyboard/tinyxml2.cpp
+	${PROJECT_SOURCE_DIR}/src/GUI/AppItem.cpp
 	${PROJECT_SOURCE_DIR}/src/GUI/Button.cpp
 	${PROJECT_SOURCE_DIR}/src/GUI/NinePatch.cpp
 	${PROJECT_SOURCE_DIR}/src/States/State.cpp

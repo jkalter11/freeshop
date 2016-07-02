@@ -5,7 +5,7 @@
 #include <cpp3ds/Window/Event.hpp>
 #include <TweenEngine/TweenManager.h>
 #include "Download.hpp"
-#include "AppItem.hpp"
+#include "GUI/AppItem.hpp"
 #include "Installer.hpp"
 
 namespace FreeShop {

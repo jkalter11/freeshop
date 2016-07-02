@@ -5,7 +5,7 @@
 #include <string>
 #include <TweenEngine/TweenManager.h>
 #include <cpp3ds/System/Thread.hpp>
-#include "AppItem.hpp"
+#include "GUI/AppItem.hpp"
 #include "RichText.hpp"
 
 
@@ -32,8 +32,8 @@ public:
 	size_t getCount() const;
 	size_t getVisibleCount() const;
 
-	AppItem* getSelected();
-	std::vector<std::unique_ptr<AppItem>> &getList();
+	GUI::AppItem* getSelected();
+	std::vector<std::unique_ptr<GUI::AppItem>> &getList();
 
 	void setCollapsed(bool collapsed);
 	bool isCollapsed() const;
@@ -52,7 +52,8 @@ private:
 	SortType m_sortType;
 	std::string m_jsonFilename;
 	int m_selectedIndex;
-	std::vector<std::unique_ptr<AppItem>> m_list;
+	std::vector<std::unique_ptr<AppItem>> m_appItems;
+	std::vector<std::unique_ptr<GUI::AppItem>> m_guiAppItems;
 	std::vector<cpp3ds::Texture*> m_iconTextures;
 	bool m_collapsed;
 	TweenEngine::TweenManager m_tweenManager;
