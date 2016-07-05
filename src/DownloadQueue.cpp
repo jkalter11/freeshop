@@ -197,9 +197,12 @@ void DownloadQueue::addDownload(AppItem* app, int contentIndex, float progress)
 
 		// Handle status message and counters
 		count += len;
-		download->setProgressMessage(_("Installing... %.1f%% (%.0f KB/s)",
-									   download->getProgress() * 100.f,
-									   count / clock.getElapsedTime().asSeconds() / 1024.f));
+		float speed = count / clock.getElapsedTime().asSeconds() / 1024.f;
+		int secsRemaining = (titleFileSize - totalProcessed) / 1024 / speed;
+		download->setProgressMessage(_("Installing %d/%d... %.1f%% (%.0f KB/s) %dm %02ds",
+		                               fileIndex, contentCount,
+		                               download->getProgress() * 100.f,
+		                               speed, secsRemaining / 60, secsRemaining % 60));
 		if (clock.getElapsedTime() > cpp3ds::seconds(5.f))
 		{
 			count = 0;
