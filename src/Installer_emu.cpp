@@ -3,6 +3,37 @@
 #include <cpp3ds/System/FileInputStream.hpp>
 #include "Installer.hpp"
 
+namespace {
+
+std::map<cpp3ds::Uint64, cpp3ds::Uint32[4]> titleKeys;
+
+// Load title keys from file if not done already
+void ensureTitleKeys()
+{
+	if (!titleKeys.size())
+	{
+		cpp3ds::FileInputStream file;
+		if (file.open("sdmc:/freeShop/encTitleKeys.bin"))
+		{
+			size_t count = file.getSize() / 32;
+
+			cpp3ds::Uint64 titleId;
+			cpp3ds::Uint32 titleKey[4];
+
+			for (int i = 0; i < count; ++i)
+			{
+				file.seek(24 + i * 32);
+				file.read(&titleId, 8);
+				file.read(titleKey, 16);
+
+				for (int j = 0; j < 4; ++j)
+					titleKeys[__builtin_bswap64(titleId)][j] = titleKey[j];
+			}
+		}
+	}
+}
+
+}
 
 namespace FreeShop {
 
@@ -35,10 +66,22 @@ bool Installer::installSeed(const void *seed)
 
 bool Installer::titleKeyExists(cpp3ds::Uint64 titleId)
 {
-	return true;
+	ensureTitleKeys();
+	return titleKeys.find(titleId) != titleKeys.end();
 }
 
-bool Installer::start()
+std::vector<cpp3ds::Uint64> Installer::getRelated(cpp3ds::Uint64 titleId, TitleType type)
+{
+	ensureTitleKeys();
+	std::vector<cpp3ds::Uint64> related;
+	cpp3ds::Uint32 titleLower = (titleId & 0xFFFFFFFF) >> 8;
+	for (const auto &key : titleKeys)
+		if ((titleLower == (key.first & 0xFFFFFFFF) >> 8) && (key.first >> 32 == type))
+			related.push_back(key.first);
+	return related;
+}
+
+bool Installer::start(bool deleteTitle)
 {
 	return true;
 }
@@ -73,6 +116,14 @@ bool Installer::finalizeContent()
 {
 	m_currentContentPosition = 0;
 	return true;
+}
+
+bool Installer::importContents(size_t count, cpp3ds::Uint16 *indices)
+{
+	if (m_isInstalling && !commit())
+		return false;
+
+	return start(false);
 }
 
 bool Installer::installTmd(const void *data, size_t size)

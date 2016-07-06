@@ -2,6 +2,7 @@
 #define FREESHOP_INSTALLER_HPP
 
 #include <string>
+#include <vector>
 #include <cpp3ds/Config.hpp>
 #include <cpp3ds/System/Mutex.hpp>
 #ifndef EMULATION
@@ -12,14 +13,22 @@ namespace FreeShop {
 
 class Installer {
 public:
+	enum TitleType {
+		Game = 0x40000,
+		Update = 0x4000E,
+		Demo = 0x40002,
+		DLC = 0x4008C,
+	};
+
 	Installer(cpp3ds::Uint64 titleId, int contentIndex = -1);
 	~Installer();
 
 	bool installTicket(cpp3ds::Uint16 titleVersion);
 	bool installSeed(const void *seed);
 	static bool titleKeyExists(cpp3ds::Uint64 titleId);
+	static std::vector<cpp3ds::Uint64> getRelated(cpp3ds::Uint64 titleId, TitleType type);
 
-	bool start();
+	bool start(bool deleteTitle);
 	bool resume();
 	void suspend();
 	void abort();
@@ -29,6 +38,7 @@ public:
 
 	bool finalizeTmd();
 	bool finalizeContent();
+	bool importContents(size_t count, cpp3ds::Uint16 *indices);
 	bool commit();
 
 	cpp3ds::Int32 getErrorCode() const;

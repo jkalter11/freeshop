@@ -209,7 +209,7 @@ void AppInfo::loadApp(AppItem *appItem)
 
 		m_textTitle.setString("");
 		m_textDescription.setString("");
-		m_textTitleId.setString(appItem->getTitleId());
+		m_textTitleId.setString(appItem->getTitleIdStr());
 
 		cpp3ds::IntRect textureRect;
 		m_icon.setTexture(*appItem->getIcon(textureRect), true);
@@ -526,7 +526,7 @@ void AppInfo::addScreenshot(int index, const rapidjson::Value &jsonScreenshot)
 {
 	std::string url = jsonScreenshot["value"].GetString();
 	std::string type = jsonScreenshot["type"].GetString();
-	std::string filename = _("sdmc:/freeShop/tmp/%s/screen%d%s.jpg", m_appItem->getTitleId().c_str(), index, type.c_str());
+	std::string filename = _("sdmc:/freeShop/tmp/%s/screen%d%s.jpg", m_appItem->getTitleIdStr().c_str(), index, type.c_str());
 	bool isUpper = type == "upper";
 
 	if (!pathExists(filename.c_str()))

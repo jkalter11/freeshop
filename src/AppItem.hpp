@@ -34,7 +34,8 @@ public:
 	const cpp3ds::String &getTitle() const;
 	const std::string &getNormalizedTitle() const;
 
-	const std::string &getTitleId() const;
+	cpp3ds::Uint64 getTitleId() const;
+	const std::string &getTitleIdStr() const;
 	const std::string &getContentId() const;
 	const std::string &getUriRegion() const;
 
@@ -55,13 +56,16 @@ public:
 	int getPlatform() const;
 	int getPublisher() const;
 
+	void queueForInstall();
+
 private:
 	void setIconIndex(size_t iconIndex);
 
 	cpp3ds::String m_title;
 	std::string m_normalizedTitle;
 	cpp3ds::Uint64 m_filesize;
-	std::string m_titleId;
+	cpp3ds::Uint64 m_titleId;
+	std::string m_titleIdStr;
 	std::string m_contentId;
 	std::string m_uriRegion;
 	std::vector<char> m_seed;
@@ -73,7 +77,8 @@ private:
 	int m_regions;
 
 	std::vector<cpp3ds::Uint64> m_updates;
-	std::vector<cpp3ds::Uint64> m_DLCs;
+	std::vector<cpp3ds::Uint64> m_demos;
+	std::vector<cpp3ds::Uint64> m_dlc;
 
 	time_t m_releaseDate;
 	int m_iconIndex;

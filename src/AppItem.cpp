@@ -4,6 +4,8 @@
 #include "AssetManager.hpp"
 #include "AppItem.hpp"
 #include "Util.hpp"
+#include "Installer.hpp"
+#include "DownloadQueue.hpp"
 #include <sstream>
 
 
@@ -37,7 +39,12 @@ void AppItem::loadFromJSON(const char* titleId, const rapidjson::Value &json)
 	m_seed.clear();
 	m_languages = 0;
 
-	m_titleId = titleId;
+	m_titleIdStr = titleId;
+	m_titleId = strtoull(titleId, 0, 16);
+	m_updates = Installer::getRelated(m_titleId, Installer::Update);
+	m_demos = Installer::getRelated(m_titleId, Installer::Demo);
+	m_dlc = Installer::getRelated(m_titleId, Installer::DLC);
+
 	const char *title = json[0].GetString();
 	m_title = cpp3ds::String::fromUtf8(title, title + json[0].GetStringLength());
 	m_normalizedTitle = json[1].GetString();
@@ -119,7 +126,7 @@ bool AppItem::isCached() const
 
 const std::string AppItem::getJsonFilename() const
 {
-	std::string filename = "sdmc:/freeShop/tmp/" + getTitleId() + "/data.json";
+	std::string filename = "sdmc:/freeShop/tmp/" + getTitleIdStr() + "/data.json";
 	return filename;
 }
 
@@ -143,7 +150,12 @@ const std::string &AppItem::getNormalizedTitle() const
 	return m_normalizedTitle;
 }
 
-const std::string &AppItem::getTitleId() const
+const std::string &AppItem::getTitleIdStr() const
+{
+	return m_titleIdStr;
+}
+
+cpp3ds::Uint64 AppItem::getTitleId() const
 {
 	return m_titleId;
 }
@@ -197,6 +209,15 @@ const cpp3ds::Texture *AppItem::getIcon(cpp3ds::IntRect &outRect) const
 {
 	outRect = m_iconRect;
 	return m_iconTexture;
+}
+
+void AppItem::queueForInstall()
+{
+	DownloadQueue::getInstance().addDownload(this);
+	for (auto &id : m_updates)
+		DownloadQueue::getInstance().addDownload(this, id);
+	for (auto &id : m_dlc)
+		DownloadQueue::getInstance().addDownload(this, id);
 }
 
 

@@ -24,7 +24,7 @@ public:
 
 	static DownloadQueue &getInstance();
 
-	void addDownload(AppItem* app, int contentIndex = -1, float progress = 0.f);
+	void addDownload(AppItem* app, cpp3ds::Uint64 titleId = 0, int contentIndex = -1, float progress = 0.f);
 	void cancelDownload(AppItem* app);
 	void restartDownload(AppItem* app);
 	bool isDownloading(AppItem* app);

@@ -267,7 +267,7 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 				AppItem *app = AppList::getInstance().getSelected()->getAppItem();
 				if (app && !DownloadQueue::getInstance().isDownloading(app))
 				{
-					DownloadQueue::getInstance().addDownload(app);
+					app->queueForInstall();
 					cpp3ds::String s = app->getTitle();
 					s.insert(0, _("Queued install: "));
 					Notification::spawn(s);

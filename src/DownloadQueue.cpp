@@ -49,28 +49,42 @@ DownloadQueue::~DownloadQueue()
 	m_downloads.clear();
 }
 
-void DownloadQueue::addDownload(AppItem* app, int contentIndex, float progress)
+void DownloadQueue::addDownload(AppItem* app, cpp3ds::Uint64 titleId, int contentIndex, float progress)
 {
 	cpp3ds::Lock lock(m_mutexRefresh);
-	std::string url = "http://ccs.cdn.c.shop.nintendowifi.net/ccs/download/" + app->getTitleId() + "/tmd";
 
+	if (titleId == 0)
+		titleId = app->getTitleId();
+	cpp3ds::String title = app->getTitle();
+	cpp3ds::Uint32 type = titleId >> 32;
+	if (type != Installer::Game)
+	{
+		if (type == Installer::Update)
+			title.insert(0, _("[Update] "));
+		else if (type == Installer::Demo)
+			title.insert(0, _("[Demo] "));
+		else if (type == Installer::DLC)
+			title.insert(0, _("[DLC] "));
+	}
+
+	std::string url = _("http://ccs.cdn.c.shop.nintendowifi.net/ccs/download/%016llX/tmd", titleId);
 	Download* download = new Download(url);
 	download->fillFromAppItem(app);
-	download->setPosition(3.f, 240.f);
+	download->m_textTitle.setString(title);
+	download->setPosition(0.f, 240.f);
 	download->setSendTopCallback([this](Download *d){
 		sendTop(d);
 	});
 
-	std::vector<char> buf;
+	std::vector<char> buf; // Store fetched files (only used for TMD atm)
 	cpp3ds::Clock clock;
 	float count = 0;
-	size_t fileSize = 0;
-	int fileIndex = 0;
+	int fileIndex = 0;   // Keep track of the multiple files, first is usually the TMD with rest being contents
+	size_t fileSize = 0; // Size of each file (as obtain by http Content-Length)
 
-	cpp3ds::Uint64 titleId = strtoull(app->getTitleId().c_str(), 0, 16);
 	Installer *installer = new Installer(titleId, contentIndex);
-	cpp3ds::Uint64 titleFileSize = app->getFilesize();
-	cpp3ds::Uint64 totalProcessed = progress * titleFileSize;
+	cpp3ds::Uint64 titleFileSize = 0;
+	cpp3ds::Uint64 totalProcessed;
 
 	// Is resuming from saved queue
 	bool isResuming = contentIndex >= 0;
@@ -112,6 +126,7 @@ void DownloadQueue::addDownload(AppItem* app, int contentIndex, float progress)
 					cpp3ds::Uint32 contentId = __builtin_bswap32(*(cpp3ds::Uint32*)&contentChunk[0]);
 					cpp3ds::Uint16 contentIdx = __builtin_bswap16(*(cpp3ds::Uint16*)&contentChunk[4]);
 					cpp3ds::Uint64 contentSize = __builtin_bswap64(*(cpp3ds::Uint64*)&contentChunk[8]);
+					titleFileSize += contentSize;
 
 					if (contentIdx == contentIndex)
 						foundIndex = true;
@@ -122,6 +137,8 @@ void DownloadQueue::addDownload(AppItem* app, int contentIndex, float progress)
 					}
 				}
 
+				totalProcessed = progress * titleFileSize;
+
 				if (!isResuming)
 				{
 					// Check for cancel at each stage in case it changes
@@ -131,7 +148,7 @@ void DownloadQueue::addDownload(AppItem* app, int contentIndex, float progress)
 						if (!installer->installTicket(titleVersion))
 							return false;
 					}
-					if (!download->isCanceled() && !app->getSeed().empty())
+					if (!download->isCanceled() && type == Installer::Game && !app->getSeed().empty())
 					{
 						download->setProgressMessage(_("Installing seed..."));
 						if (!installer->installSeed(&app->getSeed()[0]))
@@ -139,7 +156,7 @@ void DownloadQueue::addDownload(AppItem* app, int contentIndex, float progress)
 					}
 					if (!download->isCanceled())
 					{
-						if (!installer->start())
+						if (!installer->start(true))
 							return false;
 						download->setProgressMessage(_("Installing TMD..."));
 						if (!installer->installTmd(&buf[0], dataOffsets[sigType] + 0x9C4 + (contentCount * 0x30)))
@@ -190,6 +207,12 @@ void DownloadQueue::addDownload(AppItem* app, int contentIndex, float progress)
 			{
 				if (!installer->finalizeContent())
 					return false;
+				if (fileIndex == 1 && type == Installer::DLC)
+				{
+					download->setProgressMessage(_("Importing content..."));
+					if (!installer->importContents(contentIndices.size() - 1, &contentIndices[1]))
+						return false;
+				}
 				fileSize = 0;
 				fileIndex++;
 			}
@@ -199,10 +222,11 @@ void DownloadQueue::addDownload(AppItem* app, int contentIndex, float progress)
 		count += len;
 		float speed = count / clock.getElapsedTime().asSeconds() / 1024.f;
 		int secsRemaining = (titleFileSize - totalProcessed) / 1024 / speed;
-		download->setProgressMessage(_("Installing %d/%d... %.1f%% (%.0f KB/s) %dm %02ds",
-		                               fileIndex, contentCount,
-		                               download->getProgress() * 100.f,
-		                               speed, secsRemaining / 60, secsRemaining % 60));
+		if (fileIndex <= contentCount)
+			download->setProgressMessage(_("Installing %d/%d... %.1f%% (%.0f KB/s) %dm %02ds",
+		                                   fileIndex, contentCount,
+		                                   download->getProgress() * 100.f,
+		                                   speed, secsRemaining / 60, secsRemaining % 60));
 		if (clock.getElapsedTime() > cpp3ds::seconds(5.f))
 		{
 			count = 0;
@@ -357,7 +381,7 @@ void DownloadQueue::update(float delta)
 		if (changed)
 			realign();
 	}
-	
+
 	m_tweenManager.update(delta);
 }
 
@@ -487,7 +511,7 @@ void DownloadQueue::save()
 			continue;
 
 		rapidjson::Value obj(rapidjson::kObjectType);
-		obj.AddMember("id", rapidjson::StringRef(item->appItem->getTitleId().c_str()), json.GetAllocator());
+		obj.AddMember("id", rapidjson::StringRef(item->appItem->getTitleIdStr().c_str()), json.GetAllocator());
 		obj.AddMember("content_index", rapidjson::Value().SetInt(status == Download::Queued ? -1 : item->installer->getCurrentContentIndex()), json.GetAllocator());
 		obj.AddMember("progress", rapidjson::Value().SetFloat(item->download->getProgress()), json.GetAllocator());
 		json.PushBack(obj, json.GetAllocator());
@@ -528,9 +552,10 @@ void DownloadQueue::load()
 				for (int i = 0; i < pendingTitleCount; ++i)
 					if (contentIndex == -1 || pendingTitleIds[i] == titleId)
 					{
+						// TODO: resume DLC / Updates?
 						for (auto& app : list)
-							if (app->getAppItem()->getTitleId() == strTitleId)
-								addDownload(app.get()->getAppItem(), contentIndex, progress);
+							if (app->getAppItem()->getTitleId() == titleId)
+								addDownload(app.get()->getAppItem(), 0, contentIndex, progress);
 						break;
 					}
 			}

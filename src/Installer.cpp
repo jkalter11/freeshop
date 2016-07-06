@@ -30,7 +30,7 @@ void ensureTitleKeys()
 				file.read(titleKey, 16);
 
 				for (int j = 0; j < 4; ++j)
-					titleKeys[titleId][j] = titleKey[j];
+					titleKeys[__builtin_bswap64(titleId)][j] = titleKey[j];
 			}
 		}
 	}
@@ -117,7 +117,7 @@ bool Installer::installTicket(cpp3ds::Uint16 titleVersion)
 	memcpy(tikData, tikTemp, sizeof(tikData));
 	memcpy(tikData + sigSize + 0x9C, &titleIdBE, 8);
 	memcpy(tikData + sigSize + 0xA6, &titleVersion, 2);
-	memcpy(tikData + sigSize + 0x7F, titleKeys[titleIdBE], 16);
+	memcpy(tikData + sigSize + 0x7F, titleKeys[m_titleId], 16);
 
 	AM_QueryAvailableExternalTitleDatabase(nullptr);
 	AM_DeleteTicket(m_titleId);
@@ -178,14 +178,26 @@ bool Installer::installSeed(const void *seed)
 bool Installer::titleKeyExists(cpp3ds::Uint64 titleId)
 {
 	ensureTitleKeys();
-	return titleKeys.find(__builtin_bswap64(titleId)) != titleKeys.end();
+	return titleKeys.find(titleId) != titleKeys.end();
 }
 
-bool Installer::start()
+std::vector<cpp3ds::Uint64> Installer::getRelated(cpp3ds::Uint64 titleId, TitleType type)
+{
+	ensureTitleKeys();
+	std::vector<cpp3ds::Uint64> related;
+	cpp3ds::Uint32 titleLower = (titleId & 0xFFFFFFFF) >> 8;
+	for (const auto &key : titleKeys)
+		if ((titleLower == (key.first & 0xFFFFFFFF) >> 8) && (key.first >> 32 == type))
+			related.push_back(key.first);
+	return related;
+}
+
+bool Installer::start(bool deleteTitle)
 {
 	if (!m_isInstalling)
 	{
-		AM_DeleteTitle(m_mediaType, m_titleId);
+		if (deleteTitle)
+			AM_DeleteTitle(m_mediaType, m_titleId);
 		AM_QueryAvailableExternalTitleDatabase(nullptr);
 		if (R_SUCCEEDED(m_result = AM_InstallTitleBegin(m_mediaType, m_titleId, false)))
 		{
@@ -275,6 +287,20 @@ bool Installer::finalizeContent()
 
 	abort();
 	m_errorStr = _("Failed to finalize Content install: 0x%08lX", m_result);
+	return false;
+}
+
+bool Installer::importContents(size_t count, cpp3ds::Uint16 *indices)
+{
+	if (m_isInstalling && !commit())
+		return false;
+
+	if (start(false))
+		if (R_SUCCEEDED(m_result = AM_CreateImportContentContexts(count, indices)))
+			return true;
+
+	abort();
+	m_errorStr = _("Failed to import contents: 0x%08lX", m_result);
 	return false;
 }
 
