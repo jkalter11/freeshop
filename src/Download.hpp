@@ -44,7 +44,7 @@ public:
 	void setProgress(float progress);
 	float getProgress() const;
 
-	void setSize(float width, float height);
+	const cpp3ds::Vector2f &getSize() const;
 
 	void fillFromAppItem(AppItem* app);
 

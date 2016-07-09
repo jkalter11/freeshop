@@ -52,6 +52,13 @@ const cpp3ds::Vector2f &NinePatch::getContentSize() const
 }
 
 
+cpp3ds::Vector2f NinePatch::getSize() const
+{
+	ensureUpdate();
+	return m_size;
+}
+
+
 void NinePatch::setPadding(const cpp3ds::FloatRect &padding)
 {
 	m_needsUpdate = true;
@@ -188,16 +195,16 @@ void NinePatch::updateRegions() const
 	bool is_padding = false;
 	for (y = 1; y < image.getSize().y - 1; y++)
 	{
-		cpp3ds::Color color = image.getPixel(image.getSize().x-1, y);
+		cpp3ds::Color color = image.getPixel(image.getSize().x - 1, y);
 		if (is_padding) {
 			if (color.a == 0) {
-				m_padding.height = y - m_padding.top;
+				m_padding.height = y - 1 - m_padding.top;
 				break;
 			}
 		} else {
 			if (color == cpp3ds::Color::Black) {
 				is_padding = true;
-				m_padding.top = y;
+				m_padding.top = y - 1;
 				continue;
 			}
 		}
@@ -205,16 +212,16 @@ void NinePatch::updateRegions() const
 	is_padding = false;
 	for (x = 1; x < image.getSize().x - 1; x++)
 	{
-		cpp3ds::Color color = image.getPixel(x, image.getSize().y-1);
+		cpp3ds::Color color = image.getPixel(x, image.getSize().y - 1);
 		if (is_padding) {
 			if (color.a == 0) {
-				m_padding.width = x - m_padding.left;
+				m_padding.width = x - 1 - m_padding.left;
 				break;
 			}
 		} else {
 			if (color == cpp3ds::Color::Black) {
 				is_padding = true;
-				m_padding.left = x;
+				m_padding.left = x - 1;
 				continue;
 			}
 		}
@@ -229,6 +236,9 @@ void NinePatch::updateVertices() const
 
 	m_contentSize.x = std::max(m_contentSize.x, m_padding.width);
 	m_contentSize.y = std::max(m_contentSize.y, m_padding.height);
+
+	m_size.x = m_contentSize.x + m_texture->getSize().x - 2.f - m_padding.width;
+	m_size.y = m_contentSize.y + m_texture->getSize().y - 2.f - m_padding.height;
 
 	vertices[0].color = vertices[1].color = vertices[2].color = vertices[3].color = m_color;
 

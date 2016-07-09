@@ -30,13 +30,16 @@ Download::Download(const std::string &url, const std::string &destination)
 
 	setProgressMessage(_("Queued"));
 
+	m_background.setTexture(&AssetManager<cpp3ds::Texture>::get("images/listitembg.9.png"));
+	m_background.setContentSize(320.f + m_background.getPadding().width - m_background.getTexture()->getSize().x + 2.f, 24.f);
+	m_size = m_background.getSize();
+	float paddingRight = m_size.x - m_background.getContentSize().x - m_background.getPadding().left;
+	float paddingBottom = m_size.y - m_background.getContentSize().y - m_background.getPadding().top;
+
 	m_icon.setSize(cpp3ds::Vector2f(48.f, 48.f));
 	m_icon.setTexture(&AssetManager<cpp3ds::Texture>::get("images/missing-icon.png"), true);
-	m_icon.setPosition(4.f, 4.f);
+	m_icon.setPosition(m_background.getPadding().left, m_background.getPadding().top);
 	m_icon.setScale(0.5f, 0.5f);
-	m_icon.setOutlineThickness(1.f);
-	m_icon.setFillColor(cpp3ds::Color(180,180,180));
-	m_icon.setOutlineColor(cpp3ds::Color(0, 0, 0, 50));
 
 	m_textCancel.setFont(AssetManager<cpp3ds::Font>::get("fonts/fontawesome.ttf"));
 	m_textCancel.setString(L"\uf00d");
@@ -44,30 +47,28 @@ Download::Download(const std::string &url, const std::string &destination)
 	m_textCancel.setFillColor(cpp3ds::Color::White);
 	m_textCancel.setOutlineColor(cpp3ds::Color(0, 0, 0, 200));
 	m_textCancel.setOutlineThickness(1.f);
-	m_textCancel.setPosition(294.f, 4.f);
+	m_textCancel.setOrigin(0, m_textCancel.getLocalBounds().top + m_textCancel.getLocalBounds().height / 2.f);
+	m_textCancel.setPosition(m_size.x - paddingRight - m_textCancel.getLocalBounds().width,
+							 m_background.getPadding().top + m_background.getContentSize().y / 2.f);
 
 	m_textSendTop = m_textCancel;
 	m_textSendTop.setString(L"\uf077");
-	m_textSendTop.setPosition(272.f, 4.f);
+	m_textSendTop.move(-25.f, 0);
 
 	m_textRestart = m_textCancel;
 	m_textRestart.setString(L"\uf01e");
-	m_textRestart.setPosition(272.f, 4.f);
+	m_textRestart.move(-25.f, 0);
 
 	m_textTitle.setCharacterSize(10);
-	m_textTitle.setPosition(35.f, 2.f);
+	m_textTitle.setPosition(m_background.getPadding().left + 30.f, m_background.getPadding().top);
 	m_textTitle.setFillColor(cpp3ds::Color::Black);
 	m_textTitle.useSystemFont();
 
 	m_textProgress = m_textTitle;
 	m_textProgress.setFillColor(cpp3ds::Color(130, 130, 130, 255));
-	m_textProgress.setPosition(35.f, 16.f);
+	m_textProgress.move(0.f, 12.f);
 
-	m_background.setTexture(&AssetManager<cpp3ds::Texture>::get("images/itembg.9.png"));
-	m_background.setColor(cpp3ds::Color(255, 255, 255, 80));
 	m_progressBar.setFillColor(cpp3ds::Color(0, 0, 0, 50));
-
-	setSize(314.f, 32.f);
 }
 
 
@@ -295,14 +296,9 @@ void Download::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) c
 }
 
 
-void Download::setSize(float width, float height)
+const cpp3ds::Vector2f &Download::getSize() const
 {
-	m_size.x = width;
-	m_size.y = height;
-
-	m_background.setContentSize(m_size.x + m_background.getPadding().width - m_background.getTexture()->getSize().x + 2.f,
-								m_size.y + m_background.getPadding().height - m_background.getTexture()->getSize().y + 2.f);
-	setProgress(m_progress); // Resize progress bar
+	return m_size;
 }
 
 
@@ -412,5 +408,6 @@ void Download::resume()
 		start();
 	}
 }
+
 
 } // namespace FreeShop

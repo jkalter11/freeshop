@@ -20,6 +20,7 @@ public:
 	void setContentSize(const cpp3ds::Vector2f& size) const;
 	void setContentSize(float width, float height) const;
 	const cpp3ds::Vector2f& getContentSize() const;
+	cpp3ds::Vector2f getSize() const;
 
 	void setPadding(const cpp3ds::FloatRect& padding);
 	void setPadding(float left, float top, float width, float height);
@@ -54,6 +55,7 @@ private:
 	const cpp3ds::Texture *m_texture;
 	mutable cpp3ds::Color m_color;
 	mutable cpp3ds::Vector2f m_contentSize;
+	mutable cpp3ds::Vector2f m_size;
 	mutable std::vector<Region> m_regions;
 	mutable cpp3ds::VertexArray m_vertices;
 	mutable cpp3ds::FloatRect m_padding;

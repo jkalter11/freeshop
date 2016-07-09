@@ -353,7 +353,7 @@ void DownloadQueue::realign()
 		}
 
 		TweenEngine::Tween::to(*download, util3ds::TweenSprite::POSITION_Y, 0.2f)
-			.target(33.f + i * 35.f)
+			.target(33.f + i * download->getSize().y)
 			.start(m_tweenManager);
 	}
 	save();
