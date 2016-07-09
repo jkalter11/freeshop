@@ -120,30 +120,40 @@ void AppList::sort()
 
 void AppList::resize()
 {
-	float posY = 4.f;
+	bool segmentFound = false;
+	float destY = 4.f;
 	int i = 0;
+	float newX = m_selectedIndex / 4 * (m_collapsed ? 59.f : 200.f);
 
 	for (auto& app : m_guiAppItems)
 	{
 		if (!app->isVisible())
 			continue;
 
-		float posX = 3.f + (i/4) * (m_collapsed ? 59.f : 200.f);
-		if ((posX < -200.f || posX > 400.f) && (app->getPosition().x < -200 && app->getPosition().y > 400.f))
+		float destX = 3.f + (i/4) * (m_collapsed ? 59.f : 200.f);
+		float itemPosX = app->getPosition().x + getPosition().x;
+		if ((destX-newX < -200.f || destX-newX > 400.f) && (itemPosX < -200 || itemPosX > 400.f))
 		{
-			app->setPosition(posX, posY);
+			if (segmentFound == m_collapsed)
+				TweenEngine::Tween::set(*app, GUI::AppItem::POSITION_XY)
+					.target(destX, destY)
+					.delay(0.3f)
+					.start(m_tweenManager);
+			else
+				app->setPosition(destX, destY);
 		}
 		else
 		{
+			segmentFound = true;
 			TweenEngine::Tween::to(*app, GUI::AppItem::POSITION_XY, 0.3f)
-				.target(posX, posY)
+				.target(destX, destY)
 				.start(m_tweenManager);
 		}
 
 		if (++i % 4 == 0)
-			posY = 4.f;
+			destY = 4.f;
 		else
-			posY += 59.f;
+			destY += 59.f;
 	}
 }
 
@@ -207,13 +217,22 @@ void AppList::setCollapsed(bool collapsed)
 	{
 		for (auto &app : m_guiAppItems)
 		{
-			TweenEngine::Tween::to(*app, GUI::AppItem::INFO_ALPHA, 0.3f)
-				.target(0)
-				.setCallback(TweenEngine::TweenCallback::COMPLETE, [&](TweenEngine::BaseTween *source) {
-					app->setInfoVisible(false);
-				})
-				.start(m_tweenManager);
+			float appPosX = app->getPosition().x + getPosition().x;
+			if (appPosX >= 0.f && appPosX < 400.f)
+				TweenEngine::Tween::to(*app, GUI::AppItem::INFO_ALPHA, 0.3f)
+					.target(0)
+					.setCallback(TweenEngine::TweenCallback::COMPLETE, [&](TweenEngine::BaseTween *source) {
+						app->setInfoVisible(false);
+					})
+					.start(m_tweenManager);
+			else {
+				app->setInfoVisible(false);
+				TweenEngine::Tween::set(*app, GUI::AppItem::INFO_ALPHA)
+					.target(0)
+					.start(m_tweenManager);
+			}
 		}
+
 		TweenEngine::Tween::to(*this, AppList::POSITION_X, 0.3f)
 			.target(-newX)
 			.delay(0.3f)
@@ -229,12 +248,18 @@ void AppList::setCollapsed(bool collapsed)
 		resize();
 		TweenEngine::Tween::to(*this, AppList::POSITION_X, 0.3f)
 			.target(-newX)
-			.setCallback(TweenEngine::TweenCallback::COMPLETE, [this](TweenEngine::BaseTween *source) {
+			.setCallback(TweenEngine::TweenCallback::COMPLETE, [this, newX](TweenEngine::BaseTween *source) {
 				for (auto &app : m_guiAppItems) {
+					float appPosX = app->getPosition().x - newX;
 					app->setInfoVisible(true);
-					TweenEngine::Tween::to(*app, GUI::AppItem::INFO_ALPHA, 0.3f)
-						.target(255.f)
-						.start(m_tweenManager);
+					if (appPosX >= 0.f && appPosX < 400.f)
+						TweenEngine::Tween::to(*app, GUI::AppItem::INFO_ALPHA, 0.3f)
+							.target(255.f)
+							.start(m_tweenManager);
+					else
+						TweenEngine::Tween::set(*app, GUI::AppItem::INFO_ALPHA)
+							.target(255.f)
+							.start(m_tweenManager);
 				}
 
 				GUI::AppItem *item = getSelected();
