@@ -33,6 +33,7 @@ private:
 	enum Mode {
 		App        = 0,
 		Downloads,
+		Installed,
 		Settings,
 		Search,
 	};

@@ -46,6 +46,8 @@ set(SOURCE_FILES
 	${PROJECT_SOURCE_DIR}/src/AppInfo.cpp
 	${PROJECT_SOURCE_DIR}/src/Config.cpp
 	${PROJECT_SOURCE_DIR}/src/IconSet.cpp
+	${PROJECT_SOURCE_DIR}/src/InstalledItem.cpp
+	${PROJECT_SOURCE_DIR}/src/InstalledList.cpp
 	${PROJECT_SOURCE_DIR}/src/FreeShop.cpp
 	${PROJECT_SOURCE_DIR}/src/Util.cpp
 	${PROJECT_SOURCE_DIR}/src/RichText.cpp

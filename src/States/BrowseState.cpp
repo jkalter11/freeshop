@@ -5,6 +5,7 @@
 #include "../Util.hpp"
 #include "../Installer.hpp"
 #include "SleepState.hpp"
+#include "../InstalledList.hpp"
 #include <TweenEngine/Tween.h>
 #include <cpp3ds/Window/Window.hpp>
 #include <sstream>
@@ -32,18 +33,20 @@ BrowseState::BrowseState(StateStack& stack, Context& context)
 void BrowseState::initialize()
 {
 	AppList::getInstance().refresh();
+	InstalledList::getInstance().refresh();
 
 	m_iconSet.addIcon(L"\uf11b");
 	m_iconSet.addIcon(L"\uf019");
+	m_iconSet.addIcon(L"\uf290");
 	m_iconSet.addIcon(L"\uf013");
 	m_iconSet.addIcon(L"\uf002");
-	m_iconSet.setPosition(210.f, 15.f);
+	m_iconSet.setPosition(180.f, 15.f);
 
 	m_textActiveDownloads.setCharacterSize(8);
 	m_textActiveDownloads.setFillColor(cpp3ds::Color::Black);
 	m_textActiveDownloads.setOutlineColor(cpp3ds::Color::White);
 	m_textActiveDownloads.setOutlineThickness(1.f);
-	m_textActiveDownloads.setPosition(246.f, 3.f);
+	m_textActiveDownloads.setPosition(218.f, 3.f);
 
 	m_textListEmpty.setString(_("No title keys found.\nMake sure you have encTitleKeys.bin\nin your sdmc:/freeShop/ directory."));
 	m_textListEmpty.useSystemFont();
@@ -57,6 +60,7 @@ void BrowseState::initialize()
 	m_keyboard.loadFromFile("kb/keyboard.xml");
 	m_keyboard.setPosition(0.f, 240.f);
 	DownloadQueue::getInstance().setPosition(0.f, 240.f);
+	InstalledList::getInstance().setPosition(0.f, 240.f);
 	m_appInfo.setPosition(0.f, 240.f);
 
 	m_textMatches.resize(4);
@@ -115,6 +119,8 @@ void BrowseState::renderBottomScreen(cpp3ds::Window& window)
 		window.draw(m_appInfo);
 	if (DownloadQueue::getInstance().getPosition().y < 240.f)
 		window.draw(DownloadQueue::getInstance());
+	if (InstalledList::getInstance().getPosition().y < 240.f)
+		window.draw(InstalledList::getInstance());
 
 //	window.draw(m_whiteScreen);
 }
@@ -151,6 +157,7 @@ bool BrowseState::update(float delta)
 	AppList::getInstance().update(delta);
 	m_keyboard.update(delta);
 	DownloadQueue::getInstance().update(delta);
+	InstalledList::getInstance().update(delta);
 	m_tweenManager.update(delta);
 	return true;
 }
@@ -165,8 +172,11 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 	if (m_mode == App) {
 		if (!m_appInfo.processEvent(event))
 			return false;
-	} else {
+	}
+	else if (m_mode == Downloads) {
 		DownloadQueue::getInstance().processEvent(event);
+	} else if (m_mode == Installed) {
+		InstalledList::getInstance().processEvent(event);
 	}
 
 	m_iconSet.processEvent(event);
@@ -369,7 +379,10 @@ void BrowseState::setMode(BrowseState::Mode mode)
 	TweenEngine::Tween::to(m_appInfo, AppInfo::POSITION_Y, 0.3f)
 		.target(240.f)
 		.start(m_tweenManager);
-	TweenEngine::Tween::to(DownloadQueue::getInstance(), AppInfo::POSITION_Y, 0.3f)
+	TweenEngine::Tween::to(DownloadQueue::getInstance(), DownloadQueue::POSITION_Y, 0.3f)
+		.target(240.f)
+		.start(m_tweenManager);
+	TweenEngine::Tween::to(InstalledList::getInstance(), InstalledList::POSITION_Y, 0.3f)
 		.target(240.f)
 		.start(m_tweenManager);
 
@@ -383,7 +396,14 @@ void BrowseState::setMode(BrowseState::Mode mode)
 	}
 	else if (mode == Downloads)
 	{
-		TweenEngine::Tween::to(DownloadQueue::getInstance(), AppInfo::POSITION_Y, 0.3f)
+		TweenEngine::Tween::to(DownloadQueue::getInstance(), DownloadQueue::POSITION_Y, 0.3f)
+			.target(0.f)
+			.delay(0.3f)
+			.start(m_tweenManager);
+	}
+	else if (mode == Installed)
+	{
+		TweenEngine::Tween::to(InstalledList::getInstance(), InstalledList::POSITION_Y, 0.3f)
 			.target(0.f)
 			.delay(0.3f)
 			.start(m_tweenManager);
