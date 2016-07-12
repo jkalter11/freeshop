@@ -185,7 +185,7 @@ int AppInfo::getValues(int tweenType, float *returnValues)
 	}
 }
 
-void AppInfo::loadApp(AppItem *appItem)
+void AppInfo::loadApp(std::shared_ptr<AppItem> appItem)
 {
 	if (m_appItem == appItem)
 		return;
@@ -246,7 +246,7 @@ void AppInfo::loadApp(AppItem *appItem)
 	}
 }
 
-const AppItem *AppInfo::getAppItem() const
+const std::shared_ptr<AppItem> AppInfo::getAppItem() const
 {
 	return m_appItem;
 }

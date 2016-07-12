@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 #include <TweenEngine/TweenManager.h>
 #include <cpp3ds/System/Thread.hpp>
 #include "GUI/AppItem.hpp"
@@ -52,7 +53,7 @@ private:
 	SortType m_sortType;
 	std::string m_jsonFilename;
 	int m_selectedIndex;
-	std::vector<std::unique_ptr<AppItem>> m_appItems;
+	std::vector<std::shared_ptr<AppItem>> m_appItems;
 	std::vector<std::unique_ptr<GUI::AppItem>> m_guiAppItems;
 	std::vector<cpp3ds::Texture*> m_iconTextures;
 	bool m_collapsed;

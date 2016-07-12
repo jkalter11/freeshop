@@ -1,6 +1,7 @@
 #ifndef FREESHOP_APPITEM_HPP
 #define FREESHOP_APPITEM_HPP
 
+#include <memory>
 #include <cpp3ds/Graphics/Drawable.hpp>
 #include <cpp3ds/Graphics/Texture.hpp>
 #include <cpp3ds/Graphics/Sprite.hpp>
@@ -10,7 +11,7 @@
 
 namespace FreeShop {
 
-class AppItem {
+class AppItem : public std::enable_shared_from_this<AppItem> {
 public:
 	enum Region {
 		Japan     = 1 << 0,

@@ -23,8 +23,8 @@ public:
 	bool processEvent(const cpp3ds::Event& event);
 	void update(float delta);
 
-	void loadApp(AppItem *appItem);
-	const AppItem* getAppItem() const;
+	void loadApp(std::shared_ptr<AppItem> appItem);
+	const std::shared_ptr<AppItem> getAppItem() const;
 
 	void setCurrentScreenshot(int screenshotIndex);
 
@@ -69,7 +69,7 @@ private:
 
 	cpp3ds::RectangleShape m_fadeRect;
 
-	AppItem *m_appItem;
+	std::shared_ptr<AppItem> m_appItem;
 
 	TweenEngine::TweenManager m_tweenManager;
 };

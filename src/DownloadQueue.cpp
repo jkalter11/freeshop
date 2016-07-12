@@ -17,7 +17,7 @@
 namespace FreeShop {
 
 
-DownloadItem::DownloadItem(AppItem *appItem, Download *download, Installer *installer)
+DownloadItem::DownloadItem(std::shared_ptr<AppItem> appItem, Download *download, Installer *installer)
 : appItem(appItem)
 , download(download)
 , installer(installer)
@@ -49,7 +49,7 @@ DownloadQueue::~DownloadQueue()
 	m_downloads.clear();
 }
 
-void DownloadQueue::addDownload(AppItem* app, cpp3ds::Uint64 titleId, int contentIndex, float progress)
+void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 titleId, int contentIndex, float progress)
 {
 	cpp3ds::Lock lock(m_mutexRefresh);
 
@@ -299,7 +299,7 @@ void DownloadQueue::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates stat
 }
 
 
-void DownloadQueue::cancelDownload(AppItem *app)
+void DownloadQueue::cancelDownload(std::shared_ptr<AppItem> app)
 {
 	for (auto& item : m_downloads)
 		if (item->appItem == app && item->download->getStatus() != Download::Failed && item->download->getStatus() != Download::Canceled)
@@ -310,14 +310,14 @@ void DownloadQueue::cancelDownload(AppItem *app)
 }
 
 
-void DownloadQueue::restartDownload(AppItem *app)
+void DownloadQueue::restartDownload(std::shared_ptr<AppItem> app)
 {
 	cancelDownload(app);
 	addDownload(app);
 }
 
 
-bool DownloadQueue::isDownloading(AppItem *app)
+bool DownloadQueue::isDownloading(std::shared_ptr<AppItem> app)
 {
 	for (auto& item : m_downloads)
 	{
@@ -555,7 +555,7 @@ void DownloadQueue::load()
 						// TODO: resume DLC / Updates?
 						for (auto& app : list)
 							if (app->getAppItem()->getTitleId() == titleId)
-								addDownload(app.get()->getAppItem(), 0, contentIndex, progress);
+								addDownload(app->getAppItem(), 0, contentIndex, progress);
 						break;
 					}
 			}

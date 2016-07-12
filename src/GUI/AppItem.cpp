@@ -124,7 +124,7 @@ void AppItem::setTitle(const cpp3ds::String &title)
 	m_titleText.setString(cpp3ds::String::fromUtf8(s.begin(), s.end()));
 }
 
-void AppItem::setAppItem(FreeShop::AppItem *appItem)
+void AppItem::setAppItem(std::shared_ptr<::FreeShop::AppItem> appItem)
 {
 	m_appItem = appItem;
 	if (appItem)
@@ -158,7 +158,7 @@ void AppItem::setAppItem(FreeShop::AppItem *appItem)
 	}
 }
 
-::FreeShop::AppItem *AppItem::getAppItem() const
+std::shared_ptr<::FreeShop::AppItem> AppItem::getAppItem() const
 {
 	return m_appItem;
 }

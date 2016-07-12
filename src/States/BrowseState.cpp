@@ -264,7 +264,7 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 				setItemIndex(0);
 				break;
 			case cpp3ds::Keyboard::X: {
-				AppItem *app = AppList::getInstance().getSelected()->getAppItem();
+				auto app = AppList::getInstance().getSelected()->getAppItem();
 				if (app && !DownloadQueue::getInstance().isDownloading(app))
 				{
 					app->queueForInstall();
@@ -311,7 +311,7 @@ void BrowseState::setItemIndex(int index)
 
 void BrowseState::loadApp()
 {
-	AppItem* item = AppList::getInstance().getSelected()->getAppItem();
+	auto item = AppList::getInstance().getSelected()->getAppItem();
 	if (!item)
 		return;
 

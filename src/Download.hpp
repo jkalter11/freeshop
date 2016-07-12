@@ -46,7 +46,7 @@ public:
 
 	const cpp3ds::Vector2f &getSize() const;
 
-	void fillFromAppItem(AppItem* app);
+	void fillFromAppItem(std::shared_ptr<AppItem> app);
 
 	void processEvent(const cpp3ds::Event& event);
 
@@ -88,7 +88,7 @@ private:
 	DownloadFinishCallback m_onFinish;
 	cpp3ds::Thread m_thread;
 
-	AppItem *m_appItem;
+	std::shared_ptr<AppItem> m_appItem;
 
 	cpp3ds::Mutex m_mutex;
 	Status m_status;

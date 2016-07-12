@@ -302,7 +302,7 @@ const cpp3ds::Vector2f &Download::getSize() const
 }
 
 
-void Download::fillFromAppItem(AppItem *app)
+void Download::fillFromAppItem(std::shared_ptr<AppItem> app)
 {
 	m_appItem = app;
 	cpp3ds::IntRect textureRect;

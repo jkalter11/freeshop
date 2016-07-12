@@ -61,11 +61,11 @@ void AppList::refresh()
 
 			if (Installer::titleKeyExists(titleId))
 			{
-				std::unique_ptr<AppItem> appItem(new AppItem());
+				auto appItem = std::make_shared<AppItem>();
 				std::unique_ptr<GUI::AppItem> guiAppItem(new GUI::AppItem());
 
 				appItem->loadFromJSON(iter->name.GetString(), iter->value);
-				guiAppItem->setAppItem(appItem.get());
+				guiAppItem->setAppItem(appItem);
 				// Move offscreen to avoid everything being drawn at once and crashing
 				guiAppItem->setPosition(500.f, 100.f);
 

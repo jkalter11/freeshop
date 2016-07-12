@@ -1,6 +1,7 @@
 #ifndef FREESHOP_GUI_APPITEM_HPP
 #define FREESHOP_GUI_APPITEM_HPP
 
+#include <memory>
 #include "../TweenObjects.hpp"
 #include "../AppItem.hpp"
 #include "NinePatch.hpp"
@@ -18,8 +19,8 @@ namespace FreeShop {
 
 			~AppItem();
 
-			void setAppItem(::FreeShop::AppItem *appItem);
-			::FreeShop::AppItem *getAppItem() const;
+			void setAppItem(std::shared_ptr<::FreeShop::AppItem> appItem);
+			std::shared_ptr<::FreeShop::AppItem> getAppItem() const;
 
 			void setSize(float width, float height);
 
@@ -49,7 +50,7 @@ namespace FreeShop {
 			void setFilesize(cpp3ds::Uint64 filesize);
 
 		private:
-			::FreeShop::AppItem *m_appItem;
+			std::shared_ptr<::FreeShop::AppItem> m_appItem;
 
 			gui3ds::NinePatch m_background;
 

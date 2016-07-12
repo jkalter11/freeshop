@@ -213,11 +213,11 @@ const cpp3ds::Texture *AppItem::getIcon(cpp3ds::IntRect &outRect) const
 
 void AppItem::queueForInstall()
 {
-	DownloadQueue::getInstance().addDownload(this);
+	DownloadQueue::getInstance().addDownload(shared_from_this());
 	for (auto &id : m_updates)
-		DownloadQueue::getInstance().addDownload(this, id);
+		DownloadQueue::getInstance().addDownload(shared_from_this(), id);
 	for (auto &id : m_dlc)
-		DownloadQueue::getInstance().addDownload(this, id);
+		DownloadQueue::getInstance().addDownload(shared_from_this(), id);
 }
 
 
