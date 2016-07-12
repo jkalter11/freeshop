@@ -195,8 +195,8 @@ void AppInfo::loadApp(AppItem *appItem)
 	if (appItem)
 	{
 		std::string jsonFilename = appItem->getJsonFilename();
-		std::string urlTitleData = "https://samurai.ctr.shop.nintendo.net/samurai/ws/" + appItem->getUriRegion() + "/title/" + appItem->getContentId();
-		std::string dir = cpp3ds::FileSystem::getFilePath("sdmc:/freeShop/tmp/" + appItem->getTitleId());
+		std::string urlTitleData = "https://samurai.ctr.shop.nintendo.net/samurai/ws/" + appItem->getUriRegion() + "/title/" + appItem->getContentId() + "/?shop_id=1";
+		std::string dir = cpp3ds::FileSystem::getFilePath("sdmc:/freeShop/tmp/" + appItem->getTitleIdStr());
 		if (!pathExists(dir.c_str(), false))
 			mkdir(dir.c_str(), 0777);
 
@@ -242,7 +242,6 @@ void AppInfo::loadApp(AppItem *appItem)
 
 				m_textDownload.setFillColor(cpp3ds::Color::White);
 			}
-
 		}
 	}
 }
