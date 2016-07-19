@@ -19,6 +19,8 @@ AppList::AppList(std::string jsonFilename)
 : m_sortType(AlphaNumericAsc)
 , m_selectedIndex(-1)
 , m_collapsed(false)
+, m_filterRegions(0)
+, m_filterLanguages(0)
 {
 	m_jsonFilename = jsonFilename;
 }
@@ -81,7 +83,8 @@ void AppList::refresh()
 		m_selectedIndex = 0;
 
 	sort();
-	resize();
+	filter();
+	reposition();
 	setSelectedIndex(m_selectedIndex);
 }
 
@@ -89,7 +92,7 @@ void AppList::setSortType(AppList::SortType sortType)
 {
 	m_sortType = sortType;
 	sort();
-	resize();
+	reposition();
 }
 
 AppList::SortType AppList::getSortType() const
@@ -101,6 +104,9 @@ void AppList::sort()
 {
 	std::sort(m_guiAppItems.begin(), m_guiAppItems.end(), [&](const std::unique_ptr<GUI::AppItem>& a, const std::unique_ptr<GUI::AppItem>& b)
 	{
+		if (a->isFilteredOut() != b->isFilteredOut())
+			return a->isFilteredOut();
+
 		if (a->getMatchScore() != b->getMatchScore())
 		{
 			return a->getMatchScore() > b->getMatchScore();
@@ -118,7 +124,50 @@ void AppList::sort()
 	});
 }
 
-void AppList::resize()
+void AppList::filter()
+{
+	if (m_filterRegions)
+	{
+		for (const auto& appItemGUI : m_guiAppItems)
+			appItemGUI->setFilteredOut(!(appItemGUI->getAppItem()->getRegions() & m_filterRegions));
+	}
+	else
+		for (const auto& appItemGUI : m_guiAppItems)
+			appItemGUI->setFilteredOut(false);
+
+	if (m_filterLanguages != 0)
+	{
+
+	}
+	if (!m_filterGenres.empty())
+	{
+		for (const auto& appItemGUI : m_guiAppItems)
+			if (appItemGUI->isVisible())
+			{
+				for (const auto& appGenre : appItemGUI->getAppItem()->getGenres())
+					for (const auto& filterGenre : m_filterGenres)
+						if (appGenre == filterGenre)
+							goto matchedGenre;
+				appItemGUI->setFilteredOut(true);
+matchedGenre:;
+			}
+	}
+	if (!m_filterPlatforms.empty())
+	{
+		for (const auto& appItemGUI : m_guiAppItems)
+			if (appItemGUI->isVisible())
+			{
+				for (const auto& filterPlatform : m_filterPlatforms)
+					if (appItemGUI->getAppItem()->getPlatform() == filterPlatform)
+						goto matchedPlatform;
+				appItemGUI->setFilteredOut(true);
+matchedPlatform:;
+			}
+	}
+	reposition();
+}
+
+void AppList::reposition()
 {
 	bool segmentFound = false;
 	float destY = 4.f;
@@ -127,7 +176,7 @@ void AppList::resize()
 
 	for (auto& app : m_guiAppItems)
 	{
-		if (!app->isVisible())
+		if (!app->isVisible() || app->isFilteredOut())
 			continue;
 
 		float destX = 3.f + (i/4) * (m_collapsed ? 59.f : 200.f);
@@ -184,7 +233,7 @@ void AppList::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) co
 
 	for (auto& app : m_guiAppItems)
 	{
-		if (app->isVisible())
+		if (app->isVisible() && !app->isFilteredOut())
 			target.draw(*app, states);
 	}
 }
@@ -198,7 +247,7 @@ size_t AppList::getVisibleCount() const
 {
 	size_t count = 0;
 	for (auto& item : m_guiAppItems)
-		if (item->isVisible())
+		if (item->isVisible() && !item->isFilteredOut())
 			count++;
 		else break;
 
@@ -238,14 +287,14 @@ void AppList::setCollapsed(bool collapsed)
 			.delay(0.3f)
 			.setCallback(TweenEngine::TweenCallback::START, [=](TweenEngine::BaseTween *source) {
 				m_collapsed = collapsed;
-				resize();
+				reposition();
 			})
 			.start(m_tweenManager);
 	}
 	else
 	{
 		m_collapsed = collapsed;
-		resize();
+		reposition();
 		TweenEngine::Tween::to(*this, AppList::POSITION_X, 0.3f)
 			.target(-newX)
 			.setCallback(TweenEngine::TweenCallback::COMPLETE, [this, newX](TweenEngine::BaseTween *source) {
@@ -313,7 +362,7 @@ void AppList::filterBySearch(const std::string &searchTerm, std::vector<util3ds:
 	if (m_selectedIndex >= 0)
 		m_guiAppItems[m_selectedIndex]->deselect();
 	sort();
-	resize();
+	reposition();
 
 	int i = 0;
 	for (auto& textMatch : textMatches)
@@ -384,5 +433,24 @@ AppList &AppList::getInstance()
 	static AppList list("sdmc:/freeShop/cache/data.json");
 	return list;
 }
+
+void AppList::setFilterGenres(const std::vector<int> &genres)
+{
+	m_filterGenres = genres;
+	filter();
+}
+
+void AppList::setFilterPlatforms(const std::vector<int> &platforms)
+{
+	m_filterPlatforms = platforms;
+	filter();
+}
+
+void AppList::setFilterRegions(int regions)
+{
+	m_filterRegions = regions;
+	filter();
+}
+
 
 } // namespace FreeShop

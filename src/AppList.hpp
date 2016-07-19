@@ -43,14 +43,26 @@ public:
 
 	void update(float delta);
 
+	void setFilterGenres(const std::vector<int> &genres);
+	void setFilterPlatforms(const std::vector<int> &genres);
+	void setFilterLanguages(int languages);
+	void setFilterRegions(int regions);
+
 protected:
 	AppList(std::string jsonFilename);
 	virtual void draw(cpp3ds::RenderTarget& target, cpp3ds::RenderStates states) const;
 	void sort();
-	void resize();
+	void filter();
+	void reposition();
 
 private:
 	SortType m_sortType;
+
+	std::vector<int> m_filterGenres;
+	std::vector<int> m_filterPlatforms;
+	int m_filterRegions;
+	int m_filterLanguages;
+
 	std::string m_jsonFilename;
 	int m_selectedIndex;
 	std::vector<std::shared_ptr<AppItem>> m_appItems;

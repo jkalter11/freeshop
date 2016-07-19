@@ -23,6 +23,7 @@ namespace GUI
 AppItem::AppItem()
 	: m_appItem(nullptr)
 	, m_infoVisible(true)
+	, m_filteredOut(false)
 	, m_visible(true)
 	, m_matchScore(-1)
 {
@@ -187,6 +188,16 @@ bool AppItem::isVisible() const
 void AppItem::setVisible(bool visible)
 {
 	m_visible = visible;
+}
+
+bool AppItem::isFilteredOut() const
+{
+	return m_filteredOut;
+}
+
+void AppItem::setFilteredOut(bool filteredOut)
+{
+	m_filteredOut = filteredOut;
 }
 
 void AppItem::setInfoVisible(bool visible)

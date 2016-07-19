@@ -28,6 +28,8 @@ namespace FreeShop {
 
 			void setVisible(bool visible);
 			bool isVisible() const;
+			void setFilteredOut(bool filteredOut);
+			bool isFilteredOut() const;
 
 			void setInfoVisible(bool visible);
 			bool isInfoVisible() const;
@@ -68,6 +70,7 @@ namespace FreeShop {
 
 			bool m_infoVisible;
 			mutable bool m_visible;
+			mutable bool m_filteredOut;
 		};
 
 	} // namespace GUI
