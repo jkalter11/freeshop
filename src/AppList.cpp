@@ -34,9 +34,9 @@ AppList::~AppList()
 void AppList::refresh()
 {
 #ifdef EMULATION
-	uint8_t isNew3DS = 1;
+	bool isNew3DS = true;
 #else
-	uint8_t isNew3DS = 0;
+	bool isNew3DS = false;
 	APT_CheckNew3DS(&isNew3DS);
 #endif
 
