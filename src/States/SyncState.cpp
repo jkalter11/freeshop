@@ -184,15 +184,9 @@ void SyncState::sync()
 	{
 #ifndef EMULATION
 		Result res = 0;
-		aptOpenSession();
-
-		if (R_SUCCEEDED(res = APT_PrepareToDoAppJump(0, 0x400000F12EE00, MEDIATYPE_SD))) {
-			u8 buf0[0x300];
-			u8 buf1[0x20];
-			res = APT_DoAppJump(0x300, 0x20, buf0, buf1);
-		}
-
-		aptCloseSession();
+		u8 hmac[0x20];
+		if (R_SUCCEEDED(res = APT_PrepareToDoApplicationJump(0, 0x400000F12EE00, MEDIATYPE_SD)))
+			res = APT_DoApplicationJump(0, 0, hmac);
 		requestStackClear();
 		return;
 #endif
