@@ -12,7 +12,7 @@ namespace FreeShop {
 class SleepState : public State
 {
 public:
-	SleepState(StateStack& stack, Context& context);
+	SleepState(StateStack& stack, Context& context, StateCallback callback);
 	~SleepState();
 
 	static bool isSleeping;

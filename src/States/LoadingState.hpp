@@ -13,7 +13,7 @@ namespace FreeShop {
 class LoadingState : public State
 {
 public:
-	LoadingState(StateStack& stack, Context& context);
+	LoadingState(StateStack& stack, Context& context, StateCallback callback);
 
 	virtual void renderTopScreen(cpp3ds::Window& window);
 	virtual void renderBottomScreen(cpp3ds::Window& window);

@@ -10,8 +10,8 @@ using namespace util3ds;
 
 namespace FreeShop {
 
-TitleState::TitleState(StateStack& stack, Context& context)
-: State(stack, context)
+TitleState::TitleState(StateStack& stack, Context& context, StateCallback callback)
+: State(stack, context, callback)
 {
 	m_textVersion.setString(FREESHOP_VERSION);
 	m_textVersion.setCharacterSize(12);

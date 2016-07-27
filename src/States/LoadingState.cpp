@@ -8,8 +8,8 @@
 
 namespace FreeShop {
 
-LoadingState::LoadingState(StateStack& stack, Context& context)
-: State(stack, context)
+LoadingState::LoadingState(StateStack& stack, Context& context, StateCallback callback)
+: State(stack, context, callback)
 {
 	m_background.setSize(cpp3ds::Vector2f(400.f, 240.f));
 	m_background.setFillColor(cpp3ds::Color(0, 0, 0, 50));

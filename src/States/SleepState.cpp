@@ -11,8 +11,8 @@ namespace FreeShop {
 bool SleepState::isSleeping = false;
 cpp3ds::Clock SleepState::clock;
 
-SleepState::SleepState(StateStack& stack, Context& context)
-: State(stack, context)
+SleepState::SleepState(StateStack& stack, Context& context, StateCallback callback)
+: State(stack, context, callback)
 , m_sleepEnding(false)
 {
 #ifndef EMULATION

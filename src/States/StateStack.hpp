@@ -34,7 +34,7 @@ public:
 	void renderBottomScreen(cpp3ds::Window& window);
 	void processEvent(const cpp3ds::Event& event);
 
-	void pushState(States::ID stateID);
+	void pushState(States::ID stateID, bool renderAlone = false, StateCallback callback = nullptr);
 	void popState();
 	void clearStates();
 	void clearStatesUnder();
@@ -43,40 +43,46 @@ public:
 
 
 private:
-	State::Ptr createState(States::ID stateID);
+	State::Ptr createState(States::ID stateID, StateCallback callback);
 	void       applyPendingChanges();
 
 
 private:
 	struct PendingChange
 	{
-		explicit PendingChange(Action action, States::ID stateID = States::None);
+		explicit PendingChange(Action action, States::ID stateID = States::None, bool renderAlone = false, StateCallback = nullptr);
 
 		Action     action;
 		States::ID stateID;
+		bool renderAlone;
+		StateCallback callback;
 	};
 
 	struct StateStackItem
 	{
 		States::ID id;
 		State::Ptr pointer;
+		bool renderAlone;
+		bool renderEnabled;
 	};
+
+	void updateRenderConfig();
 
 private:
 	std::vector<StateStackItem>    m_stack;
 	std::vector<PendingChange> m_pendingList;
 
 	State::Context m_context;
-	std::map<States::ID, std::function<State::Ptr()>> m_factories;
+	std::map<States::ID, std::function<State::Ptr(StateCallback)>> m_factories;
 };
 
 
 template <typename T>
 void StateStack::registerState(States::ID stateID)
 {
-	m_factories[stateID] = [this] ()
+	m_factories[stateID] = [this] (StateCallback callback)
 	{
-		return State::Ptr(new T(*this, m_context));
+		return State::Ptr(new T(*this, m_context, callback));
 	};
 }
 

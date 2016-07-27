@@ -27,7 +27,8 @@ namespace FreeShop {
 class BrowseState : public State
 {
 public:
-	BrowseState(StateStack& stack, Context& context);
+	BrowseState(StateStack& stack, Context& context, StateCallback callback);
+	~BrowseState();
 
 	virtual void renderTopScreen(cpp3ds::Window& window);
 	virtual void renderBottomScreen(cpp3ds::Window& window);

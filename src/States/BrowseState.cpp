@@ -17,8 +17,8 @@
 
 namespace FreeShop {
 
-BrowseState::BrowseState(StateStack& stack, Context& context)
-: State(stack, context)
+BrowseState::BrowseState(StateStack& stack, Context& context, StateCallback callback)
+: State(stack, context, callback)
 , m_appListPositionX(0.f)
 , m_threadInitialize(&BrowseState::initialize, this)
 , m_threadLoadApp(&BrowseState::loadApp, this)

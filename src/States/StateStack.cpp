@@ -28,14 +28,16 @@ void StateStack::renderTopScreen(cpp3ds::Window &window)
 {
 	// Draw all active states from bottom to top
 	for(const StateStackItem& state : m_stack)
-		state.pointer->renderTopScreen(window);
+		if (state.renderEnabled)
+			state.pointer->renderTopScreen(window);
 }
 
 void StateStack::renderBottomScreen(cpp3ds::Window &window)
 {
 	// Draw all active states from bottom to top
 	for(const StateStackItem& state : m_stack)
-		state.pointer->renderBottomScreen(window);
+		if (state.renderEnabled)
+			state.pointer->renderBottomScreen(window);
 }
 
 void StateStack::processEvent(const cpp3ds::Event& event)
@@ -50,9 +52,9 @@ void StateStack::processEvent(const cpp3ds::Event& event)
 	applyPendingChanges();
 }
 
-void StateStack::pushState(States::ID stateID)
+void StateStack::pushState(States::ID stateID, bool renderAlone, StateCallback callback)
 {
-	m_pendingList.push_back(PendingChange(Push, stateID));
+	m_pendingList.push_back(PendingChange(Push, stateID, renderAlone, callback));
 }
 
 void StateStack::popState()
@@ -75,12 +77,12 @@ bool StateStack::isEmpty() const
 	return m_stack.empty();
 }
 
-State::Ptr StateStack::createState(States::ID stateID)
+State::Ptr StateStack::createState(States::ID stateID, StateCallback callback)
 {
 	auto found = m_factories.find(stateID);
 	assert(found != m_factories.end());
 
-	return found->second();
+	return found->second(callback);
 }
 
 void StateStack::applyPendingChanges()
@@ -90,11 +92,13 @@ void StateStack::applyPendingChanges()
 		switch (change.action)
 		{
 			case Push:
-				m_stack.push_back({change.stateID, createState(change.stateID)});
+				m_stack.push_back({change.stateID, createState(change.stateID, change.callback), change.renderAlone, true});
+				updateRenderConfig();
 				break;
 
 			case Pop:
 				m_stack.pop_back();
+				updateRenderConfig();
 				break;
 
 			case Clear:
@@ -111,9 +115,23 @@ void StateStack::applyPendingChanges()
 	m_pendingList.clear();
 }
 
-StateStack::PendingChange::PendingChange(Action action, States::ID stateID)
+void StateStack::updateRenderConfig()
+{
+	bool renderEnabled = true;
+	for (auto itr = m_stack.rbegin(); itr != m_stack.rend(); ++itr)
+	{
+		itr->renderEnabled = renderEnabled;
+		if (itr->renderAlone)
+			renderEnabled = false;
+	}
+}
+
+
+	StateStack::PendingChange::PendingChange(Action action, States::ID stateID, bool renderAlone, StateCallback callback)
 : action(action)
 , stateID(stateID)
+, renderAlone(renderAlone)
+, callback(callback)
 {
 }
 

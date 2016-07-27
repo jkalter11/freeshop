@@ -103,8 +103,8 @@ namespace FreeShop {
 bool g_syncComplete = false;
 bool g_browserLoaded = false;
 
-SyncState::SyncState(StateStack& stack, Context& context)
-: State(stack, context)
+SyncState::SyncState(StateStack& stack, Context& context, StateCallback callback)
+: State(stack, context, callback)
 , m_threadSync(&SyncState::sync, this)
 , m_threadStartupSound(&SyncState::startupSound, this)
 {

@@ -19,7 +19,7 @@ extern bool g_browserLoaded;
 class SyncState : public State
 {
 public:
-	SyncState(StateStack& stack, Context& context);
+	SyncState(StateStack& stack, Context& context, StateCallback callback);
 	~SyncState();
 
 	virtual void renderTopScreen(cpp3ds::Window& window);
