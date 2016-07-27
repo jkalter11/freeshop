@@ -53,9 +53,10 @@ int main(int argc, char** argv)
 	AM_InitializeExternalTitleDatabase(false);
 #endif
 
-	FreeShop::FreeShop game;
-	game.run();
+	auto game = new FreeShop::FreeShop();
+	game->run();
 	FreeShop::DownloadQueue::getInstance().suspend();
 	FreeShop::DownloadQueue::getInstance().save();
+	delete game;
 	return 0;
 }
