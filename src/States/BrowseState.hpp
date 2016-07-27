@@ -17,6 +17,11 @@
 #include <cpp3ds/Audio/Sound.hpp>
 #include <cpp3ds/Audio/Music.hpp>
 
+#include <Gwen/Renderers/cpp3ds.h>
+#include <Gwen/Input/cpp3ds.h>
+#include <Gwen/Skins/Simple.h>
+#include <Gwen/Skins/TexturedBase.h>
+
 namespace FreeShop {
 
 class BrowseState : public State
@@ -78,6 +83,13 @@ private:
 	util3ds::TweenRectangleShape m_whiteScreen;
 
 	std::vector<util3ds::RichText> m_textMatches;
+
+	// GWEN
+	Gwen::Renderer::cpp3dsRenderer *m_gwenRenderer;
+	Gwen::Skin::TexturedBase *m_gwenSkin;
+	Gwen::Input::cpp3dsInput m_gwenInput;
+	Gwen::Controls::Canvas *m_gwenCanvas;
+	GUI::Settings *m_settingsGUI;
 };
 
 } // namespace FreeShop

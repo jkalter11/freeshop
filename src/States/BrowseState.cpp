@@ -26,8 +26,20 @@ BrowseState::BrowseState(StateStack& stack, Context& context)
 , m_busy(false)
 , m_activeDownloadCount(0)
 , m_mode(Downloads)
+, m_gwenRenderer(nullptr)
 {
 	m_threadInitialize.launch();
+
+BrowseState::~BrowseState()
+{
+
+	if (m_gwenRenderer)
+	{
+		delete m_settingsGUI;
+		delete m_gwenCanvas;
+		delete m_gwenSkin;
+		delete m_gwenRenderer;
+	}
 }
 
 void BrowseState::initialize()
@@ -100,6 +112,16 @@ void BrowseState::renderTopScreen(cpp3ds::Window& window)
 
 void BrowseState::renderBottomScreen(cpp3ds::Window& window)
 {
+	if (!m_gwenRenderer)
+	{
+		m_gwenRenderer = new Gwen::Renderer::cpp3dsRenderer(window);
+		m_gwenSkin = new Gwen::Skin::TexturedBase(m_gwenRenderer);
+		m_gwenSkin->Init("DefaultSkin.png");
+		m_gwenSkin->SetDefaultFont(L"", 11);
+
+		m_settingsGUI = new GUI::Settings(m_gwenSkin, this);
+		m_settingsGUI->setPosition(cpp3ds::Vector2f(0.f, 200.f));
+	}
 	if (!g_syncComplete || !g_browserLoaded)
 		return;
 
@@ -108,6 +130,10 @@ void BrowseState::renderBottomScreen(cpp3ds::Window& window)
 		window.draw(m_keyboard);
 		for (auto& textMatch : m_textMatches)
 			window.draw(textMatch);
+	}
+	if (m_settingsGUI->getPosition().y < 200.f)
+	{
+		m_settingsGUI->render();
 	}
 
 	window.draw(m_iconSet);
@@ -177,6 +203,8 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 		DownloadQueue::getInstance().processEvent(event);
 	} else if (m_mode == Installed) {
 		InstalledList::getInstance().processEvent(event);
+	} else if (m_mode == Settings) {
+		m_settingsGUI->processEvent(event);
 	}
 
 	m_iconSet.processEvent(event);
@@ -372,6 +400,12 @@ void BrowseState::setMode(BrowseState::Mode mode)
 
 		AppList::getInstance().setCollapsed(false);
 	}
+	else if (m_mode == Settings)
+	{
+		TweenEngine::Tween::to(*m_settingsGUI, GUI::Settings::POSITION_XY, 0.3f)
+			.target(0.f, 200.f)
+			.start(m_tweenManager);
+	}
 
 	TweenEngine::Tween::to(m_keyboard, util3ds::Keyboard::POSITION_XY, 0.5f)
 		.target(0.f, 240.f)
@@ -405,6 +439,13 @@ void BrowseState::setMode(BrowseState::Mode mode)
 	{
 		TweenEngine::Tween::to(InstalledList::getInstance(), InstalledList::POSITION_Y, 0.3f)
 			.target(0.f)
+			.delay(0.3f)
+			.start(m_tweenManager);
+	}
+	else if (mode == Settings)
+	{
+		TweenEngine::Tween::to(*m_settingsGUI, GUI::Settings::POSITION_XY, 0.3f)
+			.target(0.f, 0.f)
 			.delay(0.3f)
 			.start(m_tweenManager);
 	}
