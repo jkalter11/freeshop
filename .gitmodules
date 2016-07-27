@@ -7,3 +7,6 @@
 [submodule "external/GWEN"]
 	path = external/GWEN
 	url = https://github.com/cpp3ds/GWEN.git
+[submodule "external/quirc"]
+	path = external/quirc
+	url = https://github.com/dlbeer/quirc.git

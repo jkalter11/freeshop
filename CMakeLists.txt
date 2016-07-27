@@ -35,9 +35,11 @@ include_directories(
 	${PROJECT_SOURCE_DIR}/external/tween-engine/include
 	${PROJECT_SOURCE_DIR}/external/GWEN/gwen/include
 	${PROJECT_SOURCE_DIR}/external/rapidjson/include
+	${PROJECT_SOURCE_DIR}/external/quirc/lib
 )
 FILE(GLOB_RECURSE TWEEN_ENGINE_SOURCE ${PROJECT_SOURCE_DIR}/external/tween-engine/src/*.cpp)
 FILE(GLOB_RECURSE GWEN_SOURCE ${PROJECT_SOURCE_DIR}/external/GWEN/gwen/src/*.cpp)
+FILE(GLOB_RECURSE QUIRC_SOURCE ${PROJECT_SOURCE_DIR}/external/quirc/lib/*.c)
 
 set(SOURCE_FILES
 	${PROJECT_SOURCE_DIR}/src/main.cpp
@@ -71,6 +73,7 @@ set(SOURCE_FILES
 	${TWEEN_ENGINE_SOURCE}
 	${GWEN_SOURCE}
 	${PROJECT_SOURCE_DIR}/external/GWEN/gwen/Renderers/cpp3ds/cpp3ds.cpp
+	${QUIRC_SOURCE}
 )
 
 set(ARM_SOURCE_FILES
