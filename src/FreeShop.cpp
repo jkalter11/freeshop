@@ -18,7 +18,7 @@ namespace FreeShop {
 
 FreeShop::FreeShop()
 : Game(0x100000)
-, m_stateStack(State::Context(m_name))
+, m_stateStack(State::Context(m_text, m_data))
 {
 	m_stateStack.registerState<TitleState>(States::Title);
 	m_stateStack.registerState<LoadingState>(States::Loading);

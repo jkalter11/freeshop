@@ -8,6 +8,7 @@
 #include "../Keyboard/Keyboard.hpp"
 #include "../RichText.hpp"
 #include "../IconSet.hpp"
+#include "../GUI/Settings.hpp"
 #include <cpp3ds/Graphics/Sprite.hpp>
 #include <cpp3ds/Graphics/Texture.hpp>
 #include <cpp3ds/System/Clock.hpp>

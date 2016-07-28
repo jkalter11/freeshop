@@ -23,7 +23,8 @@ private:
 	cpp3ds::Text textFPS;
 
 	// Shared State context variables
-	cpp3ds::String m_name;
+	std::vector<char*> m_data;
+	cpp3ds::String m_text;
 };
 
 }

@@ -16,8 +16,9 @@ namespace FreeShop {
 namespace GUI {
 
 
-Settings::Settings(Gwen::Skin::TexturedBase *skin)
+Settings::Settings(Gwen::Skin::TexturedBase *skin,  State *state)
 : m_ignoreCheckboxChange(false)
+, m_state(state)
 {
 	m_canvas = new Canvas(skin);
 	m_canvas->SetPos(0, 0);

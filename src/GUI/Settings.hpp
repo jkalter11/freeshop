@@ -6,6 +6,7 @@
 #include <Gwen/Skins/TexturedBase.h>
 #include <TweenEngine/Tweenable.h>
 #include <cpp3ds/System/Vector2.hpp>
+#include "../States/State.hpp"
 
 
 namespace FreeShop
@@ -17,7 +18,7 @@ namespace FreeShop
 		public:
 			static const int POSITION_XY = 1;
 
-			Settings(Gwen::Skin::TexturedBase *skin);
+			Settings(Gwen::Skin::TexturedBase *skin, State *state);
 			~Settings();
 
 			bool processEvent(const cpp3ds::Event &event);
@@ -45,6 +46,7 @@ namespace FreeShop
 
 			cpp3ds::Vector2f m_position;
 
+			State *m_state;
 			Gwen::Input::cpp3dsInput m_input;
 			Gwen::Controls::Canvas *m_canvas;
 			Gwen::Controls::Button *m_button;

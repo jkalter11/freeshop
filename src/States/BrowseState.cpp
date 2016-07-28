@@ -29,10 +29,10 @@ BrowseState::BrowseState(StateStack& stack, Context& context, StateCallback call
 , m_gwenRenderer(nullptr)
 {
 	m_threadInitialize.launch();
+}
 
 BrowseState::~BrowseState()
 {
-
 	if (m_gwenRenderer)
 	{
 		delete m_settingsGUI;
