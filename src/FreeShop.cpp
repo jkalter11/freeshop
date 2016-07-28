@@ -8,6 +8,7 @@
 #include "Config.hpp"
 #include "Util.hpp"
 #include "States/SleepState.hpp"
+#include "States/QrScannerState.hpp"
 
 
 using namespace cpp3ds;
@@ -29,6 +30,8 @@ FreeShop::FreeShop()
 	m_stateStack.pushState(States::Loading);
 	m_stateStack.pushState(States::Sync);
 	m_stateStack.pushState(States::Title);
+	m_stateStack.registerState<QrScannerState>(States::QrScanner);
+
 
 	textFPS.setFillColor(cpp3ds::Color::Red);
 	textFPS.setCharacterSize(20);

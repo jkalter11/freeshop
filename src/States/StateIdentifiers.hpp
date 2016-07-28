@@ -10,6 +10,7 @@ namespace FreeShop {
 			Sync,
 			Browse,
 			Sleep,
+			QrScanner,
 		};
 	}
 }
