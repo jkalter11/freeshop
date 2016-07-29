@@ -35,15 +35,19 @@ Settings::Settings(Gwen::Skin::TexturedBase *skin,  State *state)
 	m_filterTabControl->Dock(Gwen::Pos::Fill);
 	m_filterTabControl->SetTabStripPosition(Gwen::Pos::Left);
 	Base *filterPage = m_filterTabControl->AddPage(_("Regions").toAnsiString())->GetPage();
-	fillRegions(filterPage);
+	fillFilterRegions(filterPage);
 
 	ScrollControl *scrollBox;
 	scrollBox = addFilterPage("Genre");
-	fillGenres(scrollBox);
-	filterPage = m_filterTabControl->AddPage(_("Language").toAnsiString())->GetPage();
-//	filterPage = m_filterTabControl->AddPage(_("Feature").toAnsiString())->GetPage();
+	fillFilterGenres(scrollBox);
+
+	scrollBox = addFilterPage("Language");
+	fillFilterLanguages(scrollBox);
+
+//	scrollBox = addFilterPage("Feature");
+
 	scrollBox = addFilterPage("Platform");
-	fillPlatforms(scrollBox);
+	fillFilterPlatforms(scrollBox);
 
 	page = m_tabControl->AddPage(_("Sort").toAnsiString())->GetPage();
 
@@ -102,7 +106,7 @@ const cpp3ds::Vector2f &Settings::getPosition() const
 	return m_position;
 }
 
-void Settings::fillGenres(Gwen::Controls::Base *parent)
+void Settings::fillFilterGenres(Gwen::Controls::Base *parent)
 {
 	std::string jsonFilename = "sdmc:/freeShop/cache/genres.json";
 	if (!pathExists(jsonFilename.c_str()))
@@ -168,7 +172,7 @@ void Settings::fillGenres(Gwen::Controls::Base *parent)
 	}
 }
 
-void Settings::fillPlatforms(Gwen::Controls::Base *parent)
+void Settings::fillFilterPlatforms(Gwen::Controls::Base *parent)
 {
 	std::string jsonFilename = "sdmc:/freeShop/cache/platforms.json";
 	if (!pathExists(jsonFilename.c_str()))
@@ -233,6 +237,84 @@ void Settings::fillPlatforms(Gwen::Controls::Base *parent)
 	}
 }
 
+void Settings::fillFilterRegions(Gwen::Controls::Base *parent)
+{
+	for (int i = 0; i < 3; ++i)
+	{
+		cpp3ds::String strRegion;
+		int region = 1 << i;
+		int count = 0;
+
+		// Get region title counts
+		for (auto &app : AppList::getInstance().getList())
+			if (app->getAppItem()->getRegions() & region)
+				count++;
+
+		if (i == 0)
+			strRegion = _("Japan");
+		else if (i == 1)
+			strRegion = _("USA");
+		else
+			strRegion = _("Europe");
+
+		auto labelCount = new Label(parent);
+		labelCount->SetText(_("%d", count).toAnsiString());
+		labelCount->SetBounds(0, 2 + i * 18, 31, 18);
+		labelCount->SetAlignment(Gwen::Pos::Right);
+
+		auto checkbox = new CheckBoxWithLabel(parent);
+		checkbox->SetPos(35, i * 18);
+		checkbox->Label()->SetText(strRegion.toAnsiString());
+		checkbox->Checkbox()->SetValue(_("%d", region).toAnsiString());
+		checkbox->Checkbox()->onCheckChanged.Add(this, &Settings::filterRegionCheckboxChanged);
+
+		m_filterRegionCheckboxes.push_back(checkbox);
+	}
+}
+
+void Settings::fillFilterLanguages(Gwen::Controls::Base *parent)
+{
+	CheckBoxWithLabel* checkbox;
+	Label *labelCount;
+
+	for (int i = 0; i < 9; ++i)
+	{
+		auto lang = static_cast<FreeShop::AppItem::Language>(1 << i);
+		cpp3ds::String langString;
+		switch (lang) {
+			default:
+			case FreeShop::AppItem::English: langString = _("English"); break;
+			case FreeShop::AppItem::Japanese: langString = _("Japanese"); break;
+			case FreeShop::AppItem::Spanish: langString = _("Spanish"); break;
+			case FreeShop::AppItem::French: langString = _("French"); break;
+			case FreeShop::AppItem::German: langString = _("German"); break;
+			case FreeShop::AppItem::Italian: langString = _("Italian"); break;
+			case FreeShop::AppItem::Dutch: langString = _("Dutch"); break;
+			case FreeShop::AppItem::Portuguese: langString = _("Portuguese"); break;
+			case FreeShop::AppItem::Russian: langString = _("Russian"); break;
+		}
+
+		// Get language title counts
+		int gameCount = 0;
+		for (auto &app : AppList::getInstance().getList())
+			if (app->getAppItem()->getLanguages() & lang)
+				gameCount++;
+
+		labelCount = new Label(parent);
+		labelCount->SetText(_("%d", gameCount).toAnsiString());
+		labelCount->SetBounds(0, 2 + i * 18, 23, 18);
+		labelCount->SetAlignment(Gwen::Pos::Right);
+
+		checkbox = new CheckBoxWithLabel(parent);
+		checkbox->SetPos(27, i * 18);
+		checkbox->Label()->SetText(langString.toAnsiString());
+		checkbox->Checkbox()->SetValue(_("%d", lang).toAnsiString());
+		checkbox->Checkbox()->onCheckChanged.Add(this, &Settings::filterCheckboxChanged);
+
+		m_filterLanguageCheckboxes.push_back(checkbox);
+	}
+}
+
 #define CHECKBOXES_SET(checkboxes, value) \
 	{ \
         for (auto &checkbox : checkboxes) \
@@ -248,6 +330,8 @@ void Settings::selectAll(Gwen::Controls::Base *control)
 	m_ignoreCheckboxChange = true;
 	if (filterName == "Genre")
 		CHECKBOXES_SET(m_filterGenreCheckboxes, true)
+	else if (filterName == "Language")
+		CHECKBOXES_SET(m_filterLanguageCheckboxes, true)
 	else if (filterName == "Platform")
 		CHECKBOXES_SET(m_filterPlatformCheckboxes, true)
 }
@@ -258,6 +342,8 @@ void Settings::selectNone(Gwen::Controls::Base *control)
 	m_ignoreCheckboxChange = true;
 	if (filterName == "Genre")
 		CHECKBOXES_SET(m_filterGenreCheckboxes, false)
+	else if (filterName == "Language")
+		CHECKBOXES_SET(m_filterLanguageCheckboxes, false)
 	else if (filterName == "Platform")
 		CHECKBOXES_SET(m_filterPlatformCheckboxes, false)
 }
@@ -277,6 +363,14 @@ void Settings::filterCheckboxChanged(Gwen::Controls::Base *control)
 				genres.push_back(genreId);
 			}
 		AppList::getInstance().setFilterGenres(genres);
+	}
+	else if (filterName == "Language")
+	{
+		int languages = 0;
+		for (auto &checkbox : m_filterLanguageCheckboxes)
+			if (checkbox->Checkbox()->IsChecked())
+				languages |= atoi(checkbox->Checkbox()->GetValue().c_str());
+		AppList::getInstance().setFilterLanguages(languages);
 	}
 	else if (filterName == "Platform")
 	{
@@ -330,40 +424,6 @@ Gwen::Controls::ScrollControl *Settings::addFilterPage(const std::string &name)
 	return scrollBox;
 }
 
-void Settings::fillRegions(Gwen::Controls::Base *page)
-{
-	for (int i = 0; i < 3; ++i)
-	{
-		cpp3ds::String strRegion;
-		int region = 1 << i;
-		int count = 0;
-
-		// Get region title counts
-		for (auto &app : AppList::getInstance().getList())
-			if (app->getAppItem()->getRegions() & region)
-				count++;
-
-		if (i == 0)
-			strRegion = _("Japan");
-		else if (i == 1)
-			strRegion = _("USA");
-		else
-			strRegion = _("Europe");
-
-		auto labelCount = new Label(page);
-		labelCount->SetText(_("%d", count).toAnsiString());
-		labelCount->SetBounds(0, 2 + i * 18, 31, 18);
-		labelCount->SetAlignment(Gwen::Pos::Right);
-
-		auto checkbox = new CheckBoxWithLabel(page);
-		checkbox->SetPos(35, i * 18);
-		checkbox->Label()->SetText(strRegion.toAnsiString());
-		checkbox->Checkbox()->SetValue(_("%d", region).toAnsiString());
-		checkbox->Checkbox()->onCheckChanged.Add(this, &Settings::filterRegionCheckboxChanged);
-
-		m_filterRegionCheckboxes.push_back(checkbox);
-	}
-}
 
 } // namespace GUI
 } // namespace FreeShop

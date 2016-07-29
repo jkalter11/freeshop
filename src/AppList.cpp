@@ -135,10 +135,16 @@ void AppList::filter()
 		for (const auto& appItemGUI : m_guiAppItems)
 			appItemGUI->setFilteredOut(false);
 
+	// Language filter
 	if (m_filterLanguages != 0)
 	{
-
+		for (const auto& appItemGUI : m_guiAppItems)
+			if (appItemGUI->isVisible())
+				if (!(appItemGUI->getAppItem()->getLanguages() & m_filterLanguages))
+					appItemGUI->setFilteredOut(true);
 	}
+
+	// Genre filter
 	if (!m_filterGenres.empty())
 	{
 		for (const auto& appItemGUI : m_guiAppItems)
@@ -152,6 +158,8 @@ void AppList::filter()
 matchedGenre:;
 			}
 	}
+
+	// Platform filter
 	if (!m_filterPlatforms.empty())
 	{
 		for (const auto& appItemGUI : m_guiAppItems)
@@ -164,6 +172,7 @@ matchedGenre:;
 matchedPlatform:;
 			}
 	}
+
 	reposition();
 }
 
@@ -449,6 +458,12 @@ void AppList::setFilterPlatforms(const std::vector<int> &platforms)
 void AppList::setFilterRegions(int regions)
 {
 	m_filterRegions = regions;
+	filter();
+}
+
+void AppList::setFilterLanguages(int languages)
+{
+	m_filterLanguages = languages;
 	filter();
 }
 

@@ -77,10 +77,18 @@ void AppItem::loadFromJSON(const char* titleId, const rapidjson::Value &json)
 	// Languages
 	auto languages = json[9].GetArray();
 	for (int i = 0; i < languages.Size(); ++i)
-		if ("jp" == languages[i].GetString())
-			m_languages |= Japanese;
-		else if ("en" == languages[i].GetString())
-			m_languages |= English;
+	{
+		std::string lang(languages[i].GetString());
+		if ("ja" == lang) m_languages |= Japanese;
+		else if ("en" == lang) m_languages |= English;
+		else if ("es" == lang) m_languages |= Spanish;
+		else if ("fr" == lang) m_languages |= French;
+		else if ("de" == lang) m_languages |= German;
+		else if ("it" == lang) m_languages |= Italian;
+		else if ("nl" == lang) m_languages |= Dutch;
+		else if ("pt" == lang) m_languages |= Portuguese;
+		else if ("ru" == lang) m_languages |= Russian;
+	}
 	// Features
 	auto features = json[10].GetArray();
 	for (int i = 0; i < features.Size(); ++i)

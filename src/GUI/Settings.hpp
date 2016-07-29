@@ -40,9 +40,10 @@ namespace FreeShop
 			void filterRegionCheckboxChanged(Gwen::Controls::Base* control);
 
 			Gwen::Controls::ScrollControl *addFilterPage(const std::string &name);
-			void fillRegions(Gwen::Controls::Base *page);
-			void fillGenres(Gwen::Controls::Base *page);
-			void fillPlatforms(Gwen::Controls::Base *page);
+			void fillFilterRegions(Gwen::Controls::Base *parent);
+			void fillFilterGenres(Gwen::Controls::Base *parent);
+			void fillFilterPlatforms(Gwen::Controls::Base *parent);
+			void fillFilterLanguages(Gwen::Controls::Base *parent);
 
 			cpp3ds::Vector2f m_position;
 
@@ -58,6 +59,7 @@ namespace FreeShop
 			std::vector<Gwen::Controls::CheckBoxWithLabel*> m_filterGenreCheckboxes;
 			std::vector<Gwen::Controls::CheckBoxWithLabel*> m_filterPlatformCheckboxes;
 			std::vector<Gwen::Controls::CheckBoxWithLabel*> m_filterRegionCheckboxes;
+			std::vector<Gwen::Controls::CheckBoxWithLabel*> m_filterLanguageCheckboxes;
 		};
 	}
 }

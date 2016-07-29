@@ -24,8 +24,15 @@ public:
 	};
 
 	enum Language {
-		Japanese = 1 << 0,
-		English  = 1 << 1,
+		Japanese   = 1 << 0,
+		English    = 1 << 1,
+		Spanish    = 1 << 2,
+		French     = 1 << 3,
+		German     = 1 << 4,
+		Italian    = 1 << 5,
+		Dutch      = 1 << 6,
+		Portuguese = 1 << 7,
+		Russian    = 1 << 8,
 	};
 
 	AppItem();
