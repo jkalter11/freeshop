@@ -26,14 +26,17 @@ Config &Config::getInstance()
 
 bool Config::loadFromFile(const std::string &filename)
 {
+	rapidjson::Document &json = getInstance().m_json;
 	std::string path = cpp3ds::FileSystem::getFilePath(filename);
+	std::string jsonString;
 	cpp3ds::FileInputStream file;
 	if (!file.open(filename))
 		return false;
-	getInstance().m_jsonString.resize(file.getSize());
-	file.read(&getInstance().m_jsonString[0], getInstance().m_jsonString.size());
-	getInstance().m_json.Parse(getInstance().m_jsonString.c_str());
-	return !getInstance().m_json.HasParseError();
+	jsonString.resize(file.getSize());
+	file.read(&jsonString[0], jsonString.size());
+	json.Parse(jsonString.c_str());
+	getInstance().loadDefaults();
+	return !json.HasParseError();
 }
 
 void Config::saveToFile(const std::string &filename)
@@ -55,11 +58,23 @@ const rapidjson::Value &Config::get(const std::string &key)
 	return getInstance().m_json[key.c_str()];
 }
 
+#define ADD_DEFAULT(key, val) \
+	if (!m_json.HasMember(key)) \
+		m_json.AddMember(key, val, m_json.GetAllocator());
+
 void Config::loadDefaults()
 {
-	m_json.SetObject();
-	m_json.AddMember("version", rapidjson::StringRef(FREESHOP_VERSION), m_json.GetAllocator());
-	m_json.AddMember("cache_version", "", m_json.GetAllocator());
+	if (!m_json.IsObject())
+		m_json.SetObject();
+
+	ADD_DEFAULT("cache_version", "");
+
+	// Update settings
+	ADD_DEFAULT("auto-update", true);
+	ADD_DEFAULT("download_title_keys", false);
+
+	// Other settings
+	ADD_DEFAULT("sleep_mode", true);
 }
 
 void Config::set(const std::string &key, const char *val)

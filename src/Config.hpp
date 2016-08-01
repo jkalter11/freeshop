@@ -12,10 +12,12 @@ namespace FreeShop {
 
 class Config {
 public:
+	~Config();
 	static Config& getInstance();
 
 	void loadDefaults();
 
+public:
 	static bool loadFromFile(const std::string& filename = "sdmc:/freeShop/config.json");
 	static void saveToFile(const std::string& filename = "sdmc:/freeShop/config.json");
 
@@ -33,13 +35,10 @@ public:
 	static void set(const std::string& key, const char *val);
 	static void set(const std::string& key, rapidjson::Value &val);
 
-	~Config();
-
 private:
 	Config();
 
 	rapidjson::Document m_json;
-	std::string m_jsonString;
 };
 
 } // namespace FreeShop
