@@ -4,37 +4,10 @@
 #include <cpp3ds/Network/Http.hpp>
 #include <cpp3ds/System/Lock.hpp>
 #include "Installer.hpp"
+#include "TitleKeys.hpp"
 #include "ticket.h"
 
 namespace {
-
-std::map<cpp3ds::Uint64, cpp3ds::Uint32[4]> titleKeys;
-
-// Load title keys from file if not done already
-void ensureTitleKeys()
-{
-	if (!titleKeys.size())
-	{
-		cpp3ds::FileInputStream file;
-		if (file.open("sdmc:/freeShop/encTitleKeys.bin"))
-		{
-			size_t count = file.getSize() / 32;
-
-			cpp3ds::Uint64 titleId;
-			cpp3ds::Uint32 titleKey[4];
-
-			for (int i = 0; i < count; ++i)
-			{
-				file.seek(24 + i * 32);
-				file.read(&titleId, 8);
-				file.read(titleKey, 16);
-
-				for (int j = 0; j < 4; ++j)
-					titleKeys[__builtin_bswap64(titleId)][j] = titleKey[j];
-			}
-		}
-	}
-}
 
 Result FSUSER_AddSeed(u64 titleId, const void* seed)
 {
@@ -111,13 +84,15 @@ bool Installer::installTicket(cpp3ds::Uint16 titleVersion)
 	const u16 sigSize = 0x140;
 	cpp3ds::Uint64 titleIdBE = __builtin_bswap64(m_titleId);
 
-	ensureTitleKeys();
+	cpp3ds::Uint32 *key = TitleKeys::get(m_titleId);
+	if (!key)
+		return false;
 
 	// Build ticket
 	memcpy(tikData, tikTemp, sizeof(tikData));
 	memcpy(tikData + sigSize + 0x9C, &titleIdBE, 8);
 	memcpy(tikData + sigSize + 0xA6, &titleVersion, 2);
-	memcpy(tikData + sigSize + 0x7F, titleKeys[m_titleId], 16);
+	memcpy(tikData + sigSize + 0x7F, key, 16);
 
 	AM_QueryAvailableExternalTitleDatabase(nullptr);
 	AM_DeleteTicket(m_titleId);
@@ -173,23 +148,6 @@ bool Installer::installSeed(const void *seed)
 
 	m_errorStr = _("Failed to add seed: %016llX", m_result);
 	return false;
-}
-
-bool Installer::titleKeyExists(cpp3ds::Uint64 titleId)
-{
-	ensureTitleKeys();
-	return titleKeys.find(titleId) != titleKeys.end();
-}
-
-std::vector<cpp3ds::Uint64> Installer::getRelated(cpp3ds::Uint64 titleId, TitleType type)
-{
-	ensureTitleKeys();
-	std::vector<cpp3ds::Uint64> related;
-	cpp3ds::Uint32 titleLower = (titleId & 0xFFFFFFFF) >> 8;
-	for (const auto &key : titleKeys)
-		if ((titleLower == (key.first & 0xFFFFFFFF) >> 8) && (key.first >> 32 == type))
-			related.push_back(key.first);
-	return related;
 }
 
 bool Installer::start(bool deleteTitle)

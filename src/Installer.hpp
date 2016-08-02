@@ -13,20 +13,13 @@ namespace FreeShop {
 
 class Installer {
 public:
-	enum TitleType {
-		Game = 0x40000,
-		Update = 0x4000E,
-		Demo = 0x40002,
-		DLC = 0x4008C,
-	};
+
 
 	Installer(cpp3ds::Uint64 titleId, int contentIndex = -1);
 	~Installer();
 
 	bool installTicket(cpp3ds::Uint16 titleVersion);
 	bool installSeed(const void *seed);
-	static bool titleKeyExists(cpp3ds::Uint64 titleId);
-	static std::vector<cpp3ds::Uint64> getRelated(cpp3ds::Uint64 titleId, TitleType type);
 
 	bool start(bool deleteTitle);
 	bool resume();

@@ -57,6 +57,7 @@ set(SOURCE_FILES
 	${PROJECT_SOURCE_DIR}/src/DownloadQueue.cpp
 	${PROJECT_SOURCE_DIR}/src/AssetManager.hpp
 	${PROJECT_SOURCE_DIR}/src/Notification.cpp
+	${PROJECT_SOURCE_DIR}/src/TitleKeys.cpp
 	${PROJECT_SOURCE_DIR}/src/Keyboard/Keyboard.cpp
 	${PROJECT_SOURCE_DIR}/src/Keyboard/tinyxml2.cpp
 	${PROJECT_SOURCE_DIR}/src/GUI/AppItem.cpp
@@ -78,6 +79,7 @@ set(SOURCE_FILES
 )
 
 set(ARM_SOURCE_FILES
+	${PROJECT_SOURCE_DIR}/src/KeyboardApplet.cpp
 	${PROJECT_SOURCE_DIR}/src/Installer.cpp
 )
 

@@ -10,7 +10,7 @@
 #include <cpp3ds/System/Sleep.hpp>
 #include "AppList.hpp"
 #include "Util.hpp"
-#include "Installer.hpp"
+#include "TitleKeys.hpp"
 
 
 namespace FreeShop {
@@ -61,7 +61,7 @@ void AppList::refresh()
 			if (!isNew3DS && ((titleId >> 24) & 0xF) == 0xF)
 				continue;
 
-			if (Installer::titleKeyExists(titleId))
+			if (TitleKeys::get(titleId))
 			{
 				auto appItem = std::make_shared<AppItem>();
 				std::unique_ptr<GUI::AppItem> guiAppItem(new GUI::AppItem());
