@@ -4,7 +4,7 @@
 #include "AssetManager.hpp"
 #include "AppItem.hpp"
 #include "Util.hpp"
-#include "Installer.hpp"
+#include "TitleKeys.hpp"
 #include "DownloadQueue.hpp"
 #include <sstream>
 
@@ -41,9 +41,9 @@ void AppItem::loadFromJSON(const char* titleId, const rapidjson::Value &json)
 
 	m_titleIdStr = titleId;
 	m_titleId = strtoull(titleId, 0, 16);
-	m_updates = Installer::getRelated(m_titleId, Installer::Update);
-	m_demos = Installer::getRelated(m_titleId, Installer::Demo);
-	m_dlc = Installer::getRelated(m_titleId, Installer::DLC);
+	m_updates = TitleKeys::getRelated(m_titleId, TitleKeys::Update);
+	m_demos = TitleKeys::getRelated(m_titleId, TitleKeys::Demo);
+	m_dlc = TitleKeys::getRelated(m_titleId, TitleKeys::DLC);
 
 	const char *title = json[0].GetString();
 	m_title = cpp3ds::String::fromUtf8(title, title + json[0].GetStringLength());
@@ -232,6 +232,20 @@ void AppItem::queueForInstall()
 		DownloadQueue::getInstance().addDownload(shared_from_this(), id);
 	for (auto &id : m_dlc)
 		DownloadQueue::getInstance().addDownload(shared_from_this(), id);
+}
+
+const std::vector<cpp3ds::Uint64> &AppItem::getUpdates() const
+{
+	return m_updates;
+}
+
+const std::vector<cpp3ds::Uint64> &AppItem::getDemos() const
+{
+	return m_demos;
+}
+const std::vector<cpp3ds::Uint64> &AppItem::getDLC() const
+{
+	return m_dlc;
 }
 
 float AppItem::getVoteScore() const

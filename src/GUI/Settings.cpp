@@ -1,6 +1,5 @@
 #include <cpp3ds/System/I18n.hpp>
 #include <Gwen/Skins/TexturedBase.h>
-#include <Gwen/Controls/RadioButtonController.h>
 #include <cpp3ds/System/FileInputStream.hpp>
 #include <unistd.h>
 #include <bits/basic_string.h>
@@ -9,6 +8,12 @@
 #include "../Download.hpp"
 #include "../Util.hpp"
 #include "../AppList.hpp"
+#include "../Config.hpp"
+#include "../TitleKeys.hpp"
+
+#ifdef _3DS
+#include "../KeyboardApplet.hpp"
+#endif
 
 using namespace Gwen::Controls;
 
@@ -49,15 +54,23 @@ Settings::Settings(Gwen::Skin::TexturedBase *skin,  State *state)
 	scrollBox = addFilterPage("Platform");
 	fillFilterPlatforms(scrollBox);
 
+	// Sorting options
 	page = m_tabControl->AddPage(_("Sort").toAnsiString())->GetPage();
+	fillSortPage(page);
 
 	page = m_tabControl->AddPage(_("Update").toAnsiString())->GetPage();
+	fillUpdatePage(page);
 
 	page = m_tabControl->AddPage(_("Other").toAnsiString())->GetPage();
+
+	loadConfig();
+	updateEnabledStates();
+	updateSorting(nullptr);
 }
 
 Settings::~Settings()
 {
+	saveToConfig();
 	delete m_canvas;
 }
 
@@ -92,6 +105,39 @@ void Settings::setValues(int tweenType, float *newValues)
 	switch (tweenType) {
 		case POSITION_XY: setPosition(cpp3ds::Vector2f(newValues[0], newValues[1])); break;
 		default: break;
+	}
+}
+
+void Settings::saveToConfig()
+{
+	Config::set("auto-update", m_checkboxAutoUpdate->Checkbox()->IsChecked());
+	Config::set("download_title_keys", m_checkboxDownloadKeys->Checkbox()->IsChecked());
+
+	rapidjson::Value list(rapidjson::kArrayType);
+	if (m_comboBoxUrls->GetSelectedItem())
+	{
+		auto menuList = m_comboBoxUrls->GetSelectedItem()->GetParent()->GetChildren();
+		for (auto it = menuList.begin(); it != menuList.end(); ++it)
+		{
+			rapidjson::Value val(rapidjson::StringRef((*it)->GetValue().c_str()), Config::getAllocator());
+			list.PushBack(val, Config::getAllocator());
+		}
+	}
+	Config::set("key_urls", list);
+}
+
+void Settings::loadConfig()
+{
+	m_checkboxAutoUpdate->Checkbox()->SetChecked(Config::get("auto-update").GetBool());
+	m_checkboxDownloadKeys->Checkbox()->SetChecked(Config::get("download_title_keys").GetBool());
+
+	auto urls = Config::get("key_urls").GetArray();
+	m_comboBoxUrls->ClearItems();
+	for (int i = 0; i < urls.Size(); ++i)
+	{
+		const char *url = urls[i].GetString();
+		std::wstring ws(url, url + urls[i].GetStringLength());
+		m_comboBoxUrls->AddItem(ws);
 	}
 }
 
@@ -422,6 +468,205 @@ Gwen::Controls::ScrollControl *Settings::addFilterPage(const std::string &name)
 	scrollBox->SetScroll(false, true);
 	// Return scrollbox to be filled with controls (probably checkboxes)
 	return scrollBox;
+}
+
+void Settings::fillSortPage(Gwen::Controls::Base *page)
+{
+	m_radioSortType = new RadioButtonController(page);
+	m_radioSortType->SetBounds(10, 0, 180, 120);
+	m_radioSortType->AddOption(_("Name").toWideString(), "Name")->Select();
+	m_radioSortType->AddOption(_("Size").toWideString(), "Size");
+	m_radioSortType->AddOption(_("Vote Score").toWideString(), "Vote Score");
+	m_radioSortType->AddOption(_("Vote Count").toWideString(), "Vote Count");
+	m_radioSortType->AddOption(_("Release Date").toWideString(), "Release Date");
+	m_radioSortType->onSelectionChange.Add(this, &Settings::updateSorting);
+
+	m_radioSortDirection = new RadioButtonController(page);
+	m_radioSortDirection->SetBounds(190, 5, 150, 120);
+	m_radioSortDirection->AddOption(_("Ascending").toWideString(), "Ascending")->Select();
+	m_radioSortDirection->AddOption(_("Descending").toWideString(), "Descending");
+	m_radioSortDirection->onSelectionChange.Add(this, &Settings::updateSorting);
+}
+
+void Settings::fillUpdatePage(Gwen::Controls::Base *page)
+{
+	Gwen::Padding iconPadding(0, 0, 0, 4);
+	auto base = new Base(page);
+	base->SetBounds(0, 0, 320, 40);
+
+	m_checkboxDownloadKeys = new CheckBoxWithLabel(base);
+	m_checkboxDownloadKeys->SetBounds(0, 0, 300, 20);
+	m_checkboxDownloadKeys->Label()->SetText(_("Auto-update title keys from URL").toAnsiString());
+	m_checkboxDownloadKeys->Checkbox()->onCheckChanged.Add(this, &Settings::updateEnabledState);
+
+	m_buttonUrlQr = new Button(base);
+	m_buttonUrlQr->SetFont(L"fonts/fontawesome.ttf", 18, false);
+	m_buttonUrlQr->SetText(L"\uf029"); // QR icon
+	m_buttonUrlQr->SetPadding(iconPadding);
+	m_buttonUrlQr->SetBounds(0, 20, 20, 20);
+	m_buttonUrlQr->onPress.Add(this, &Settings::updateQrClicked);
+
+	m_buttonUrlKeyboard = new Button(base);
+	m_buttonUrlKeyboard->SetFont(L"fonts/fontawesome.ttf", 20, false);
+	m_buttonUrlKeyboard->SetText(L"\uf11c"); // Keyboard icon
+	m_buttonUrlKeyboard->SetPadding(Gwen::Padding(0, 0, 0, 6));
+	m_buttonUrlKeyboard->SetBounds(21, 20, 26, 20);
+	m_buttonUrlKeyboard->onPress.Add(this, &Settings::updateKeyboardClicked);
+
+	m_buttonUrlDelete = new Button(base);
+	m_buttonUrlDelete->SetFont(L"fonts/fontawesome.ttf", 18, false);
+	m_buttonUrlDelete->SetText(L"\uf014"); // Trash can icon
+	m_buttonUrlDelete->SetPadding(iconPadding);
+	m_buttonUrlDelete->SetBounds(288, 20, 20, 20);
+	m_buttonUrlDelete->onPress.Add(this, &Settings::updateUrlDeleteClicked);
+
+	m_comboBoxUrls = new ComboBox(base);
+	m_comboBoxUrls->SetBounds(50, 20, 235, 20);
+	m_comboBoxUrls->onSelection.Add(this, &Settings::updateUrlSelected);
+
+
+	base = new Base(page);
+	base->SetBounds(0, 48, 320, 60);
+
+	m_checkboxAutoUpdate = new CheckBoxWithLabel(base);
+	m_checkboxAutoUpdate->SetBounds(0, 0, 300, 20);
+	m_checkboxAutoUpdate->Label()->SetText(_("Auto-update freeShop").toAnsiString());
+	m_checkboxAutoUpdate->Checkbox()->onCheckChanged.Add(this, &Settings::updateEnabledState);
+
+	// Button to update - disabled when auto-update is checked
+	// Label date last checked (and current version)
+	m_buttonUpdate = new Button(base);
+	m_buttonUpdate->SetBounds(0, 22, 75, 18);
+	m_buttonUpdate->SetText(_("Update").toAnsiString());
+
+	auto label = new Label(base);
+	label->SetBounds(78, 24, 300, 20);
+	label->SetText(_("(last checked %s)", "28/07/16").toAnsiString());
+	label->SetTextColor(Gwen::Color(0, 0, 0, 80));
+	label = new Label(base);
+	label->SetBounds(78, 44, 300, 20);
+	label->SetText(_("freeShop %s", FREESHOP_VERSION).toAnsiString());
+}
+
+void Settings::fillOtherPage(Gwen::Controls::Base *page)
+{
+	//
+}
+
+void Settings::updateQrClicked(Gwen::Controls::Base *button)
+{
+	m_state->requestStackPush(States::QrScanner, true, [this](void *data){
+		auto text = reinterpret_cast<cpp3ds::String*>(data);
+		if (!text->isEmpty())
+		{
+			cpp3ds::String strError;
+			if (TitleKeys::isValidUrl(*text, &strError))
+			{
+				m_comboBoxUrls->AddItem(text->toWideString());
+				return true;
+			}
+			*text = strError;
+		}
+		return false;
+	});
+}
+
+void Settings::updateKeyboardClicked(Gwen::Controls::Base *textbox)
+{
+#ifdef _3DS
+	KeyboardApplet kb(KeyboardApplet::URL);
+	kb.addDictWord("http", "http://");
+	kb.addDictWord("https", "https://");
+	swkbdSetHintText(kb, "https://<encTitleKeys.bin>");
+	cpp3ds::String input = kb.getInput();
+	std::cout << input.toAnsiString() << std::endl;
+	if (!input.isEmpty())
+		m_comboBoxUrls->AddItem(input.toWideString());
+#else
+	m_comboBoxUrls->AddItem(L"Test");
+#endif
+}
+
+void Settings::updateUrlSelected(Gwen::Controls::Base *combobox)
+{
+	updateEnabledStates();
+}
+
+void Settings::updateUrlDeleteClicked(Gwen::Controls::Base *button)
+{
+	MenuItem *selected = gwen_cast<MenuItem>(m_comboBoxUrls->GetSelectedItem());
+	MenuItem *newSelected = nullptr;
+	if (selected)
+	{
+		// Find next child to select when current one is deleted
+		bool foundSelected = false;
+		auto menuList = selected->GetParent()->GetChildren();
+		for (auto it = menuList.begin(); it != menuList.end(); ++it)
+		{
+			auto menuItem = gwen_cast<MenuItem>(*it);
+			if (foundSelected) {
+				newSelected = menuItem;
+				break;
+			}
+
+			if (menuItem == selected)
+				foundSelected = true;
+			else
+				newSelected = menuItem;
+		}
+
+		selected->DelayedDelete();
+		m_comboBoxUrls->SelectItem(newSelected);
+		updateEnabledStates();
+	}
+}
+
+void Settings::updateEnabledStates()
+{
+	Gwen::Color transparent(0,0,0,0); // Transparent cancels the color override
+	bool isDownloadEnabled = m_checkboxDownloadKeys->Checkbox()->IsChecked();
+	bool isUrlSelected = !!m_comboBoxUrls->GetSelectedItem();
+
+	m_comboBoxUrls->SetDisabled(!isDownloadEnabled);
+	m_buttonUrlQr->SetDisabled(!isDownloadEnabled);
+	m_buttonUrlKeyboard->SetDisabled(!isDownloadEnabled);
+	m_buttonUrlDelete->SetDisabled(!isDownloadEnabled || !isUrlSelected);
+	if (!isUrlSelected)
+		m_comboBoxUrls->SetText(_("Remote title key URL(s)").toAnsiString());
+	if (isDownloadEnabled) {
+		m_buttonUrlQr->SetTextColorOverride(Gwen::Color(0, 100, 0));
+		m_buttonUrlKeyboard->SetTextColorOverride(Gwen::Color(0, 100, 0));
+		m_buttonUrlDelete->SetTextColorOverride(isUrlSelected ? Gwen::Color(150, 0, 0, 200) : transparent);
+	} else {
+		m_buttonUrlQr->SetTextColorOverride(transparent);
+		m_buttonUrlKeyboard->SetTextColorOverride(transparent);
+		m_buttonUrlDelete->SetTextColorOverride(transparent);
+	}
+	m_buttonUpdate->SetDisabled(m_checkboxAutoUpdate->Checkbox()->IsChecked());
+}
+
+void Settings::updateEnabledState(Gwen::Controls::Base *control)
+{
+	updateEnabledStates();
+}
+
+void Settings::updateSorting(Gwen::Controls::Base *control)
+{
+	AppList::SortType sortType;
+	std::string sortTypeName(m_radioSortType->GetSelectedName());
+	bool isAscending = (m_radioSortDirection->GetSelectedName() == "Ascending");
+	if (sortTypeName == "Name")
+		sortType = AppList::Name;
+	else if (sortTypeName == "Size")
+		sortType = AppList::Size;
+	else if (sortTypeName == "Vote Score")
+		sortType = AppList::VoteScore;
+	else if (sortTypeName == "Vote Count")
+		sortType = AppList::VoteCount;
+	else
+		sortType = AppList::ReleaseDate;
+
+	AppList::getInstance().setSortType(sortType, isAscending);
 }
 
 

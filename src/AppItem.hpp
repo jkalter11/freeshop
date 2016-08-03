@@ -71,6 +71,10 @@ public:
 
 	void queueForInstall();
 
+	const std::vector<cpp3ds::Uint64> &getUpdates() const;
+	const std::vector<cpp3ds::Uint64> &getDemos() const;
+	const std::vector<cpp3ds::Uint64> &getDLC() const;
+
 private:
 	void setIconIndex(size_t iconIndex);
 
