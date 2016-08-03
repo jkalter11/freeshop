@@ -16,11 +16,12 @@
 namespace FreeShop {
 
 AppList::AppList(std::string jsonFilename)
-: m_sortType(AlphaNumericAsc)
+: m_sortType(Name)
 , m_selectedIndex(-1)
 , m_collapsed(false)
 , m_filterRegions(0)
 , m_filterLanguages(0)
+, m_sortAscending(true)
 {
 	m_jsonFilename = jsonFilename;
 }
@@ -88,16 +89,12 @@ void AppList::refresh()
 	setSelectedIndex(m_selectedIndex);
 }
 
-void AppList::setSortType(AppList::SortType sortType)
+void AppList::setSortType(AppList::SortType sortType, bool ascending)
 {
 	m_sortType = sortType;
+	m_sortAscending = ascending;
 	sort();
 	reposition();
-}
-
-AppList::SortType AppList::getSortType() const
-{
-	return m_sortType;
 }
 
 void AppList::sort()
@@ -113,12 +110,25 @@ void AppList::sort()
 		}
 		else
 		{
-			switch(m_sortType)
+			if (m_sortAscending)
 			{
-				case AlphaNumericDesc:
-					return a->getAppItem()->getNormalizedTitle() > b->getAppItem()->getNormalizedTitle();
-				default:
-					return a->getAppItem()->getNormalizedTitle() < b->getAppItem()->getNormalizedTitle();
+				switch(m_sortType) {
+					case Name: return a->getAppItem()->getNormalizedTitle() < b->getAppItem()->getNormalizedTitle();
+					case Size: return a->getAppItem()->getFilesize() < b->getAppItem()->getFilesize();
+					case VoteScore: return a->getAppItem()->getVoteScore() < b->getAppItem()->getVoteScore();
+					case VoteCount: return a->getAppItem()->getVoteCount() < b->getAppItem()->getVoteCount();
+					case ReleaseDate: return a->getAppItem()->getReleaseDate() < b->getAppItem()->getReleaseDate();
+				}
+			}
+			else
+			{
+				switch(m_sortType) {
+					case Name: return a->getAppItem()->getNormalizedTitle() > b->getAppItem()->getNormalizedTitle();
+					case Size: return a->getAppItem()->getFilesize() > b->getAppItem()->getFilesize();
+					case VoteScore: return a->getAppItem()->getVoteScore() > b->getAppItem()->getVoteScore();
+					case VoteCount: return a->getAppItem()->getVoteCount() > b->getAppItem()->getVoteCount();
+					case ReleaseDate: return a->getAppItem()->getReleaseDate() > b->getAppItem()->getReleaseDate();
+				}
 			}
 		}
 	});
@@ -126,6 +136,8 @@ void AppList::sort()
 
 void AppList::filter()
 {
+	// Region filter
+	// Also resets the filter state when no region filter is set.
 	if (m_filterRegions)
 	{
 		for (const auto& appItemGUI : m_guiAppItems)

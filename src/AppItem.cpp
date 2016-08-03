@@ -94,6 +94,12 @@ void AppItem::loadFromJSON(const char* titleId, const rapidjson::Value &json)
 	for (int i = 0; i < features.Size(); ++i)
 		m_features.push_back(features[i].GetInt());
 
+	if (!json[11].IsNull())
+		m_voteScore = json[11].GetFloat();
+	m_voteCount = json[12].GetInt();
+	m_releaseDate = json[13].GetInt();
+	m_productCode = json[14].GetString();
+
 	m_platform = json[15].GetInt();
 	m_publisher = json[16].GetInt();
 }
@@ -226,6 +232,26 @@ void AppItem::queueForInstall()
 		DownloadQueue::getInstance().addDownload(shared_from_this(), id);
 	for (auto &id : m_dlc)
 		DownloadQueue::getInstance().addDownload(shared_from_this(), id);
+}
+
+float AppItem::getVoteScore() const
+{
+	return m_voteScore;
+}
+
+int AppItem::getVoteCount() const
+{
+	return m_voteCount;
+}
+
+time_t AppItem::getReleaseDate() const
+{
+	return m_releaseDate;
+}
+
+const std::string &AppItem::getProductCode() const
+{
+	return m_productCode;
 }
 
 

@@ -64,6 +64,11 @@ public:
 	int getPlatform() const;
 	int getPublisher() const;
 
+	float getVoteScore() const;
+	int getVoteCount() const;
+	time_t getReleaseDate() const;
+	const std::string &getProductCode() const;
+
 	void queueForInstall();
 
 private:
@@ -83,13 +88,15 @@ private:
 	int m_publisher;
 	int m_languages;
 	int m_regions;
+	float m_voteScore;
+	int m_voteCount;
+	time_t m_releaseDate;
+	int m_iconIndex;
+	std::string m_productCode;
 
 	std::vector<cpp3ds::Uint64> m_updates;
 	std::vector<cpp3ds::Uint64> m_demos;
 	std::vector<cpp3ds::Uint64> m_dlc;
-
-	time_t m_releaseDate;
-	int m_iconIndex;
 	bool m_installed;
 
 	cpp3ds::Texture *m_iconTexture;

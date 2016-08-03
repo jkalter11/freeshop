@@ -16,16 +16,18 @@ namespace FreeShop
 class AppList : public cpp3ds::Drawable, public util3ds::TweenTransformable<cpp3ds::Transformable> {
 public:
 	enum SortType {
-		AlphaNumericAsc,
-		AlphaNumericDesc,
+		Name,
+		Size,
+		VoteScore,
+		VoteCount,
+		ReleaseDate,
 	};
 
 	static AppList &getInstance();
 
 	~AppList();
 	void refresh();
-	void setSortType(SortType sortType);
-	SortType getSortType() const;
+	void setSortType(SortType sortType, bool ascending);
 
 	void setSelectedIndex(int index);
 	int getSelectedIndex() const;
@@ -57,6 +59,7 @@ protected:
 
 private:
 	SortType m_sortType;
+	bool m_sortAscending;
 
 	std::vector<int> m_filterGenres;
 	std::vector<int> m_filterPlatforms;
