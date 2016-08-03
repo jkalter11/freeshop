@@ -1,42 +1,20 @@
 #include "KeyboardApplet.hpp"
-#include "Download.hpp"
-#include <cpp3ds/System/I18n.hpp>
+#include "TitleKeys.hpp"
 
 namespace {
 
 SwkbdCallbackResult callbackUrl(void* user, const char** ppMessage, const char* text, size_t textlen)
 {
+	cpp3ds::String strError;
 	auto kb = reinterpret_cast<FreeShop::KeyboardApplet*>(user);
-	kb->error.clear();
-	bool passed = false;
 
-	FreeShop::Download download(text);
-	download.setDataCallback([&](const void* data, size_t len, size_t processed, const cpp3ds::Http::Response& response)
-	{
-		auto httpStatus = response.getStatus();
-		if (httpStatus == cpp3ds::Http::Response::MovedPermanently || httpStatus == cpp3ds::Http::Response::MovedTemporarily)
-			return true;
-		// If HTTP request is good, verify that contents are a titlekey dump
-		if (passed = httpStatus == cpp3ds::Http::Response::Ok || httpStatus == cpp3ds::Http::Response::PartialContent)
-		{
-			std::cout << "len:" << len << " processed:" << processed << std::endl;
-			kb->error = _("Failed.\n\nHTTP Status: %d", static_cast<int>(httpStatus)).toUtf8();
-			return false;
-		}
+	if (FreeShop::TitleKeys::isValidUrl(text, &strError))
+		return SWKBD_CALLBACK_OK;
 
-		kb->error = _("Failed.\n\nHTTP Status: %d", static_cast<int>(httpStatus)).toUtf8();
-		return false;
-	});
-	download.run();
+	kb->error = strError.toUtf8();
+	*ppMessage = reinterpret_cast<const char*>(kb->error.c_str());
 
-	if (download.getLastResponse().getStatus() == cpp3ds::Http::Response::TimedOut)
-		kb->error = _("Request timed out.\nTry again.").toUtf8();
-	if (!passed && kb->error.empty())
-		kb->error = _("Invalid URL.").toUtf8();
-	if (!kb->error.empty())
-		*ppMessage = reinterpret_cast<const char*>(kb->error.c_str());
-
-	return (passed ? SWKBD_CALLBACK_OK : SWKBD_CALLBACK_CONTINUE);
+	return SWKBD_CALLBACK_CONTINUE;
 }
 
 }

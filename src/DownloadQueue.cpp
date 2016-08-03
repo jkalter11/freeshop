@@ -13,6 +13,7 @@
 #include "DownloadQueue.hpp"
 #include "Notification.hpp"
 #include "AppList.hpp"
+#include "TitleKeys.hpp"
 
 namespace FreeShop {
 
@@ -57,13 +58,13 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 		titleId = app->getTitleId();
 	cpp3ds::String title = app->getTitle();
 	cpp3ds::Uint32 type = titleId >> 32;
-	if (type != Installer::Game)
+	if (type != TitleKeys::Game)
 	{
-		if (type == Installer::Update)
+		if (type == TitleKeys::Update)
 			title.insert(0, _("[Update] "));
-		else if (type == Installer::Demo)
+		else if (type == TitleKeys::Demo)
 			title.insert(0, _("[Demo] "));
-		else if (type == Installer::DLC)
+		else if (type == TitleKeys::DLC)
 			title.insert(0, _("[DLC] "));
 	}
 
@@ -148,7 +149,7 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 						if (!installer->installTicket(titleVersion))
 							return false;
 					}
-					if (!download->isCanceled() && type == Installer::Game && !app->getSeed().empty())
+					if (!download->isCanceled() && type == TitleKeys::Game && !app->getSeed().empty())
 					{
 						download->setProgressMessage(_("Installing seed..."));
 						if (!installer->installSeed(&app->getSeed()[0]))
@@ -207,7 +208,7 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 			{
 				if (!installer->finalizeContent())
 					return false;
-				if (fileIndex == 1 && type == Installer::DLC)
+				if (fileIndex == 1 && type == TitleKeys::DLC)
 				{
 					download->setProgressMessage(_("Importing content..."));
 					if (!installer->importContents(contentIndices.size() - 1, &contentIndices[1]))

@@ -1,5 +1,5 @@
-#include <vector>
-#include <map>
+#include <cpp3ds/System/I18n.hpp>
+#include "Download.hpp"
 #include "TitleKeys.hpp"
 
 namespace {
@@ -111,6 +111,46 @@ bool TitleKeys::isValidData(const void *data, size_t size)
 			return false;
 	}
 	return true;
+}
+
+bool TitleKeys::isValidUrl(const std::string &url, cpp3ds::String *errorOut)
+{
+	std::vector<char> keyBuf;
+	bool passed = false;
+	errorOut->clear();
+
+	FreeShop::Download download(url);
+	download.setDataCallback([&](const void* data, size_t len, size_t processed, const cpp3ds::Http::Response& response)
+	{
+		auto httpStatus = response.getStatus();
+		if (httpStatus == cpp3ds::Http::Response::MovedPermanently || httpStatus == cpp3ds::Http::Response::MovedTemporarily)
+			return true;
+		// If HTTP request is good, verify that contents are a titlekey dump
+		if (passed = httpStatus == cpp3ds::Http::Response::Ok || httpStatus == cpp3ds::Http::Response::PartialContent)
+		{
+			const char *buf = reinterpret_cast<const char*>(data);
+			keyBuf.insert(keyBuf.end(), buf + 16, buf + len);
+			return false;
+		}
+
+		*errorOut = _("Failed.\n\nHTTP Status: %d", static_cast<int>(httpStatus));
+		return false;
+	});
+	download.run();
+
+	if (passed)
+	{
+		passed = isValidData(&keyBuf[0], keyBuf.size());
+		if (!passed)
+			*errorOut = _("Invalid title key format.");
+	}
+
+	if (download.getLastResponse().getStatus() == cpp3ds::Http::Response::TimedOut)
+		*errorOut = _("Request timed out.\nTry again.");
+	if (!passed && errorOut->isEmpty())
+		*errorOut = _("Invalid URL.");
+
+	return passed;
 }
 
 

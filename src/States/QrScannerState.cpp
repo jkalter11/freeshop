@@ -29,6 +29,7 @@ QrScannerState::QrScannerState(StateStack &stack, Context &context, StateCallbac
 	, m_capturing(false)
 	, m_threadRunning(false)
 	, m_requestedClose(false)
+	, m_displayError(false)
 {
 	m_cameraScreen.setTexture(&m_cameraTexture);
 	m_cameraScreen.setSize(cpp3ds::Vector2f(WIDTH, HEIGHT));
@@ -51,10 +52,18 @@ QrScannerState::QrScannerState(StateStack &stack, Context &context, StateCallbac
 	m_closeCaption.setString(_("\uE001 Cancel"));
 	m_closeCaption.setFillColor(cpp3ds::Color(150, 150, 150));
 	m_closeCaption.setCharacterSize(20);
-	m_closeCaption.setPosition(160.f, 120.f);
+	m_closeCaption.setPosition(160.f, 200.f);
 	m_closeCaption.useSystemFont();
 	m_closeCaption.setOrigin(m_closeCaption.getLocalBounds().width / 2,
 	                         m_closeCaption.getLocalBounds().height / 2);
+
+	m_textCloseError = m_closeCaption;
+	m_textCloseError.setString(_("\uE000 Retry"));
+	m_textCloseError.setPosition(160.f, 200.f);
+
+	m_textError = m_closeCaption;
+	m_textError.setPosition(160.f, 120.f);
+	m_textError.setCharacterSize(16);
 
 	m_qr = quirc_new();
 	quirc_resize(m_qr, WIDTH, HEIGHT);
@@ -67,6 +76,7 @@ QrScannerState::~QrScannerState()
 {
 	while (m_threadRunning && !m_capturing)
 		cpp3ds::sleep(cpp3ds::milliseconds(10));
+	m_displayError = false;
 	m_capturing = false;
 	m_camThread.wait();
 	quirc_destroy(m_qr);
@@ -75,13 +85,20 @@ QrScannerState::~QrScannerState()
 void QrScannerState::renderTopScreen(cpp3ds::Window& window)
 {
 	window.draw(m_cameraScreen);
-	window.draw(m_qrBorder, m_qrBorder.getTransform());
+	if (!m_displayError)
+		window.draw(m_qrBorder, m_qrBorder.getTransform());
 }
 
 void QrScannerState::renderBottomScreen(cpp3ds::Window& window)
 {
 	window.draw(m_bottomBackground);
-	window.draw(m_closeCaption);
+	if (m_displayError)
+	{
+		window.draw(m_textError);
+		window.draw(m_textCloseError);
+	}
+	else
+		window.draw(m_closeCaption);
 }
 
 bool QrScannerState::update(float delta)
@@ -94,15 +111,15 @@ bool QrScannerState::processEvent(const cpp3ds::Event& event)
 {
 	if (event.type == cpp3ds::Event::KeyPressed)
 	{
-		if (event.key.code == cpp3ds::Keyboard::B)
+		if (m_displayError)
 		{
-			close();
+			if (event.key.code == cpp3ds::Keyboard::A)
+				m_displayError = false;
 		}
-		if (event.key.code == cpp3ds::Keyboard::X)
+		else
 		{
-			std::string test("lele");
-			if (runCallback(&test))
-				std::cout << "success!" << std::endl;
+			if (event.key.code == cpp3ds::Keyboard::B)
+				close();
 		}
 	}
 	return false;
@@ -248,12 +265,21 @@ void QrScannerState::scanQrCode()
 			quirc_extract(m_qr, i, &code);
 			if (!quirc_decode(&code, &data))
 			{
-				// Return QR's decoded text to callback, close when it returns false
-				std::string text(reinterpret_cast<char*>(data.payload));
-				if (!runCallback(&text))
+				// Return QR's decoded text to callback, outputs error string when true
+				cpp3ds::String text(reinterpret_cast<char*>(data.payload));
+				if (runCallback(&text))
 					close();
+				else
+				{
+					m_textError.setString(text);
+					m_textError.setOrigin(m_textError.getLocalBounds().width / 2,
+										  m_textError.getLocalBounds().height / 2);
+					m_displayError = true;
+				}
 			}
 		}
+		while (m_displayError)
+			cpp3ds::sleep(cpp3ds::milliseconds(100));
 	}
 }
 

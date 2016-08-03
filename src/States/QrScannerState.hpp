@@ -49,6 +49,10 @@ private:
 	bool m_requestedClose;
 	cpp3ds::Mutex m_mutexRequest;
 
+	bool m_displayError;
+	cpp3ds::Text m_textError;
+	cpp3ds::Text m_textCloseError;
+
 	cpp3ds::RectangleShape m_cameraScreen;
 	cpp3ds::Texture m_cameraTexture;
 	util3ds::TweenRectangleShape m_tweenShape;

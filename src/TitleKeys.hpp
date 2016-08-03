@@ -1,7 +1,10 @@
 #ifndef FREESHOP_TITLEKEYS_HPP
 #define FREESHOP_TITLEKEYS_HPP
 
+#include <map>
+#include <vector>
 #include <cpp3ds/System/FileInputStream.hpp>
+#include <cpp3ds/System/String.hpp>
 
 namespace FreeShop {
 
@@ -21,6 +24,7 @@ public:
 	static std::map<cpp3ds::Uint64, cpp3ds::Uint32[4]> &getList();
 	static std::vector<cpp3ds::Uint64> getRelated(cpp3ds::Uint64 titleId, TitleType type);
 
+	static bool isValidUrl(const std::string &url, cpp3ds::String *errorOut);
 	static bool isValidFile(cpp3ds::FileInputStream &file);
 	static bool isValidFile(const std::string &filename);
 	static bool isValidData(const void *data, size_t size);
