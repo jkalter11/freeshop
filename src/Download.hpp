@@ -50,7 +50,7 @@ public:
 
 	void processEvent(const cpp3ds::Event& event);
 
-	void setUrl(const std::string& url);
+	bool setUrl(const std::string& url);
 	void setDestination(const std::string& destination);
 
 	void pushUrl(const std::string& url, cpp3ds::Uint64 position = 0);
@@ -62,6 +62,7 @@ public:
 	void setSendTopCallback(SendTopCallback onSendTop);
 
 	void setField(const std::string &field, const std::string &value);
+	void setRetryCount(int timesToRetry);
 
 	void run();
 	void suspend();
@@ -72,12 +73,16 @@ public:
 
 	Status getStatus() const;
 
+	const cpp3ds::Http::Response &getLastResponse() const;
+	void setTimeout(cpp3ds::Time timeout);
+
 	bool markedForDelete();
 
 protected:
 	virtual void draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) const;
 
 private:
+	cpp3ds::Http::Response m_response;
 	cpp3ds::Http m_http;
 	cpp3ds::Http::Request m_request;
 	std::string m_host;
@@ -99,6 +104,8 @@ private:
 	FILE* m_file;
 	std::vector<char> m_buffer;
 
+	cpp3ds::Time m_timeout;
+
 	// For queue UI
 	gui3ds::NinePatch m_background;
 	cpp3ds::RectangleShape m_icon;
@@ -113,6 +120,7 @@ private:
 
 	size_t m_downloadPos;
 	float m_progress;
+	int m_timesToRetry;
 	cpp3ds::Vector2f m_size;
 	std::string m_progressMessage;
 };

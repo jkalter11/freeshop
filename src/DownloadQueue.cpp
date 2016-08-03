@@ -73,6 +73,8 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 	download->fillFromAppItem(app);
 	download->m_textTitle.setString(title);
 	download->setPosition(0.f, 240.f);
+	download->setRetryCount(4);
+	download->setTimeout(cpp3ds::seconds(5.f));
 	download->setSendTopCallback([this](Download *d){
 		sendTop(d);
 	});

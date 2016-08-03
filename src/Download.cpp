@@ -21,54 +21,14 @@ Download::Download(const std::string &url, const std::string &destination)
 , m_status(Queued)
 , m_downloadPos(0)
 , m_appItem(nullptr)
+, m_timesToRetry(0)
+, m_timeout(cpp3ds::seconds(3))
 {
 	setUrl(url);
 	setDestination(destination);
 
 //	m_thread.setStackSize(64*1024);
 //	m_thread.setAffinity(1);
-
-	setProgressMessage(_("Queued"));
-
-	m_background.setTexture(&AssetManager<cpp3ds::Texture>::get("images/listitembg.9.png"));
-	m_background.setContentSize(320.f + m_background.getPadding().width - m_background.getTexture()->getSize().x + 2.f, 24.f);
-	m_size = m_background.getSize();
-	float paddingRight = m_size.x - m_background.getContentSize().x - m_background.getPadding().left;
-	float paddingBottom = m_size.y - m_background.getContentSize().y - m_background.getPadding().top;
-
-	m_icon.setSize(cpp3ds::Vector2f(48.f, 48.f));
-	m_icon.setTexture(&AssetManager<cpp3ds::Texture>::get("images/missing-icon.png"), true);
-	m_icon.setPosition(m_background.getPadding().left, m_background.getPadding().top);
-	m_icon.setScale(0.5f, 0.5f);
-
-	m_textCancel.setFont(AssetManager<cpp3ds::Font>::get("fonts/fontawesome.ttf"));
-	m_textCancel.setString(L"\uf00d");
-	m_textCancel.setCharacterSize(18);
-	m_textCancel.setFillColor(cpp3ds::Color::White);
-	m_textCancel.setOutlineColor(cpp3ds::Color(0, 0, 0, 200));
-	m_textCancel.setOutlineThickness(1.f);
-	m_textCancel.setOrigin(0, m_textCancel.getLocalBounds().top + m_textCancel.getLocalBounds().height / 2.f);
-	m_textCancel.setPosition(m_size.x - paddingRight - m_textCancel.getLocalBounds().width,
-							 m_background.getPadding().top + m_background.getContentSize().y / 2.f);
-
-	m_textSendTop = m_textCancel;
-	m_textSendTop.setString(L"\uf077");
-	m_textSendTop.move(-25.f, 0);
-
-	m_textRestart = m_textCancel;
-	m_textRestart.setString(L"\uf01e");
-	m_textRestart.move(-25.f, 0);
-
-	m_textTitle.setCharacterSize(10);
-	m_textTitle.setPosition(m_background.getPadding().left + 30.f, m_background.getPadding().top);
-	m_textTitle.setFillColor(cpp3ds::Color::Black);
-	m_textTitle.useSystemFont();
-
-	m_textProgress = m_textTitle;
-	m_textProgress.setFillColor(cpp3ds::Color(130, 130, 130, 255));
-	m_textProgress.move(0.f, 12.f);
-
-	m_progressBar.setFillColor(cpp3ds::Color(0, 0, 0, 50));
 }
 
 
@@ -78,14 +38,17 @@ Download::~Download()
 }
 
 
-void Download::setUrl(const std::string &url)
+bool Download::setUrl(const std::string &url)
 {
 	size_t pos;
 
 	pos = url.find("://");
 	if (pos != std::string::npos) {
 		pos = url.find("/", pos + 3);
-		if (pos != std::string::npos) {
+		if (pos == std::string::npos) {
+			m_host = url;
+			m_uri = "/";
+		} else {
 			m_host = url.substr(0, pos);
 			m_uri = url.substr(pos);
 		}
@@ -93,6 +56,7 @@ void Download::setUrl(const std::string &url)
 
 	m_http.setHost(m_host);
 	m_request.setUri(m_uri);
+	return true;
 }
 
 
@@ -105,7 +69,6 @@ void Download::start()
 
 void Download::run()
 {
-	cpp3ds::Http::Response response;
 	size_t bufferSize = 128*1024;
 
 	if (!m_destination.empty())
@@ -161,30 +124,34 @@ void Download::run()
 				cpp3ds::sleep(cpp3ds::milliseconds(200));
 			}
 
-			response = m_http.sendRequest(m_request, cpp3ds::seconds(1), dataCallback, bufferSize);
+			m_response = m_http.sendRequest(m_request, m_timeout, dataCallback, bufferSize);
 			// Follow all redirects
-			while (response.getStatus() == cpp3ds::Http::Response::MovedPermanently || response.getStatus() == cpp3ds::Http::Response::MovedTemporarily)
+			while (m_response.getStatus() == cpp3ds::Http::Response::MovedPermanently || m_response.getStatus() == cpp3ds::Http::Response::MovedTemporarily)
 			{
-				setUrl(response.getField("Location"));
-				response = m_http.sendRequest(m_request, cpp3ds::seconds(1), dataCallback, bufferSize);
+				setUrl(m_response.getField("Location"));
+				m_response = m_http.sendRequest(m_request, m_timeout, dataCallback, bufferSize);
 			}
 
-			// Retry failed connection up to 10 times
-			if (response.getStatus() == cpp3ds::Http::Response::ConnectionFailed)
+			// Retry failed connections (all error codes >= 1000)
+			if (m_response.getStatus() >= 1000)
 			{
-				if (retryCount >= 10)
+				if (retryCount >= m_timesToRetry)
 				{
-					setProgressMessage(_("Retry attempts exceeded"));
+					if (m_timesToRetry == 0)
+						setProgressMessage(_("Failed"));
+					else
+						setProgressMessage(_("Retry attempts exceeded"));
 					failed = true;
 					break;
 				}
+				std::cout << _("Retrying... %d", retryCount).toAnsiString() << std::endl;
 				setProgressMessage(_("Retrying... %d", ++retryCount));
-				cpp3ds::sleep(cpp3ds::seconds(2));
+				cpp3ds::sleep(cpp3ds::milliseconds(1000));
 			}
-		} while (response.getStatus() == cpp3ds::Http::Response::ConnectionFailed &&
+		} while (m_response.getStatus() >= 1000 &&
 		         !m_cancelFlag && getStatus() != Suspended);
 
-		if (response.getStatus() != cpp3ds::Http::Response::Ok && response.getStatus() != cpp3ds::Http::Response::PartialContent)
+		if (m_response.getStatus() != cpp3ds::Http::Response::Ok && m_response.getStatus() != cpp3ds::Http::Response::PartialContent)
 			break;
 		if (m_cancelFlag || failed || getStatus() == Suspended)
 			break;
@@ -305,10 +272,51 @@ const cpp3ds::Vector2f &Download::getSize() const
 void Download::fillFromAppItem(std::shared_ptr<AppItem> app)
 {
 	m_appItem = app;
+
+	setProgressMessage(_("Queued"));
+
+	m_background.setTexture(&AssetManager<cpp3ds::Texture>::get("images/listitembg.9.png"));
+	m_background.setContentSize(320.f + m_background.getPadding().width - m_background.getTexture()->getSize().x + 2.f, 24.f);
+	m_size = m_background.getSize();
+	float paddingRight = m_size.x - m_background.getContentSize().x - m_background.getPadding().left;
+	float paddingBottom = m_size.y - m_background.getContentSize().y - m_background.getPadding().top;
+
+	m_icon.setSize(cpp3ds::Vector2f(48.f, 48.f));
 	cpp3ds::IntRect textureRect;
 	m_icon.setTexture(app->getIcon(textureRect), true);
 	m_icon.setTextureRect(textureRect);
+	m_icon.setPosition(m_background.getPadding().left, m_background.getPadding().top);
+	m_icon.setScale(0.5f, 0.5f);
+
+	m_textCancel.setFont(AssetManager<cpp3ds::Font>::get("fonts/fontawesome.ttf"));
+	m_textCancel.setString(L"\uf00d");
+	m_textCancel.setCharacterSize(18);
+	m_textCancel.setFillColor(cpp3ds::Color::White);
+	m_textCancel.setOutlineColor(cpp3ds::Color(0, 0, 0, 200));
+	m_textCancel.setOutlineThickness(1.f);
+	m_textCancel.setOrigin(0, m_textCancel.getLocalBounds().top + m_textCancel.getLocalBounds().height / 2.f);
+	m_textCancel.setPosition(m_size.x - paddingRight - m_textCancel.getLocalBounds().width,
+							 m_background.getPadding().top + m_background.getContentSize().y / 2.f);
+
+	m_textSendTop = m_textCancel;
+	m_textSendTop.setString(L"\uf077");
+	m_textSendTop.move(-25.f, 0);
+
+	m_textRestart = m_textCancel;
+	m_textRestart.setString(L"\uf01e");
+	m_textRestart.move(-25.f, 0);
+
 	m_textTitle.setString(app->getTitle());
+	m_textTitle.setCharacterSize(10);
+	m_textTitle.setPosition(m_background.getPadding().left + 30.f, m_background.getPadding().top);
+	m_textTitle.setFillColor(cpp3ds::Color::Black);
+	m_textTitle.useSystemFont();
+
+	m_textProgress = m_textTitle;
+	m_textProgress.setFillColor(cpp3ds::Color(130, 130, 130, 255));
+	m_textProgress.move(0.f, 12.f);
+
+	m_progressBar.setFillColor(cpp3ds::Color(0, 0, 0, 50));
 }
 
 
@@ -407,6 +415,21 @@ void Download::resume()
 	{
 		start();
 	}
+}
+
+void Download::setRetryCount(int timesToRetry)
+{
+	m_timesToRetry = timesToRetry;
+}
+
+const cpp3ds::Http::Response &Download::getLastResponse() const
+{
+	return m_response;
+}
+
+void Download::setTimeout(cpp3ds::Time timeout)
+{
+	m_timeout = timeout;
 }
 
 
