@@ -13,11 +13,6 @@ Config::Config()
 	loadDefaults();
 }
 
-Config::~Config()
-{
-	saveToFile();
-}
-
 Config &Config::getInstance()
 {
 	static Config config;
@@ -90,5 +85,11 @@ void Config::set(const std::string &key, rapidjson::Value &val)
 	else
 		getInstance().m_json.AddMember(rapidjson::StringRef(key.c_str()), val, getInstance().m_json.GetAllocator());
 }
+
+rapidjson::Document::AllocatorType &Config::getAllocator()
+{
+	return getInstance().m_json.GetAllocator();
+}
+
 
 } // namespace FreeShop

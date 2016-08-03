@@ -12,7 +12,6 @@ namespace FreeShop {
 
 class Config {
 public:
-	~Config();
 	static Config& getInstance();
 
 	void loadDefaults();
@@ -24,6 +23,7 @@ public:
 	static bool keyExists(const std::string& key);
 
 	static const rapidjson::Value &get(const std::string& key);
+	static rapidjson::Document::AllocatorType &getAllocator();
 
 	template <typename T>
 	static void set(const std::string& key, T val)
