@@ -45,6 +45,20 @@ void NinePatch::setContentSize(float width, float height) const
 }
 
 
+void NinePatch::setSize(const cpp3ds::Vector2f &size) const
+{
+	m_contentSize.x = size.x + getPadding().width - getTexture()->getSize().x + 2.f;
+	m_contentSize.y = size.y + getPadding().height - getTexture()->getSize().y + 2.f;
+	m_needsUpdate = true;
+}
+
+
+void NinePatch::setSize(float width, float height) const
+{
+	setSize(cpp3ds::Vector2f(width, height));
+}
+
+
 const cpp3ds::Vector2f &NinePatch::getContentSize() const
 {
 	ensureUpdate();
