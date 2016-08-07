@@ -63,6 +63,8 @@ set(SOURCE_FILES
 	${PROJECT_SOURCE_DIR}/src/GUI/AppItem.cpp
 	${PROJECT_SOURCE_DIR}/src/GUI/Button.cpp
 	${PROJECT_SOURCE_DIR}/src/GUI/NinePatch.cpp
+	${PROJECT_SOURCE_DIR}/src/GUI/Scrollable.cpp
+	${PROJECT_SOURCE_DIR}/src/GUI/ScrollBar.cpp
 	${PROJECT_SOURCE_DIR}/src/GUI/Settings.cpp
 	${PROJECT_SOURCE_DIR}/src/States/State.cpp
 	${PROJECT_SOURCE_DIR}/src/States/SleepState.cpp
