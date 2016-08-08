@@ -204,11 +204,11 @@ void Settings::fillFilterGenres(Gwen::Controls::Base *parent)
 
 			labelCount = new Label(parent);
 			labelCount->SetText(_("%d", gameCount).toAnsiString());
-			labelCount->SetBounds(0, 2 + i * 18, 23, 18);
+			labelCount->SetBounds(0, 2 + i * 18, 31, 18);
 			labelCount->SetAlignment(Gwen::Pos::Right);
 
 			checkbox = new CheckBoxWithLabel(parent);
-			checkbox->SetPos(27, i * 18);
+			checkbox->SetPos(35, i * 18);
 			checkbox->Label()->SetText(genreName);
 			checkbox->Checkbox()->SetValue(_("%d", genreId).toAnsiString());
 			checkbox->Checkbox()->onCheckChanged.Add(this, &Settings::filterCheckboxChanged);
@@ -269,11 +269,11 @@ void Settings::fillFilterPlatforms(Gwen::Controls::Base *parent)
 
 			labelCount = new Label(parent);
 			labelCount->SetText(_("%d", gameCount).toAnsiString());
-			labelCount->SetBounds(0, 2 + i * 18, 23, 18);
+			labelCount->SetBounds(0, 2 + i * 18, 31, 18);
 			labelCount->SetAlignment(Gwen::Pos::Right);
 
 			checkbox = new CheckBoxWithLabel(parent);
-			checkbox->SetPos(27, i * 18);
+			checkbox->SetPos(35, i * 18);
 			checkbox->Label()->SetText(platformName);
 			checkbox->Checkbox()->SetValue(_("%d", platformId).toAnsiString());
 			checkbox->Checkbox()->onCheckChanged.Add(this, &Settings::filterCheckboxChanged);
@@ -348,11 +348,11 @@ void Settings::fillFilterLanguages(Gwen::Controls::Base *parent)
 
 		labelCount = new Label(parent);
 		labelCount->SetText(_("%d", gameCount).toAnsiString());
-		labelCount->SetBounds(0, 2 + i * 18, 23, 18);
+		labelCount->SetBounds(0, 2 + i * 18, 31, 18);
 		labelCount->SetAlignment(Gwen::Pos::Right);
 
 		checkbox = new CheckBoxWithLabel(parent);
-		checkbox->SetPos(27, i * 18);
+		checkbox->SetPos(35, i * 18);
 		checkbox->Label()->SetText(langString.toAnsiString());
 		checkbox->Checkbox()->SetValue(_("%d", lang).toAnsiString());
 		checkbox->Checkbox()->onCheckChanged.Add(this, &Settings::filterCheckboxChanged);
@@ -478,7 +478,7 @@ void Settings::fillSortPage(Gwen::Controls::Base *page)
 	m_radioSortType->AddOption(_("Size").toWideString(), "Size");
 	m_radioSortType->AddOption(_("Vote Score").toWideString(), "Vote Score");
 	m_radioSortType->AddOption(_("Vote Count").toWideString(), "Vote Count");
-	m_radioSortType->AddOption(_("Release Date").toWideString(), "Release Date");
+//	m_radioSortType->AddOption(_("Release Date").toWideString(), "Release Date");
 	m_radioSortType->onSelectionChange.Add(this, &Settings::updateSorting);
 
 	m_radioSortDirection = new RadioButtonController(page);
