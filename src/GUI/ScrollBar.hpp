@@ -36,6 +36,7 @@ public:
 
 	void show();
 	void hide();
+	void markDirty();
 
 	// Returns true when event is captured
 	bool processEvent(const cpp3ds::Event &event);

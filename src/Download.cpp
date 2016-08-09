@@ -326,7 +326,7 @@ void Download::processEvent(const cpp3ds::Event &event)
 	{
 		cpp3ds::FloatRect bounds = m_textCancel.getGlobalBounds();
 		bounds.left += getPosition().x;
-		bounds.top += getPosition().y;
+		bounds.top += getPosition().y + DownloadQueue::getInstance().getPosition().y;
 		if (bounds.contains(event.touch.x, event.touch.y))
 		{
 			if (getStatus() != Downloading)
@@ -341,7 +341,7 @@ void Download::processEvent(const cpp3ds::Event &event)
 		{
 			bounds = m_textSendTop.getGlobalBounds();
 			bounds.left += getPosition().x;
-			bounds.top += getPosition().y;
+			bounds.top += getPosition().y + DownloadQueue::getInstance().getPosition().y;
 			if (bounds.contains(event.touch.x, event.touch.y))
 			{
 				m_onSendTop(this);
@@ -351,7 +351,7 @@ void Download::processEvent(const cpp3ds::Event &event)
 		{
 			bounds = m_textRestart.getGlobalBounds();
 			bounds.left += getPosition().x;
-			bounds.top += getPosition().y;
+			bounds.top += getPosition().y + DownloadQueue::getInstance().getPosition().y;
 			if (bounds.contains(event.touch.x, event.touch.y))
 			{
 				// Restart failed download

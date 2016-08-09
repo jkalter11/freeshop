@@ -42,7 +42,7 @@ InstalledItem::InstalledItem(cpp3ds::Uint64 titleId)
 	}
 
 	m_background.setTexture(&AssetManager<cpp3ds::Texture>::get("images/installed_item_bg.9.png"));
-	m_background.setContentSize(320.f + m_background.getPadding().width - m_background.getTexture()->getSize().x + 2.f, 14.f);
+	m_background.setContentSize(320.f + m_background.getPadding().width - m_background.getTexture()->getSize().x + 2.f, 14.f*3);
 	float paddingRight = m_background.getSize().x - m_background.getContentSize().x - m_background.getPadding().left;
 	float paddingBottom = m_background.getSize().y - m_background.getContentSize().y - m_background.getPadding().top;
 
@@ -68,7 +68,7 @@ InstalledItem::InstalledItem(cpp3ds::Uint64 titleId)
 	m_textWarningUpdate.setFillColor(cpp3ds::Color(50, 50, 50));
 	m_textWarningUpdate.setOutlineColor(cpp3ds::Color(0, 200, 0));
 	m_textWarningUpdate.setOutlineThickness(1.f);
-	m_textWarningUpdate.move(-1.f, 0);
+	m_textWarningUpdate.move(-7.f, 0);
 
 	m_textWarningDLC = m_textWarningUpdate;
 	m_textWarningDLC.setOutlineColor(cpp3ds::Color(255, 255, 0, 255));
@@ -99,6 +99,10 @@ void InstalledItem::setUpdateStatus(cpp3ds::Uint64 titleId, bool installed)
 	for (auto& update : m_updates)
 		if (update.second)
 			m_updateInstallCount++;
+//	if (m_updates.size() - m_updateInstallCount > 0)
+//		m_textUpdatesRemaining.setString(_("%u", m_updates.size() - m_updateInstallCount));
+//	else
+//		m_textUpdatesRemaining.setString("");
 }
 
 void InstalledItem::setDLCStatus(cpp3ds::Uint64 titleId, bool installed)
@@ -108,6 +112,10 @@ void InstalledItem::setDLCStatus(cpp3ds::Uint64 titleId, bool installed)
 	for (auto& dlc : m_dlc)
 		if (dlc.second)
 			m_dlcInstallCount++;
+//	if (m_dlc.size() - m_dlcInstallCount > 0)
+//		m_textDLCRemaining.setString(_("%u", m_dlc.size() - m_dlcInstallCount));
+//	else
+//		m_textDLCRemaining.setString("");
 }
 
 std::shared_ptr<AppItem> InstalledItem::getAppItem() const

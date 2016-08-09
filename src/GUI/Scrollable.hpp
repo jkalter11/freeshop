@@ -14,11 +14,12 @@ public:
 	~Scrollable();
 	virtual void setScroll(float position) = 0;
 	virtual float getScroll() = 0;
-	virtual const cpp3ds::Vector2f &getSize() = 0;
+	virtual const cpp3ds::Vector2f &getScrollSize() = 0;
 
 protected:
 	void attachScrollbar(ScrollBar *scrollbar);
 	void detachScrollbar();
+	void updateScrollSize();
 
 private:
 	float m_scrollVal;

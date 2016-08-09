@@ -1,3 +1,4 @@
+#include <cmath>
 #include "InstalledList.hpp"
 #include "AppList.hpp"
 #include "TitleKeys.hpp"
@@ -5,6 +6,8 @@
 namespace FreeShop {
 
 InstalledList::InstalledList()
+: m_scrollPos(0.f)
+, m_size(320.f, 0.f)
 {
 	//
 }
@@ -56,8 +59,6 @@ void InstalledList::refresh()
 		}
 	}
 
-	int i = 0;
-
 	// Add all primary game titles first
 	for (auto& titleId : titleIds)
 	{
@@ -66,15 +67,14 @@ void InstalledList::refresh()
 			try
 			{
 				std::unique_ptr<InstalledItem> item(new InstalledItem(titleId));
-				item->setPosition(0.f, 16.f * i + 30.f);
 				m_installedItems.emplace_back(std::move(item));
-				i++;
 			}
 			catch (int e)
 			{
 				//
 			}
 	}
+	repositionItems();
 
 	// Add updates that have not yet been installed for which we have a titlekey
 	for (auto& titleKey : TitleKeys::getList())
@@ -124,6 +124,7 @@ void InstalledList::refresh()
 void InstalledList::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) const
 {
 	states.transform *= getTransform();
+	states.scissor = cpp3ds::UintRect(0, 30, 320, 210);
 
 	for (auto& item : m_installedItems)
 	{
@@ -139,6 +140,34 @@ void InstalledList::update(float delta)
 bool InstalledList::processEvent(const cpp3ds::Event &event)
 {
 	return false;
+}
+
+void InstalledList::setScroll(float position)
+{
+	m_scrollPos = std::round(position);
+	repositionItems();
+}
+
+float InstalledList::getScroll()
+{
+	return m_scrollPos;
+}
+
+void InstalledList::repositionItems()
+{
+	float posY = 30.f + m_scrollPos;
+	for (auto& item : m_installedItems)
+	{
+		item->setPosition(0.f, posY);
+		posY += 16.f*4;
+	}
+
+	m_size.y = posY - 30.f;
+}
+
+const cpp3ds::Vector2f &InstalledList::getScrollSize()
+{
+	return m_size;
 }
 
 

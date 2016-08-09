@@ -162,7 +162,7 @@ void ScrollBar::ensureUpdateScrollBar() const
 	for (auto &obj : m_scrollObjects)
 	{
 		float scrollVal = obj->getScroll();
-		const cpp3ds::Vector2f &size = obj->getSize();
+		const cpp3ds::Vector2f &size = obj->getScrollSize();
 		m_scrollSize += size.y;
 	}
 	m_scrollPosMin = m_scrollAreaSize.y - m_scrollSize;
@@ -275,6 +275,11 @@ void ScrollBar::setPosition(float x, float y)
 const cpp3ds::Vector2f &ScrollBar::getPosition() const
 {
 	return m_position;
+}
+
+void ScrollBar::markDirty()
+{
+	m_needsUpdate = true;
 }
 
 

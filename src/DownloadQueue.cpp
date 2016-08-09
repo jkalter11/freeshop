@@ -10,6 +10,7 @@
 #include <rapidjson/writer.h>
 #include <cpp3ds/System/FileInputStream.hpp>
 #include <cpp3ds/System/Lock.hpp>
+#include <cmath>
 #include "DownloadQueue.hpp"
 #include "Notification.hpp"
 #include "AppList.hpp"
@@ -38,6 +39,7 @@ DownloadItem::~DownloadItem()
 DownloadQueue::DownloadQueue()
 : m_threadRefresh(&DownloadQueue::refresh, this)
 , m_refreshEnd(false)
+, m_size(320.f, 0.f)
 {
 	load();
 	m_threadRefresh.launch();
@@ -294,6 +296,7 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 void DownloadQueue::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) const
 {
 	states.transform *= getTransform();
+	states.scissor = cpp3ds::UintRect(0, 30, 320, 210);
 
 	for (auto& item : m_downloads)
 	{
@@ -341,6 +344,7 @@ bool DownloadQueue::processEvent(const cpp3ds::Event &event)
 void DownloadQueue::realign()
 {
 	bool processedFirstItem = false;
+	m_size.y = 0.f;
 	for (int i = 0; i < m_downloads.size(); ++i)
 	{
 		Download *download = m_downloads[i]->download;
@@ -358,7 +362,10 @@ void DownloadQueue::realign()
 		TweenEngine::Tween::to(*download, util3ds::TweenSprite::POSITION_Y, 0.2f)
 			.target(33.f + i * download->getSize().y)
 			.start(m_tweenManager);
+
+		m_size.y += download->getSize().y;
 	}
+	updateScrollSize();
 	save();
 }
 
@@ -567,6 +574,22 @@ void DownloadQueue::load()
 
 	if (pendingTitleIds)
 		delete[] pendingTitleIds;
+}
+
+void DownloadQueue::setScroll(float position)
+{
+	m_scrollPos = position;
+	setPosition(0.f, std::round(position));
+}
+
+float DownloadQueue::getScroll()
+{
+	return m_scrollPos;
+}
+
+const cpp3ds::Vector2f &DownloadQueue::getScrollSize()
+{
+	return m_size;
 }
 
 } // namespace FreeShop

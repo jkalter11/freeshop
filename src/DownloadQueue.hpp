@@ -7,6 +7,7 @@
 #include "Download.hpp"
 #include "GUI/AppItem.hpp"
 #include "Installer.hpp"
+#include "GUI/Scrollable.hpp"
 
 namespace FreeShop {
 
@@ -18,7 +19,7 @@ struct DownloadItem {
 	Installer *installer;
 };
 
-class DownloadQueue : public cpp3ds::Drawable, public util3ds::TweenTransformable<cpp3ds::Transformable> {
+class DownloadQueue : public cpp3ds::Drawable, public Scrollable, public util3ds::TweenTransformable<cpp3ds::Transformable> {
 public:
 	~DownloadQueue();
 
@@ -41,6 +42,10 @@ public:
 	void update(float delta);
 	bool processEvent(const cpp3ds::Event& event);
 
+	virtual void setScroll(float position);
+	virtual float getScroll();
+	virtual const cpp3ds::Vector2f &getScrollSize();
+
 protected:
 	DownloadQueue();
 	void load();
@@ -53,6 +58,9 @@ protected:
 private:
 	std::vector<std::unique_ptr<DownloadItem>> m_downloads;
 	TweenEngine::TweenManager m_tweenManager;
+
+	float m_scrollPos;
+	cpp3ds::Vector2f m_size;
 
 	cpp3ds::Thread m_threadRefresh;
 	cpp3ds::Mutex m_mutexRefresh;

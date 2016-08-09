@@ -80,6 +80,16 @@ void BrowseState::initialize()
 		text.useSystemFont();
 	}
 
+	m_scrollbarInstalledList.setPosition(314.f, 30.f);
+	m_scrollbarInstalledList.setDragRect(cpp3ds::IntRect(0, 30, 320, 210));
+	m_scrollbarInstalledList.setScrollAreaSize(cpp3ds::Vector2u(320, 210));
+	m_scrollbarInstalledList.setSize(cpp3ds::Vector2u(8, 210));
+	m_scrollbarInstalledList.setColor(cpp3ds::Color(150, 150, 150, 150));
+	m_scrollbarDownloadQueue = m_scrollbarInstalledList;
+
+	m_scrollbarInstalledList.attachObject(&InstalledList::getInstance());
+	m_scrollbarDownloadQueue.attachObject(&DownloadQueue::getInstance());
+
 	setMode(App);
 
 	m_soundBlip.setBuffer(AssetManager<cpp3ds::SoundBuffer>::get("sounds/blip.ogg"));
@@ -186,6 +196,8 @@ bool BrowseState::update(float delta)
 	AppList::getInstance().update(delta);
 	m_keyboard.update(delta);
 	DownloadQueue::getInstance().update(delta);
+	m_scrollbarInstalledList.update(delta);
+	m_scrollbarDownloadQueue.update(delta);
 	InstalledList::getInstance().update(delta);
 	m_tweenManager.update(delta);
 	return true;
@@ -203,9 +215,11 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 			return false;
 	}
 	else if (m_mode == Downloads) {
-		DownloadQueue::getInstance().processEvent(event);
+		if (!m_scrollbarDownloadQueue.processEvent(event))
+			DownloadQueue::getInstance().processEvent(event);
 	} else if (m_mode == Installed) {
-		InstalledList::getInstance().processEvent(event);
+		if (!m_scrollbarInstalledList.processEvent(event))
+			InstalledList::getInstance().processEvent(event);
 	} else if (m_mode == Settings) {
 		m_settingsGUI->processEvent(event);
 	}

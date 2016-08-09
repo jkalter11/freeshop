@@ -9,6 +9,7 @@
 #include "../RichText.hpp"
 #include "../IconSet.hpp"
 #include "../GUI/Settings.hpp"
+#include "../GUI/ScrollBar.hpp"
 #include <cpp3ds/Graphics/Sprite.hpp>
 #include <cpp3ds/Graphics/Texture.hpp>
 #include <cpp3ds/System/Clock.hpp>
@@ -52,7 +53,6 @@ private:
 	void loadApp();
 
 private:
-	bool m_busy;
 	AppInfo m_appInfo;
 	util3ds::TweenText m_textListEmpty;
 
@@ -69,6 +69,9 @@ private:
 	size_t m_activeDownloadCount;
 	util3ds::TweenText m_textActiveDownloads;
 
+	ScrollBar m_scrollbarInstalledList;
+	ScrollBar m_scrollbarDownloadQueue;
+
 	// Sounds
 	cpp3ds::Sound  m_soundBlip;
 	cpp3ds::Sound  m_soundClick;
@@ -81,8 +84,6 @@ private:
 	// Keyboard
 	util3ds::Keyboard m_keyboard;
 	cpp3ds::String m_lastKeyboardInput;
-
-	util3ds::TweenRectangleShape m_whiteScreen;
 
 	std::vector<util3ds::RichText> m_textMatches;
 

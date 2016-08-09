@@ -26,5 +26,11 @@ void Scrollable::detachScrollbar()
 	m_scrollBar = nullptr;
 }
 
+void Scrollable::updateScrollSize()
+{
+	if (m_scrollBar)
+		m_scrollBar->markDirty();
+}
+
 
 } // namespace FreeShop
