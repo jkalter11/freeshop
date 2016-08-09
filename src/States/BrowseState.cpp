@@ -23,10 +23,11 @@ BrowseState::BrowseState(StateStack& stack, Context& context, StateCallback call
 , m_threadInitialize(&BrowseState::initialize, this)
 , m_threadLoadApp(&BrowseState::loadApp, this)
 , m_threadMusic(&BrowseState::playMusic, this)
-, m_busy(false)
+, m_threadBusy(false)
 , m_activeDownloadCount(0)
 , m_mode(Downloads)
 , m_gwenRenderer(nullptr)
+, m_isTransitioning(false)
 {
 	m_threadInitialize.launch();
 }
@@ -66,14 +67,11 @@ void BrowseState::initialize()
 	m_textListEmpty.setFillColor(cpp3ds::Color(80, 80, 80, 255));
 	m_textListEmpty.setPosition((400.f - m_textListEmpty.getLocalBounds().width) / 2, 70.f);
 
-	m_whiteScreen.setSize(cpp3ds::Vector2f(320.f, 240.f));
+	m_whiteScreen.setPosition(0.f, 30.f);
+	m_whiteScreen.setSize(cpp3ds::Vector2f(320.f, 210.f));
 	m_whiteScreen.setFillColor(cpp3ds::Color::White);
 
 	m_keyboard.loadFromFile("kb/keyboard.xml");
-	m_keyboard.setPosition(0.f, 240.f);
-	DownloadQueue::getInstance().setPosition(0.f, 240.f);
-	InstalledList::getInstance().setPosition(0.f, 240.f);
-	m_appInfo.setPosition(0.f, 240.f);
 
 	m_textMatches.resize(4);
 	for (auto& text : m_textMatches)
@@ -120,18 +118,17 @@ void BrowseState::renderBottomScreen(cpp3ds::Window& window)
 		m_gwenSkin->SetDefaultFont(L"", 11);
 
 		m_settingsGUI = new GUI::Settings(m_gwenSkin, this);
-		m_settingsGUI->setPosition(cpp3ds::Vector2f(0.f, 200.f));
 	}
 	if (!g_syncComplete || !g_browserLoaded)
 		return;
 
-	if (m_keyboard.getPosition().y < 240.f)
+	if (m_mode == Search)
 	{
 		window.draw(m_keyboard);
 		for (auto& textMatch : m_textMatches)
 			window.draw(textMatch);
 	}
-	if (m_settingsGUI->getPosition().y < 200.f)
+	if (m_mode == Settings)
 	{
 		m_settingsGUI->render();
 	}
@@ -141,21 +138,27 @@ void BrowseState::renderBottomScreen(cpp3ds::Window& window)
 	if (m_activeDownloadCount > 0)
 		window.draw(m_textActiveDownloads);
 
-	if (m_appInfo.getPosition().y < 240.f)
+	if (m_mode == App)
 		window.draw(m_appInfo);
-	if (DownloadQueue::getInstance().getPosition().y < 240.f)
+	if (m_mode == Downloads)
+	{
 		window.draw(DownloadQueue::getInstance());
-	if (InstalledList::getInstance().getPosition().y < 240.f)
+	}
+	if (m_mode == Installed)
+	{
 		window.draw(InstalledList::getInstance());
+	}
 
 //	window.draw(m_whiteScreen);
+	if (m_isTransitioning)
+		window.draw(m_whiteScreen);
 }
 
 bool BrowseState::update(float delta)
 {
 	if (!g_syncComplete || !g_browserLoaded)
 		return true;
-	if (m_busy)
+	if (m_threadBusy)
 		SleepState::clock.restart();
 
 	if (SleepState::clock.getElapsedTime() > cpp3ds::seconds(SECONDS_TO_SLEEP))
@@ -192,7 +195,7 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 {
 	SleepState::clock.restart();
 
-	if (m_busy || !g_syncComplete || !g_browserLoaded)
+	if (m_threadBusy || !g_syncComplete || !g_browserLoaded)
 		return false;
 
 	if (m_mode == App) {
@@ -285,7 +288,7 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 				requestStackClear();
 				return true;
 			case cpp3ds::Keyboard::A: {
-				m_busy = true;
+				m_threadBusy = true;
 				if (!m_appInfo.getAppItem())
 					m_threadLoadApp.launch();
 				else
@@ -356,7 +359,7 @@ void BrowseState::loadApp()
 	m_iconSet.setSelectedIndex(App);
 	if (m_appInfo.getAppItem() == item)
 	{
-		m_busy = false;
+		m_threadBusy = false;
 		return;
 	}
 
@@ -376,13 +379,13 @@ void BrowseState::loadApp()
 	if (showLoading)
 		requestStackPop();
 
-	m_busy = false;
+	m_threadBusy = false;
 }
 
 
 void BrowseState::setMode(BrowseState::Mode mode)
 {
-	if (m_mode == mode)
+	if (m_mode == mode || m_isTransitioning)
 		return;
 
 	// Transition / end current mode
@@ -391,7 +394,7 @@ void BrowseState::setMode(BrowseState::Mode mode)
 		float delay = 0.f;
 		for (auto& text : m_textMatches)
 		{
-			TweenEngine::Tween::to(text, util3ds::RichText::POSITION_X, 0.3f)
+			TweenEngine::Tween::to(text, util3ds::RichText::POSITION_X, 0.2f)
 				.target(-text.getLocalBounds().width)
 				.delay(delay)
 				.start(m_tweenManager);
@@ -400,56 +403,9 @@ void BrowseState::setMode(BrowseState::Mode mode)
 
 		AppList::getInstance().setCollapsed(false);
 	}
-	else if (m_mode == Settings)
-	{
-		TweenEngine::Tween::to(*m_settingsGUI, GUI::Settings::POSITION_XY, 0.3f)
-			.target(0.f, 200.f)
-			.start(m_tweenManager);
-	}
-
-	TweenEngine::Tween::to(m_keyboard, util3ds::Keyboard::POSITION_XY, 0.5f)
-		.target(0.f, 240.f)
-		.start(m_tweenManager);
-	TweenEngine::Tween::to(m_appInfo, AppInfo::POSITION_Y, 0.3f)
-		.target(240.f)
-		.start(m_tweenManager);
-	TweenEngine::Tween::to(DownloadQueue::getInstance(), DownloadQueue::POSITION_Y, 0.3f)
-		.target(240.f)
-		.start(m_tweenManager);
-	TweenEngine::Tween::to(InstalledList::getInstance(), InstalledList::POSITION_Y, 0.3f)
-		.target(240.f)
-		.start(m_tweenManager);
 
 	// Transition / start new mode
-	if (mode == App)
-	{
-		TweenEngine::Tween::to(m_appInfo, AppInfo::POSITION_Y, 0.3f)
-			.target(0.f)
-			.delay(0.3f)
-			.start(m_tweenManager);
-	}
-	else if (mode == Downloads)
-	{
-		TweenEngine::Tween::to(DownloadQueue::getInstance(), DownloadQueue::POSITION_Y, 0.3f)
-			.target(0.f)
-			.delay(0.3f)
-			.start(m_tweenManager);
-	}
-	else if (mode == Installed)
-	{
-		TweenEngine::Tween::to(InstalledList::getInstance(), InstalledList::POSITION_Y, 0.3f)
-			.target(0.f)
-			.delay(0.3f)
-			.start(m_tweenManager);
-	}
-	else if (mode == Settings)
-	{
-		TweenEngine::Tween::to(*m_settingsGUI, GUI::Settings::POSITION_XY, 0.3f)
-			.target(0.f, 0.f)
-			.delay(0.3f)
-			.start(m_tweenManager);
-	}
-	else if (mode == Search)
+	if (mode == Search)
 	{
 		float posY = 1.f;
 		for (auto& text : m_textMatches)
@@ -459,16 +415,26 @@ void BrowseState::setMode(BrowseState::Mode mode)
 			posY += 13.f;
 		}
 		AppList::getInstance().setCollapsed(true);
-		TweenEngine::Tween::to(m_keyboard, util3ds::Keyboard::POSITION_XY, 0.3f)
-			.target(0.f, 0.f)
-			.delay(0.3f)
-			.start(m_tweenManager);
 
 		m_lastKeyboardInput = "";
 		m_keyboard.setCurrentInput(m_lastKeyboardInput);
 	}
 
-	m_mode = mode;
+	TweenEngine::Tween::to(m_whiteScreen, m_whiteScreen.FILL_COLOR_ALPHA, 0.4f)
+		.target(255.f)
+		.setCallback(TweenEngine::TweenCallback::COMPLETE, [=](TweenEngine::BaseTween* source) {
+			m_mode = mode;
+		})
+		.start(m_tweenManager);
+	TweenEngine::Tween::to(m_whiteScreen, m_whiteScreen.FILL_COLOR_ALPHA, 0.4f)
+		.target(0.f)
+		.setCallback(TweenEngine::TweenCallback::COMPLETE, [=](TweenEngine::BaseTween* source) {
+			m_isTransitioning = false;
+		})
+		.delay(0.4f)
+		.start(m_tweenManager);
+
+	m_isTransitioning = true;
 }
 
 void BrowseState::playMusic()

@@ -53,7 +53,6 @@ private:
 
 private:
 	bool m_busy;
-	Mode m_mode;
 	AppInfo m_appInfo;
 	util3ds::TweenText m_textListEmpty;
 
@@ -63,6 +62,7 @@ private:
 
 	cpp3ds::Thread m_threadInitialize;
 	cpp3ds::Thread m_threadLoadApp;
+	bool m_threadBusy;
 
 	IconSet m_iconSet;
 
@@ -85,6 +85,11 @@ private:
 	util3ds::TweenRectangleShape m_whiteScreen;
 
 	std::vector<util3ds::RichText> m_textMatches;
+
+	// Transitioning
+	bool m_isTransitioning;
+	Mode m_mode;
+	util3ds::TweenRectangleShape m_whiteScreen;
 
 	// GWEN
 	Gwen::Renderer::cpp3dsRenderer *m_gwenRenderer;
