@@ -1,4 +1,5 @@
 #include <cmath>
+#include <TweenEngine/Tween.h>
 #include "InstalledList.hpp"
 #include "AppList.hpp"
 #include "TitleKeys.hpp"
@@ -8,8 +9,11 @@ namespace FreeShop {
 InstalledList::InstalledList()
 : m_scrollPos(0.f)
 , m_size(320.f, 0.f)
+, m_expandedItem(nullptr)
 {
-	//
+	// Make install options initially transparent for fade in
+	TweenEngine::Tween::set(m_options, InstalledOptions::ALPHA)
+			.target(0.f).start(m_tweenManager);
 }
 
 InstalledList &InstalledList::getInstance()
@@ -22,6 +26,10 @@ void InstalledList::refresh()
 {
 	cpp3ds::Uint64 relatedTitleId;
 	std::vector<cpp3ds::Uint64> titleIds;
+
+	m_installedItems.clear();
+	m_expandedItem = nullptr;
+
 #ifdef EMULATION
 	// some hardcoded title IDs for testing
 	titleIds.push_back(0x00040000000edf00); // [US] Super Smash Bros.
@@ -127,9 +135,10 @@ void InstalledList::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates stat
 	states.scissor = cpp3ds::UintRect(0, 30, 320, 210);
 
 	for (auto& item : m_installedItems)
-	{
 		target.draw(*item, states);
-	}
+
+	if (m_expandedItem)
+		target.draw(m_options, states);
 }
 
 void InstalledList::update(float delta)
@@ -139,6 +148,29 @@ void InstalledList::update(float delta)
 
 bool InstalledList::processEvent(const cpp3ds::Event &event)
 {
+	if (m_tweenManager.getRunningTweensCount() > 0)
+		return false;
+
+	if (event.type == cpp3ds::Event::TouchEnded)
+	{
+		for (auto &item : m_installedItems)
+		{
+			float posY = getPosition().y + item->getPosition().y;
+			if (event.touch.y > posY && event.touch.y < posY + item->getHeight())
+			{
+				if (item.get() == m_expandedItem)
+				{
+					if (event.touch.y < posY + 16.f)
+						expandItem(nullptr);
+					else
+						m_options.processTouchEvent(event);
+				}
+				else
+					expandItem(item.get());
+				break;
+			}
+		}
+	}
 	return false;
 }
 
@@ -158,16 +190,92 @@ void InstalledList::repositionItems()
 	float posY = 30.f + m_scrollPos;
 	for (auto& item : m_installedItems)
 	{
+		if (item.get() == m_expandedItem)
+			m_options.setPosition(0.f, posY + 20.f);
 		item->setPosition(0.f, posY);
-		posY += 16.f*4;
+		posY += item->getHeight();
 	}
-
-	m_size.y = posY - 30.f;
+	m_size.y = posY - 6.f - m_scrollPos;
+	if (m_expandedItem)
+		m_size.y -= 24.f;
+	updateScrollSize();
 }
 
 const cpp3ds::Vector2f &InstalledList::getScrollSize()
 {
 	return m_size;
+}
+
+void InstalledList::expandItem(InstalledItem *item)
+{
+	if (item == m_expandedItem)
+		return;
+
+	const float optionsFadeDelay = 0.15f;
+	const float expandDuration = 0.2f;
+
+	// Expand animation
+	if (m_expandedItem)
+	{
+		TweenEngine::Tween::to(*m_expandedItem, InstalledItem::HEIGHT, expandDuration)
+			.target(16.f)
+			.setCallback(TweenEngine::TweenCallback::COMPLETE, [=](TweenEngine::BaseTween* source) {
+				m_expandedItem = item;
+				repositionItems();
+			})
+			.delay(optionsFadeDelay)
+			.start(m_tweenManager);
+		TweenEngine::Tween::to(m_options, InstalledOptions::ALPHA, optionsFadeDelay + 0.05f)
+			.target(0.f)
+			.start(m_tweenManager);
+	}
+	if (item)
+	{
+		TweenEngine::Tween::to(*item, InstalledItem::HEIGHT, expandDuration)
+			.target(40.f)
+			.setCallback(TweenEngine::TweenCallback::COMPLETE, [=](TweenEngine::BaseTween* source) {
+				m_expandedItem = item;
+				m_options.setInstalledItem(item);
+				repositionItems();
+			})
+			.delay(m_expandedItem ? optionsFadeDelay : 0.f)
+			.start(m_tweenManager);
+		TweenEngine::Tween::to(m_options, InstalledOptions::ALPHA, expandDuration)
+			.target(255.f)
+			.delay(m_expandedItem ? expandDuration + optionsFadeDelay : optionsFadeDelay)
+			.start(m_tweenManager);
+	}
+
+	// Move animation for items in between expanded items
+	bool foundItem = false;
+	bool foundExpanded = false;
+	for (auto &itemToMove : m_installedItems)
+	{
+		if (foundItem && !foundExpanded)
+		{
+			TweenEngine::Tween::to(*itemToMove, InstalledItem::POSITION_Y, expandDuration)
+				.targetRelative(24.f)
+				.delay(m_expandedItem ? optionsFadeDelay : 0.f)
+				.start(m_tweenManager);
+		}
+		else if (foundExpanded && !foundItem)
+		{
+			TweenEngine::Tween::to(*itemToMove, InstalledItem::POSITION_Y, expandDuration)
+				.targetRelative(-24.f)
+				.delay(m_expandedItem ? optionsFadeDelay : 0.f)
+				.start(m_tweenManager);
+		}
+
+		if (itemToMove.get() == m_expandedItem)
+			foundExpanded = true;
+		else if (itemToMove.get() == item)
+		{
+			foundItem = true;
+		}
+
+		if (foundExpanded && foundItem)
+			break;
+	}
 }
 
 

@@ -44,9 +44,9 @@ bool Installer::resume()
 	return true;
 }
 
-void Installer::suspend()
+bool Installer::suspend()
 {
-	//
+	return true;
 }
 
 void Installer::abort()
@@ -108,6 +108,11 @@ int Installer::getCurrentContentIndex() const
 cpp3ds::Uint64 Installer::getCurrentContentPosition() const
 {
 	return m_currentContentPosition;
+}
+
+cpp3ds::Uint64 Installer::getTitleId() const
+{
+	return m_titleId;
 }
 
 } // namespace FreeShop

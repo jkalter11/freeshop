@@ -11,6 +11,8 @@
 
 namespace FreeShop {
 
+typedef std::function<void(bool)> DownloadCompleteCallback;
+
 struct DownloadItem {
 	DownloadItem(std::shared_ptr<AppItem> appItem, Download *download, Installer *installer);
 	~DownloadItem();
@@ -25,10 +27,12 @@ public:
 
 	static DownloadQueue &getInstance();
 
-	void addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 titleId = 0, int contentIndex = -1, float progress = 0.f);
+	void addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 titleId = 0, DownloadCompleteCallback callback = nullptr, int contentIndex = -1, float progress = 0.f);
 	void cancelDownload(std::shared_ptr<AppItem> app);
 	void restartDownload(std::shared_ptr<AppItem> app);
+
 	bool isDownloading(std::shared_ptr<AppItem> app);
+	bool isDownloading(cpp3ds::Uint64 titleId);
 
 	void suspend();
 	void resume();

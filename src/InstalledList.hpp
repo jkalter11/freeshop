@@ -4,6 +4,7 @@
 #include <TweenEngine/TweenManager.h>
 #include <cpp3ds/Window/Event.hpp>
 #include "InstalledItem.hpp"
+#include "InstalledOptions.hpp"
 #include "GUI/Scrollable.hpp"
 
 namespace FreeShop {
@@ -24,12 +25,16 @@ protected:
 	InstalledList();
 	virtual void draw(cpp3ds::RenderTarget& target, cpp3ds::RenderStates states) const;
 	void repositionItems();
+	void expandItem(InstalledItem *item);
 
 private:
 	std::vector<std::unique_ptr<InstalledItem>> m_installedItems;
 	TweenEngine::TweenManager m_tweenManager;
 	float m_scrollPos;
 	cpp3ds::Vector2f m_size;
+	InstalledItem *m_expandedItem;
+
+	InstalledOptions m_options;
 };
 
 } // namespace FreeShop

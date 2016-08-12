@@ -185,18 +185,23 @@ bool Installer::resume()
 	return false;
 }
 
-void Installer::suspend()
+bool Installer::suspend()
 {
 	cpp3ds::Lock lock(m_mutex);
+	m_result = 0;
 
 	if (m_isInstalling && !m_isSuspended)
 	{
 		if (m_isInstallingContent)
-			AM_InstallContentStop(m_handleContent);
-		AM_InstallTitleStop();
-
-		m_isSuspended = true;
+			m_result = AM_InstallContentStop(m_handleContent);
+		if (R_SUCCEEDED(m_result = AM_InstallTitleStop()))
+			return m_isSuspended = true;
 	}
+	else
+		return true;
+
+	m_errorStr = _("Failed to suspend: 0x%08lX", m_result);
+	return false;
 }
 
 bool Installer::commit()
@@ -323,5 +328,11 @@ cpp3ds::Uint64 Installer::getCurrentContentPosition() const
 {
 	return m_currentContentPosition;
 }
+
+cpp3ds::Uint64 Installer::getTitleId() const
+{
+	return m_titleId;
+}
+
 
 } // namespace FreeShop

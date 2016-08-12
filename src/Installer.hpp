@@ -23,7 +23,7 @@ public:
 
 	bool start(bool deleteTitle);
 	bool resume();
-	void suspend();
+	bool suspend();
 	void abort();
 
 	bool installTmd(const void *data, size_t size);
@@ -37,6 +37,7 @@ public:
 	cpp3ds::Int32 getErrorCode() const;
 	const cpp3ds::String &getErrorString() const;
 
+	cpp3ds::Uint64 getTitleId() const;
 	int getCurrentContentIndex() const;
 	cpp3ds::Uint64 getCurrentContentPosition() const;
 
