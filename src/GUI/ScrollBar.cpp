@@ -127,8 +127,12 @@ void ScrollBar::update(float delta)
 			m_isScrolling = false;
 	}
 
-	for (auto &obj : m_scrollObjects)
-		obj->setScroll(m_scrollPos);
+	if (m_isScrolling)
+		for (auto &obj : m_scrollObjects)
+			obj->setScroll(m_scrollPos);
+
+	if (m_scrollPos > m_scrollPosMax)
+		setScroll(m_scrollPosMax);
 
 	m_tweenManager.update(delta);
 }
