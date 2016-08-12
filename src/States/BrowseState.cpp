@@ -153,10 +153,12 @@ void BrowseState::renderBottomScreen(cpp3ds::Window& window)
 	if (m_mode == Downloads)
 	{
 		window.draw(DownloadQueue::getInstance());
+		window.draw(m_scrollbarDownloadQueue);
 	}
 	if (m_mode == Installed)
 	{
 		window.draw(InstalledList::getInstance());
+		window.draw(m_scrollbarInstalledList);
 	}
 
 //	window.draw(m_whiteScreen);
@@ -185,6 +187,20 @@ bool BrowseState::update(float delta)
 	{
 		m_appInfo.update(delta);
 	}
+	else if (m_mode == Downloads)
+	{
+		DownloadQueue::getInstance().update(delta);
+		m_scrollbarDownloadQueue.update(delta);
+	}
+	else if (m_mode == Installed)
+	{
+		InstalledList::getInstance().update(delta);
+		m_scrollbarInstalledList.update(delta);
+	}
+	else if (m_mode == Search)
+	{
+		m_keyboard.update(delta);
+	}
 
 	if (m_activeDownloadCount != DownloadQueue::getInstance().getActiveCount())
 	{
@@ -194,11 +210,6 @@ bool BrowseState::update(float delta)
 
 	m_iconSet.update(delta);
 	AppList::getInstance().update(delta);
-	m_keyboard.update(delta);
-	DownloadQueue::getInstance().update(delta);
-	m_scrollbarInstalledList.update(delta);
-	m_scrollbarDownloadQueue.update(delta);
-	InstalledList::getInstance().update(delta);
 	m_tweenManager.update(delta);
 	return true;
 }
@@ -322,9 +333,14 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 				auto app = AppList::getInstance().getSelected()->getAppItem();
 				if (app && !DownloadQueue::getInstance().isDownloading(app))
 				{
-					app->queueForInstall();
 					cpp3ds::String s = app->getTitle();
-					s.insert(0, _("Queued install: "));
+					if (!app->isInstalled())
+					{
+						app->queueForInstall();
+						s.insert(0, _("Queued install: "));
+					}
+					else
+						s.insert(0, _("Already installed: "));
 					Notification::spawn(s);
 				}
 				break;
