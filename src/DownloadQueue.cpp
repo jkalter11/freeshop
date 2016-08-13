@@ -289,12 +289,12 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 		for (auto& download : m_downloads)
 			download->download->m_canSendTop = true;
 
-		if (callback)
-			callback(succeeded);
-
 		// Refresh installed list to add recent install
 		if (succeeded)
 			InstalledList::getInstance().refresh();
+
+		if (callback)
+			callback(succeeded);
 	});
 
 	if (progress > 0.f)
@@ -560,11 +560,20 @@ void DownloadQueue::save()
 			continue;
 
 		rapidjson::Value obj(rapidjson::kObjectType);
+		cpp3ds::Uint32 titleType = item->installer->getTitleId() >> 32;
 		subTitleIds.push_back(_("%016llX", item->installer->getTitleId()).toAnsiString());
+
 		obj.AddMember("title_id", rapidjson::StringRef(item->appItem->getTitleIdStr().c_str()), json.GetAllocator());
 		obj.AddMember("subtitle_id", rapidjson::StringRef(subTitleIds.back().c_str()), json.GetAllocator());
-		obj.AddMember("content_index", rapidjson::Value().SetInt(status == Download::Queued ? -1 : item->installer->getCurrentContentIndex()), json.GetAllocator());
-		obj.AddMember("progress", rapidjson::Value().SetFloat(item->download->getProgress()), json.GetAllocator());
+
+		// TODO: Figure out how to properly resume DLC installation
+		if (titleType == TitleKeys::DLC) {
+			obj.AddMember("content_index", rapidjson::Value().SetInt(-1), json.GetAllocator());
+			obj.AddMember("progress", rapidjson::Value().SetFloat(0.f), json.GetAllocator());
+		} else {
+			obj.AddMember("content_index", rapidjson::Value().SetInt(status == Download::Queued ? -1 : item->installer->getCurrentContentIndex()), json.GetAllocator());
+			obj.AddMember("progress", rapidjson::Value().SetFloat(item->download->getProgress()), json.GetAllocator());
+		}
 		json.PushBack(obj, json.GetAllocator());
 	}
 
@@ -573,13 +582,18 @@ void DownloadQueue::save()
 
 void DownloadQueue::load()
 {
-	uint32_t pendingTitleCount = 0;
-	uint64_t *pendingTitleIds = nullptr;
+	uint32_t pendingTitleCountSD = 0;
+	uint32_t pendingTitleCountNAND = 0;
+	std::vector<uint64_t> pendingTitleIds;
 #ifndef EMULATION
 	Result res = 0;
-	if (R_SUCCEEDED(res = AM_GetPendingTitleCount(&pendingTitleCount, MEDIATYPE_SD, AM_STATUS_MASK_INSTALLING)))
-		if (pendingTitleIds = new uint64_t[pendingTitleCount])
-			res = AM_GetPendingTitleList(&pendingTitleCount, pendingTitleCount, MEDIATYPE_SD, AM_STATUS_MASK_INSTALLING, pendingTitleIds);
+	if (R_SUCCEEDED(res = AM_GetPendingTitleCount(&pendingTitleCountSD, MEDIATYPE_SD, AM_STATUS_MASK_INSTALLING)))
+		if (R_SUCCEEDED(res = AM_GetPendingTitleCount(&pendingTitleCountNAND, MEDIATYPE_NAND, AM_STATUS_MASK_INSTALLING)))
+		{
+			pendingTitleIds.resize(pendingTitleCountSD + pendingTitleCountNAND);
+			res = AM_GetPendingTitleList(nullptr, pendingTitleCountSD, MEDIATYPE_SD, AM_STATUS_MASK_INSTALLING, &pendingTitleIds[0]);
+			res = AM_GetPendingTitleList(nullptr, pendingTitleCountNAND, MEDIATYPE_NAND, AM_STATUS_MASK_INSTALLING, &pendingTitleIds[pendingTitleCountSD]);
+		}
 #endif
 	cpp3ds::FileInputStream file;
 	if (file.open("sdmc:/freeShop/queue.json"))
@@ -603,8 +617,8 @@ void DownloadQueue::load()
 				uint64_t titleId = strtoull(strTitleId.c_str(), 0, 16);
 				uint64_t subTitleId = strtoull(strSubTitleId.c_str(), 0, 16);
 #ifdef _3DS
-				for (int i = 0; i < pendingTitleCount; ++i)
-					if (contentIndex == -1 || pendingTitleIds[i] == titleId || pendingTitleIds[i] == subTitleId)
+				for (auto pendingTitleId : pendingTitleIds)
+					if (contentIndex == -1 || pendingTitleId == titleId || pendingTitleId == subTitleId)
 					{
 						for (auto& app : list)
 							if (app->getAppItem()->getTitleId() == titleId)
@@ -619,9 +633,6 @@ void DownloadQueue::load()
 			}
 		}
 	}
-
-	if (pendingTitleIds)
-		delete[] pendingTitleIds;
 }
 
 void DownloadQueue::setScroll(float position)
