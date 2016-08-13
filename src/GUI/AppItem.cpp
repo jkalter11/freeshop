@@ -82,9 +82,7 @@ void AppItem::setSize(float width, float height)
 {
 	m_size.x = width;
 	m_size.y = height;
-
-	m_background.setContentSize(m_size.x + m_background.getPadding().width - m_background.getTexture()->getSize().x + 2.f,
-								m_size.y + m_background.getPadding().height - m_background.getTexture()->getSize().y + 2.f);
+	m_background.setSize(width, height);
 }
 
 const cpp3ds::Vector2f& AppItem::getSize() const
