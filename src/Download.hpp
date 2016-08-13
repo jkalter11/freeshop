@@ -75,6 +75,7 @@ public:
 
 	const cpp3ds::Http::Response &getLastResponse() const;
 	void setTimeout(cpp3ds::Time timeout);
+	void setBufferSize(size_t size);
 
 	bool markedForDelete();
 
@@ -105,6 +106,7 @@ private:
 	std::vector<char> m_buffer;
 
 	cpp3ds::Time m_timeout;
+	size_t m_bufferSize;
 
 	// For queue UI
 	gui3ds::NinePatch m_background;

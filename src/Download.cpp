@@ -23,6 +23,7 @@ Download::Download(const std::string &url, const std::string &destination)
 , m_appItem(nullptr)
 , m_timesToRetry(0)
 , m_timeout(cpp3ds::seconds(3))
+, m_bufferSize(128*1024)
 {
 	setUrl(url);
 	setDestination(destination);
@@ -69,8 +70,6 @@ void Download::start()
 
 void Download::run()
 {
-	size_t bufferSize = 128*1024;
-
 	if (!m_destination.empty())
 	{
 		m_file = fopen(cpp3ds::FileSystem::getFilePath(m_destination).c_str(), "w");
@@ -115,6 +114,8 @@ void Download::run()
 	// Loop in case there are URLs pushed to queue later
 	while (1)
 	{
+		retryCount = 0;
+
 		// Retry loop in case of connection failures
 		do {
 			// Wait in case of internet loss, but exit when canceled or suspended
@@ -124,12 +125,12 @@ void Download::run()
 				cpp3ds::sleep(cpp3ds::milliseconds(200));
 			}
 
-			m_response = m_http.sendRequest(m_request, m_timeout, dataCallback, bufferSize);
+			m_response = m_http.sendRequest(m_request, m_timeout, dataCallback, m_bufferSize);
 			// Follow all redirects
 			while (m_response.getStatus() == cpp3ds::Http::Response::MovedPermanently || m_response.getStatus() == cpp3ds::Http::Response::MovedTemporarily)
 			{
 				setUrl(m_response.getField("Location"));
-				m_response = m_http.sendRequest(m_request, m_timeout, dataCallback, bufferSize);
+				m_response = m_http.sendRequest(m_request, m_timeout, dataCallback, m_bufferSize);
 			}
 
 			// Retry failed connections (all error codes >= 1000)
@@ -430,6 +431,11 @@ const cpp3ds::Http::Response &Download::getLastResponse() const
 void Download::setTimeout(cpp3ds::Time timeout)
 {
 	m_timeout = timeout;
+}
+
+void Download::setBufferSize(size_t size)
+{
+	m_bufferSize = size;
 }
 
 
