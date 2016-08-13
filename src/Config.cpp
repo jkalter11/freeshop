@@ -67,6 +67,7 @@ void Config::loadDefaults()
 	// Update settings
 	ADD_DEFAULT("auto-update", true);
 	ADD_DEFAULT("download_title_keys", false);
+	ADD_DEFAULT("key_urls", rapidjson::kArrayType);
 
 	// Other settings
 	ADD_DEFAULT("sleep_mode", true);

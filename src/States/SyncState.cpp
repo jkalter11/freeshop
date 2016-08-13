@@ -4,6 +4,7 @@
 #include "../Util.hpp"
 #include "../AssetManager.hpp"
 #include "../Config.hpp"
+#include "../TitleKeys.hpp"
 #include <TweenEngine/Tween.h>
 #include <cpp3ds/Window/Window.hpp>
 #include <cpp3ds/System/I18n.hpp>
@@ -182,7 +183,7 @@ void SyncState::sync()
 #ifdef NDEBUG
 	if (updateFreeShop())
 	{
-#ifndef EMULATION
+#ifdef _3DS
 		Result res = 0;
 		u8 hmac[0x20];
 		if (R_SUCCEEDED(res = APT_PrepareToDoApplicationJump(0, 0x400000F12EE00, MEDIATYPE_SD)))
@@ -194,13 +195,9 @@ void SyncState::sync()
 #endif
 
 	updateCache();
+	updateTitleKeys();
 
-	Config::saveToFile();
-
-	std::cout << "time: " << m_timer.getElapsedTime().asSeconds() << std::endl;
-
-	if (m_timer.getElapsedTime() < cpp3ds::seconds(6.5f))
-		setStatus(_("Loading game list..."));
+	setStatus(_("Loading game list..."));
 
 	requestStackPush(States::Browse);
 
@@ -213,6 +210,9 @@ void SyncState::sync()
 
 bool SyncState::updateFreeShop()
 {
+	if (!Config::get("auto-update").GetBool())
+		return false;
+
 	setStatus(_("Looking for freeShop update..."));
 	const char *url = "https://api.github.com/repos/Cruel/freeShop/releases/latest";
 	const char *latestJsonFilename = "sdmc:/freeShop/tmp/latest.json";
@@ -266,12 +266,8 @@ bool SyncState::updateFreeShop()
 			if (R_FAILED(ret))
 				setStatus(_("Failed to install update: 0x%08lX", ret));
 			suceeded = R_SUCCEEDED(ret = AM_FinishCiaInstall(cia));
-			if (suceeded) {
-				Config::set("version", tag.c_str());
-				Config::saveToFile();
-			} else
+			if (!suceeded)
 				setStatus(_("Failed to install update: 0x%08lX", ret));
-
 			return suceeded;
 #endif
 		}
@@ -282,6 +278,9 @@ bool SyncState::updateFreeShop()
 
 bool SyncState::updateCache()
 {
+	if (!Config::get("auto-update").GetBool())
+		return false;
+
 	setStatus(_("Checking latest cache..."));
 	const char *url = "https://api.github.com/repos/Repo3DS/shop-cache/releases/latest";
 	const char *latestJsonFilename = "sdmc:/freeShop/tmp/latest.json";
@@ -318,6 +317,31 @@ bool SyncState::updateCache()
 	}
 
 	return false;
+}
+
+
+bool SyncState::updateTitleKeys()
+{
+	auto urls = Config::get("key_urls").GetArray();
+	if (!Config::get("download_title_keys").GetBool() || urls.Empty())
+		return false;
+
+	setStatus(_("Downloading title keys..."));
+
+	const char *url = urls[0].GetString();
+	std::string tmpFilename = cpp3ds::FileSystem::getFilePath("sdmc:/freeShop/tmp/keys.bin");
+	std::string keysFilename = cpp3ds::FileSystem::getFilePath("sdmc:/freeShop/keys/download.bin");
+	Download download(url, tmpFilename);
+	download.run();
+
+	if (!TitleKeys::isValidFile(tmpFilename))
+		return false;
+
+	if (pathExists(keysFilename.c_str()))
+		unlink(keysFilename.c_str());
+	rename(tmpFilename.c_str(), keysFilename.c_str());
+
+	return true;
 }
 
 

@@ -1,4 +1,6 @@
 #include <cpp3ds/System/I18n.hpp>
+#include <cpp3ds/System/FileSystem.hpp>
+#include <dirent.h>
 #include "Download.hpp"
 #include "TitleKeys.hpp"
 
@@ -27,24 +29,40 @@ void TitleKeys::ensureTitleKeys()
 	if (!titleKeys.size())
 	{
 		cpp3ds::FileInputStream file;
-		file.open("sdmc:/freeShop/encTitleKeys.bin");
-		if (isValidFile(file))
+		std::string keyDirectory = cpp3ds::FileSystem::getFilePath("sdmc:/freeShop/keys/");
+
+		struct dirent *ent;
+		DIR *dir = opendir(keyDirectory.c_str());
+		if (!dir)
+			return;
+
+		while (ent = readdir(dir))
 		{
-			size_t count = file.getSize() / 32;
+			if (!strcmp(ent->d_name, ".") || !strcmp(ent->d_name, ".."))
+				continue;
 
-			cpp3ds::Uint64 titleId;
-			cpp3ds::Uint32 titleKey[4];
-
-			for (int i = 0; i < count; ++i)
+			std::string filename = keyDirectory + ent->d_name;
+			file.open(filename);
+			if (isValidFile(file))
 			{
-				file.seek(24 + i * 32);
-				file.read(&titleId, 8);
-				file.read(titleKey, 16);
+				size_t count = file.getSize() / 32;
 
-				for (int j = 0; j < 4; ++j)
-					titleKeys[__builtin_bswap64(titleId)][j] = titleKey[j];
+				cpp3ds::Uint64 titleId;
+				cpp3ds::Uint32 titleKey[4];
+
+				for (int i = 0; i < count; ++i)
+				{
+					file.seek(24 + i * 32);
+					file.read(&titleId, 8);
+					file.read(titleKey, 16);
+
+					for (int j = 0; j < 4; ++j)
+						titleKeys[__builtin_bswap64(titleId)][j] = titleKey[j];
+				}
 			}
 		}
+
+		closedir(dir);
 	}
 }
 

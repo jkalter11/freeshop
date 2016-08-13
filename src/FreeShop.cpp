@@ -50,6 +50,10 @@ FreeShop::FreeShop()
 	if (!pathExists(path.c_str(), false))
 		mkdir(path.c_str(), 0777);
 
+	path = cpp3ds::FileSystem::getFilePath("sdmc:/freeShop/keys");
+	if (!pathExists(path.c_str(), false))
+		mkdir(path.c_str(), 0777);
+
 	Config::loadFromFile();
 }
 

@@ -32,6 +32,7 @@ public:
 private:
 	bool updateFreeShop();
 	bool updateCache();
+	bool updateTitleKeys();
 	void setStatus(const std::string& message);
 
 	cpp3ds::Thread m_threadSync;
