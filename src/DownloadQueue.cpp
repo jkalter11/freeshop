@@ -549,7 +549,7 @@ void DownloadQueue::save()
 	std::ofstream file(filepath);
 	rapidjson::OStreamWrapper osw(file);
 	rapidjson::Writer<rapidjson::OStreamWrapper> writer(osw);
-	std::string subTitleId;
+	std::vector<std::string> subTitleIds; // Strings need to be in memory for json allocator write
 
 	json.SetArray();
 	for (auto& item : m_downloads)
@@ -560,9 +560,9 @@ void DownloadQueue::save()
 			continue;
 
 		rapidjson::Value obj(rapidjson::kObjectType);
-		subTitleId = _("%016llX", item->installer->getTitleId()).toAnsiString();
+		subTitleIds.push_back(_("%016llX", item->installer->getTitleId()).toAnsiString());
 		obj.AddMember("title_id", rapidjson::StringRef(item->appItem->getTitleIdStr().c_str()), json.GetAllocator());
-		obj.AddMember("subtitle_id", rapidjson::StringRef(subTitleId.c_str()), json.GetAllocator());
+		obj.AddMember("subtitle_id", rapidjson::StringRef(subTitleIds.back().c_str()), json.GetAllocator());
 		obj.AddMember("content_index", rapidjson::Value().SetInt(status == Download::Queued ? -1 : item->installer->getCurrentContentIndex()), json.GetAllocator());
 		obj.AddMember("progress", rapidjson::Value().SetFloat(item->download->getProgress()), json.GetAllocator());
 		json.PushBack(obj, json.GetAllocator());
