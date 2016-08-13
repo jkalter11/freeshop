@@ -6,6 +6,7 @@
 #include "../Installer.hpp"
 #include "SleepState.hpp"
 #include "../InstalledList.hpp"
+#include "../Config.hpp"
 #include <TweenEngine/Tween.h>
 #include <cpp3ds/Window/Window.hpp>
 #include <sstream>
@@ -37,10 +38,10 @@ BrowseState::~BrowseState()
 	if (m_gwenRenderer)
 	{
 		delete m_settingsGUI;
-		delete m_gwenCanvas;
 		delete m_gwenSkin;
 		delete m_gwenRenderer;
 	}
+	Config::saveToFile();
 }
 
 void BrowseState::initialize()
@@ -161,7 +162,6 @@ void BrowseState::renderBottomScreen(cpp3ds::Window& window)
 		window.draw(m_scrollbarInstalledList);
 	}
 
-//	window.draw(m_whiteScreen);
 	if (m_isTransitioning)
 		window.draw(m_whiteScreen);
 }
