@@ -34,6 +34,8 @@ protected:
 	virtual void setValues(int tweenType, float *newValues);
 	virtual int getValues(int tweenType, float *returnValues);
 
+	void updateInfo();
+
 private:
 	void setDescription(const rapidjson::Value &jsonDescription);
 	void setScreenshots(const rapidjson::Value &jsonScreenshots);
@@ -45,7 +47,10 @@ private:
 	cpp3ds::Text m_textTitleId;
 	float m_descriptionVelocity;
 	cpp3ds::RectangleShape m_fadeTextRect;
-	cpp3ds::View m_descriptionView;
+
+	bool m_isDemoInstalled;
+	cpp3ds::Text m_textDemo;
+	cpp3ds::Text m_textIconDemo;
 
 	util3ds::TweenText m_textDownload;
 	util3ds::TweenText m_textDelete;

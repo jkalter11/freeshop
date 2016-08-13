@@ -21,6 +21,8 @@ public:
 	virtual float getScroll();
 	virtual const cpp3ds::Vector2f &getScrollSize();
 
+	static bool isInstalled(cpp3ds::Uint64 titleId);
+
 protected:
 	InstalledList();
 	virtual void draw(cpp3ds::RenderTarget& target, cpp3ds::RenderStates states) const;
@@ -28,6 +30,7 @@ protected:
 	void expandItem(InstalledItem *item);
 
 private:
+	std::vector<cpp3ds::Uint64> m_installedTitleIds;
 	std::vector<std::unique_ptr<InstalledItem>> m_installedItems;
 	TweenEngine::TweenManager m_tweenManager;
 	float m_scrollPos;

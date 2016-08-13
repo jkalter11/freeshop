@@ -27,6 +27,7 @@ void InstalledList::refresh()
 	cpp3ds::Uint64 relatedTitleId;
 	std::vector<cpp3ds::Uint64> titleIds;
 
+	m_installedTitleIds.clear();
 	m_installedItems.clear();
 	m_expandedItem = nullptr;
 
@@ -49,9 +50,13 @@ void InstalledList::refresh()
 
 	for (auto& titleId : titleIds)
 	{
-		TitleKeys::TitleType titleType = static_cast<TitleKeys::TitleType>(titleId >> 32);
+		size_t titleType = titleId >> 32;
 		cpp3ds::Uint32 titleLower = (titleId & 0xFFFFFFFF) >> 8;
 		relatedTitleId = 0;
+
+		if (titleType == TitleKeys::Game || titleType == TitleKeys::Update ||
+				titleType == TitleKeys::DLC || titleType == TitleKeys::Demo || titleType == TitleKeys::DSiWare)
+			m_installedTitleIds.push_back(titleId);
 
 		if (titleType == TitleKeys::DLC || titleType == TitleKeys::Update)
 		{
@@ -276,6 +281,12 @@ void InstalledList::expandItem(InstalledItem *item)
 		if (foundExpanded && foundItem)
 			break;
 	}
+}
+
+bool InstalledList::isInstalled(cpp3ds::Uint64 titleId)
+{
+	auto &v = getInstance().m_installedTitleIds;
+	return std::find(v.begin(), v.end(), titleId) != v.end();
 }
 
 

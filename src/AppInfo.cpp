@@ -8,6 +8,7 @@
 #include "Util.hpp"
 #include "DownloadQueue.hpp"
 #include "Notification.hpp"
+#include "InstalledList.hpp"
 #include <sstream>
 #include <TweenEngine/Tween.h>
 #include <cpp3ds/System/FileInputStream.hpp>
@@ -23,6 +24,7 @@ AppInfo::AppInfo()
 : m_appItem(nullptr)
 , m_currentScreenshot(0)
 , m_descriptionVelocity(0.f)
+, m_isDemoInstalled(false)
 {
 	m_textDownload.setFillColor(cpp3ds::Color::White);
 	m_textDownload.setOutlineColor(cpp3ds::Color(0, 0, 0, 200));
@@ -81,6 +83,17 @@ AppInfo::AppInfo()
 	m_textTitleId.setFillColor(cpp3ds::Color(80, 80, 80, 255));
 	m_textTitleId.setPosition(2.f, 127.f);
 
+	m_textDemo.setString(_("Demo"));
+	m_textDemo.setFillColor(cpp3ds::Color(100, 100, 100));
+	m_textDemo.setCharacterSize(10);
+	m_textDemo.setPosition(25.f, 140.f);
+	m_textDemo.useSystemFont();
+
+	m_textIconDemo.setFont(AssetManager<cpp3ds::Font>::get("fonts/fontawesome.ttf"));
+	m_textIconDemo.setFillColor(cpp3ds::Color(50, 100, 50));
+	m_textIconDemo.setCharacterSize(18);
+	m_textIconDemo.setPosition(5.f, 135.f);
+
 	m_fadeTextRect.setTexture(&AssetManager<cpp3ds::Texture>::get("images/fade.png"));
 	m_fadeTextRect.setSize(cpp3ds::Vector2f(250.f, 8.f));
 	m_fadeTextRect.setOrigin(m_fadeTextRect.getSize());
@@ -89,9 +102,6 @@ AppInfo::AppInfo()
 
 	m_icon.setPosition(2.f, 30.f);
 	m_icon.setScale(2.f, 2.f);
-
-	m_descriptionView.reset(cpp3ds::FloatRect(0.f, 46.f, 320.f, 120.f));
-	m_descriptionView.setViewport(cpp3ds::FloatRect(0.f, 46.f / 240.f, 1.f, 120.f / 240.f));
 
 	m_fadeRect.setPosition(0.f, 30.f);
 	m_fadeRect.setSize(cpp3ds::Vector2f(320.f, 210.f));
@@ -122,13 +132,10 @@ void AppInfo::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) co
 		target.draw(m_icon, states);
 		target.draw(m_textTitle, states);
 
-		cpp3ds::View defaultView = target.getView();
-		target.setView(m_descriptionView);
+		states.scissor = cpp3ds::UintRect(0, 46, 320, 120);
 		target.draw(m_textDescription, states);
-		target.setView(defaultView);
+		states.scissor = cpp3ds::UintRect();
 		target.draw(m_fadeTextRect, states);
-
-		target.draw(m_textTitleId, states);
 
 		if (m_appItem->isInstalled())
 		{
@@ -138,6 +145,12 @@ void AppInfo::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) co
 		else
 		{
 			target.draw(m_textDownload, states);
+		}
+
+		if (!m_appItem->getDemos().empty() && !DownloadQueue::getInstance().isDownloading(m_appItem->getDemos()[0]))
+		{
+			target.draw(m_textDemo, states);
+			target.draw(m_textIconDemo, states);
 		}
 
 		for (auto& screenshot : m_screenshotTops)
@@ -207,6 +220,8 @@ void AppInfo::loadApp(std::shared_ptr<AppItem> appItem)
 			download.run();
 		}
 
+		updateInfo();
+
 		m_textTitle.setString("");
 		m_textDescription.setString("");
 		m_textTitleId.setString(appItem->getTitleIdStr());
@@ -230,7 +245,6 @@ void AppInfo::loadApp(std::shared_ptr<AppItem> appItem)
 			doc.Parse(json.c_str());
 			if (!doc.HasParseError())
 			{
-
 				if (doc["title"].HasMember("screenshots"))
 					setScreenshots(doc["title"]["screenshots"]["screenshot"]);
 
@@ -308,27 +322,27 @@ void AppInfo::setCurrentScreenshot(int screenshotIndex)
 
 			TweenEngine::Tween::to(m_screenshotTopTop, util3ds::TweenSprite::SCALE_XY, 0.7f)
 					.target(1.f, 1.f)
-					.delay(0.6f)
+					.delay(0.5f)
 					.start(m_tweenManager);
 			TweenEngine::Tween::to(m_screenshotTopTop, util3ds::TweenSprite::POSITION_XY, 0.7f)
 					.target(0.f, 0.f)
-					.delay(0.6f)
+					.delay(0.5f)
 					.start(m_tweenManager);
 			TweenEngine::Tween::to(m_screenshotTopBottom, util3ds::TweenSprite::SCALE_XY, 0.7f)
 					.target(1.f, 1.f)
-					.delay(0.6f)
+					.delay(0.5f)
 					.start(m_tweenManager);
 			TweenEngine::Tween::to(m_screenshotTopBottom, util3ds::TweenSprite::POSITION_XY, 0.7f)
 					.target(-40.f, -240.f)
-					.delay(0.6f)
+					.delay(0.5f)
 					.start(m_tweenManager);
 			TweenEngine::Tween::to(m_screenshotBottom, util3ds::TweenSprite::SCALE_XY, 0.7f)
 					.target(1.f, 1.f)
-					.delay(0.6f)
+					.delay(0.5f)
 					.start(m_tweenManager);
 			TweenEngine::Tween::to(m_screenshotBottom, util3ds::TweenSprite::POSITION_XY, 0.7f)
 					.target(0.f, 0.f)
-					.delay(0.6f)
+					.delay(0.5f)
 					.start(m_tweenManager);
 		}
 	}
@@ -429,6 +443,18 @@ bool AppInfo::processEvent(const cpp3ds::Event &event)
 
 				cpp3ds::String s = m_appItem->getTitle();
 				s.insert(0, _("Queued install: "));
+				Notification::spawn(s);
+			}
+		}
+		else if (m_textIconDemo.getGlobalBounds().contains(event.touch.x, event.touch.y))
+		{
+			if (!m_appItem->getDemos().empty())
+			{
+				DownloadQueue::getInstance().addDownload(m_appItem, m_appItem->getDemos()[0], [this](bool succeeded){
+					updateInfo();
+				});
+				cpp3ds::String s = m_appItem->getTitle();
+				s.insert(0, _("Queued demo: "));
 				Notification::spawn(s);
 			}
 		}
@@ -551,5 +577,18 @@ void AppInfo::addScreenshot(int index, const rapidjson::Value &jsonScreenshot)
 		m_screenshotBottomTextures.emplace_back(std::move(texture));
 	}
 }
+
+void AppInfo::updateInfo()
+{
+	if (m_appItem->getDemos().size() > 0)
+	{
+		if (InstalledList::isInstalled(m_appItem->getDemos()[0])) {
+			m_textIconDemo.setString(L"\uf1f8");
+		} else {
+			m_textIconDemo.setString(L"\uf019");
+		}
+	}
+}
+
 
 } // namespace FreeShop
