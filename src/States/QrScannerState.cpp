@@ -30,6 +30,7 @@ QrScannerState::QrScannerState(StateStack &stack, Context &context, StateCallbac
 	, m_threadRunning(false)
 	, m_requestedClose(false)
 	, m_displayError(false)
+	, m_hideQrBorder(false)
 {
 	m_cameraScreen.setTexture(&m_cameraTexture);
 	m_cameraScreen.setSize(cpp3ds::Vector2f(WIDTH, HEIGHT));
@@ -85,7 +86,7 @@ QrScannerState::~QrScannerState()
 void QrScannerState::renderTopScreen(cpp3ds::Window& window)
 {
 	window.draw(m_cameraScreen);
-	if (!m_displayError)
+	if (!m_displayError && !m_hideQrBorder)
 		window.draw(m_qrBorder, m_qrBorder.getTransform());
 }
 
@@ -239,7 +240,7 @@ void QrScannerState::scanQrCode()
 	int w, h;
 	std::vector<cpp3ds::Uint8> camBuffer;
 
-	while (m_capturing)
+	while (m_capturing && !m_requestedClose)
 	{
 		{
 			cpp3ds::Lock lock(m_camMutex);
@@ -267,6 +268,7 @@ void QrScannerState::scanQrCode()
 			{
 				// Return QR's decoded text to callback, outputs error string when true
 				cpp3ds::String text(reinterpret_cast<char*>(data.payload));
+				m_hideQrBorder = true;
 				if (runCallback(&text))
 					close();
 				else
@@ -276,6 +278,7 @@ void QrScannerState::scanQrCode()
 										  m_textError.getLocalBounds().height / 2);
 					m_displayError = true;
 				}
+				m_hideQrBorder = false;
 			}
 		}
 		while (m_displayError)

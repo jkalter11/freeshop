@@ -50,6 +50,7 @@ private:
 	cpp3ds::Mutex m_mutexRequest;
 
 	bool m_displayError;
+	bool m_hideQrBorder;
 	cpp3ds::Text m_textError;
 	cpp3ds::Text m_textCloseError;
 
