@@ -140,7 +140,11 @@ void InstalledList::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates stat
 	states.scissor = cpp3ds::UintRect(0, 30, 320, 210);
 
 	for (auto& item : m_installedItems)
-		target.draw(*item, states);
+	{
+		float posY = item->getPosition().y;
+		if (posY > -10.f && posY < 240.f)
+			target.draw(*item, states);
+	}
 
 	if (m_expandedItem)
 		target.draw(m_options, states);

@@ -318,7 +318,10 @@ void DownloadQueue::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates stat
 
 	for (auto& item : m_downloads)
 	{
-		target.draw(*item->download, states);
+		static float top = 30.f - item->download->getSize().y;
+		float posY = item->download->getPosition().y + m_scrollPos;
+		if (posY > top && posY < 240.f)
+			target.draw(*item->download, states);
 	}
 }
 
