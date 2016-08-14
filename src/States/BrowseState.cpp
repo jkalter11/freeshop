@@ -28,6 +28,8 @@ BrowseState::BrowseState(StateStack& stack, Context& context, StateCallback call
 , m_activeDownloadCount(0)
 , m_mode(Downloads)
 , m_gwenRenderer(nullptr)
+, m_gwenSkin(nullptr)
+, m_settingsGUI(nullptr)
 , m_isTransitioning(false)
 {
 	m_threadInitialize.launch();
@@ -35,12 +37,12 @@ BrowseState::BrowseState(StateStack& stack, Context& context, StateCallback call
 
 BrowseState::~BrowseState()
 {
-	if (m_gwenRenderer)
-	{
+	if (m_settingsGUI)
 		delete m_settingsGUI;
+	if (m_gwenSkin)
 		delete m_gwenSkin;
+	if (m_gwenRenderer)
 		delete m_gwenRenderer;
-	}
 	Config::saveToFile();
 }
 
@@ -99,6 +101,10 @@ void BrowseState::initialize()
 	m_musicLoop.openFromFile("sounds/shop-loop.ogg");
 	m_musicLoop.setLoop(true);
 
+	while (!m_gwenSkin)
+		cpp3ds::sleep(cpp3ds::milliseconds(10));
+	m_settingsGUI = new GUI::Settings(m_gwenSkin, this);
+
 	g_browserLoaded = true;
 
 	SleepState::clock.restart();
@@ -128,7 +134,6 @@ void BrowseState::renderBottomScreen(cpp3ds::Window& window)
 		m_gwenSkin->Init("DefaultSkin.png");
 		m_gwenSkin->SetDefaultFont(L"", 11);
 
-		m_settingsGUI = new GUI::Settings(m_gwenSkin, this);
 	}
 	if (!g_syncComplete || !g_browserLoaded)
 		return;
