@@ -301,7 +301,11 @@ bool SyncState::updateCache()
 		if (!tag.empty() && tag.compare(Config::get("cache_version").GetString()) != 0)
 		{
 			std::string cacheFile = "sdmc:/freeShop/tmp/cache.tar.gz";
+#ifdef _3DS
 			std::string cacheUrl = _("https://github.com/Repo3DS/shop-cache/releases/download/%s/cache-%s-etc1.tar.gz", tag.c_str(), tag.c_str());
+#else
+			std::string cacheUrl = _("https://github.com/Repo3DS/shop-cache/releases/download/%s/cache-%s-jpg.tar.gz", tag.c_str(), tag.c_str());
+#endif
 			setStatus(_("Downloading latest cache: %s...", tag.c_str()));
 			Download cacheDownload(cacheUrl, cacheFile);
 			cacheDownload.run();
