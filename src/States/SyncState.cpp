@@ -215,7 +215,7 @@ bool SyncState::updateFreeShop()
 
 	setStatus(_("Looking for freeShop update..."));
 	const char *url = "https://api.github.com/repos/Cruel/freeShop/releases/latest";
-	const char *latestJsonFilename = "sdmc:/freeShop/tmp/latest.json";
+	const char *latestJsonFilename = FREESHOP_DIR "/tmp/latest.json";
 	Download cache(url, latestJsonFilename);
 	cache.run();
 
@@ -242,7 +242,7 @@ bool SyncState::updateFreeShop()
 			Handle cia;
 			bool suceeded = false;
 			size_t total = 0;
-			std::string freeShopFile = "sdmc:/freeShop/tmp/freeShop.cia";
+			std::string freeShopFile = FREESHOP_DIR "/tmp/freeShop.cia";
 			std::string freeShopUrl = _("https://github.com/Cruel/freeShop/releases/download/%s/freeShop-%s.cia", tag.c_str(), tag.c_str());
 			setStatus(_("Installing freeShop %s ...", tag.c_str()));
 			Download freeShopDownload(freeShopUrl, freeShopFile);
@@ -283,7 +283,7 @@ bool SyncState::updateCache()
 
 	setStatus(_("Checking latest cache..."));
 	const char *url = "https://api.github.com/repos/Repo3DS/shop-cache/releases/latest";
-	const char *latestJsonFilename = "sdmc:/freeShop/tmp/latest.json";
+	const char *latestJsonFilename = FREESHOP_DIR "/tmp/latest.json";
 	Download cache(url, latestJsonFilename);
 	cache.run();
 
@@ -300,7 +300,7 @@ bool SyncState::updateCache()
 		std::string tag = doc["tag_name"].GetString();
 		if (!tag.empty() && tag.compare(Config::get("cache_version").GetString()) != 0)
 		{
-			std::string cacheFile = "sdmc:/freeShop/tmp/cache.tar.gz";
+			std::string cacheFile = FREESHOP_DIR "/tmp/cache.tar.gz";
 #ifdef _3DS
 			std::string cacheUrl = _("https://github.com/Repo3DS/shop-cache/releases/download/%s/cache-%s-etc1.tar.gz", tag.c_str(), tag.c_str());
 #else
@@ -311,7 +311,7 @@ bool SyncState::updateCache()
 			cacheDownload.run();
 
 			setStatus(_("Extracting latest cache..."));
-			if (extract(cacheFile, "sdmc:/freeShop/cache/"))
+			if (extract(cacheFile, FREESHOP_DIR "/cache/"))
 			{
 				Config::set("cache_version", tag.c_str());
 				Config::saveToFile();
@@ -333,8 +333,8 @@ bool SyncState::updateTitleKeys()
 	setStatus(_("Downloading title keys..."));
 
 	const char *url = urls[0].GetString();
-	std::string tmpFilename = cpp3ds::FileSystem::getFilePath("sdmc:/freeShop/tmp/keys.bin");
-	std::string keysFilename = cpp3ds::FileSystem::getFilePath("sdmc:/freeShop/keys/download.bin");
+	std::string tmpFilename = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/tmp/keys.bin");
+	std::string keysFilename = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/keys/download.bin");
 	Download download(url, tmpFilename);
 	download.run();
 

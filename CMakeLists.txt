@@ -14,6 +14,7 @@ set(APP_ICON ${PROJECT_SOURCE_DIR}/res/app/icon.png)
 # First one is Title Version, second is the readable version
 set(APP_VERSION 5)
 add_definitions(-DFREESHOP_VERSION="1.2.2")
+add_definitions(-DFREESHOP_DIR="sdmc:/3ds/data/freeShop")
 
 # CIA settings
 set(APP_UNIQUE_ID 0xF12EE) # This must be unique for your CIA project

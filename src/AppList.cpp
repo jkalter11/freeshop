@@ -451,7 +451,7 @@ std::vector<std::unique_ptr<GUI::AppItem>> &AppList::getList()
 
 AppList &AppList::getInstance()
 {
-	static AppList list("sdmc:/freeShop/cache/data.json");
+	static AppList list(FREESHOP_DIR "/cache/data.json");
 	return list;
 }
 

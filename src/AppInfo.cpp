@@ -209,7 +209,7 @@ void AppInfo::loadApp(std::shared_ptr<AppItem> appItem)
 	{
 		std::string jsonFilename = appItem->getJsonFilename();
 		std::string urlTitleData = "https://samurai.ctr.shop.nintendo.net/samurai/ws/" + appItem->getUriRegion() + "/title/" + appItem->getContentId() + "/?shop_id=1";
-		std::string dir = cpp3ds::FileSystem::getFilePath("sdmc:/freeShop/tmp/" + appItem->getTitleIdStr());
+		std::string dir = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/tmp/" + appItem->getTitleIdStr());
 		if (!pathExists(dir.c_str(), false))
 			mkdir(dir.c_str(), 0777);
 
@@ -563,7 +563,7 @@ void AppInfo::addScreenshot(int index, const rapidjson::Value &jsonScreenshot)
 {
 	std::string url = jsonScreenshot["value"].GetString();
 	std::string type = jsonScreenshot["type"].GetString();
-	std::string filename = _("sdmc:/freeShop/tmp/%s/screen%d%s.jpg", m_appItem->getTitleIdStr().c_str(), index, type.c_str());
+	std::string filename = _(FREESHOP_DIR "/tmp/%s/screen%d%s.jpg", m_appItem->getTitleIdStr().c_str(), index, type.c_str());
 	bool isUpper = type == "upper";
 
 	if (!pathExists(filename.c_str()))

@@ -545,7 +545,7 @@ void DownloadQueue::resume()
 void DownloadQueue::save()
 {
 	rapidjson::Document json;
-	std::string filepath = cpp3ds::FileSystem::getFilePath("sdmc:/freeShop/queue.json");
+	std::string filepath = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/queue.json");
 	std::ofstream file(filepath);
 	rapidjson::OStreamWrapper osw(file);
 	rapidjson::Writer<rapidjson::OStreamWrapper> writer(osw);
@@ -596,7 +596,7 @@ void DownloadQueue::load()
 		}
 #endif
 	cpp3ds::FileInputStream file;
-	if (file.open("sdmc:/freeShop/queue.json"))
+	if (file.open(FREESHOP_DIR "/queue.json"))
 	{
 		rapidjson::Document json;
 		std::string jsonStr;

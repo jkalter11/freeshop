@@ -29,7 +29,7 @@ void TitleKeys::ensureTitleKeys()
 	if (!titleKeys.size())
 	{
 		cpp3ds::FileInputStream file;
-		std::string keyDirectory = cpp3ds::FileSystem::getFilePath("sdmc:/freeShop/keys/");
+		std::string keyDirectory = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/keys/");
 
 		struct dirent *ent;
 		DIR *dir = opendir(keyDirectory.c_str());

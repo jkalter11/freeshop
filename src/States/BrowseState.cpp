@@ -64,7 +64,7 @@ void BrowseState::initialize()
 	m_textActiveDownloads.setOutlineThickness(1.f);
 	m_textActiveDownloads.setPosition(218.f, 3.f);
 
-	m_textListEmpty.setString(_("No title keys found.\nMake sure you have encTitleKeys.bin\nin your sdmc:/freeShop/ directory."));
+	m_textListEmpty.setString(_("No title keys found.\nMake sure you have keys in\nsdmc:/3ds/data/freeShop/keys/\nCheck settings to set up key\ndownloads or redownload cache."));
 	m_textListEmpty.useSystemFont();
 	m_textListEmpty.setCharacterSize(16);
 	m_textListEmpty.setFillColor(cpp3ds::Color(80, 80, 80, 255));

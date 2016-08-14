@@ -154,7 +154,7 @@ const cpp3ds::Vector2f &Settings::getPosition() const
 
 void Settings::fillFilterGenres(Gwen::Controls::Base *parent)
 {
-	std::string jsonFilename = "sdmc:/freeShop/cache/genres.json";
+	std::string jsonFilename = FREESHOP_DIR "/cache/genres.json";
 	if (!pathExists(jsonFilename.c_str()))
 	{
 		Download download("https://samurai.ctr.shop.nintendo.net/samurai/ws/US/genres/?shop_id=1", jsonFilename);
@@ -220,7 +220,7 @@ void Settings::fillFilterGenres(Gwen::Controls::Base *parent)
 
 void Settings::fillFilterPlatforms(Gwen::Controls::Base *parent)
 {
-	std::string jsonFilename = "sdmc:/freeShop/cache/platforms.json";
+	std::string jsonFilename = FREESHOP_DIR "/cache/platforms.json";
 	if (!pathExists(jsonFilename.c_str()))
 	{
 		Download download("https://samurai.ctr.shop.nintendo.net/samurai/ws/US/platforms/?shop_id=1", jsonFilename);

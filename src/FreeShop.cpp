@@ -37,20 +37,20 @@ FreeShop::FreeShop()
 	textFPS.setCharacterSize(20);
 
 	// Set up directory structure, if necessary
-	std::string path = cpp3ds::FileSystem::getFilePath("sdmc:/freeShop");
+	std::string path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR);
 	if (!pathExists(path.c_str(), false))
-		mkdir(path.c_str(), 0777);
+		makeDirectory(path.c_str());
 
-	path = cpp3ds::FileSystem::getFilePath("sdmc:/freeShop/tmp");
+	path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/tmp");
 	if (pathExists(path.c_str(), false))
 		removeDirectory(path.c_str());
 	mkdir(path.c_str(), 0777);
 
-	path = cpp3ds::FileSystem::getFilePath("sdmc:/freeShop/cache");
+	path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/cache");
 	if (!pathExists(path.c_str(), false))
 		mkdir(path.c_str(), 0777);
 
-	path = cpp3ds::FileSystem::getFilePath("sdmc:/freeShop/keys");
+	path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/keys");
 	if (!pathExists(path.c_str(), false))
 		mkdir(path.c_str(), 0777);
 

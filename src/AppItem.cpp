@@ -116,9 +116,9 @@ void AppItem::setIconIndex(size_t iconIndex)
 		{
 			std::unique_ptr<cpp3ds::Texture> texture(new cpp3ds::Texture());
 #ifdef EMULATION
-			texture->loadFromFile(_("sdmc:/freeShop/cache/images/icons%d.jpg", i));
+			texture->loadFromFile(_(FREESHOP_DIR "/cache/images/icons%d.jpg", i));
 #else
-			texture->loadFromPreprocessedFile(_("sdmc:/freeShop/cache/images/icons%d.bin", i), 1024, 1024, GPU_ETC1);
+			texture->loadFromPreprocessedFile(_(FREESHOP_DIR "/cache/images/icons%d.bin", i), 1024, 1024, GPU_ETC1);
 #endif
 			texture->setSmooth(true);
 			textures.push_back(std::move(texture));
@@ -140,7 +140,7 @@ bool AppItem::isCached() const
 
 const std::string AppItem::getJsonFilename() const
 {
-	std::string filename = "sdmc:/freeShop/tmp/" + getTitleIdStr() + "/data.json";
+	std::string filename = FREESHOP_DIR "/tmp/" + getTitleIdStr() + "/data.json";
 	return filename;
 }
 

@@ -1,5 +1,4 @@
 #include "Util.hpp"
-#include <sys/stat.h>
 #include <dirent.h>
 #include <sys/unistd.h>
 #include <string.h>
@@ -19,6 +18,25 @@ bool pathExists(const char* path, bool escape)
 		return stat(path, &buffer) == 0;
 }
 
+void makeDirectory(const char *dir, mode_t mode)
+{
+	char tmp[256];
+	char *p = NULL;
+	size_t len;
+
+	snprintf(tmp, sizeof(tmp),"%s",dir);
+	len = strlen(tmp);
+	if(tmp[len - 1] == '/')
+		tmp[len - 1] = 0;
+	for(p = tmp + 1; *p; p++)
+		if(*p == '/') {
+			*p = 0;
+			mkdir(tmp, mode);
+			*p = '/';
+		}
+	mkdir(tmp, mode);
+}
+
 int removeDirectory(const char *path, bool onlyIfEmpty)
 {
 	DIR *d = opendir(path);
@@ -27,7 +45,6 @@ int removeDirectory(const char *path, bool onlyIfEmpty)
 
 	if (d) {
 		struct dirent *p;
-
 		r = 0;
 
 		while (!r && (p = readdir(d))) {
@@ -52,18 +69,12 @@ int removeDirectory(const char *path, bool onlyIfEmpty)
 					else if (!onlyIfEmpty)
 						r2 = unlink(buf);
 				}
-
 				free(buf);
 			}
-
 			r = r2;
 		}
-
 		closedir(d);
 	}
-
-	printf("%s\n", path);
-
 	if (!r)
 		r = rmdir(path);
 

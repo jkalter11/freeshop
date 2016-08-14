@@ -17,8 +17,8 @@ public:
 	void loadDefaults();
 
 public:
-	static bool loadFromFile(const std::string& filename = "sdmc:/freeShop/config.json");
-	static void saveToFile(const std::string& filename = "sdmc:/freeShop/config.json");
+	static bool loadFromFile(const std::string& filename = FREESHOP_DIR "/config.json");
+	static void saveToFile(const std::string& filename = FREESHOP_DIR "/config.json");
 
 	static bool keyExists(const std::string& key);
 
