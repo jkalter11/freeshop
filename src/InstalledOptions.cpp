@@ -104,6 +104,7 @@ void InstalledOptions::processTouchEvent(const cpp3ds::Event &event)
 		FS_MediaType mediaType = ((titleId >> 32) & 0x8010) != 0 ? MEDIATYPE_NAND : MEDIATYPE_SD;
 		AM_DeleteTitle(m_mediaType, titleId);
 #endif
+		m_installedItem->getAppItem()->setInstalled(false);
 		InstalledList::getInstance().refresh();
 	}
 	else if (m_textIconUpdates.getGlobalBounds().contains(touchPos))

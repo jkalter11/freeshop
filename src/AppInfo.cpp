@@ -450,11 +450,23 @@ bool AppInfo::processEvent(const cpp3ds::Event &event)
 		{
 			if (!m_appItem->getDemos().empty())
 			{
-				DownloadQueue::getInstance().addDownload(m_appItem, m_appItem->getDemos()[0], [this](bool succeeded){
-					updateInfo();
-				});
+				cpp3ds::Uint64 demoTitleId = m_appItem->getDemos()[0];
 				cpp3ds::String s = m_appItem->getTitle();
-				s.insert(0, _("Queued demo: "));
+
+				if (InstalledList::isInstalled(demoTitleId))
+				{
+#ifdef _3DS
+					AM_DeleteTitle(MEDIATYPE_SD, demoTitleId);
+#endif
+					s.insert(0, _("Deleted demo: "));
+				}
+				else
+				{
+					DownloadQueue::getInstance().addDownload(m_appItem, demoTitleId, [this](bool succeeded){
+						updateInfo();
+					});
+					s.insert(0, _("Queued demo: "));
+				}
 				Notification::spawn(s);
 			}
 		}
