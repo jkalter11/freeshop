@@ -9,6 +9,7 @@
 #include "DownloadQueue.hpp"
 #include "Notification.hpp"
 #include "InstalledList.hpp"
+#include "FreeShop.hpp"
 #include <sstream>
 #include <TweenEngine/Tween.h>
 #include <cpp3ds/System/FileInputStream.hpp>
@@ -142,7 +143,7 @@ void AppInfo::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) co
 			target.draw(m_textExecute, states);
 			target.draw(m_textDelete, states);
 		}
-		else
+		else if (!DownloadQueue::getInstance().isDownloading(m_appItem))
 		{
 			target.draw(m_textDownload, states);
 		}
@@ -385,6 +386,9 @@ void AppInfo::setCurrentScreenshot(int screenshotIndex)
 
 bool AppInfo::processEvent(const cpp3ds::Event &event)
 {
+	if (!m_appItem)
+		return true;
+
 	if (m_currentScreenshot)
 	{
 		if (event.type == cpp3ds::Event::KeyPressed)
@@ -426,27 +430,7 @@ bool AppInfo::processEvent(const cpp3ds::Event &event)
 
 	if (event.type == cpp3ds::Event::TouchBegan)
 	{
-		if (m_textDownload.getGlobalBounds().contains(event.touch.x, event.touch.y)) {
-			if (DownloadQueue::getInstance().isDownloading(m_appItem))
-			{
-				DownloadQueue::getInstance().cancelDownload(m_appItem);
-				TweenEngine::Tween::to(m_textDownload, util3ds::TweenText::FILL_COLOR_RGB, 0.5f)
-					.target(255, 255, 255)
-					.start(m_tweenManager);
-			}
-			else
-			{
-				DownloadQueue::getInstance().addDownload(m_appItem);
-				TweenEngine::Tween::to(m_textDownload, util3ds::TweenText::FILL_COLOR_RGB, 0.5f)
-					.target(230, 20, 20)
-					.start(m_tweenManager);
-
-				cpp3ds::String s = m_appItem->getTitle();
-				s.insert(0, _("Queued install: "));
-				Notification::spawn(s);
-			}
-		}
-		else if (m_textIconDemo.getGlobalBounds().contains(event.touch.x, event.touch.y))
+		if (m_textIconDemo.getGlobalBounds().contains(event.touch.x, event.touch.y))
 		{
 			if (!m_appItem->getDemos().empty())
 			{
@@ -464,9 +448,48 @@ bool AppInfo::processEvent(const cpp3ds::Event &event)
 				{
 					DownloadQueue::getInstance().addDownload(m_appItem, demoTitleId, [this](bool succeeded){
 						updateInfo();
+						if (succeeded)
+							InstalledList::getInstance().refresh();
 					});
 					s.insert(0, _("Queued demo: "));
 				}
+				Notification::spawn(s);
+			}
+		}
+		else if (m_appItem->isInstalled())
+		{
+			if (m_textExecute.getGlobalBounds().contains(event.touch.x, event.touch.y))
+			{
+#ifdef _3DS
+				Result res = 0;
+				u8 hmac[0x20];
+				FS_MediaType mediaType = ((m_appItem->getTitleId() >> 32) & 0x8010) != 0 ? MEDIATYPE_NAND : MEDIATYPE_SD;
+				if (R_SUCCEEDED(res = APT_PrepareToDoApplicationJump(0, m_appItem->getTitleId(), mediaType)))
+					res = APT_DoApplicationJump(0, 0, hmac);
+#endif
+				g_requestExit = true;
+			}
+			else if (m_textDelete.getGlobalBounds().contains(event.touch.x, event.touch.y))
+			{
+#ifdef _3DS
+				FS_MediaType mediaType = ((m_appItem->getTitleId() >> 32) & 0x8010) != 0 ? MEDIATYPE_NAND : MEDIATYPE_SD;
+				AM_DeleteTitle(mediaType, m_appItem->getTitleId());
+#endif
+				m_appItem->setInstalled(false);
+				InstalledList::getInstance().refresh();
+			}
+		}
+		else if (m_textDownload.getGlobalBounds().contains(event.touch.x, event.touch.y))
+		{
+			if (!DownloadQueue::getInstance().isDownloading(m_appItem))
+			{
+				DownloadQueue::getInstance().addDownload(m_appItem);
+				TweenEngine::Tween::to(m_textDownload, util3ds::TweenText::FILL_COLOR_RGB, 0.5f)
+						.target(230, 20, 20)
+						.start(m_tweenManager);
+
+				cpp3ds::String s = m_appItem->getTitle();
+				s.insert(0, _("Queued install: "));
 				Notification::spawn(s);
 			}
 		}

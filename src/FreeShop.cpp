@@ -16,6 +16,7 @@ using namespace TweenEngine;
 
 namespace FreeShop {
 
+bool g_requestExit = false;
 
 FreeShop::FreeShop()
 : Game(0x100000)
@@ -67,6 +68,9 @@ void FreeShop::update(float delta)
 	// Need to update before checking if empty
 	m_stateStack.update(delta);
 	if (m_stateStack.isEmpty())
+		exit();
+
+	if (g_requestExit)
 		exit();
 
 	Notification::update(delta);
