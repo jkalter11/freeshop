@@ -99,10 +99,11 @@ void AppList::setSortType(AppList::SortType sortType, bool ascending)
 
 void AppList::sort()
 {
+	setSelectedIndex(-1);
 	std::sort(m_guiAppItems.begin(), m_guiAppItems.end(), [&](const std::unique_ptr<GUI::AppItem>& a, const std::unique_ptr<GUI::AppItem>& b)
 	{
 		if (a->isFilteredOut() != b->isFilteredOut())
-			return a->isFilteredOut();
+			return !a->isFilteredOut();
 
 		if (a->getMatchScore() != b->getMatchScore())
 		{
@@ -132,6 +133,8 @@ void AppList::sort()
 			}
 		}
 	});
+	if (!m_guiAppItems.empty())
+		setSelectedIndex(0);
 }
 
 void AppList::filter()
@@ -185,7 +188,9 @@ matchedPlatform:;
 			}
 	}
 
+	sort();
 	reposition();
+	setPosition(0.f, 0.f);
 }
 
 void AppList::reposition()
