@@ -43,7 +43,6 @@ BrowseState::~BrowseState()
 		delete m_gwenSkin;
 	if (m_gwenRenderer)
 		delete m_gwenRenderer;
-	Config::saveToFile();
 }
 
 void BrowseState::initialize()

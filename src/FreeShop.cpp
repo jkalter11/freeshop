@@ -59,7 +59,7 @@ FreeShop::FreeShop()
 
 FreeShop::~FreeShop()
 {
-	// Destructor called when game exits
+	Config::saveToFile();
 }
 
 void FreeShop::update(float delta)
