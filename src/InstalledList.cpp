@@ -87,6 +87,13 @@ void InstalledList::refresh()
 				//
 			}
 	}
+
+	// Sort alphabetically
+	std::sort(m_installedItems.begin(), m_installedItems.end(), [=](const std::unique_ptr<InstalledItem>& a, const std::unique_ptr<InstalledItem>& b)
+	{
+		return a->getAppItem()->getNormalizedTitle() < b->getAppItem()->getNormalizedTitle();
+	});
+
 	repositionItems();
 
 	// Add updates that have not yet been installed for which we have a titlekey
