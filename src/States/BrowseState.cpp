@@ -96,12 +96,17 @@ void BrowseState::initialize()
 
 	m_soundBlip.setBuffer(AssetManager<cpp3ds::SoundBuffer>::get("sounds/blip.ogg"));
 
-	m_musicIntro.openFromFile("sounds/shop-intro.ogg");
-	m_musicLoop.openFromFile("sounds/shop-loop.ogg");
-	m_musicLoop.setLoop(true);
+	m_soundBufferIntro.loadFromFile(FREESHOP_DIR "/shop-intro.ogg");
+	m_soundBufferLoop.loadFromFile(FREESHOP_DIR "/shop-loop.ogg");
+	m_soundIntro.setBuffer(m_soundBufferIntro);
+	m_soundLoop.setBuffer(m_soundBufferLoop);
+	m_soundLoop.setLoop(true);
 
-	while (!m_gwenSkin)
+	while (!m_gwenRenderer)
 		cpp3ds::sleep(cpp3ds::milliseconds(10));
+	m_gwenSkin = new Gwen::Skin::TexturedBase(m_gwenRenderer);
+	m_gwenSkin->Init("DefaultSkin.png");
+	m_gwenSkin->SetDefaultFont(L"", 11);
 	m_settingsGUI = new GUI::Settings(m_gwenSkin, this);
 
 	g_browserLoaded = true;
@@ -129,9 +134,6 @@ void BrowseState::renderBottomScreen(cpp3ds::Window& window)
 	if (!m_gwenRenderer)
 	{
 		m_gwenRenderer = new Gwen::Renderer::cpp3dsRenderer(window);
-		m_gwenSkin = new Gwen::Skin::TexturedBase(m_gwenRenderer);
-		m_gwenSkin->Init("DefaultSkin.png");
-		m_gwenSkin->SetDefaultFont(L"", 11);
 
 	}
 	if (!g_syncComplete || !g_browserLoaded)
@@ -476,10 +478,10 @@ void BrowseState::playMusic()
 	while (!g_syncComplete || !g_browserLoaded)
 		cpp3ds::sleep(cpp3ds::milliseconds(50));
 	cpp3ds::Clock clock;
-	m_musicIntro.play();
-	while (clock.getElapsedTime() < m_musicIntro.getDuration())
+	m_soundIntro.play();
+	while (clock.getElapsedTime() < m_soundBufferIntro.getDuration())
 		cpp3ds::sleep(cpp3ds::milliseconds(5));
-	m_musicLoop.play();
+	m_soundLoop.play();
 }
 
 } // namespace FreeShop
