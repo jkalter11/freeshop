@@ -210,7 +210,7 @@ void SyncState::sync()
 
 bool SyncState::updateFreeShop()
 {
-	if (!Config::get("auto-update").GetBool())
+	if (!Config::get(Config::AutoUpdate).GetBool())
 		return false;
 
 	setStatus(_("Looking for freeShop update..."));
@@ -278,7 +278,7 @@ bool SyncState::updateFreeShop()
 
 bool SyncState::updateCache()
 {
-	if (!Config::get("auto-update").GetBool())
+	if (!Config::get(Config::AutoUpdate).GetBool())
 		return false;
 
 	setStatus(_("Checking latest cache..."));
@@ -298,7 +298,7 @@ bool SyncState::updateCache()
 		doc.Parse(json.c_str());
 
 		std::string tag = doc["tag_name"].GetString();
-		if (!tag.empty() && tag.compare(Config::get("cache_version").GetString()) != 0)
+		if (!tag.empty() && tag.compare(Config::get(Config::CacheVersion).GetString()) != 0)
 		{
 			std::string cacheFile = FREESHOP_DIR "/tmp/cache.tar.gz";
 #ifdef _3DS
@@ -313,7 +313,7 @@ bool SyncState::updateCache()
 			setStatus(_("Extracting latest cache..."));
 			if (extract(cacheFile, FREESHOP_DIR "/cache/"))
 			{
-				Config::set("cache_version", tag.c_str());
+				Config::set(Config::CacheVersion, tag.c_str());
 				Config::saveToFile();
 				return true;
 			}
@@ -326,8 +326,8 @@ bool SyncState::updateCache()
 
 bool SyncState::updateTitleKeys()
 {
-	auto urls = Config::get("key_urls").GetArray();
-	if (!Config::get("download_title_keys").GetBool() || urls.Empty())
+	auto urls = Config::get(Config::KeyURLs).GetArray();
+	if (!Config::get(Config::DownloadTitleKeys).GetBool() || urls.Empty())
 		return false;
 
 	setStatus(_("Downloading title keys..."));

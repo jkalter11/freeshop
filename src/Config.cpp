@@ -6,10 +6,21 @@
 #include "Config.hpp"
 #include "Util.hpp"
 
+namespace {
+	const char *keyStrings[] = {
+		"cache_version",
+		"auto-update",
+		"download_title_keys",
+		"key_urls",
+		"sleep_mode",
+	};
+}
+
 namespace FreeShop {
 
 Config::Config()
 {
+	static_assert(KEY_COUNT == sizeof(keyStrings)/sizeof(*keyStrings), "Key string count much match the enum count.");
 	loadDefaults();
 }
 
@@ -43,48 +54,49 @@ void Config::saveToFile(const std::string &filename)
 	getInstance().m_json.Accept(writer);
 }
 
-bool Config::keyExists(const std::string &key)
+bool Config::keyExists(const char *key)
 {
-	return getInstance().m_json.HasMember(key.c_str());
+	return getInstance().m_json.HasMember(key);
 }
 
-const rapidjson::Value &Config::get(const std::string &key)
+const rapidjson::Value &Config::get(Key key)
 {
-	return getInstance().m_json[key.c_str()];
+	return getInstance().m_json[keyStrings[key]];
 }
 
 #define ADD_DEFAULT(key, val) \
-	if (!m_json.HasMember(key)) \
-		m_json.AddMember(key, val, m_json.GetAllocator());
+	if (!m_json.HasMember(keyStrings[key])) \
+		m_json.AddMember(rapidjson::StringRef(keyStrings[key]), val, m_json.GetAllocator());
 
 void Config::loadDefaults()
 {
 	if (!m_json.IsObject())
 		m_json.SetObject();
 
-	ADD_DEFAULT("cache_version", "");
+	ADD_DEFAULT(CacheVersion, "");
 
 	// Update settings
-	ADD_DEFAULT("auto-update", true);
-	ADD_DEFAULT("download_title_keys", false);
-	ADD_DEFAULT("key_urls", rapidjson::kArrayType);
+	ADD_DEFAULT(AutoUpdate, true);
+	ADD_DEFAULT(DownloadTitleKeys, false);
+	ADD_DEFAULT(KeyURLs, rapidjson::kArrayType);
 
 	// Other settings
-	ADD_DEFAULT("sleep_mode", true);
+	ADD_DEFAULT(SleepMode, true);
 }
 
-void Config::set(const std::string &key, const char *val)
+void Config::set(Key key, const char *val)
 {
 	rapidjson::Value v(val, getInstance().m_json.GetAllocator());
 	set(key, v);
 }
 
-void Config::set(const std::string &key, rapidjson::Value &val)
+void Config::set(Key key, rapidjson::Value &val)
 {
-	if (keyExists(key))
-		getInstance().m_json[key.c_str()] = val;
+	const char *keyStr = keyStrings[key];
+	if (keyExists(keyStr))
+		getInstance().m_json[keyStr] = val;
 	else
-		getInstance().m_json.AddMember(rapidjson::StringRef(key.c_str()), val, getInstance().m_json.GetAllocator());
+		getInstance().m_json.AddMember(rapidjson::StringRef(keyStr), val, getInstance().m_json.GetAllocator());
 }
 
 rapidjson::Document::AllocatorType &Config::getAllocator()

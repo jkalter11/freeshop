@@ -110,8 +110,8 @@ void Settings::setValues(int tweenType, float *newValues)
 
 void Settings::saveToConfig()
 {
-	Config::set("auto-update", m_checkboxAutoUpdate->Checkbox()->IsChecked());
-	Config::set("download_title_keys", m_checkboxDownloadKeys->Checkbox()->IsChecked());
+	Config::set(Config::AutoUpdate, m_checkboxAutoUpdate->Checkbox()->IsChecked());
+	Config::set(Config::DownloadTitleKeys, m_checkboxDownloadKeys->Checkbox()->IsChecked());
 
 	rapidjson::Value list(rapidjson::kArrayType);
 	if (m_comboBoxUrls->GetSelectedItem())
@@ -123,15 +123,15 @@ void Settings::saveToConfig()
 			list.PushBack(val, Config::getAllocator());
 		}
 	}
-	Config::set("key_urls", list);
+	Config::set(Config::KeyURLs, list);
 }
 
 void Settings::loadConfig()
 {
-	m_checkboxAutoUpdate->Checkbox()->SetChecked(Config::get("auto-update").GetBool());
-	m_checkboxDownloadKeys->Checkbox()->SetChecked(Config::get("download_title_keys").GetBool());
+	m_checkboxAutoUpdate->Checkbox()->SetChecked(Config::get(Config::AutoUpdate).GetBool());
+	m_checkboxDownloadKeys->Checkbox()->SetChecked(Config::get(Config::DownloadTitleKeys).GetBool());
 
-	auto urls = Config::get("key_urls").GetArray();
+	auto urls = Config::get(Config::KeyURLs).GetArray();
 	m_comboBoxUrls->ClearItems();
 	for (int i = 0; i < urls.Size(); ++i)
 	{
@@ -579,7 +579,6 @@ void Settings::updateKeyboardClicked(Gwen::Controls::Base *textbox)
 	kb.addDictWord("https", "https://");
 	swkbdSetHintText(kb, "https://<encTitleKeys.bin>");
 	cpp3ds::String input = kb.getInput();
-	std::cout << input.toAnsiString() << std::endl;
 	if (!input.isEmpty())
 		m_comboBoxUrls->AddItem(input.toWideString());
 #else

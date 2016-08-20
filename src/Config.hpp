@@ -12,6 +12,16 @@ namespace FreeShop {
 
 class Config {
 public:
+	enum Key {
+		CacheVersion,
+		AutoUpdate,
+		DownloadTitleKeys,
+		KeyURLs,
+		SleepMode,
+
+		KEY_COUNT,
+	};
+
 	static Config& getInstance();
 
 	void loadDefaults();
@@ -20,20 +30,20 @@ public:
 	static bool loadFromFile(const std::string& filename = FREESHOP_DIR "/config.json");
 	static void saveToFile(const std::string& filename = FREESHOP_DIR "/config.json");
 
-	static bool keyExists(const std::string& key);
+	static bool keyExists(const char *key);
 
-	static const rapidjson::Value &get(const std::string& key);
+	static const rapidjson::Value &get(Key key);
 	static rapidjson::Document::AllocatorType &getAllocator();
 
 	template <typename T>
-	static void set(const std::string& key, T val)
+	static void set(Key key, T val)
 	{
 		rapidjson::Value v(val);
 		set(key, v);
 	}
 
-	static void set(const std::string& key, const char *val);
-	static void set(const std::string& key, rapidjson::Value &val);
+	static void set(Key key, const char *val);
+	static void set(Key key, rapidjson::Value &val);
 
 private:
 	Config();
