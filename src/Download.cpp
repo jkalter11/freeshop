@@ -21,8 +21,8 @@ Download::Download(const std::string &url, const std::string &destination)
 , m_status(Queued)
 , m_downloadPos(0)
 , m_appItem(nullptr)
-, m_timesToRetry(0)
-, m_timeout(cpp3ds::seconds(3))
+, m_timesToRetry(3)
+, m_timeout(cpp3ds::seconds(5))
 , m_bufferSize(128*1024)
 {
 	setUrl(url);
@@ -164,7 +164,7 @@ void Download::run()
 			setUrl(nextUrl.first);
 			m_urlQueue.pop();
 			m_request.setField("Range", _("bytes=%llu-", nextUrl.second));
-			m_downloadPos = 0;
+			m_downloadPos = nextUrl.second;
 		}
 		else
 			break;
@@ -172,14 +172,6 @@ void Download::run()
 
 	if (m_urlQueue.size() > 0 && getStatus() != Suspended)
 		std::queue<std::pair<std::string,cpp3ds::Uint64>>().swap(m_urlQueue);
-
-	// Write remaining buffer and close downloaded file
-	if (!m_destination.empty())
-	{
-		if (m_buffer.size() > 0)
-			fwrite(&m_buffer[0], sizeof(char), m_buffer.size(), m_file);
-		fclose(m_file);
-	}
 
 	if (getStatus() != Suspended)
 	{
@@ -193,6 +185,17 @@ void Download::run()
 			m_status = Failed;
 		else
 			m_status = Finished;
+	}
+
+	// Write remaining buffer and close downloaded file
+	if (!m_destination.empty())
+	{
+		if (m_buffer.size() > 0)
+			fwrite(&m_buffer[0], sizeof(char), m_buffer.size(), m_file);
+		fclose(m_file);
+
+		if (m_status != Finished)
+			remove(cpp3ds::FileSystem::getFilePath(m_destination).c_str());
 	}
 
 	if (m_onFinish)
