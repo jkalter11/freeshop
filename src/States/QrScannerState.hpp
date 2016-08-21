@@ -43,20 +43,21 @@ private:
 	std::vector<cpp3ds::Uint8> m_camBuffer;
 #ifdef _3DS
 	std::vector<cpp3ds::Uint8, cpp3ds::LinearAllocator<cpp3ds::Uint8>> m_textureBuffer;
+	std::vector<cpp3ds::Uint8, cpp3ds::LinearAllocator<cpp3ds::Uint8>> m_rawTextureBuffer;
 #endif
 	bool m_capturing;
 	bool m_threadRunning;
 	bool m_requestedClose;
 	cpp3ds::Mutex m_mutexRequest;
+	cpp3ds::Mutex m_mutexDraw;
 
 	bool m_displayError;
 	bool m_hideQrBorder;
 	cpp3ds::Text m_textError;
 	cpp3ds::Text m_textCloseError;
 
-	cpp3ds::RectangleShape m_cameraScreen;
+	util3ds::TweenRectangleShape m_cameraScreen;
 	cpp3ds::Texture m_cameraTexture;
-	util3ds::TweenRectangleShape m_tweenShape;
 	QrBorder m_qrBorder;
 
 	cpp3ds::Text m_closeCaption;

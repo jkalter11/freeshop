@@ -11,10 +11,9 @@
 #define HEIGHT 240
 #define EVENT_RECV 0
 #define EVENT_BUFFER_ERROR 1
-#define EVENT_VSYNC 2
 //#define EVENT_CANCEL 2
 
-#define EVENT_COUNT 3
+#define EVENT_COUNT 2
 
 #define TEXTURE_TRANSFER_FLAGS \
 	(GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_FLIP_VERT(1) | GX_TRANSFER_OUT_TILED(1) | \
@@ -85,7 +84,18 @@ QrScannerState::~QrScannerState()
 
 void QrScannerState::renderTopScreen(cpp3ds::Window& window)
 {
+	cpp3ds::Lock lock(m_mutexDraw);
+#ifdef _3DS
+	if (m_textureBuffer.empty())
+		return;
+	u32 dimTexture = GX_BUFFER_DIM(512, 256);
+	GSPGPU_FlushDataCache(&m_rawTextureBuffer[0], m_rawTextureBuffer.size());
+	GX_DisplayTransfer((u32*)&m_rawTextureBuffer[0], dimTexture, (u32*)&m_textureBuffer[0], dimTexture, TEXTURE_TRANSFER_FLAGS);
+	gspWaitForPPF();
+	GSPGPU_FlushDataCache(&m_textureBuffer[0], m_textureBuffer.size());
+#endif
 	window.draw(m_cameraScreen);
+
 	if (!m_displayError && !m_hideQrBorder)
 		window.draw(m_qrBorder, m_qrBorder.getTransform());
 }
@@ -137,7 +147,6 @@ void QrScannerState::startCamera()
 	Handle events[EVENT_COUNT] = {0};
 //	events[EVENT_CANCEL] = data->cancelEvent;
 	std::vector<cpp3ds::Uint8> tmpCamBuffer;
-	std::vector<cpp3ds::Uint8, cpp3ds::LinearAllocator<cpp3ds::Uint8>> tmpTextureBuffer;
 	size_t qrCounter = 0;
 	Result res = 0;
 
@@ -147,9 +156,9 @@ void QrScannerState::startCamera()
 	tmpCamBuffer.resize(w * h * sizeof(u16));
 
 	int npow2w = 512, npow2h = 256;
-	u32 dimTexture = GX_BUFFER_DIM(npow2w, npow2h);
 	m_textureBuffer.resize(npow2w * npow2h * sizeof(u16));
-	tmpTextureBuffer.resize(m_textureBuffer.size());
+	m_rawTextureBuffer.resize(m_textureBuffer.size());
+	m_cameraTexture.loadFromPreprocessedMemory(&m_textureBuffer[0], m_textureBuffer.size(), npow2w, npow2h, GPU_RGB565, false);
 
 	if(R_SUCCEEDED(res = camInit())) {
 		if(R_SUCCEEDED(res = CAMU_SetSize(SELECT_OUT1, SIZE_CTR_TOP_LCD, CONTEXT_A))
@@ -162,7 +171,6 @@ void QrScannerState::startCamera()
 			u32 transferUnit = 0;
 
 			if(R_SUCCEEDED(res = CAMU_GetBufferErrorInterruptEvent(&events[EVENT_BUFFER_ERROR], PORT_CAM1))
-			   && R_SUCCEEDED(res = CAMU_GetVsyncInterruptEvent(&events[EVENT_VSYNC], PORT_CAM1))
 			   && R_SUCCEEDED(res = CAMU_SetTrimming(PORT_CAM1, false))
 			   && R_SUCCEEDED(res = CAMU_GetMaxBytes(&transferUnit, w, h))
 			   && R_SUCCEEDED(res = CAMU_SetTransferBytes(PORT_CAM1, transferUnit, w, h))
@@ -179,9 +187,6 @@ void QrScannerState::startCamera()
 					s32 index = 0;
 					if(R_SUCCEEDED(res = svcWaitSynchronizationN(&index, events, EVENT_COUNT, false, U64_MAX))) {
 						switch(index) {
-							case EVENT_VSYNC:
-								m_cameraTexture.loadFromPreprocessedMemory(&m_textureBuffer[0], m_textureBuffer.size(), npow2w, npow2h, GPU_RGB565, true);
-								break;
 //							case EVENT_CANCEL:
 //								m_capturing = false;
 //								break;
@@ -192,16 +197,15 @@ void QrScannerState::startCamera()
 									cpp3ds::Lock lock(m_camMutex);
 									m_camBuffer = tmpCamBuffer;
 								}
-								for (int i = 0; i < h; ++i)
-									memcpy(&tmpTextureBuffer[i * npow2w * 2], &tmpCamBuffer[i * w * 2], w * 2);
-								GSPGPU_FlushDataCache(&tmpTextureBuffer[0], tmpTextureBuffer.size());
-								GX_DisplayTransfer((u32*)&tmpTextureBuffer[0], dimTexture, (u32*)&m_textureBuffer[0], dimTexture, TEXTURE_TRANSFER_FLAGS);
-								gspWaitForPPF();
-								GSPGPU_FlushDataCache(&m_textureBuffer[0], m_textureBuffer.size());
-
+								{
+									cpp3ds::Lock lock(m_mutexDraw);
+									for (int i = 0; i < h; ++i)
+										memcpy(&m_rawTextureBuffer[i * npow2w * 2], &tmpCamBuffer[i * w * 2], w * 2);
+								}
 								res = CAMU_SetReceiving(&events[EVENT_RECV], &tmpCamBuffer[0], PORT_CAM1, tmpCamBuffer.size(), (s16) transferUnit);
 								break;
 							case EVENT_BUFFER_ERROR:
+								cpp3ds::err() << "CAM ERROR" << std::endl;
 								svcCloseHandle(events[EVENT_RECV]);
 								events[EVENT_RECV] = 0;
 
@@ -268,7 +272,12 @@ void QrScannerState::scanQrCode()
 			{
 				// Return QR's decoded text to callback, outputs error string when true
 				cpp3ds::String text(reinterpret_cast<char*>(data.payload));
+
 				m_hideQrBorder = true;
+				TweenEngine::Tween::to(m_cameraScreen, m_cameraScreen.FILL_COLOR_ALPHA, 0.4f)
+					.target(100.f)
+					.start(m_tweenManager);
+
 				if (runCallback(&text))
 					close();
 				else
@@ -278,11 +287,16 @@ void QrScannerState::scanQrCode()
 										  m_textError.getLocalBounds().height / 2);
 					m_displayError = true;
 				}
+
 				m_hideQrBorder = false;
 			}
 		}
 		while (m_displayError)
 			cpp3ds::sleep(cpp3ds::milliseconds(100));
+
+		TweenEngine::Tween::to(m_cameraScreen, m_cameraScreen.FILL_COLOR_ALPHA, 0.4f)
+			.target(255.f)
+			.start(m_tweenManager);
 	}
 }
 
