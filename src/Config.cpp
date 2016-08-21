@@ -85,7 +85,7 @@ void Config::loadDefaults()
 	ADD_DEFAULT(KeyURLs, rapidjson::kArrayType);
 
 	// Other settings
-	ADD_DEFAULT(SleepMode, true);
+	ADD_DEFAULT(SleepMode, false);
 }
 
 void Config::set(Key key, const char *val)
