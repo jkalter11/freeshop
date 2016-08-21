@@ -442,6 +442,11 @@ void BrowseState::setMode(BrowseState::Mode mode)
 
 		AppList::getInstance().setCollapsed(false);
 	}
+	else if (m_mode == Settings)
+	{
+		m_settingsGUI->saveToConfig();
+		Config::saveToFile();
+	}
 
 	// Transition / start new mode
 	if (mode == Search)
