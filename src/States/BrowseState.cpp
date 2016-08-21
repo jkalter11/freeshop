@@ -445,7 +445,6 @@ void BrowseState::setMode(BrowseState::Mode mode)
 	else if (m_mode == Settings)
 	{
 		m_settingsGUI->saveToConfig();
-		Config::saveToFile();
 	}
 
 	// Transition / start new mode
