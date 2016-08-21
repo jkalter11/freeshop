@@ -199,6 +199,8 @@ void SyncState::sync()
 
 	setStatus(_("Loading game list..."));
 
+	// TODO: Figure out why browse state won'nt load without this sleep
+	cpp3ds::sleep(cpp3ds::milliseconds(100));
 	requestStackPush(States::Browse);
 
 	while (m_timer.getElapsedTime() < cpp3ds::seconds(7.f))
@@ -366,10 +368,10 @@ void SyncState::startupSound()
 	cpp3ds::Clock clock;
 	while (clock.getElapsedTime() < cpp3ds::seconds(3.f))
 		cpp3ds::sleep(cpp3ds::milliseconds(50));
-	m_soundStartup.play();
+	m_soundStartup.play(0);
 //	while (clock.getElapsedTime() < cpp3ds::seconds(7.f))
 //		cpp3ds::sleep(cpp3ds::milliseconds(50));
-//	m_soundLoading.play();
+//	m_soundLoading.play(0);
 }
 
 } // namespace FreeShop

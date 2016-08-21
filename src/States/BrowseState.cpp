@@ -32,7 +32,10 @@ BrowseState::BrowseState(StateStack& stack, Context& context, StateCallback call
 , m_settingsGUI(nullptr)
 , m_isTransitioning(false)
 {
+	m_threadInitialize.setRelativePriority(1);
 	m_threadInitialize.launch();
+	m_threadMusic.setRelativePriority(1);
+	m_threadMusic.launch();
 }
 
 BrowseState::~BrowseState()
@@ -82,6 +85,14 @@ void BrowseState::initialize()
 		text.useSystemFont();
 	}
 
+	m_soundBlip.setBuffer(AssetManager<cpp3ds::SoundBuffer>::get("sounds/blip.ogg"));
+
+	m_soundBufferIntro.loadFromFile(FREESHOP_DIR "/shop-intro.ogg");
+	m_soundBufferLoop.loadFromFile(FREESHOP_DIR "/shop-loop.ogg");
+	m_soundIntro.setBuffer(m_soundBufferIntro);
+	m_soundLoop.setBuffer(m_soundBufferLoop);
+	m_soundLoop.setLoop(true);
+
 	m_scrollbarInstalledList.setPosition(314.f, 30.f);
 	m_scrollbarInstalledList.setDragRect(cpp3ds::IntRect(0, 30, 320, 210));
 	m_scrollbarInstalledList.setScrollAreaSize(cpp3ds::Vector2u(320, 210));
@@ -93,14 +104,6 @@ void BrowseState::initialize()
 	m_scrollbarDownloadQueue.attachObject(&DownloadQueue::getInstance());
 
 	setMode(App);
-
-	m_soundBlip.setBuffer(AssetManager<cpp3ds::SoundBuffer>::get("sounds/blip.ogg"));
-
-	m_soundBufferIntro.loadFromFile(FREESHOP_DIR "/shop-intro.ogg");
-	m_soundBufferLoop.loadFromFile(FREESHOP_DIR "/shop-loop.ogg");
-	m_soundIntro.setBuffer(m_soundBufferIntro);
-	m_soundLoop.setBuffer(m_soundBufferLoop);
-	m_soundLoop.setLoop(true);
 
 	while (!m_gwenRenderer)
 		cpp3ds::sleep(cpp3ds::milliseconds(10));
@@ -278,23 +281,23 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 			switch (event.key.code)
 			{
 				case cpp3ds::Keyboard::DPadUp:
-					m_soundBlip.play();
+					m_soundBlip.play(1);
 					if (index % 4 == 0)
 						break;
 					setItemIndex(index - 1);
 					break;
 				case cpp3ds::Keyboard::DPadDown:
-					m_soundBlip.play();
+					m_soundBlip.play(1);
 					if (index % 4 == 3)
 						break;
 					setItemIndex(index + 1);
 					break;
 				case cpp3ds::Keyboard::DPadLeft:
-					m_soundBlip.play();
+					m_soundBlip.play(1);
 					setItemIndex(index - 4);
 					break;
 				case cpp3ds::Keyboard::DPadRight:
-					m_soundBlip.play();
+					m_soundBlip.play(1);
 					setItemIndex(index + 4);
 					break;
 				case cpp3ds::Keyboard::L:
@@ -478,10 +481,10 @@ void BrowseState::playMusic()
 	while (!g_syncComplete || !g_browserLoaded)
 		cpp3ds::sleep(cpp3ds::milliseconds(50));
 	cpp3ds::Clock clock;
-	m_soundIntro.play();
+	m_soundIntro.play(0);
 	while (clock.getElapsedTime() < m_soundBufferIntro.getDuration())
 		cpp3ds::sleep(cpp3ds::milliseconds(5));
-	m_soundLoop.play();
+	m_soundLoop.play(0);
 }
 
 } // namespace FreeShop

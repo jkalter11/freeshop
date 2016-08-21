@@ -74,8 +74,6 @@ void AppList::refresh()
 
 				m_appItems.emplace_back(std::move(appItem));
 				m_guiAppItems.emplace_back(std::move(guiAppItem));
-
-				cpp3ds::sleep(cpp3ds::microseconds(300));
 			}
 		}
 	}
