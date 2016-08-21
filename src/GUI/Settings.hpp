@@ -60,6 +60,7 @@ namespace FreeShop
 			void updateQrClicked(Gwen::Controls::Base *button);
 			void updateKeyboardClicked(Gwen::Controls::Base *button);
 			void updateUrlDeleteClicked(Gwen::Controls::Base *button);
+			void updateCheckUpdateClicked(Gwen::Controls::Base *button);
 
 			void updateEnabledState(Gwen::Controls::Base* control);
 			void updateSorting(Gwen::Controls::Base* control);
@@ -88,6 +89,7 @@ namespace FreeShop
 			Gwen::Controls::ComboBox *m_comboBoxUrls;
 			Gwen::Controls::Button *m_buttonUrlQr, *m_buttonUrlKeyboard, *m_buttonUrlDelete;
 			Gwen::Controls::Button *m_buttonUpdate;
+			Gwen::Controls::Label *m_labelLastUpdated;
 		};
 	}
 }

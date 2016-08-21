@@ -210,7 +210,7 @@ void SyncState::sync()
 
 bool SyncState::updateFreeShop()
 {
-	if (!Config::get(Config::AutoUpdate).GetBool())
+	if (!Config::get(Config::AutoUpdate).GetBool() && !Config::get(Config::TriggerUpdateFlag).GetBool())
 		return false;
 
 	setStatus(_("Looking for freeShop update..."));
@@ -278,8 +278,13 @@ bool SyncState::updateFreeShop()
 
 bool SyncState::updateCache()
 {
-	if (!Config::get(Config::AutoUpdate).GetBool())
+	if (!Config::get(Config::AutoUpdate).GetBool() && !Config::get(Config::TriggerUpdateFlag).GetBool())
 		return false;
+
+	// In case this flag triggered the update, reset it
+	Config::set(Config::TriggerUpdateFlag, false);
+	Config::set(Config::LastUpdatedTime, static_cast<int>(time(nullptr)));
+	Config::saveToFile();
 
 	setStatus(_("Checking latest cache..."));
 	const char *url = "https://api.github.com/repos/Repo3DS/shop-cache/releases/latest";

@@ -2,7 +2,6 @@
 #include <Gwen/Skins/TexturedBase.h>
 #include <cpp3ds/System/FileInputStream.hpp>
 #include <unistd.h>
-#include <bits/basic_string.h>
 #include <cpp3ds/System/FileSystem.hpp>
 #include "Settings.hpp"
 #include "../Download.hpp"
@@ -18,6 +17,7 @@
 using namespace Gwen::Controls;
 
 namespace FreeShop {
+extern bool g_requestExit;
 namespace GUI {
 
 
@@ -130,6 +130,14 @@ void Settings::loadConfig()
 {
 	m_checkboxAutoUpdate->Checkbox()->SetChecked(Config::get(Config::AutoUpdate).GetBool());
 	m_checkboxDownloadKeys->Checkbox()->SetChecked(Config::get(Config::DownloadTitleKeys).GetBool());
+
+	char strTime[100];
+	time_t lastUpdatedTime = Config::get(Config::LastUpdatedTime).GetInt();
+	strftime(strTime, sizeof(strTime), "%D %T", localtime(&lastUpdatedTime));
+	if (lastUpdatedTime == 0)
+		m_labelLastUpdated->SetText(_("(Never checked)").toAnsiString());
+	else
+		m_labelLastUpdated->SetText(_("(Last checked: %s)", strTime).toAnsiString());
 
 	auto urls = Config::get(Config::KeyURLs).GetArray();
 	m_comboBoxUrls->ClearItems();
@@ -538,12 +546,12 @@ void Settings::fillUpdatePage(Gwen::Controls::Base *page)
 	m_buttonUpdate = new Button(base);
 	m_buttonUpdate->SetBounds(0, 22, 75, 18);
 	m_buttonUpdate->SetText(_("Update").toAnsiString());
+	m_buttonUpdate->onPress.Add(this, &Settings::updateCheckUpdateClicked);
 
+	m_labelLastUpdated = new Label(base);
+	m_labelLastUpdated->SetBounds(78, 24, 300, 20);
+	m_labelLastUpdated->SetTextColor(Gwen::Color(0, 0, 0, 80));
 	auto label = new Label(base);
-	label->SetBounds(78, 24, 300, 20);
-	label->SetText(_("(last checked %s)", "28/07/16").toAnsiString());
-	label->SetTextColor(Gwen::Color(0, 0, 0, 80));
-	label = new Label(base);
 	label->SetBounds(78, 44, 300, 20);
 	label->SetText(_("freeShop %s", FREESHOP_VERSION).toAnsiString());
 }
@@ -569,6 +577,20 @@ void Settings::updateQrClicked(Gwen::Controls::Base *button)
 		}
 		return false;
 	});
+}
+
+void Settings::updateCheckUpdateClicked(Gwen::Controls::Base *button)
+{
+	Config::set(Config::TriggerUpdateFlag, true);
+	saveToConfig();
+	Config::saveToFile();
+#ifdef _3DS
+	Result res = 0;
+	u8 hmac[0x20];
+	if (R_SUCCEEDED(res = APT_PrepareToDoApplicationJump(0, 0x400000F12EE00, MEDIATYPE_SD)))
+		res = APT_DoApplicationJump(0, 0, hmac);
+#endif
+	g_requestExit = true;
 }
 
 void Settings::updateKeyboardClicked(Gwen::Controls::Base *textbox)

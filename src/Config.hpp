@@ -15,6 +15,8 @@ public:
 	enum Key {
 		CacheVersion,
 		AutoUpdate,
+		TriggerUpdateFlag,
+		LastUpdatedTime,
 		DownloadTitleKeys,
 		KeyURLs,
 		SleepMode,

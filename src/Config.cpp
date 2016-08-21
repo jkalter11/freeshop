@@ -10,6 +10,8 @@ namespace {
 	const char *keyStrings[] = {
 		"cache_version",
 		"auto-update",
+		"trigger_update",
+		"last_updated",
 		"download_title_keys",
 		"key_urls",
 		"sleep_mode",
@@ -77,6 +79,8 @@ void Config::loadDefaults()
 
 	// Update settings
 	ADD_DEFAULT(AutoUpdate, true);
+	ADD_DEFAULT(TriggerUpdateFlag, false);
+	ADD_DEFAULT(LastUpdatedTime, 0);
 	ADD_DEFAULT(DownloadTitleKeys, false);
 	ADD_DEFAULT(KeyURLs, rapidjson::kArrayType);
 
