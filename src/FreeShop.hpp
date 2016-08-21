@@ -21,7 +21,7 @@ public:
 	void renderBottomScreen(cpp3ds::Window& window);
 
 private:
-	StateStack m_stateStack;
+	StateStack *m_stateStack;
 	cpp3ds::Text textFPS;
 
 	// Shared State context variables

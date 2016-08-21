@@ -20,19 +20,18 @@ bool g_requestExit = false;
 
 FreeShop::FreeShop()
 : Game(0x100000)
-, m_stateStack(State::Context(m_text, m_data))
 {
-	m_stateStack.registerState<TitleState>(States::Title);
-	m_stateStack.registerState<LoadingState>(States::Loading);
-	m_stateStack.registerState<SyncState>(States::Sync);
-	m_stateStack.registerState<BrowseState>(States::Browse);
-	m_stateStack.registerState<SleepState>(States::Sleep);
-	m_stateStack.registerState<QrScannerState>(States::QrScanner);
+	m_stateStack = new StateStack(State::Context(m_text, m_data));
+	m_stateStack->registerState<TitleState>(States::Title);
+	m_stateStack->registerState<LoadingState>(States::Loading);
+	m_stateStack->registerState<SyncState>(States::Sync);
+	m_stateStack->registerState<BrowseState>(States::Browse);
+	m_stateStack->registerState<SleepState>(States::Sleep);
+	m_stateStack->registerState<QrScannerState>(States::QrScanner);
 
-//	m_stateStack.pushState(States::Browse);
-	m_stateStack.pushState(States::Loading);
-	m_stateStack.pushState(States::Sync);
-	m_stateStack.pushState(States::Title);
+	m_stateStack->pushState(States::Loading);
+	m_stateStack->pushState(States::Sync);
+	m_stateStack->pushState(States::Title);
 
 	textFPS.setFillColor(cpp3ds::Color::Red);
 	textFPS.setCharacterSize(20);
@@ -60,14 +59,15 @@ FreeShop::FreeShop()
 
 FreeShop::~FreeShop()
 {
+	delete m_stateStack;
 	Config::saveToFile();
 }
 
 void FreeShop::update(float delta)
 {
 	// Need to update before checking if empty
-	m_stateStack.update(delta);
-	if (m_stateStack.isEmpty())
+	m_stateStack->update(delta);
+	if (m_stateStack->isEmpty())
 		exit();
 
 	if (g_requestExit)
@@ -86,13 +86,13 @@ void FreeShop::update(float delta)
 
 void FreeShop::processEvent(Event& event)
 {
-	m_stateStack.processEvent(event);
+	m_stateStack->processEvent(event);
 }
 
 void FreeShop::renderTopScreen(Window& window)
 {
 	window.clear(Color::White);
-	m_stateStack.renderTopScreen(window);
+	m_stateStack->renderTopScreen(window);
 	for (auto& notification : Notification::notifications)
 		window.draw(*notification);
 
@@ -104,7 +104,7 @@ void FreeShop::renderTopScreen(Window& window)
 void FreeShop::renderBottomScreen(Window& window)
 {
 	window.clear(Color::White);
-	m_stateStack.renderBottomScreen(window);
+	m_stateStack->renderBottomScreen(window);
 }
 
 
