@@ -3,6 +3,7 @@
 
 #include <TweenEngine/TweenManager.h>
 #include <cpp3ds/Window/Event.hpp>
+#include <cpp3ds/System/Mutex.hpp>
 #include "InstalledItem.hpp"
 #include "InstalledOptions.hpp"
 #include "GUI/Scrollable.hpp"
@@ -30,6 +31,7 @@ protected:
 	void expandItem(InstalledItem *item);
 
 private:
+	cpp3ds::Mutex m_mutexRefresh;
 	std::vector<cpp3ds::Uint64> m_installedTitleIds;
 	std::vector<std::unique_ptr<InstalledItem>> m_installedItems;
 	TweenEngine::TweenManager m_tweenManager;

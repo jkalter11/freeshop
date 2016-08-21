@@ -1,5 +1,6 @@
 #include <cmath>
 #include <TweenEngine/Tween.h>
+#include <cpp3ds/System/Lock.hpp>
 #include "InstalledList.hpp"
 #include "AppList.hpp"
 #include "TitleKeys.hpp"
@@ -24,6 +25,7 @@ InstalledList &InstalledList::getInstance()
 
 void InstalledList::refresh()
 {
+	cpp3ds::Lock lock(m_mutexRefresh);
 	cpp3ds::Uint64 relatedTitleId;
 	std::vector<cpp3ds::Uint64> titleIds;
 
