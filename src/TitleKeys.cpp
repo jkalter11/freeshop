@@ -7,6 +7,7 @@
 namespace {
 
 std::map<cpp3ds::Uint64, cpp3ds::Uint32[4]> titleKeys;
+std::vector<cpp3ds::Uint64> titleIds;
 
 }
 
@@ -26,8 +27,10 @@ namespace FreeShop {
 */
 void TitleKeys::ensureTitleKeys()
 {
-	if (!titleKeys.size())
+	static bool keysChecked = false;
+	if (!keysChecked)
 	{
+		keysChecked = true;
 		cpp3ds::FileInputStream file;
 		std::string keyDirectory = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/keys/");
 
@@ -55,9 +58,24 @@ void TitleKeys::ensureTitleKeys()
 					file.seek(24 + i * 32);
 					file.read(&titleId, 8);
 					file.read(titleKey, 16);
+					titleId = __builtin_bswap64(titleId);
 
-					for (int j = 0; j < 4; ++j)
-						titleKeys[__builtin_bswap64(titleId)][j] = titleKey[j];
+					int type = titleId >> 32;
+					switch (type) {
+						case Game:
+						case Update:
+						case Demo:
+						case DLC:
+						case DSiWare:
+							if (titleKeys.find(titleId) == titleKeys.end())
+							{
+								titleIds.push_back(titleId);
+								for (int j = 0; j < 4; ++j)
+									titleKeys[titleId][j] = titleKey[j];
+							}
+						default:
+							break;
+					}
 				}
 			}
 		}
@@ -71,9 +89,9 @@ std::vector<cpp3ds::Uint64> TitleKeys::getRelated(cpp3ds::Uint64 titleId, TitleT
 	ensureTitleKeys();
 	std::vector<cpp3ds::Uint64> related;
 	cpp3ds::Uint32 titleLower = (titleId & 0xFFFFFFFF) >> 8;
-	for (const auto &key : titleKeys)
-		if ((titleLower == (key.first & 0xFFFFFFFF) >> 8) && (key.first >> 32 == type))
-			related.push_back(key.first);
+	for (const auto &key : titleIds)
+		if ((key >> 32 == type) && (titleLower == (key & 0xFFFFFFFF) >> 8))
+			related.push_back(key);
 	return related;
 }
 
