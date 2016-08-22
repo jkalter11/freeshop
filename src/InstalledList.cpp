@@ -31,7 +31,7 @@ void InstalledList::refresh()
 
 	m_installedTitleIds.clear();
 	m_installedItems.clear();
-	m_expandedItem = nullptr;
+	expandItem(nullptr);
 
 #ifdef EMULATION
 	// some hardcoded title IDs for testing
@@ -171,6 +171,9 @@ bool InstalledList::processEvent(const cpp3ds::Event &event)
 
 	if (event.type == cpp3ds::Event::TouchEnded)
 	{
+		if (event.touch.y < 30)
+			return false;
+
 		for (auto &item : m_installedItems)
 		{
 			float posY = getPosition().y + item->getPosition().y;

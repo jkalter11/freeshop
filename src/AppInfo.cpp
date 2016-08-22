@@ -448,8 +448,6 @@ bool AppInfo::processEvent(const cpp3ds::Event &event)
 				{
 					DownloadQueue::getInstance().addDownload(m_appItem, demoTitleId, [this](bool succeeded){
 						updateInfo();
-						if (succeeded)
-							InstalledList::getInstance().refresh();
 					});
 					s.insert(0, _("Queued demo: "));
 				}

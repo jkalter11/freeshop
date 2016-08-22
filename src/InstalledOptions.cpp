@@ -125,9 +125,10 @@ void InstalledOptions::processTouchEvent(const cpp3ds::Event &event)
 			for (auto &id : m_installedItem->getAppItem()->getUpdates())
 				if (!m_installedItem->getUpdateStatus(id))
 					DownloadQueue::getInstance().addDownload(m_installedItem->getAppItem(), id, [=](bool succeeded){
-						m_installedItem->setUpdateStatus(id, succeeded);
-						m_updatesAvailable = true;
-						update();
+						if (!succeeded) {
+							m_updatesAvailable = true;
+							update();
+						}
 					});
 			appTitle.insert(0, _("Queued update: "));
 			m_updatesAvailable = false;
@@ -153,9 +154,10 @@ void InstalledOptions::processTouchEvent(const cpp3ds::Event &event)
 			for (auto &id : m_installedItem->getAppItem()->getDLC())
 				if (!m_installedItem->getDLCStatus(id))
 					DownloadQueue::getInstance().addDownload(m_installedItem->getAppItem(), id, [=](bool succeeded){
-						m_installedItem->setDLCStatus(id, succeeded);
-						m_dlcAvailable = true;
-						update();
+						if (!succeeded) {
+							m_dlcAvailable = true;
+							update();
+						}
 					});
 			appTitle.insert(0, _("Queued DLC: "));
 			m_dlcAvailable = false;
