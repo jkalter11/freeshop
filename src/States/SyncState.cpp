@@ -5,6 +5,7 @@
 #include "../AssetManager.hpp"
 #include "../Config.hpp"
 #include "../TitleKeys.hpp"
+#include "../FreeShop.hpp"
 #include <TweenEngine/Tween.h>
 #include <cpp3ds/Window/Window.hpp>
 #include <cpp3ds/System/I18n.hpp>
