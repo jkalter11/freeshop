@@ -31,7 +31,8 @@ void InstalledList::refresh()
 
 	m_installedTitleIds.clear();
 	m_installedItems.clear();
-	expandItem(nullptr);
+	m_expandedItem = nullptr;
+	TweenEngine::Tween::set(m_options, InstalledOptions::ALPHA).target(0.f).start(m_tweenManager);
 
 #ifdef EMULATION
 	// some hardcoded title IDs for testing
