@@ -16,7 +16,7 @@ using namespace TweenEngine;
 
 namespace FreeShop {
 
-bool g_requestExit = false;
+cpp3ds::Uint64 g_requestJump = 0;
 
 FreeShop::FreeShop()
 : Game(0x100000)
@@ -61,6 +61,18 @@ FreeShop::~FreeShop()
 {
 	delete m_stateStack;
 	Config::saveToFile();
+
+	if (g_requestJump != 0)
+	{
+#ifdef _3DS
+		Result res = 0;
+		u8 hmac[0x20];
+		memset(hmac, 0, sizeof(hmac));
+		FS_MediaType mediaType = ((g_requestJump >> 32) & 0x8010) != 0 ? MEDIATYPE_NAND : MEDIATYPE_SD;
+		if (R_SUCCEEDED(res = APT_PrepareToDoApplicationJump(0, g_requestJump, mediaType)))
+			res = APT_DoApplicationJump(0, 0, hmac);
+#endif
+	}
 }
 
 void FreeShop::update(float delta)
@@ -70,7 +82,7 @@ void FreeShop::update(float delta)
 	if (m_stateStack->isEmpty())
 		exit();
 
-	if (g_requestExit)
+	if (g_requestJump != 0)
 		exit();
 
 	Notification::update(delta);

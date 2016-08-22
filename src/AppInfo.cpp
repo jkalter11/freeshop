@@ -460,14 +460,7 @@ bool AppInfo::processEvent(const cpp3ds::Event &event)
 		{
 			if (m_textExecute.getGlobalBounds().contains(event.touch.x, event.touch.y))
 			{
-#ifdef _3DS
-				Result res = 0;
-				u8 hmac[0x20];
-				FS_MediaType mediaType = ((m_appItem->getTitleId() >> 32) & 0x8010) != 0 ? MEDIATYPE_NAND : MEDIATYPE_SD;
-				if (R_SUCCEEDED(res = APT_PrepareToDoApplicationJump(0, m_appItem->getTitleId(), mediaType)))
-					res = APT_DoApplicationJump(0, 0, hmac);
-#endif
-				g_requestExit = true;
+				g_requestJump = m_appItem->getTitleId();
 			}
 			else if (m_textDelete.getGlobalBounds().contains(event.touch.x, event.touch.y))
 			{

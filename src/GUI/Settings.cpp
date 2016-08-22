@@ -17,7 +17,7 @@
 using namespace Gwen::Controls;
 
 namespace FreeShop {
-extern bool g_requestExit;
+extern cpp3ds::Uint64 g_requestJump;
 namespace GUI {
 
 
@@ -534,7 +534,7 @@ void Settings::fillUpdatePage(Gwen::Controls::Base *page)
 
 
 	base = new Base(page);
-	base->SetBounds(0, 48, 320, 60);
+	base->SetBounds(0, 48, 320, 80);
 
 	m_checkboxAutoUpdate = new CheckBoxWithLabel(base);
 	m_checkboxAutoUpdate->SetBounds(0, 0, 300, 20);
@@ -549,10 +549,16 @@ void Settings::fillUpdatePage(Gwen::Controls::Base *page)
 	m_buttonUpdate->onPress.Add(this, &Settings::updateCheckUpdateClicked);
 
 	m_labelLastUpdated = new Label(base);
-	m_labelLastUpdated->SetBounds(78, 24, 300, 20);
+	m_labelLastUpdated->SetBounds(0, 60, 300, 20);
 	m_labelLastUpdated->SetTextColor(Gwen::Color(0, 0, 0, 80));
+
+	auto button = new Button(base);
+	button->SetBounds(80, 22, 105, 18);
+	button->SetText(_("Refresh Cache").toAnsiString());
+	button->onPress.Add(this, &Settings::updateRefreshCacheClicked);
+
 	auto label = new Label(base);
-	label->SetBounds(78, 44, 300, 20);
+	label->SetBounds(0, 44, 300, 20);
 	label->SetText(_("freeShop %s", FREESHOP_VERSION).toAnsiString());
 }
 
@@ -582,15 +588,13 @@ void Settings::updateQrClicked(Gwen::Controls::Base *button)
 void Settings::updateCheckUpdateClicked(Gwen::Controls::Base *button)
 {
 	Config::set(Config::TriggerUpdateFlag, true);
-	saveToConfig();
-	Config::saveToFile();
-#ifdef _3DS
-	Result res = 0;
-	u8 hmac[0x20];
-	if (R_SUCCEEDED(res = APT_PrepareToDoApplicationJump(0, 0x400000F12EE00, MEDIATYPE_SD)))
-		res = APT_DoApplicationJump(0, 0, hmac);
-#endif
-	g_requestExit = true;
+	g_requestJump = 0x400000F12EE00;
+}
+
+void Settings::updateRefreshCacheClicked(Gwen::Controls::Base *button)
+{
+	Config::set(Config::CacheVersion, "");
+	g_requestJump = 0x400000F12EE00;
 }
 
 void Settings::updateKeyboardClicked(Gwen::Controls::Base *textbox)

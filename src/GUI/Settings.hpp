@@ -61,6 +61,7 @@ namespace FreeShop
 			void updateKeyboardClicked(Gwen::Controls::Base *button);
 			void updateUrlDeleteClicked(Gwen::Controls::Base *button);
 			void updateCheckUpdateClicked(Gwen::Controls::Base *button);
+			void updateRefreshCacheClicked(Gwen::Controls::Base *button);
 
 			void updateEnabledState(Gwen::Controls::Base* control);
 			void updateSorting(Gwen::Controls::Base* control);

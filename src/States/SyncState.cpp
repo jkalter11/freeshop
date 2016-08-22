@@ -183,14 +183,8 @@ void SyncState::sync()
 #ifdef NDEBUG
 	if (updateFreeShop())
 	{
-#ifdef _3DS
-		Result res = 0;
-		u8 hmac[0x20];
-		if (R_SUCCEEDED(res = APT_PrepareToDoApplicationJump(0, 0x400000F12EE00, MEDIATYPE_SD)))
-			res = APT_DoApplicationJump(0, 0, hmac);
-		requestStackClear();
+		g_requestJump = 0x400000F12EE00;
 		return;
-#endif
 	}
 #endif
 
@@ -199,10 +193,11 @@ void SyncState::sync()
 
 	setStatus(_("Loading game list..."));
 
-	// TODO: Figure out why browse state won'nt load without this sleep
+	// TODO: Figure out why browse state won't load without this sleep
 	cpp3ds::sleep(cpp3ds::milliseconds(100));
 	requestStackPush(States::Browse);
 
+	Config::saveToFile();
 	while (m_timer.getElapsedTime() < cpp3ds::seconds(7.f))
 		cpp3ds::sleep(cpp3ds::milliseconds(50));
 
@@ -218,8 +213,8 @@ bool SyncState::updateFreeShop()
 	setStatus(_("Looking for freeShop update..."));
 	const char *url = "https://api.github.com/repos/Cruel/freeShop/releases/latest";
 	const char *latestJsonFilename = FREESHOP_DIR "/tmp/latest.json";
-	Download cache(url, latestJsonFilename);
-	cache.run();
+	Download download(url, latestJsonFilename);
+	download.run();
 
 	cpp3ds::FileInputStream jsonFile;
 	if (jsonFile.open(latestJsonFilename))
@@ -236,6 +231,9 @@ bool SyncState::updateFreeShop()
 		if (!doc.HasMember("tag_name"))
 			return false;
 		std::string tag = doc["tag_name"].GetString();
+
+		Config::set(Config::LastUpdatedTime, static_cast<int>(time(nullptr)));
+		Config::saveToFile();
 
 		if (!tag.empty() && tag.compare(FREESHOP_VERSION) != 0)
 		{
@@ -280,13 +278,15 @@ bool SyncState::updateFreeShop()
 
 bool SyncState::updateCache()
 {
-	if (!Config::get(Config::AutoUpdate).GetBool() && !Config::get(Config::TriggerUpdateFlag).GetBool())
-		return false;
+	// Fetch cache if it doesn't exist, regardless of settings
+	bool cacheExists = pathExists(FREESHOP_DIR "/cache/data.json");
+
+	if (cacheExists && Config::get(Config::CacheVersion).GetStringLength() > 0)
+		if (!Config::get(Config::AutoUpdate).GetBool() && !Config::get(Config::TriggerUpdateFlag).GetBool())
+			return false;
 
 	// In case this flag triggered the update, reset it
 	Config::set(Config::TriggerUpdateFlag, false);
-	Config::set(Config::LastUpdatedTime, static_cast<int>(time(nullptr)));
-	Config::saveToFile();
 
 	setStatus(_("Checking latest cache..."));
 	const char *url = "https://api.github.com/repos/Repo3DS/shop-cache/releases/latest";
@@ -305,7 +305,7 @@ bool SyncState::updateCache()
 		doc.Parse(json.c_str());
 
 		std::string tag = doc["tag_name"].GetString();
-		if (!tag.empty() && tag.compare(Config::get(Config::CacheVersion).GetString()) != 0)
+		if (!cacheExists || (!tag.empty() && tag.compare(Config::get(Config::CacheVersion).GetString()) != 0))
 		{
 			std::string cacheFile = FREESHOP_DIR "/tmp/cache.tar.gz";
 #ifdef _3DS
