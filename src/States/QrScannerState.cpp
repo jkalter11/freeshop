@@ -97,7 +97,7 @@ void QrScannerState::renderTopScreen(cpp3ds::Window& window)
 	window.draw(m_cameraScreen);
 
 	if (!m_displayError && !m_hideQrBorder)
-		window.draw(m_qrBorder, m_qrBorder.getTransform());
+		window.draw(m_qrBorder);
 }
 
 void QrScannerState::renderBottomScreen(cpp3ds::Window& window)
