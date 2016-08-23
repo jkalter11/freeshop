@@ -9,6 +9,7 @@
 #include <cpp3ds/Graphics/RectangleShape.hpp>
 #include <cpp3ds/Graphics/CircleShape.hpp>
 #include <cpp3ds/Graphics/ConvexShape.hpp>
+#include "GUI/NinePatch.hpp"
 
 namespace util3ds {
 
@@ -200,6 +201,7 @@ protected:
 	}
 };
 
+typedef TweenColorTransformable<gui3ds::NinePatch> TweenNinePatch;
 
 typedef TweenColorTransformable<cpp3ds::Sprite> TweenSprite;
 typedef TweenShape<cpp3ds::Text> TweenText;

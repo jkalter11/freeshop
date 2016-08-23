@@ -42,7 +42,7 @@ QrScannerState::QrScannerState(StateStack &stack, Context &context, StateCallbac
 	m_qrBorder.setPosition(200.f, 120.f);
 	m_qrBorder.setColor(cpp3ds::Color(255, 255, 255, 100));
 	m_qrBorder.setOrigin(std::round(m_qrBorder.getSize().x * 0.5f), std::round(m_qrBorder.getSize().y * 0.5f));
-	TweenEngine::Tween::to(m_qrBorder, QrBorder::SCALE_XY, 0.3f)
+	TweenEngine::Tween::to(m_qrBorder, m_qrBorder.SCALE_XY, 0.3f)
 		.target(0.95f, 0.95f)
 		.repeatYoyo(-1, 0.f)
 		.start(m_tweenManager);

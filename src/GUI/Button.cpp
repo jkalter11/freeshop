@@ -17,10 +17,10 @@ Button::Button()
 void Button::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) const
 {
 	ensureUpdate();
+	NinePatch::draw(target, states);
 
 	states.transform *= getTransform();
 
-	NinePatch::draw(target, states);
 	if (!m_text.getString().isEmpty())
 		target.draw(m_text, states);
 }

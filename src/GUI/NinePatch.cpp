@@ -109,6 +109,8 @@ const cpp3ds::Color &NinePatch::getColor() const
 void NinePatch::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) const
 {
 	ensureUpdate();
+	states.transform *= getTransform();
+
 	states.texture = m_texture;
 	target.draw(m_vertices, states);
 }

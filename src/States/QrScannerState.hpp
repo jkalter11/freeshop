@@ -20,8 +20,6 @@ extern "C" {
 
 namespace FreeShop {
 
-class QrBorder: public gui3ds::NinePatch, public util3ds::TweenTransformable<cpp3ds::Transformable> {};
-
 class QrScannerState: public State {
 public:
 	QrScannerState(StateStack& stack, Context& context, StateCallback callback);
@@ -58,7 +56,7 @@ private:
 
 	util3ds::TweenRectangleShape m_cameraScreen;
 	cpp3ds::Texture m_cameraTexture;
-	QrBorder m_qrBorder;
+	util3ds::TweenNinePatch m_qrBorder;
 
 	cpp3ds::Text m_closeCaption;
 	cpp3ds::RectangleShape m_bottomBackground;

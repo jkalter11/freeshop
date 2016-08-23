@@ -10,7 +10,7 @@
 
 namespace gui3ds {
 
-class Button : public NinePatch, public util3ds::TweenTransformable<cpp3ds::Transformable> {
+class Button : public util3ds::TweenNinePatch {
 public:
 	static const int COLOR_RGB   = 11;
 	static const int COLOR_ALPHA = 12;

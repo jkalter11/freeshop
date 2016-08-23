@@ -9,7 +9,7 @@
 
 namespace gui3ds {
 
-class NinePatch : public cpp3ds::Drawable {
+class NinePatch : public cpp3ds::Drawable, public cpp3ds::Transformable {
 public:
 	NinePatch();
 	~NinePatch();
