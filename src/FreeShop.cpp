@@ -29,9 +29,13 @@ FreeShop::FreeShop()
 	m_stateStack->registerState<SleepState>(States::Sleep);
 	m_stateStack->registerState<QrScannerState>(States::QrScanner);
 
+#ifdef EMULATION
+	m_stateStack->pushState(States::Browse);
+#else
 	m_stateStack->pushState(States::Loading);
 	m_stateStack->pushState(States::Sync);
 	m_stateStack->pushState(States::Title);
+#endif
 
 	textFPS.setFillColor(cpp3ds::Color::Red);
 	textFPS.setCharacterSize(20);

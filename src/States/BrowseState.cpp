@@ -32,10 +32,15 @@ BrowseState::BrowseState(StateStack& stack, Context& context, StateCallback call
 , m_settingsGUI(nullptr)
 , m_isTransitioning(false)
 {
+#ifdef EMULATION
+	g_syncComplete = true;
+	initialize();
+#else
 	m_threadInitialize.setRelativePriority(1);
 	m_threadInitialize.launch();
 	m_threadMusic.setRelativePriority(1);
 	m_threadMusic.launch();
+#endif
 }
 
 BrowseState::~BrowseState()
@@ -105,12 +110,14 @@ void BrowseState::initialize()
 
 	setMode(App);
 
+#ifdef _3DS
 	while (!m_gwenRenderer)
 		cpp3ds::sleep(cpp3ds::milliseconds(10));
 	m_gwenSkin = new Gwen::Skin::TexturedBase(m_gwenRenderer);
 	m_gwenSkin->Init("DefaultSkin.png");
 	m_gwenSkin->SetDefaultFont(L"", 11);
 	m_settingsGUI = new GUI::Settings(m_gwenSkin, this);
+#endif
 
 	g_browserLoaded = true;
 
@@ -138,6 +145,12 @@ void BrowseState::renderBottomScreen(cpp3ds::Window& window)
 	{
 		m_gwenRenderer = new Gwen::Renderer::cpp3dsRenderer(window);
 
+#ifdef EMULATION
+		m_gwenSkin = new Gwen::Skin::TexturedBase(m_gwenRenderer);
+		m_gwenSkin->Init("DefaultSkin.png");
+		m_gwenSkin->SetDefaultFont(L"", 11);
+		m_settingsGUI = new GUI::Settings(m_gwenSkin, this);
+#endif
 	}
 	if (!g_syncComplete || !g_browserLoaded)
 		return;
