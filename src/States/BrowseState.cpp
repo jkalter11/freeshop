@@ -57,6 +57,7 @@ void BrowseState::initialize()
 {
 	AppList::getInstance().refresh();
 	InstalledList::getInstance().refresh();
+	InstalledList::getInstance().setBrowseState(this);
 
 	m_iconSet.addIcon(L"\uf11b");
 	m_iconSet.addIcon(L"\uf019");

@@ -2,6 +2,7 @@
 #include "FreeShop.hpp"
 #include "States/TitleState.hpp"
 #include "Notification.hpp"
+#include "States/DialogState.hpp"
 #include "States/LoadingState.hpp"
 #include "States/SyncState.hpp"
 #include "States/BrowseState.hpp"
@@ -28,6 +29,7 @@ FreeShop::FreeShop()
 	m_stateStack->registerState<BrowseState>(States::Browse);
 	m_stateStack->registerState<SleepState>(States::Sleep);
 	m_stateStack->registerState<QrScannerState>(States::QrScanner);
+	m_stateStack->registerState<DialogState>(States::Dialog);
 
 #ifdef EMULATION
 	m_stateStack->pushState(States::Browse);

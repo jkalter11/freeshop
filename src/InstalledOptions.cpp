@@ -4,12 +4,15 @@
 #include "DownloadQueue.hpp"
 #include "Notification.hpp"
 #include "InstalledList.hpp"
+#include "States/StateIdentifiers.hpp"
+#include "States/DialogState.hpp"
 #include <cpp3ds/System/I18n.hpp>
 
 namespace FreeShop {
 
 InstalledOptions::InstalledOptions()
 : m_installedItem(nullptr)
+, m_browseState(nullptr)
 {
 	m_textGame.setString(_("Game"));
 	m_textGame.setFillColor(cpp3ds::Color(100, 100, 100));
@@ -100,25 +103,69 @@ void InstalledOptions::processTouchEvent(const cpp3ds::Event &event)
 	if (m_textIconGame.getGlobalBounds().contains(touchPos))
 	{
 		cpp3ds::Uint64 titleId = m_installedItem->getTitleId();
+		if (m_browseState)
+			m_browseState->requestStackPush(States::Dialog, false, [=](void *data) mutable {
+				auto event = reinterpret_cast<DialogState::Event*>(data);
+				if (event->type == DialogState::GetText)
+				{
+					auto str = reinterpret_cast<cpp3ds::String*>(event->data);
+					*str = _("You are deleting this game,\nincluding all save data:\n\n");
+					str->insert(str->getSize(), appTitle);
+					return true;
+				}
+				else if (event->type == DialogState::Response)
+				{
+					bool *accepted = reinterpret_cast<bool*>(event->data);
+					if (*accepted)
+					{
 #ifdef _3DS
-		FS_MediaType mediaType = ((titleId >> 32) & 0x8010) != 0 ? MEDIATYPE_NAND : MEDIATYPE_SD;
+						FS_MediaType mediaType = ((titleId >> 32) & 0x8010) != 0 ? MEDIATYPE_NAND : MEDIATYPE_SD;
 		AM_DeleteTitle(m_mediaType, titleId);
 #endif
-		m_installedItem->getAppItem()->setInstalled(false);
-		InstalledList::getInstance().refresh();
+						m_installedItem->getAppItem()->setInstalled(false);
+						appTitle.insert(0, _("Deleted game: "));
+						Notification::spawn(appTitle);
+						InstalledList::getInstance().refresh();
+					}
+					return true;
+				}
+				return false;
+			});
 	}
 	else if (m_textIconUpdates.getGlobalBounds().contains(touchPos))
 	{
 		if (m_updatesInstalled)
 		{
-			for (auto &id : m_installedItem->getAppItem()->getUpdates()) {
+			if (m_browseState)
+				m_browseState->requestStackPush(States::Dialog, false, [=](void *data) mutable {
+					auto event = reinterpret_cast<DialogState::Event*>(data);
+					if (event->type == DialogState::GetText)
+					{
+						auto str = reinterpret_cast<cpp3ds::String*>(event->data);
+						*str = _("You are deleting updates for\nthis title:\n\n");
+						str->insert(str->getSize(), appTitle);
+						return true;
+					}
+					else if (event->type == DialogState::Response)
+					{
+						bool *accepted = reinterpret_cast<bool*>(event->data);
+						if (*accepted)
+						{
+							for (auto &id : m_installedItem->getAppItem()->getUpdates()) {
 #ifdef _3DS
-				AM_DeleteTitle(m_mediaType, id);
+								AM_DeleteTitle(m_mediaType, id);
 #endif
-				m_installedItem->setUpdateStatus(id, false);
-			}
-			m_updatesInstalled = false;
-			appTitle.insert(0, _("Deleted update: "));
+								m_installedItem->setUpdateStatus(id, false);
+							}
+							m_updatesInstalled = false;
+							appTitle.insert(0, _("Deleted update: "));
+							Notification::spawn(appTitle);
+							update();
+						}
+						return true;
+					}
+					return false;
+				});
 		}
 		else
 		{
@@ -132,22 +179,44 @@ void InstalledOptions::processTouchEvent(const cpp3ds::Event &event)
 					});
 			appTitle.insert(0, _("Queued update: "));
 			m_updatesAvailable = false;
+			Notification::spawn(appTitle);
+			update();
 		}
-		Notification::spawn(appTitle);
-		update();
 	}
 	else if (m_textIconDLC.getGlobalBounds().contains(touchPos))
 	{
 		if (m_dlcInstalled)
 		{
-			for (auto &id : m_installedItem->getAppItem()->getDLC()) {
+			if (m_browseState)
+				m_browseState->requestStackPush(States::Dialog, false, [=](void *data) mutable {
+					auto event = reinterpret_cast<DialogState::Event*>(data);
+					if (event->type == DialogState::GetText)
+					{
+						auto str = reinterpret_cast<cpp3ds::String*>(event->data);
+						*str = _("You are deleting DLC for\nthis title:\n\n");
+						str->insert(str->getSize(), appTitle);
+						return true;
+					}
+					else if (event->type == DialogState::Response)
+					{
+						bool *accepted = reinterpret_cast<bool*>(event->data);
+						if (*accepted)
+						{
+							for (auto &id : m_installedItem->getAppItem()->getDLC()) {
 #ifdef _3DS
-				AM_DeleteTitle(m_mediaType, id);
+								AM_DeleteTitle(m_mediaType, id);
 #endif
-				m_installedItem->setDLCStatus(id, false);
-			}
-			m_dlcInstalled = false;
-			appTitle.insert(0, _("Deleted DLC: "));
+								m_installedItem->setDLCStatus(id, false);
+							}
+							m_dlcInstalled = false;
+							appTitle.insert(0, _("Deleted DLC: "));
+							Notification::spawn(appTitle);
+							update();
+						}
+						return true;
+					}
+					return false;
+				});
 		}
 		else
 		{
@@ -208,6 +277,11 @@ void InstalledOptions::update()
 
 	m_textIconUpdates.setString(m_updatesInstalled ? L"\uf1f8" : L"\uf019");
 	m_textIconDLC.setString(m_dlcInstalled ? L"\uf1f8" : L"\uf019");
+}
+
+void InstalledOptions::setBrowseState(BrowseState *state)
+{
+	m_browseState = state;
 }
 
 

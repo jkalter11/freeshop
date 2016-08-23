@@ -306,5 +306,10 @@ bool InstalledList::isInstalled(cpp3ds::Uint64 titleId)
 	return std::find(v.begin(), v.end(), titleId) != v.end();
 }
 
+void InstalledList::setBrowseState(BrowseState *state)
+{
+	m_options.setBrowseState(state);
+}
+
 
 } // namespace FreeShop

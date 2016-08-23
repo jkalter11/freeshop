@@ -5,6 +5,7 @@
 #include <cpp3ds/Graphics/Text.hpp>
 #include <cpp3ds/Window/Event.hpp>
 #include "TweenObjects.hpp"
+#include "States/BrowseState.hpp"
 
 namespace FreeShop {
 
@@ -20,6 +21,8 @@ public:
 
 	void setInstalledItem(InstalledItem *installedItem);
 	InstalledItem *getInstalledItem() const;
+
+	void setBrowseState(BrowseState *state);
 
 	void update();
 
@@ -41,6 +44,8 @@ private:
 	bool m_dlcAvailable;
 	bool m_updatesInstalled;
 	bool m_dlcInstalled;
+
+	BrowseState *m_browseState;
 
 #ifdef _3DS
 	FS_MediaType m_mediaType;

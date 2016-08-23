@@ -7,6 +7,7 @@
 #include "InstalledItem.hpp"
 #include "InstalledOptions.hpp"
 #include "GUI/Scrollable.hpp"
+#include "States/BrowseState.hpp"
 
 namespace FreeShop {
 
@@ -23,6 +24,8 @@ public:
 	virtual const cpp3ds::Vector2f &getScrollSize();
 
 	static bool isInstalled(cpp3ds::Uint64 titleId);
+
+	void setBrowseState(BrowseState *state);
 
 protected:
 	InstalledList();
