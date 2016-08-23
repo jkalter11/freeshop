@@ -22,7 +22,7 @@ Download::Download(const std::string &url, const std::string &destination)
 , m_downloadPos(0)
 , m_appItem(nullptr)
 , m_timesToRetry(3)
-, m_timeout(cpp3ds::seconds(5))
+, m_timeout(cpp3ds::seconds(8))
 , m_bufferSize(128*1024)
 {
 	setUrl(url);
