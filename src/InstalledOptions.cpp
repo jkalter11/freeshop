@@ -230,9 +230,9 @@ void InstalledOptions::processTouchEvent(const cpp3ds::Event &event)
 					});
 			appTitle.insert(0, _("Queued DLC: "));
 			m_dlcAvailable = false;
+			Notification::spawn(appTitle);
+			update();
 		}
-		Notification::spawn(appTitle);
-		update();
 	}
 }
 
