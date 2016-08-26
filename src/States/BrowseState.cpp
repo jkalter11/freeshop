@@ -115,7 +115,7 @@ void BrowseState::initialize()
 	while (!m_gwenRenderer)
 		cpp3ds::sleep(cpp3ds::milliseconds(10));
 	m_gwenSkin = new Gwen::Skin::TexturedBase(m_gwenRenderer);
-	m_gwenSkin->Init("DefaultSkin.png");
+	m_gwenSkin->Init("images/DefaultSkin.png");
 	m_gwenSkin->SetDefaultFont(L"", 11);
 	m_settingsGUI = new GUI::Settings(m_gwenSkin, this);
 #endif
@@ -148,7 +148,7 @@ void BrowseState::renderBottomScreen(cpp3ds::Window& window)
 
 #ifdef EMULATION
 		m_gwenSkin = new Gwen::Skin::TexturedBase(m_gwenRenderer);
-		m_gwenSkin->Init("DefaultSkin.png");
+		m_gwenSkin->Init("images/DefaultSkin.png");
 		m_gwenSkin->SetDefaultFont(L"", 11);
 		m_settingsGUI = new GUI::Settings(m_gwenSkin, this);
 #endif
