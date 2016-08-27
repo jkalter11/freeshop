@@ -249,7 +249,7 @@ bool Installer::finalizeContent()
 	}
 
 	abort();
-	m_errorStr = _("Failed to finalize Content install: 0x%08lX", m_result);
+	m_errorStr = _("Failed to finalize content install: 0x%08lX", m_result);
 	return false;
 }
 
@@ -305,7 +305,7 @@ bool Installer::installContent(const void *data, size_t size, cpp3ds::Uint16 ind
 		}
 
 	abort();
-	m_errorStr = _("Failed to install Content: 0x%08lX", m_result);
+	m_errorStr = _("Failed to install content: 0x%08lX", m_result);
 	return false;
 }
 

@@ -296,6 +296,7 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 	{
 		download->setProgress(progress);
 		download->setProgressMessage(_("Suspended"));
+		download->m_status = Download::Suspended;
 	}
 	else
 		download->setProgressMessage(_("Queued"));

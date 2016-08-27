@@ -12,10 +12,11 @@ Installer::Installer(cpp3ds::Uint64 titleId, int contentIndex)
 , m_isInstalling(false)
 , m_isInstallingTmd(false)
 , m_isInstallingContent(false)
-, m_currentContentIndex(0)
+, m_currentContentIndex(-1)
 , m_currentContentPosition(0)
 {
-
+	if (contentIndex >= 0)
+		m_currentContentIndex = contentIndex;
 }
 
 Installer::~Installer()
