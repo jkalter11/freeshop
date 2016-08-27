@@ -147,6 +147,7 @@ void Download::run()
 				}
 				std::cout << _("Retrying... %d", retryCount).toAnsiString() << std::endl;
 				setProgressMessage(_("Retrying... %d", ++retryCount));
+				m_request.setField("Range", _("bytes=%u-", m_downloadPos));
 				cpp3ds::sleep(cpp3ds::milliseconds(1000));
 			}
 		} while (m_response.getStatus() >= 1000 &&
@@ -162,9 +163,9 @@ void Download::run()
 		{
 			auto nextUrl = m_urlQueue.front();
 			setUrl(nextUrl.first);
-			m_urlQueue.pop();
-			m_request.setField("Range", _("bytes=%llu-", nextUrl.second));
 			m_downloadPos = nextUrl.second;
+			m_urlQueue.pop();
+			m_request.setField("Range", _("bytes=%u-", m_downloadPos));
 		}
 		else
 			break;

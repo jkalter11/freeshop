@@ -81,6 +81,7 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 	download->m_textTitle.setString(title);
 	download->setPosition(0.f, 240.f);
 	download->setRetryCount(6);
+	download->setTimeout(cpp3ds::seconds(6.f));
 	download->setSendTopCallback([this](Download *d){
 		sendTop(d);
 	});
@@ -105,7 +106,8 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 
 	download->setDataCallback([=](const void* data, size_t len, size_t processed, const cpp3ds::Http::Response& response) mutable
 	{
-		if (fileSize == 0) {
+		// This condition should be true when download first starts.
+		if (len == processed) {
 			std::string length = response.getField("Content-Length");
 			if (!length.empty())
 				fileSize = strtoul(length.c_str(), 0, 10);
@@ -177,7 +179,6 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 				}
 
 				buf.clear();
-				fileSize = 0;
 				if (!isResuming)
 					fileIndex++;
 			}
@@ -192,7 +193,6 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 				cpp3ds::Lock lock(m_mutexRefresh);
 				download->suspend();
 				installer->suspend();
-				fileSize = 0;
 				return true;
 			}
 #endif
@@ -201,10 +201,7 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 			if (!installer->installContent(data, len, contentIndices[fileIndex-1]))
 			{
 				if (download->getStatus() == Download::Suspended)
-				{
-					fileSize = 0;
 					return true;
-				}
 				return false;
 			}
 
@@ -225,7 +222,6 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 					if (!installer->importContents(contentIndices.size() - 1, &contentIndices[1]))
 						return false;
 				}
-				fileSize = 0;
 				fileIndex++;
 			}
 		}
