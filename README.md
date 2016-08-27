@@ -8,7 +8,7 @@ Open source eShop clone for the Nintendo 3DS. Allows you to browse and install t
 
 1. Install the CIA file on your CFW of choice (preferably one removing region restrictions)
 
-2. Put an encTitleKeys.bin file in the directory `sdmc:/3ds/data/freeShop/keys/`
+2. Put an encTitleKeys.bin file in the directory `sdmc:/3ds/data/freeShop/keys/` (or go to update settings in freeShop and add a URL to download)
 
 3. Launch freeShop and enjoy
 

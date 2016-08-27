@@ -509,21 +509,21 @@ void Settings::fillUpdatePage(Gwen::Controls::Base *page)
 
 	m_buttonUrlQr = new Button(base);
 	m_buttonUrlQr->SetFont(L"fonts/fontawesome.ttf", 18, false);
-	m_buttonUrlQr->SetText(L"\uf029"); // QR icon
+	m_buttonUrlQr->SetText("\uf029"); // QR icon
 	m_buttonUrlQr->SetPadding(iconPadding);
 	m_buttonUrlQr->SetBounds(0, 20, 20, 20);
 	m_buttonUrlQr->onPress.Add(this, &Settings::updateQrClicked);
 
 	m_buttonUrlKeyboard = new Button(base);
 	m_buttonUrlKeyboard->SetFont(L"fonts/fontawesome.ttf", 20, false);
-	m_buttonUrlKeyboard->SetText(L"\uf11c"); // Keyboard icon
+	m_buttonUrlKeyboard->SetText("\uf11c"); // Keyboard icon
 	m_buttonUrlKeyboard->SetPadding(Gwen::Padding(0, 0, 0, 6));
 	m_buttonUrlKeyboard->SetBounds(21, 20, 26, 20);
 	m_buttonUrlKeyboard->onPress.Add(this, &Settings::updateKeyboardClicked);
 
 	m_buttonUrlDelete = new Button(base);
 	m_buttonUrlDelete->SetFont(L"fonts/fontawesome.ttf", 18, false);
-	m_buttonUrlDelete->SetText(L"\uf014"); // Trash can icon
+	m_buttonUrlDelete->SetText("\uf014"); // Trash can icon
 	m_buttonUrlDelete->SetPadding(iconPadding);
 	m_buttonUrlDelete->SetBounds(288, 20, 20, 20);
 	m_buttonUrlDelete->onPress.Add(this, &Settings::updateUrlDeleteClicked);
