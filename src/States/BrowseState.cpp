@@ -7,6 +7,7 @@
 #include "SleepState.hpp"
 #include "../InstalledList.hpp"
 #include "../Config.hpp"
+#include "../TitleKeys.hpp"
 #include <TweenEngine/Tween.h>
 #include <cpp3ds/Window/Window.hpp>
 #include <sstream>
@@ -73,11 +74,15 @@ void BrowseState::initialize()
 	m_textActiveDownloads.setOutlineThickness(1.f);
 	m_textActiveDownloads.setPosition(218.f, 3.f);
 
-	m_textListEmpty.setString(_("No titles found.\nMake sure you have keys in\nsdmc:/3ds/data/freeShop/keys/\nCheck settings to set up key\ndownloads or try refreshing cache."));
+	if (TitleKeys::getList().empty())
+		m_textListEmpty.setString(_("No title keys found.\nMake sure you have keys in\n%s\n\nManually copy keys to the directory\nor check settings to enter a URL\nfor downloading title keys.", FREESHOP_DIR "/keys/"));
+	else
+		m_textListEmpty.setString(_("No cache entries found\nfor your title keys.\n\nTry refreshing cache in settings.\nIf that doesn't work, then your\ntitles simply won't work with\nfreeShop currently."));
 	m_textListEmpty.useSystemFont();
 	m_textListEmpty.setCharacterSize(16);
 	m_textListEmpty.setFillColor(cpp3ds::Color(80, 80, 80, 255));
-	m_textListEmpty.setPosition((400.f - m_textListEmpty.getLocalBounds().width) / 2, 70.f);
+	m_textListEmpty.setPosition(200.f, 120.f);
+	m_textListEmpty.setOrigin(m_textListEmpty.getLocalBounds().width / 2, m_textListEmpty.getLocalBounds().height / 2);
 
 	m_whiteScreen.setPosition(0.f, 30.f);
 	m_whiteScreen.setSize(cpp3ds::Vector2f(320.f, 210.f));
