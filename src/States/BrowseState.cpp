@@ -55,6 +55,7 @@ BrowseState::~BrowseState()
 
 void BrowseState::initialize()
 {
+	// Initialize AppList singleton first
 	AppList::getInstance().refresh();
 	InstalledList::getInstance().refresh();
 	InstalledList::getInstance().setBrowseState(this);
@@ -335,8 +336,14 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 			case cpp3ds::Keyboard::Select:
 				requestStackClear();
 				return true;
-			case cpp3ds::Keyboard::A: {
+			case cpp3ds::Keyboard::A:
+			{
+				// Don't load if game is already loaded
+				if (m_appInfo.getAppItem() == AppList::getInstance().getSelected()->getAppItem())
+					break;
+
 				m_threadBusy = true;
+				// Only fade out if a game is loaded already
 				if (!m_appInfo.getAppItem())
 					m_threadLoadApp.launch();
 				else
@@ -409,21 +416,19 @@ void BrowseState::loadApp()
 	if (!item)
 		return;
 
+	// TODO: Don't show loading when game is cached?
+	bool showLoading = g_browserLoaded && m_appInfo.getAppItem() != item;
+
 	m_iconSet.setSelectedIndex(App);
-	if (m_appInfo.getAppItem() == item)
+	if (m_appInfo.getAppItem() != item)
 	{
-		m_threadBusy = false;
-		return;
+		setMode(App);
+
+		if (showLoading)
+			requestStackPush(States::Loading);
+
+		m_appInfo.loadApp(item);
 	}
-
-	setMode(App);
-
-	// No cache to load, so show loading state
-	bool showLoading = g_browserLoaded; //!item->isCached();
-	if (showLoading)
-		requestStackPush(States::Loading);
-
-	m_appInfo.loadApp(item);
 
 	TweenEngine::Tween::to(m_appInfo, AppInfo::ALPHA, 0.5f)
 		.target(255.f)
