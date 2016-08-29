@@ -19,6 +19,10 @@ public:
 		LastUpdatedTime,
 		DownloadTitleKeys,
 		KeyURLs,
+
+		DownloadTimeout,
+		DownloadBufferSize,
+
 		SleepMode,
 
 		KEY_COUNT,

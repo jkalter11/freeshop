@@ -14,6 +14,10 @@ namespace {
 		"last_updated",
 		"download_title_keys",
 		"key_urls",
+
+		"download_timeout",
+		"download_buffer_size",
+
 		"sleep_mode",
 	};
 }
@@ -22,7 +26,7 @@ namespace FreeShop {
 
 Config::Config()
 {
-	static_assert(KEY_COUNT == sizeof(keyStrings)/sizeof(*keyStrings), "Key string count much match the enum count.");
+	static_assert(KEY_COUNT == sizeof(keyStrings)/sizeof(*keyStrings), "Key string count must match the enum count.");
 	loadDefaults();
 }
 
@@ -83,6 +87,10 @@ void Config::loadDefaults()
 	ADD_DEFAULT(LastUpdatedTime, 0);
 	ADD_DEFAULT(DownloadTitleKeys, false);
 	ADD_DEFAULT(KeyURLs, rapidjson::kArrayType);
+
+	// Download settings
+	ADD_DEFAULT(DownloadTimeout, 6.f);
+	ADD_DEFAULT(DownloadBufferSize, 128u);
 
 	// Other settings
 	ADD_DEFAULT(SleepMode, false);

@@ -46,6 +46,7 @@ namespace FreeShop
 
 			void fillSortPage(Gwen::Controls::Base *page);
 			void fillUpdatePage(Gwen::Controls::Base *page);
+			void fillDownloadPage(Gwen::Controls::Base *page);
 			void fillOtherPage(Gwen::Controls::Base *page);
 
 			// Event Callback functions
@@ -62,6 +63,10 @@ namespace FreeShop
 			void updateUrlDeleteClicked(Gwen::Controls::Base *button);
 			void updateCheckUpdateClicked(Gwen::Controls::Base *button);
 			void updateRefreshCacheClicked(Gwen::Controls::Base *button);
+
+			void downloadTimeoutChanged(Gwen::Controls::Base *base);
+			void downloadBufferSizeChanged(Gwen::Controls::Base *base);
+			void downloadUseDefaultsClicked(Gwen::Controls::Base *base);
 
 			void updateEnabledState(Gwen::Controls::Base* control);
 			void updateSorting(Gwen::Controls::Base* control);
@@ -80,17 +85,23 @@ namespace FreeShop
 			std::vector<Gwen::Controls::CheckBoxWithLabel*> m_filterRegionCheckboxes;
 			std::vector<Gwen::Controls::CheckBoxWithLabel*> m_filterLanguageCheckboxes;
 
-			// Sort controls
+			// Sort
 			Gwen::Controls::RadioButtonController *m_radioSortType;
 			Gwen::Controls::RadioButtonController *m_radioSortDirection;
 
-			// Update controls
+			// Update
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxAutoUpdate;
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxDownloadKeys;
 			Gwen::Controls::ComboBox *m_comboBoxUrls;
 			Gwen::Controls::Button *m_buttonUrlQr, *m_buttonUrlKeyboard, *m_buttonUrlDelete;
 			Gwen::Controls::Button *m_buttonUpdate;
 			Gwen::Controls::Label *m_labelLastUpdated;
+
+			// Download
+			Gwen::Controls::Label *m_labelTimeout;
+			Gwen::Controls::Label *m_labelDownloadBufferSize;
+			Gwen::Controls::HorizontalSlider *m_sliderTimeout;
+			Gwen::Controls::HorizontalSlider *m_sliderDownloadBufferSize;
 		};
 	}
 }

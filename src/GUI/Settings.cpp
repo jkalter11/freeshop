@@ -3,6 +3,7 @@
 #include <cpp3ds/System/FileInputStream.hpp>
 #include <unistd.h>
 #include <cpp3ds/System/FileSystem.hpp>
+#include <cmath>
 #include "Settings.hpp"
 #include "../Download.hpp"
 #include "../Util.hpp"
@@ -61,7 +62,11 @@ Settings::Settings(Gwen::Skin::TexturedBase *skin,  State *state)
 	page = m_tabControl->AddPage(_("Update").toAnsiString())->GetPage();
 	fillUpdatePage(page);
 
+	page = m_tabControl->AddPage(_("Download").toAnsiString())->GetPage();
+	fillDownloadPage(page);
+
 	page = m_tabControl->AddPage(_("Other").toAnsiString())->GetPage();
+	fillOtherPage(page);
 
 	loadConfig();
 	updateEnabledStates();
@@ -124,6 +129,9 @@ void Settings::saveToConfig()
 		}
 	}
 	Config::set(Config::KeyURLs, list);
+
+	Config::set(Config::DownloadTimeout, m_sliderTimeout->GetFloatValue());
+	Config::set(Config::DownloadBufferSize, static_cast<size_t>(std::ceil(m_sliderDownloadBufferSize->GetFloatValue())));
 }
 
 void Settings::loadConfig()
@@ -147,6 +155,11 @@ void Settings::loadConfig()
 		std::wstring ws(url, url + urls[i].GetStringLength());
 		m_comboBoxUrls->AddItem(ws);
 	}
+
+	m_sliderTimeout->SetFloatValue(Config::get(Config::DownloadTimeout).GetFloat());
+	m_sliderDownloadBufferSize->SetFloatValue(Config::get(Config::DownloadBufferSize).GetUint());
+	downloadTimeoutChanged(m_sliderTimeout);
+	downloadBufferSizeChanged(m_sliderDownloadBufferSize);
 }
 
 void Settings::setPosition(const cpp3ds::Vector2f &position)
@@ -560,6 +573,50 @@ void Settings::fillUpdatePage(Gwen::Controls::Base *page)
 	auto label = new Label(base);
 	label->SetBounds(0, 44, 300, 20);
 	label->SetText(_("freeShop %s", FREESHOP_VERSION).toAnsiString());
+}
+
+void Settings::fillDownloadPage(Gwen::Controls::Base *page)
+{
+	m_labelTimeout = new Label(page);
+	m_labelTimeout->SetBounds(0, 100, 150, 20);
+	m_sliderTimeout = new HorizontalSlider(page);
+	m_sliderTimeout->SetBounds(0, 116, 140, 20);
+	m_sliderTimeout->SetRange(3, 12);
+	m_sliderTimeout->SetNotchCount(9);
+	m_sliderTimeout->SetClampToNotches(true);
+	m_sliderTimeout->onValueChanged.Add(this, &Settings::downloadTimeoutChanged);
+
+	m_labelDownloadBufferSize = new Label(page);
+	m_labelDownloadBufferSize->SetBounds(160, 100, 150, 20);
+	m_sliderDownloadBufferSize = new HorizontalSlider(page);
+	m_sliderDownloadBufferSize->SetBounds(155, 116, 155, 20);
+	m_sliderDownloadBufferSize->SetRange(4, 320);
+	m_sliderDownloadBufferSize->onValueChanged.Add(this, &Settings::downloadBufferSizeChanged);
+
+	auto button = new Button(page);
+	button->SetBounds(95, 140, 110, 18);
+	button->SetText(_("Use Defaults").toAnsiString());
+	button->onPress.Add(this, &Settings::downloadUseDefaultsClicked);
+}
+
+void Settings::downloadUseDefaultsClicked(Gwen::Controls::Base *base)
+{
+	m_sliderTimeout->SetFloatValue(6.f);
+	m_sliderDownloadBufferSize->SetFloatValue(128u);
+}
+
+void Settings::downloadTimeoutChanged(Gwen::Controls::Base *base)
+{
+	auto slider = gwen_cast<HorizontalSlider>(base);
+	m_labelTimeout->SetText(_("HTTP Timeout: %.0fs", slider->GetFloatValue()).toAnsiString());
+	saveToConfig();
+}
+
+void Settings::downloadBufferSizeChanged(Gwen::Controls::Base *base)
+{
+	auto slider = gwen_cast<HorizontalSlider>(base);
+	m_labelDownloadBufferSize->SetText(_("Buffer size: %u KB", static_cast<size_t>(std::ceil(slider->GetFloatValue()))).toAnsiString());
+	saveToConfig();
 }
 
 void Settings::fillOtherPage(Gwen::Controls::Base *page)
