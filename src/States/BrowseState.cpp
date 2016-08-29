@@ -59,9 +59,9 @@ void BrowseState::initialize()
 	InstalledList::getInstance().refresh();
 	InstalledList::getInstance().setBrowseState(this);
 
-	m_iconSet.addIcon(L"\uf11b");
-	m_iconSet.addIcon(L"\uf019");
 	m_iconSet.addIcon(L"\uf290");
+	m_iconSet.addIcon(L"\uf019");
+	m_iconSet.addIcon(L"\uf11b");
 	m_iconSet.addIcon(L"\uf013");
 	m_iconSet.addIcon(L"\uf002");
 	m_iconSet.setPosition(180.f, 15.f);
@@ -203,8 +203,8 @@ bool BrowseState::update(float delta)
 	}
 
 	int iconIndex = m_iconSet.getSelectedIndex();
-	if (m_mode != iconIndex)
-		setMode((Mode)iconIndex);
+	if (m_mode != iconIndex && iconIndex >= 0)
+		setMode(static_cast<Mode>(iconIndex));
 
 	if (m_mode == App)
 	{
