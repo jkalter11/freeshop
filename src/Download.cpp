@@ -360,7 +360,7 @@ void Download::processEvent(const cpp3ds::Event &event)
 			if (bounds.contains(event.touch.x, event.touch.y))
 			{
 				// Restart failed download
-				DownloadQueue::getInstance().restartDownload(m_appItem);
+				DownloadQueue::getInstance().restartDownload(this);
 			}
 		}
 	}

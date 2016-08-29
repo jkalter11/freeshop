@@ -322,24 +322,13 @@ void DownloadQueue::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates stat
 }
 
 
-void DownloadQueue::cancelDownload(std::shared_ptr<AppItem> app)
+void DownloadQueue::restartDownload(Download *download)
 {
 	for (auto& item : m_downloads)
-		if (item->appItem == app && item->download->getStatus() != Download::Failed && item->download->getStatus() != Download::Canceled)
+		if (item->download == download && item->download->getStatus() == Download::Failed)
 		{
-			item->download->cancel(false);
-			break;
-		}
-}
-
-
-void DownloadQueue::restartDownload(std::shared_ptr<AppItem> app)
-{
-	cancelDownload(app);
-	for (auto& item : m_downloads)
-		if (item->appItem == app && item->download->getStatus() == Download::Failed)
-		{
-			addDownload(app, item->installer->getTitleId());
+			item->download->m_markedForDelete = true;
+			addDownload(item->appItem, item->installer->getTitleId());
 			break;
 		}
 }
@@ -374,7 +363,12 @@ bool DownloadQueue::isDownloading(cpp3ds::Uint64 titleId)
 bool DownloadQueue::processEvent(const cpp3ds::Event &event)
 {
 	for (auto& item : m_downloads)
-		item->download->processEvent(event);
+	{
+		static float top = 30.f - item->download->getSize().y;
+		float posY = item->download->getPosition().y + m_scrollPos;
+		if (posY > top && posY < 240.f)
+			item->download->processEvent(event);
+	}
 	return true;
 }
 
@@ -386,6 +380,8 @@ void DownloadQueue::realign()
 	{
 		Download *download = m_downloads[i]->download;
 		Download::Status status = download->getStatus();
+		if (download->markedForDelete())
+			continue;
 		if (processedFirstItem)
 		{
 			download->m_canSendTop = (status == Download::Queued || status == Download::Suspended || status == Download::Downloading);

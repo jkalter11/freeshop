@@ -28,8 +28,7 @@ public:
 	static DownloadQueue &getInstance();
 
 	void addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 titleId = 0, DownloadCompleteCallback callback = nullptr, int contentIndex = -1, float progress = 0.f);
-	void cancelDownload(std::shared_ptr<AppItem> app);
-	void restartDownload(std::shared_ptr<AppItem> app);
+	void restartDownload(Download *download);
 
 	bool isDownloading(std::shared_ptr<AppItem> app);
 	bool isDownloading(cpp3ds::Uint64 titleId);
