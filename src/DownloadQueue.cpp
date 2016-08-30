@@ -271,10 +271,20 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 				notification.insert(0, _("Failed: "));
 				Notification::spawn(notification);
 				installer->abort();
-				if (installer->getErrorCode() != 0)
-					download->setProgressMessage(installer->getErrorString());
-				else // Failed due to internet problem and not from Installer
-					download->setProgressMessage(_("Failed: Internet problem?"));
+
+				switch (installer->getErrorCode()) {
+					case 0: // Failed due to internet problem and not from Installer
+						download->setProgressMessage(_("Failed: Internet problem"));
+						break;
+					case 0xC8A08035:
+						download->setProgressMessage(_("Not enough space on NAND"));
+						break;
+					case 0xC86044D2:
+						download->setProgressMessage(_("Not enough space on SD"));
+						break;
+					default:
+						download->setProgressMessage(installer->getErrorString());
+				}
 				break;
 			case Download::Canceled:
 				break;
