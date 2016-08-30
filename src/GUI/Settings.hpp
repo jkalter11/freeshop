@@ -8,6 +8,7 @@
 #include <TweenEngine/Tweenable.h>
 #include <cpp3ds/System/Vector2.hpp>
 #include "../States/State.hpp"
+#include "../Config.hpp"
 
 
 namespace FreeShop
@@ -36,6 +37,8 @@ namespace FreeShop
 			virtual void setValues(int tweenType, float *newValues);
 
 		private:
+			void saveFilter(Config::Key key, std::vector<Gwen::Controls::CheckBoxWithLabel*> &checkboxArray);
+			void loadFilter(Config::Key key, std::vector<Gwen::Controls::CheckBoxWithLabel*> &checkboxArray);
 			void updateEnabledStates();
 
 			Gwen::Controls::ScrollControl *addFilterPage(const std::string &name);
@@ -56,6 +59,8 @@ namespace FreeShop
 			bool m_ignoreCheckboxChange;
 			void filterCheckboxChanged(Gwen::Controls::Base* control);
 			void filterRegionCheckboxChanged(Gwen::Controls::Base* control);
+			void filterSaveClicked(Gwen::Controls::Base *base);
+			void filterClearClicked(Gwen::Controls::Base *base);
 
 			void updateUrlSelected(Gwen::Controls::Base *combobox);
 			void updateQrClicked(Gwen::Controls::Base *button);
@@ -78,12 +83,15 @@ namespace FreeShop
 			Gwen::Input::cpp3dsInput m_input;
 			Gwen::Controls::Canvas *m_canvas;
 			Gwen::Controls::TabControl *m_tabControl;
-			Gwen::Controls::TabControl *m_filterTabControl;
 
+			// Filter
+			Gwen::Controls::TabControl *m_filterTabControl;
 			std::vector<Gwen::Controls::CheckBoxWithLabel*> m_filterGenreCheckboxes;
 			std::vector<Gwen::Controls::CheckBoxWithLabel*> m_filterPlatformCheckboxes;
 			std::vector<Gwen::Controls::CheckBoxWithLabel*> m_filterRegionCheckboxes;
 			std::vector<Gwen::Controls::CheckBoxWithLabel*> m_filterLanguageCheckboxes;
+			Gwen::Controls::Button *m_buttonFilterSave;
+			Gwen::Controls::Button *m_buttonFilterSaveClear;
 
 			// Sort
 			Gwen::Controls::RadioButtonController *m_radioSortType;

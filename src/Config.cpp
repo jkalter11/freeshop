@@ -7,17 +7,25 @@
 #include "Util.hpp"
 
 namespace {
+	// Matches with Config::Key enum in Config.hpp
 	const char *keyStrings[] = {
 		"cache_version",
 		"auto-update",
 		"trigger_update",
+		// Filter
+		"filter_region",
+		"filter_genre",
+		"filter_language",
+		"filter_platform",
+		// Sort
+		// Update
 		"last_updated",
 		"download_title_keys",
 		"key_urls",
-
+		// Download
 		"download_timeout",
 		"download_buffer_size",
-
+		// Other
 		"sleep_mode",
 	};
 }
@@ -81,18 +89,24 @@ void Config::loadDefaults()
 
 	ADD_DEFAULT(CacheVersion, "");
 
-	// Update settings
+	// Filter
+	ADD_DEFAULT(FilterRegion, rapidjson::kArrayType);
+	ADD_DEFAULT(FilterGenre, rapidjson::kArrayType);
+	ADD_DEFAULT(FilterLanguage, rapidjson::kArrayType);
+	ADD_DEFAULT(FilterPlatform, rapidjson::kArrayType);
+
+	// Update
 	ADD_DEFAULT(AutoUpdate, true);
 	ADD_DEFAULT(TriggerUpdateFlag, false);
 	ADD_DEFAULT(LastUpdatedTime, 0);
 	ADD_DEFAULT(DownloadTitleKeys, false);
 	ADD_DEFAULT(KeyURLs, rapidjson::kArrayType);
 
-	// Download settings
+	// Download
 	ADD_DEFAULT(DownloadTimeout, 6.f);
 	ADD_DEFAULT(DownloadBufferSize, 128u);
 
-	// Other settings
+	// Other
 	ADD_DEFAULT(SleepMode, false);
 }
 

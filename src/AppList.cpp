@@ -34,6 +34,8 @@ AppList::~AppList()
 
 void AppList::refresh()
 {
+	m_appItems.clear();
+	m_guiAppItems.clear();
 #ifdef EMULATION
 	bool isNew3DS = true;
 #else
@@ -137,6 +139,7 @@ void AppList::sort()
 
 void AppList::filter()
 {
+	m_tweenManager.killAll();
 	// Region filter
 	// Also resets the filter state when no region filter is set.
 	if (m_filterRegions)

@@ -8,8 +8,8 @@
 #include "../Download.hpp"
 #include "../Util.hpp"
 #include "../AppList.hpp"
-#include "../Config.hpp"
 #include "../TitleKeys.hpp"
+#include "../Notification.hpp"
 
 #ifdef _3DS
 #include "../KeyboardApplet.hpp"
@@ -34,28 +34,36 @@ Settings::Settings(Gwen::Skin::TexturedBase *skin,  State *state)
 	m_tabControl = new TabControl(m_canvas);
 	m_tabControl->SetBounds(0, 40, 320, 200);
 
-	Base *page = m_tabControl->AddPage(_("Filter").toAnsiString())->GetPage();
-
 	// Filters
+	Base *page = m_tabControl->AddPage(_("Filter").toAnsiString())->GetPage();
 	m_filterTabControl = new TabControl(page);
 	m_filterTabControl->Dock(Gwen::Pos::Fill);
 	m_filterTabControl->SetTabStripPosition(Gwen::Pos::Left);
 	Base *filterPage = m_filterTabControl->AddPage(_("Regions").toAnsiString())->GetPage();
-	fillFilterRegions(filterPage);
+	m_buttonFilterSave = new Button(page);
+	m_buttonFilterSave->SetFont(L"fonts/fontawesome.ttf", 18, false);
+	m_buttonFilterSave->SetText("\uf0c7"); // Save floppy icon
+	m_buttonFilterSave->SetBounds(4, 140, 22, 22);
+	m_buttonFilterSave->SetPadding(Gwen::Padding(0, 0, 0, 3));
+	m_buttonFilterSave->onPress.Add(this, &Settings::filterSaveClicked);
+	m_buttonFilterSaveClear = new Button(page);
+	m_buttonFilterSaveClear->SetFont(L"fonts/fontawesome.ttf", 18, false);
+	m_buttonFilterSaveClear->SetText("\uf014"); // Trash can icon
+	m_buttonFilterSaveClear->SetBounds(32, 140, 22, 22);
+	m_buttonFilterSaveClear->SetPadding(Gwen::Padding(0, 0, 0, 3));
+	m_buttonFilterSaveClear->onPress.Add(this, &Settings::filterClearClicked);
 
+	fillFilterRegions(filterPage);
 	ScrollControl *scrollBox;
 	scrollBox = addFilterPage("Genre");
 	fillFilterGenres(scrollBox);
-
 	scrollBox = addFilterPage("Language");
 	fillFilterLanguages(scrollBox);
-
 //	scrollBox = addFilterPage("Feature");
-
 	scrollBox = addFilterPage("Platform");
 	fillFilterPlatforms(scrollBox);
 
-	// Sorting options
+	// Sorting
 	page = m_tabControl->AddPage(_("Sort").toAnsiString())->GetPage();
 	fillSortPage(page);
 
@@ -136,6 +144,14 @@ void Settings::saveToConfig()
 
 void Settings::loadConfig()
 {
+	// Filters
+	m_buttonFilterSaveClear->SetDisabled(true);
+	loadFilter(Config::FilterRegion, m_filterRegionCheckboxes);
+	loadFilter(Config::FilterGenre, m_filterGenreCheckboxes);
+	loadFilter(Config::FilterLanguage, m_filterLanguageCheckboxes);
+	loadFilter(Config::FilterPlatform, m_filterPlatformCheckboxes);
+
+	// Update
 	m_checkboxAutoUpdate->Checkbox()->SetChecked(Config::get(Config::AutoUpdate).GetBool());
 	m_checkboxDownloadKeys->Checkbox()->SetChecked(Config::get(Config::DownloadTitleKeys).GetBool());
 
@@ -156,10 +172,48 @@ void Settings::loadConfig()
 		m_comboBoxUrls->AddItem(ws);
 	}
 
+	// Download
 	m_sliderTimeout->SetFloatValue(Config::get(Config::DownloadTimeout).GetFloat());
 	m_sliderDownloadBufferSize->SetFloatValue(Config::get(Config::DownloadBufferSize).GetUint());
 	downloadTimeoutChanged(m_sliderTimeout);
 	downloadBufferSizeChanged(m_sliderDownloadBufferSize);
+}
+
+void Settings::saveFilter(Config::Key key, std::vector<Gwen::Controls::CheckBoxWithLabel*> &checkboxArray)
+{
+	rapidjson::Value val;
+	val.SetArray();
+	for (auto& checkbox : checkboxArray)
+		if (checkbox->Checkbox()->IsChecked())
+		{
+			int i = atoi(checkbox->Checkbox()->GetValue().c_str());
+			val.PushBack(i, Config::getAllocator());
+		}
+	Config::set(key, val);
+}
+
+void Settings::loadFilter(Config::Key key, std::vector<Gwen::Controls::CheckBoxWithLabel*> &checkboxArray)
+{
+	// Ignore the checkbox change events.
+	// Manually invoke the event once at the end.
+	m_ignoreCheckboxChange = true;
+	auto filterArray = Config::get(key).GetArray();
+	if (!filterArray.Empty())
+	{
+		// Enable clear button since a filter is evidently saved
+		m_buttonFilterSaveClear->SetDisabled(false);
+		for (auto& checkbox : checkboxArray)
+		{
+			int val = std::stoi(checkbox->Checkbox()->GetValue().Get(), nullptr, 10);
+			for (auto& filterId : filterArray)
+				if (filterId.GetInt() == val)
+					checkbox->Checkbox()->SetChecked(true);
+		}
+	}
+	m_ignoreCheckboxChange = false;
+	auto checkbox = checkboxArray.front()->Checkbox();
+	if (!filterArray.Empty())
+		checkbox->onCheckChanged.Call(checkbox);
 }
 
 void Settings::setPosition(const cpp3ds::Vector2f &position)
@@ -382,6 +436,30 @@ void Settings::fillFilterLanguages(Gwen::Controls::Base *parent)
 	}
 }
 
+void Settings::filterSaveClicked(Gwen::Controls::Base *base)
+{
+	// Region
+	saveFilter(Config::FilterRegion, m_filterRegionCheckboxes);
+	saveFilter(Config::FilterGenre, m_filterGenreCheckboxes);
+	saveFilter(Config::FilterLanguage, m_filterLanguageCheckboxes);
+	saveFilter(Config::FilterPlatform, m_filterPlatformCheckboxes);
+
+	m_buttonFilterSaveClear->SetDisabled(false);
+	Config::saveToFile();
+	Notification::spawn(_("Filter settings saved"));
+}
+
+void Settings::filterClearClicked(Gwen::Controls::Base *base)
+{
+	Config::set(Config::FilterRegion, rapidjson::kArrayType);
+	Config::set(Config::FilterGenre, rapidjson::kArrayType);
+	Config::set(Config::FilterLanguage, rapidjson::kArrayType);
+	Config::set(Config::FilterPlatform, rapidjson::kArrayType);
+	m_buttonFilterSaveClear->SetDisabled(true);
+	Config::saveToFile();
+	Notification::spawn(_("Cleared saved filter settings"));
+}
+
 #define CHECKBOXES_SET(checkboxes, value) \
 	{ \
         for (auto &checkbox : checkboxes) \
@@ -454,6 +532,8 @@ void Settings::filterCheckboxChanged(Gwen::Controls::Base *control)
 
 void Settings::filterRegionCheckboxChanged(Gwen::Controls::Base *control)
 {
+	if (m_ignoreCheckboxChange)
+		return;
 	int regions = 0;
 	for (auto &checkbox : m_filterRegionCheckboxes)
 		if (checkbox->Checkbox()->IsChecked())

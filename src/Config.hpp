@@ -12,17 +12,26 @@ namespace FreeShop {
 
 class Config {
 public:
+	// See string deifnitions in Config.coo
 	enum Key {
 		CacheVersion,
 		AutoUpdate,
 		TriggerUpdateFlag,
+		// Filter
+		FilterRegion,
+		FilterGenre,
+		FilterLanguage,
+		FilterPlatform,
+		// Sort
+
+		// Update
 		LastUpdatedTime,
 		DownloadTitleKeys,
 		KeyURLs,
-
+		// Download
 		DownloadTimeout,
 		DownloadBufferSize,
-
+		// Other
 		SleepMode,
 
 		KEY_COUNT,
