@@ -204,7 +204,7 @@ void Settings::loadFilter(Config::Key key, std::vector<Gwen::Controls::CheckBoxW
 		m_buttonFilterSaveClear->SetDisabled(false);
 		for (auto& checkbox : checkboxArray)
 		{
-			int val = std::stoi(checkbox->Checkbox()->GetValue().Get(), nullptr, 10);
+			int val = strtol(checkbox->Checkbox()->GetValue().c_str(), nullptr, 10);
 			for (auto& filterId : filterArray)
 				if (filterId.GetInt() == val)
 					checkbox->Checkbox()->SetChecked(true);
