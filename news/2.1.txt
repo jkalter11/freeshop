@@ -1,0 +1,14 @@
+• Add version news log (like it?)
+• Add save buttons for filters.
+• Fix bug when restarting failed installs.
+• Fix download suspension and timeouts
+  for people with slower connection.
+• Add timeout and buffer size to Download
+  Settings so users can adjust to better fit
+  various speeds of internet connection.
+• Holding down buttons keeps the game
+  list scrolling.
+• Can choose to play sound or power off
+  console after queue finishes.
+• Swapped shopping bag and game
+  controller icons.
