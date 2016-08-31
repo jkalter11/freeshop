@@ -15,8 +15,8 @@ public:
 	// See string deifnitions in Config.coo
 	enum Key {
 		CacheVersion,
-		AutoUpdate,
 		TriggerUpdateFlag,
+		ShowNews,
 		// Filter
 		FilterRegion,
 		FilterGenre,
@@ -25,6 +25,7 @@ public:
 		// Sort
 
 		// Update
+		AutoUpdate,
 		LastUpdatedTime,
 		DownloadTitleKeys,
 		KeyURLs,

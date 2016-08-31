@@ -12,6 +12,7 @@ namespace FreeShop {
 			Sleep,
 			QrScanner,
 			Dialog,
+			News,
 		};
 	}
 }

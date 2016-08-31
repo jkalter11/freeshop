@@ -76,6 +76,8 @@ namespace FreeShop
 			void updateEnabledState(Gwen::Controls::Base* control);
 			void updateSorting(Gwen::Controls::Base* control);
 
+			void showNews(Gwen::Controls::Base* base);
+
 		private:
 			cpp3ds::Vector2f m_position;
 

@@ -202,16 +202,26 @@ bool BrowseState::update(float delta)
 	if (m_threadBusy)
 		SleepState::clock.restart();
 
+	// Show latest news if requested
+	if (Config::get(Config::ShowNews).GetBool())
+	{
+		Config::set(Config::ShowNews, false);
+		requestStackPush(States::News);
+	}
+
+	// Go into sleep state after inactivity
 	if (SleepState::clock.getElapsedTime() > cpp3ds::seconds(SECONDS_TO_SLEEP))
 	{
 		requestStackPush(States::Sleep);
 		return false;
 	}
 
+	// If selected icon changed, change mode accordingly
 	int iconIndex = m_iconSet.getSelectedIndex();
 	if (m_mode != iconIndex && iconIndex >= 0)
 		setMode(static_cast<Mode>(iconIndex));
 
+	// Update the active mode
 	if (m_mode == App)
 	{
 		m_appInfo.update(delta);

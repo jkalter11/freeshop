@@ -689,19 +689,20 @@ void Settings::downloadTimeoutChanged(Gwen::Controls::Base *base)
 {
 	auto slider = gwen_cast<HorizontalSlider>(base);
 	m_labelTimeout->SetText(_("HTTP Timeout: %.0fs", slider->GetFloatValue()).toAnsiString());
-	saveToConfig();
 }
 
 void Settings::downloadBufferSizeChanged(Gwen::Controls::Base *base)
 {
 	auto slider = gwen_cast<HorizontalSlider>(base);
 	m_labelDownloadBufferSize->SetText(_("Buffer size: %u KB", static_cast<size_t>(std::ceil(slider->GetFloatValue()))).toAnsiString());
-	saveToConfig();
 }
 
 void Settings::fillOtherPage(Gwen::Controls::Base *page)
 {
-	//
+	auto newsButton = new Button(page);
+	newsButton->SetBounds(0, 100, 130, 20);
+	newsButton->SetText(_("View news (%s)", FREESHOP_VERSION).toAnsiString());
+	newsButton->onPress.Add(this, &Settings::showNews);
 }
 
 void Settings::updateQrClicked(Gwen::Controls::Base *button)
@@ -829,6 +830,11 @@ void Settings::updateSorting(Gwen::Controls::Base *control)
 		sortType = AppList::ReleaseDate;
 
 	AppList::getInstance().setSortType(sortType, isAscending);
+}
+
+void Settings::showNews(Gwen::Controls::Base *base)
+{
+	Config::set(Config::ShowNews, true);
 }
 
 

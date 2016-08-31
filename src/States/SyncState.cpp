@@ -184,6 +184,7 @@ void SyncState::sync()
 #ifdef NDEBUG
 	if (updateFreeShop())
 	{
+		Config::set(Config::ShowNews, true);
 		g_requestJump = 0x400000F12EE00;
 		return;
 	}
@@ -191,6 +192,14 @@ void SyncState::sync()
 
 	updateCache();
 	updateTitleKeys();
+
+	if (Config::get(Config::ShowNews).GetBool())
+	{
+		setStatus(_("Fetching news for %s ...", FREESHOP_VERSION));
+		std::string url = _("https://raw.githubusercontent.com/Cruel/freeShop/master/news/%s.txt", FREESHOP_VERSION).toAnsiString();
+		Download download(url, FREESHOP_DIR "/news.txt");
+		download.run();
+	}
 
 	setStatus(_("Loading game list..."));
 

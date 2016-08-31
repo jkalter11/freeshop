@@ -10,8 +10,8 @@ namespace {
 	// Matches with Config::Key enum in Config.hpp
 	const char *keyStrings[] = {
 		"cache_version",
-		"auto-update",
 		"trigger_update",
+		"show_news",
 		// Filter
 		"filter_region",
 		"filter_genre",
@@ -19,6 +19,7 @@ namespace {
 		"filter_platform",
 		// Sort
 		// Update
+		"auto-update",
 		"last_updated",
 		"download_title_keys",
 		"key_urls",
@@ -88,6 +89,8 @@ void Config::loadDefaults()
 		m_json.SetObject();
 
 	ADD_DEFAULT(CacheVersion, "");
+	ADD_DEFAULT(TriggerUpdateFlag, false);
+	ADD_DEFAULT(ShowNews, true);
 
 	// Filter
 	ADD_DEFAULT(FilterRegion, rapidjson::kArrayType);
@@ -97,7 +100,6 @@ void Config::loadDefaults()
 
 	// Update
 	ADD_DEFAULT(AutoUpdate, true);
-	ADD_DEFAULT(TriggerUpdateFlag, false);
 	ADD_DEFAULT(LastUpdatedTime, 0);
 	ADD_DEFAULT(DownloadTitleKeys, false);
 	ADD_DEFAULT(KeyURLs, rapidjson::kArrayType);
