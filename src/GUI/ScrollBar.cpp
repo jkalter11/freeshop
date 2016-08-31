@@ -6,6 +6,7 @@ namespace FreeShop {
 
 ScrollBar::ScrollBar()
 : m_isTouching(false)
+, m_autoHide(true)
 , m_needsUpdate(true)
 , m_isHidden(true)
 , m_isScrolling(false)
@@ -33,8 +34,11 @@ ScrollBar::~ScrollBar()
 void ScrollBar::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) const
 {
 	ensureUpdateScrollBar();
-	states.transform *= getTransform();
-	target.draw(m_scrollBar, states);
+	if (m_scrollBar.getSize().y < m_size.y)
+	{
+		states.transform *= getTransform();
+		target.draw(m_scrollBar, states);
+	}
 }
 
 void ScrollBar::attachObject(Scrollable *object)
@@ -113,8 +117,11 @@ bool ScrollBar::processEvent(const cpp3ds::Event &event)
 
 void ScrollBar::update(float delta)
 {
-	if (m_clockHide.getElapsedTime() > cpp3ds::seconds(3.f))
+	if (m_autoHide && m_clockHide.getElapsedTime() > cpp3ds::seconds(3.f))
 		hide();
+
+	if (!m_autoHide && m_isHidden)
+		show();
 
 	if (m_isScrolling && !m_isTouching)
 	{
@@ -252,7 +259,7 @@ void ScrollBar::setScroll(float scrollPos)
 		scrollPos = m_scrollPosMin;
 
 	m_scrollPos = scrollPos;
-	if (m_scrollPosMin != m_scrollPosMax)
+	if (m_autoHide && m_scrollPosMin != m_scrollPosMax)
 		show();
 
 	setPosition(m_position);
@@ -266,7 +273,7 @@ void ScrollBar::setScrollRelative(float scrollDelta)
 void ScrollBar::setPosition(const cpp3ds::Vector2f &position)
 {
 	m_position = position;
-	float visibleRatio = m_scrollAreaSize.y / (m_scrollSize+1);
+	float visibleRatio = m_size.y / (m_scrollSize+1);
 	Transformable::setPosition(position + cpp3ds::Vector2f(0.f, -m_scrollPos * visibleRatio));
 }
 

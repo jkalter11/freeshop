@@ -33,6 +33,7 @@ public:
 	void setScrollAreaSize(const cpp3ds::Vector2u &size);
 	void setDeceleration(float rate) { m_deceleration = rate; }
 	void setColor(const cpp3ds::Color &color);
+	void setAutoHide(bool autoHide) { m_autoHide = autoHide; }
 
 	void show();
 	void hide();
@@ -49,6 +50,7 @@ protected:
 	void ensureUpdateScrollBar() const;
 
 private:
+	bool m_autoHide;
 	bool m_isHidden;
 	bool m_isTouching;
 	bool m_isScrolling;
