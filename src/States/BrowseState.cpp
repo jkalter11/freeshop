@@ -97,8 +97,6 @@ void BrowseState::initialize()
 		text.useSystemFont();
 	}
 
-	m_soundBlip.setBuffer(AssetManager<cpp3ds::SoundBuffer>::get("sounds/blip.ogg"));
-
 	m_soundBufferIntro.loadFromFile(FREESHOP_DIR "/shop-intro.ogg");
 	m_soundBufferLoop.loadFromFile(FREESHOP_DIR "/shop-loop.ogg");
 	m_soundIntro.setBuffer(m_soundBufferIntro);
@@ -304,42 +302,7 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 	else
 	{
 		// Events for all modes except Search
-		if (event.type == cpp3ds::Event::KeyPressed)
-		{
-			int index = AppList::getInstance().getSelectedIndex();
-
-			switch (event.key.code)
-			{
-				case cpp3ds::Keyboard::DPadUp:
-					m_soundBlip.play(1);
-					if (index % 4 == 0)
-						break;
-					setItemIndex(index - 1);
-					break;
-				case cpp3ds::Keyboard::DPadDown:
-					m_soundBlip.play(1);
-					if (index % 4 == 3)
-						break;
-					setItemIndex(index + 1);
-					break;
-				case cpp3ds::Keyboard::DPadLeft:
-					m_soundBlip.play(1);
-					setItemIndex(index - 4);
-					break;
-				case cpp3ds::Keyboard::DPadRight:
-					m_soundBlip.play(1);
-					setItemIndex(index + 4);
-					break;
-				case cpp3ds::Keyboard::L:
-					setItemIndex(index - 8);
-					break;
-				case cpp3ds::Keyboard::R:
-					setItemIndex(index + 8);
-					break;
-				default:
-					break;
-			}
-		}
+		AppList::getInstance().processEvent(event);
 	}
 
 	if (event.type == cpp3ds::Event::KeyPressed)
@@ -372,7 +335,7 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 			}
 			case cpp3ds::Keyboard::B:
 				AppList::getInstance().filterBySearch("", m_textMatches);
-				setItemIndex(0);
+				AppList::getInstance().setSelectedIndex(0);
 				break;
 			case cpp3ds::Keyboard::X: {
 				auto app = AppList::getInstance().getSelected()->getAppItem();
@@ -396,32 +359,6 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 	}
 
 	return true;
-}
-
-
-void BrowseState::setItemIndex(int index)
-{
-	if (AppList::getInstance().getVisibleCount() == 0)
-		return;
-
-	if (index < 0)
-		index = 0;
-	else if (index >= AppList::getInstance().getVisibleCount())
-		index = AppList::getInstance().getVisibleCount() - 1;
-
-	float extra = 1.0f; //std::abs(m_appList.getSelectedIndex() - index) == 8.f ? 2.f : 1.f;
-
-	float pos = -200.f * extra * (index / 4);
-	if (pos > m_appListPositionX)
-		m_appListPositionX = pos;
-	else if (pos <= m_appListPositionX - 400.f)
-		m_appListPositionX = pos + 200.f * extra;
-
-	TweenEngine::Tween::to(AppList::getInstance(), AppList::POSITION_X, 0.3f)
-			.target(m_appListPositionX)
-			.start(m_tweenManager);
-
-	AppList::getInstance().setSelectedIndex(index);
 }
 
 

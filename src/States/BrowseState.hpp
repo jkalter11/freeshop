@@ -49,7 +49,6 @@ private:
 	void initialize();
 	void playMusic();
 	void setMode(Mode mode);
-	void setItemIndex(int index);
 	void loadApp();
 
 private:
@@ -73,7 +72,6 @@ private:
 	ScrollBar m_scrollbarDownloadQueue;
 
 	// Sounds
-	cpp3ds::Sound  m_soundBlip;
 	cpp3ds::Sound  m_soundClick;
 	cpp3ds::Sound  m_soundLoading;
 
@@ -97,8 +95,6 @@ private:
 	// GWEN
 	Gwen::Renderer::cpp3dsRenderer *m_gwenRenderer;
 	Gwen::Skin::TexturedBase *m_gwenSkin;
-	Gwen::Input::cpp3dsInput m_gwenInput;
-	Gwen::Controls::Canvas *m_gwenCanvas;
 	GUI::Settings *m_settingsGUI;
 };
 

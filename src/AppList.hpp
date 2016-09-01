@@ -6,6 +6,9 @@
 #include <memory>
 #include <TweenEngine/TweenManager.h>
 #include <cpp3ds/System/Thread.hpp>
+#include <cpp3ds/Window/Event.hpp>
+#include <cpp3ds/System/Clock.hpp>
+#include <cpp3ds/Audio/Sound.hpp>
 #include "GUI/AppItem.hpp"
 #include "RichText.hpp"
 
@@ -44,6 +47,7 @@ public:
 	void filterBySearch(const std::string& searchTerm, std::vector<util3ds::RichText> &textMatches);
 
 	void update(float delta);
+	bool processEvent(const cpp3ds::Event& event);
 
 	void setFilterGenres(const std::vector<int> &genres);
 	void setFilterPlatforms(const std::vector<int> &genres);
@@ -56,10 +60,18 @@ protected:
 	void sort();
 	void filter();
 	void reposition();
+	void processKeyRepeat();
 
 private:
 	SortType m_sortType;
 	bool m_sortAscending;
+
+	float m_targetPosX;
+	cpp3ds::Sound  m_soundBlip;
+	cpp3ds::Clock m_clockKeyRepeat;
+	int m_indexDelta;
+	bool m_processedFirstKey;
+	bool m_startKeyRepeat;
 
 	std::vector<int> m_filterGenres;
 	std::vector<int> m_filterPlatforms;

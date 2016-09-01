@@ -11,6 +11,7 @@
 #include "AppList.hpp"
 #include "Util.hpp"
 #include "TitleKeys.hpp"
+#include "AssetManager.hpp"
 
 
 namespace FreeShop {
@@ -22,8 +23,13 @@ AppList::AppList(std::string jsonFilename)
 , m_filterRegions(0)
 , m_filterLanguages(0)
 , m_sortAscending(true)
+, m_targetPosX(0.f)
+, m_indexDelta(0)
+, m_startKeyRepeat(false)
+, m_processedFirstKey(false)
 {
 	m_jsonFilename = jsonFilename;
+	m_soundBlip.setBuffer(AssetManager<cpp3ds::SoundBuffer>::get("sounds/blip.ogg"));
 }
 
 AppList::~AppList()
@@ -42,7 +48,7 @@ void AppList::refresh()
 	bool isNew3DS = false;
 	APT_CheckNew3DS(&isNew3DS);
 #endif
-
+	cpp3ds::Clock clock;
 	cpp3ds::FileInputStream file;
 	if (file.open(m_jsonFilename))
 	{
@@ -87,6 +93,78 @@ void AppList::refresh()
 	filter();
 	reposition();
 	setSelectedIndex(m_selectedIndex);
+}
+
+bool AppList::processEvent(const cpp3ds::Event &event)
+{
+	if (event.type == cpp3ds::Event::KeyPressed)
+	{
+		m_processedFirstKey = false;
+		if (event.key.code & cpp3ds::Keyboard::Up) {
+			m_indexDelta = -1;
+		} else if (event.key.code & cpp3ds::Keyboard::Down) {
+			m_indexDelta = 1;
+		} else if (event.key.code & cpp3ds::Keyboard::Left) {
+			m_indexDelta = -4;
+		} else if (event.key.code & cpp3ds::Keyboard::Right) {
+			m_indexDelta = 4;
+		} else if (event.key.code & cpp3ds::Keyboard::L) {
+			m_indexDelta = -8;
+		} else if (event.key.code & cpp3ds::Keyboard::R) {
+			m_indexDelta = 8;
+		} else
+			m_processedFirstKey = true;
+	}
+	else if (event.type == cpp3ds::Event::KeyReleased)
+	{
+		if (event.key.code & (cpp3ds::Keyboard::Up | cpp3ds::Keyboard::Down | cpp3ds::Keyboard::Left | cpp3ds::Keyboard::Right | cpp3ds::Keyboard::L | cpp3ds::Keyboard::R))
+		{
+			if (cpp3ds::Keyboard::isKeyDown(cpp3ds::Keyboard::Up)
+					|| cpp3ds::Keyboard::isKeyDown(cpp3ds::Keyboard::Down)
+					|| cpp3ds::Keyboard::isKeyDown(cpp3ds::Keyboard::Left)
+					|| cpp3ds::Keyboard::isKeyDown(cpp3ds::Keyboard::Right)
+					|| cpp3ds::Keyboard::isKeyDown(cpp3ds::Keyboard::L)
+					|| cpp3ds::Keyboard::isKeyDown(cpp3ds::Keyboard::R))
+				return false;
+			m_indexDelta = 0;
+			m_startKeyRepeat = false;
+			m_processedFirstKey = false;
+		}
+	}
+	return false;
+}
+
+void AppList::update(float delta)
+{
+	if (m_indexDelta != 0)
+	{
+		if (m_startKeyRepeat)
+		{
+			if (m_clockKeyRepeat.getElapsedTime() > cpp3ds::milliseconds(60))
+				processKeyRepeat();
+		}
+		else if (!m_processedFirstKey)
+		{
+			m_processedFirstKey = true;
+			processKeyRepeat();
+		}
+		else if (m_clockKeyRepeat.getElapsedTime() > cpp3ds::milliseconds(300))
+			m_startKeyRepeat = true;
+	}
+
+	m_tweenManager.update(delta);
+}
+
+void AppList::processKeyRepeat()
+{
+	int index = getSelectedIndex();
+	// Don't keep changing index on top/bottom boundaries
+	if ((m_indexDelta != 1 || index % 4 != 3) && (m_indexDelta != -1 || index % 4 != 0))
+	{
+		m_soundBlip.play(1);
+		setSelectedIndex(index + m_indexDelta);
+		m_clockKeyRepeat.restart();
+	}
 }
 
 void AppList::setSortType(AppList::SortType sortType, bool ascending)
@@ -235,6 +313,26 @@ void AppList::reposition()
 
 void AppList::setSelectedIndex(int index)
 {
+	if (getVisibleCount() == 0)
+		return;
+
+	if (index < 0)
+		index = 0;
+	else if (index >= getVisibleCount())
+		index = getVisibleCount() - 1;
+
+	float extra = 1.0f; //std::abs(m_appList.getSelectedIndex() - index) == 8.f ? 2.f : 1.f;
+
+	float pos = -200.f * extra * (index / 4);
+	if (pos > m_targetPosX)
+		m_targetPosX = pos;
+	else if (pos <= m_targetPosX - 400.f)
+		m_targetPosX = pos + 200.f * extra;
+
+	TweenEngine::Tween::to(*this, AppList::POSITION_X, 0.3f)
+		.target(m_targetPosX)
+		.start(m_tweenManager);
+
 	if (m_selectedIndex >= 0)
 		m_guiAppItems[m_selectedIndex]->deselect();
 	m_selectedIndex = index;
@@ -355,11 +453,6 @@ void AppList::setCollapsed(bool collapsed)
 bool AppList::isCollapsed() const
 {
 	return m_collapsed;
-}
-
-void AppList::update(float delta)
-{
-	m_tweenManager.update(delta);
 }
 
 void AppList::filterBySearch(const std::string &searchTerm, std::vector<util3ds::RichText> &textMatches)
