@@ -208,7 +208,7 @@ bool BrowseState::update(float delta)
 	}
 
 	// Go into sleep state after inactivity
-	if (SleepState::clock.getElapsedTime() > cpp3ds::seconds(SECONDS_TO_SLEEP))
+	if (Config::get(Config::SleepMode).GetBool() && SleepState::clock.getElapsedTime() > cpp3ds::seconds(SECONDS_TO_SLEEP))
 	{
 		requestStackPush(States::Sleep);
 		return false;

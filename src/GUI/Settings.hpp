@@ -112,6 +112,9 @@ namespace FreeShop
 			Gwen::Controls::Label *m_labelDownloadBufferSize;
 			Gwen::Controls::HorizontalSlider *m_sliderTimeout;
 			Gwen::Controls::HorizontalSlider *m_sliderDownloadBufferSize;
+
+			// Other
+			Gwen::Controls::CheckBoxWithLabel *m_checkboxSleep;
 		};
 	}
 }

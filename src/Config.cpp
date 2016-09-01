@@ -109,7 +109,7 @@ void Config::loadDefaults()
 	ADD_DEFAULT(DownloadBufferSize, 128u);
 
 	// Other
-	ADD_DEFAULT(SleepMode, false);
+	ADD_DEFAULT(SleepMode, true);
 }
 
 void Config::set(Key key, const char *val)

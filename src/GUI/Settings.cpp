@@ -140,6 +140,8 @@ void Settings::saveToConfig()
 
 	Config::set(Config::DownloadTimeout, m_sliderTimeout->GetFloatValue());
 	Config::set(Config::DownloadBufferSize, static_cast<size_t>(std::ceil(m_sliderDownloadBufferSize->GetFloatValue())));
+
+	Config::set(Config::SleepMode, m_checkboxSleep->Checkbox()->IsChecked());
 }
 
 void Settings::loadConfig()
@@ -177,6 +179,9 @@ void Settings::loadConfig()
 	m_sliderDownloadBufferSize->SetFloatValue(Config::get(Config::DownloadBufferSize).GetUint());
 	downloadTimeoutChanged(m_sliderTimeout);
 	downloadBufferSizeChanged(m_sliderDownloadBufferSize);
+
+	// Other
+	m_checkboxSleep->Checkbox()->SetChecked(Config::get(Config::SleepMode).GetBool());
 }
 
 void Settings::saveFilter(Config::Key key, std::vector<Gwen::Controls::CheckBoxWithLabel*> &checkboxArray)
@@ -703,6 +708,10 @@ void Settings::fillOtherPage(Gwen::Controls::Base *page)
 	newsButton->SetBounds(0, 100, 130, 20);
 	newsButton->SetText(_("View news (%s)", FREESHOP_VERSION).toAnsiString());
 	newsButton->onPress.Add(this, &Settings::showNews);
+
+	m_checkboxSleep = new CheckBoxWithLabel(page);
+	m_checkboxSleep->SetBounds(0, 120, 320, 20);
+	m_checkboxSleep->Label()->SetText(_("Enable screen sleep after inactivity").toAnsiString());
 }
 
 void Settings::updateQrClicked(Gwen::Controls::Base *button)

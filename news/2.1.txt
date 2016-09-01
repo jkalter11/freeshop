@@ -10,5 +10,6 @@
   and holding keys keeps it scrolling.
 • Can choose to play sound or power off
   console after queue finishes.
+• Can disable screen sleep mode in settings.
 • Swapped shopping bag and game
   controller icons.
