@@ -24,7 +24,6 @@ public:
 	virtual bool processEvent(const cpp3ds::Event& event);
 
 private:
-	util3ds::TweenText m_textSleep;
 	util3ds::TweenRectangleShape m_overlay;
 	TweenEngine::TweenManager m_tweenManager;
 	bool m_sleepEnding;
