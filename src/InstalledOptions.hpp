@@ -22,8 +22,6 @@ public:
 	void setInstalledItem(InstalledItem *installedItem);
 	InstalledItem *getInstalledItem() const;
 
-	void setBrowseState(BrowseState *state);
-
 	void update();
 
 protected:
@@ -44,8 +42,6 @@ private:
 	bool m_dlcAvailable;
 	bool m_updatesInstalled;
 	bool m_dlcInstalled;
-
-	BrowseState *m_browseState;
 
 #ifdef _3DS
 	FS_MediaType m_mediaType;

@@ -25,8 +25,6 @@ public:
 
 	static bool isInstalled(cpp3ds::Uint64 titleId);
 
-	void setBrowseState(BrowseState *state);
-
 protected:
 	InstalledList();
 	virtual void draw(cpp3ds::RenderTarget& target, cpp3ds::RenderStates states) const;

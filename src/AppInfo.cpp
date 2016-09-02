@@ -10,6 +10,7 @@
 #include "Notification.hpp"
 #include "InstalledList.hpp"
 #include "FreeShop.hpp"
+#include "States/DialogState.hpp"
 #include <sstream>
 #include <TweenEngine/Tween.h>
 #include <cpp3ds/System/FileInputStream.hpp>
@@ -435,23 +436,44 @@ bool AppInfo::processEvent(const cpp3ds::Event &event)
 			if (!m_appItem->getDemos().empty())
 			{
 				cpp3ds::Uint64 demoTitleId = m_appItem->getDemos()[0];
-				cpp3ds::String s = m_appItem->getTitle();
+				cpp3ds::String appTitle = m_appItem->getTitle();
 
 				if (InstalledList::isInstalled(demoTitleId))
 				{
+					g_browseState->requestStackPush(States::Dialog, false, [=](void *data) mutable {
+						auto event = reinterpret_cast<DialogState::Event*>(data);
+						if (event->type == DialogState::GetText)
+						{
+							auto str = reinterpret_cast<cpp3ds::String*>(event->data);
+							*str = _("You are deleting the demo for\nthis title:\n\n%s", appTitle.toAnsiString().c_str());
+							return true;
+						}
+						else if (event->type == DialogState::Response)
+						{
+							bool *accepted = reinterpret_cast<bool*>(event->data);
+							if (*accepted)
+							{
 #ifdef _3DS
-					AM_DeleteTitle(MEDIATYPE_SD, demoTitleId);
+								AM_DeleteTitle(MEDIATYPE_SD, demoTitleId);
 #endif
-					s.insert(0, _("Deleted demo: "));
+								appTitle.insert(0, _("Deleted demo: "));
+								Notification::spawn(appTitle);
+								InstalledList::getInstance().refresh();
+								updateInfo();
+							}
+							return true;
+						}
+						return false;
+					});
 				}
 				else
 				{
 					DownloadQueue::getInstance().addDownload(m_appItem, demoTitleId, [this](bool succeeded){
 						updateInfo();
 					});
-					s.insert(0, _("Queued demo: "));
+					appTitle.insert(0, _("Queued demo: "));
+					Notification::spawn(appTitle);
 				}
-				Notification::spawn(s);
 			}
 		}
 		else if (m_appItem->isInstalled())
@@ -462,12 +484,35 @@ bool AppInfo::processEvent(const cpp3ds::Event &event)
 			}
 			else if (m_textDelete.getGlobalBounds().contains(event.touch.x, event.touch.y))
 			{
+				cpp3ds::String appTitle = m_appItem->getTitle();
+				g_browseState->requestStackPush(States::Dialog, false, [=](void *data) mutable {
+					auto event = reinterpret_cast<DialogState::Event*>(data);
+					if (event->type == DialogState::GetText)
+					{
+						auto str = reinterpret_cast<cpp3ds::String*>(event->data);
+						*str = _("You are deleting this game,\nincluding all save data:\n\n");
+						str->insert(str->getSize(), appTitle);
+						return true;
+					}
+					else if (event->type == DialogState::Response)
+					{
+						bool *accepted = reinterpret_cast<bool*>(event->data);
+						if (*accepted)
+						{
 #ifdef _3DS
-				FS_MediaType mediaType = ((m_appItem->getTitleId() >> 32) & 0x8010) != 0 ? MEDIATYPE_NAND : MEDIATYPE_SD;
-				AM_DeleteTitle(mediaType, m_appItem->getTitleId());
+							FS_MediaType mediaType = ((m_appItem->getTitleId() >> 32) & 0x8010) != 0 ? MEDIATYPE_NAND : MEDIATYPE_SD;
+							AM_DeleteTitle(mediaType, m_appItem->getTitleId());
 #endif
-				m_appItem->setInstalled(false);
-				InstalledList::getInstance().refresh();
+							m_appItem->setInstalled(false);
+							appTitle.insert(0, _("Deleted: "));
+							Notification::spawn(appTitle);
+							InstalledList::getInstance().refresh();
+							updateInfo();
+						}
+						return true;
+					}
+					return false;
+				});
 			}
 		}
 		else if (m_textDownload.getGlobalBounds().contains(event.touch.x, event.touch.y))

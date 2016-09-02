@@ -98,6 +98,8 @@ private:
 	GUI::Settings *m_settingsGUI;
 };
 
+extern BrowseState *g_browseState;
+
 } // namespace FreeShop
 
 #endif // FREESHOP_BROWSESTATE_HPP

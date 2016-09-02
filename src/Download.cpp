@@ -8,6 +8,8 @@
 #include "Download.hpp"
 #include "AssetManager.hpp"
 #include "DownloadQueue.hpp"
+#include "States/DialogState.hpp"
+#include "States/BrowseState.hpp"
 
 namespace FreeShop {
 
@@ -107,6 +109,9 @@ void Download::run()
 
 		if (getStatus() != Suspended)
 			m_downloadPos += len;
+
+		if (getStatus() == Failed)
+			failed = true;
 
 		return !m_cancelFlag && !failed && getStatus() == Downloading;
 	};
@@ -334,12 +339,36 @@ void Download::processEvent(const cpp3ds::Event &event)
 		bounds.top += getPosition().y + DownloadQueue::getInstance().getPosition().y;
 		if (bounds.contains(event.touch.x, event.touch.y))
 		{
-			if (getStatus() != Downloading)
+			if (getStatus() != Downloading && getStatus() != Suspended)
 				m_markedForDelete = true;
 			else
 			{
-				setProgressMessage(_("Canceling..."));
-				cancel(false);
+				g_browseState->requestStackPush(States::Dialog, false, [=](void *data) mutable {
+					auto event = reinterpret_cast<DialogState::Event*>(data);
+					if (event->type == DialogState::GetText)
+					{
+						auto str = reinterpret_cast<cpp3ds::String*>(event->data);
+						*str = _("%s\n\nAre you sure you want to cancel\nthis installation and lose all progress?", m_appItem->getTitle().toAnsiString().c_str());
+						return true;
+					}
+					else if (event->type == DialogState::Response)
+					{
+						bool *accepted = reinterpret_cast<bool*>(event->data);
+						if (*accepted)
+						{
+							// Check status again in case it changed while dialog was open
+							if (getStatus() == Downloading)
+							{
+								setProgressMessage(_("Canceling..."));
+								cancel(false);
+							}
+							else if (getStatus() == Suspended)
+								m_markedForDelete = true;
+						}
+						return true;
+					}
+					return false;
+				});
 			}
 		}
 		else if (m_canSendTop && m_onSendTop && (getStatus() == Queued || getStatus() == Suspended || getStatus() == Downloading))

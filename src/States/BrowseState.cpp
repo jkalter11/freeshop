@@ -19,6 +19,8 @@
 
 namespace FreeShop {
 
+BrowseState *g_browseState = nullptr;
+
 BrowseState::BrowseState(StateStack& stack, Context& context, StateCallback callback)
 : State(stack, context, callback)
 , m_appListPositionX(0.f)
@@ -33,6 +35,7 @@ BrowseState::BrowseState(StateStack& stack, Context& context, StateCallback call
 , m_settingsGUI(nullptr)
 , m_isTransitioning(false)
 {
+	g_browseState = this;
 #ifdef EMULATION
 	g_syncComplete = true;
 	initialize();
@@ -59,7 +62,6 @@ void BrowseState::initialize()
 	// Initialize AppList singleton first
 	AppList::getInstance().refresh();
 	InstalledList::getInstance().refresh();
-	InstalledList::getInstance().setBrowseState(this);
 
 	m_iconSet.addIcon(L"\uf290");
 	m_iconSet.addIcon(L"\uf019");
