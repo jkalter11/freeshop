@@ -8,6 +8,7 @@
 #include "../InstalledList.hpp"
 #include "../Config.hpp"
 #include "../TitleKeys.hpp"
+#include "../FreeShop.hpp"
 #include <TweenEngine/Tween.h>
 #include <cpp3ds/Window/Window.hpp>
 #include <sstream>
@@ -20,6 +21,7 @@
 namespace FreeShop {
 
 BrowseState *g_browseState = nullptr;
+cpp3ds::Clock BrowseState::clockDownloadInactivity;
 
 BrowseState::BrowseState(StateStack& stack, Context& context, StateCallback callback)
 : State(stack, context, callback)
@@ -129,6 +131,7 @@ void BrowseState::initialize()
 	g_browserLoaded = true;
 
 	SleepState::clock.restart();
+	clockDownloadInactivity.restart();
 	requestStackClearUnder();
 }
 
@@ -200,7 +203,10 @@ bool BrowseState::update(float delta)
 	if (!g_syncComplete || !g_browserLoaded)
 		return true;
 	if (m_threadBusy)
+	{
+		clockDownloadInactivity.restart();
 		SleepState::clock.restart();
+	}
 
 	// Show latest news if requested
 	if (Config::get(Config::ShowNews).GetBool())
@@ -210,9 +216,18 @@ bool BrowseState::update(float delta)
 	}
 
 	// Go into sleep state after inactivity
-	if (Config::get(Config::SleepMode).GetBool() && SleepState::clock.getElapsedTime() > cpp3ds::seconds(SECONDS_TO_SLEEP))
+	if (!SleepState::isSleeping && Config::get(Config::SleepMode).GetBool() && SleepState::clock.getElapsedTime() > cpp3ds::seconds(SECONDS_TO_SLEEP))
 	{
 		requestStackPush(States::Sleep);
+		return false;
+	}
+
+	// Power off after sufficient download inactivity
+	if (m_activeDownloadCount == 0
+		&& Config::get(Config::PowerOffAfterDownload).GetBool()
+		&& clockDownloadInactivity.getElapsedTime() > cpp3ds::seconds(Config::get(Config::PowerOffTime).GetInt()))
+	{
+		g_requestShutdown = true;
 		return false;
 	}
 
@@ -243,6 +258,7 @@ bool BrowseState::update(float delta)
 
 	if (m_activeDownloadCount != DownloadQueue::getInstance().getActiveCount())
 	{
+		clockDownloadInactivity.restart();
 		m_activeDownloadCount = DownloadQueue::getInstance().getActiveCount();
 		m_textActiveDownloads.setString(_("%u", m_activeDownloadCount));
 	}
@@ -256,6 +272,7 @@ bool BrowseState::update(float delta)
 bool BrowseState::processEvent(const cpp3ds::Event& event)
 {
 	SleepState::clock.restart();
+	clockDownloadInactivity.restart();
 
 	if (m_threadBusy || !g_syncComplete || !g_browserLoaded)
 		return false;

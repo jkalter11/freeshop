@@ -174,7 +174,7 @@ AccessControlInfo:
    - qtm:u
    - soc:U
    - ssl:C
-   - y2r:u
+   - ptm:sysm
    - am:u
    - ns:s
 

@@ -43,6 +43,9 @@ DownloadQueue::DownloadQueue()
 , m_refreshEnd(false)
 , m_size(320.f, 0.f)
 {
+	m_soundBufferFinish.loadFromFile("sounds/chime.ogg");
+	m_soundFinish.setBuffer(m_soundBufferFinish);
+
 	load();
 	m_threadRefresh.launch();
 }
@@ -299,6 +302,11 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 		// Refresh installed list to add recent install
 		if (succeeded)
 			InstalledList::getInstance().refresh();
+
+		// Play sound if queue is finished
+		if (getActiveCount() == 0 && !canceled)
+			if (Config::get(Config::PlaySoundAfterDownload).GetBool())
+				m_soundFinish.play(3);
 
 		if (callback)
 			callback(succeeded);

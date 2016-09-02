@@ -6,6 +6,7 @@
 #include "NewsState.hpp"
 #include "../AssetManager.hpp"
 #include "SleepState.hpp"
+#include "BrowseState.hpp"
 
 namespace FreeShop {
 
@@ -115,6 +116,7 @@ bool NewsState::update(float delta)
 
 bool NewsState::processEvent(const cpp3ds::Event &event)
 {
+	BrowseState::clockDownloadInactivity.restart();
 	SleepState::clock.restart();
 	if (m_isClosing)
 		return false;

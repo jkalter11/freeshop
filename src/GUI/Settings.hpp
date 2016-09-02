@@ -72,6 +72,7 @@ namespace FreeShop
 			void downloadTimeoutChanged(Gwen::Controls::Base *base);
 			void downloadBufferSizeChanged(Gwen::Controls::Base *base);
 			void downloadUseDefaultsClicked(Gwen::Controls::Base *base);
+			void downloadPowerOffClicked(Gwen::Controls::Base *base);
 
 			void updateEnabledState(Gwen::Controls::Base* control);
 			void updateSorting(Gwen::Controls::Base* control);
@@ -112,6 +113,9 @@ namespace FreeShop
 			Gwen::Controls::Label *m_labelDownloadBufferSize;
 			Gwen::Controls::HorizontalSlider *m_sliderTimeout;
 			Gwen::Controls::HorizontalSlider *m_sliderDownloadBufferSize;
+			Gwen::Controls::CheckBoxWithLabel *m_checkboxPlaySound;
+			Gwen::Controls::CheckBoxWithLabel *m_checkboxPowerOff;
+			Gwen::Controls::ComboBox *m_comboPowerOffTime;
 
 			// Other
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxSleep;

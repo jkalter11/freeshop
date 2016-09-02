@@ -77,7 +77,7 @@ bool SleepState::update(float delta)
 		clock.restart();
 	}
 	m_tweenManager.update(delta);
-	return false;
+	return true;
 }
 
 bool SleepState::processEvent(const cpp3ds::Event& event)

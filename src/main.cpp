@@ -1,5 +1,6 @@
 #include "FreeShop.hpp"
 #include "DownloadQueue.hpp"
+#include "States/BrowseState.hpp"
 #include "States/SleepState.hpp"
 
 #ifndef EMULATION
@@ -24,6 +25,7 @@ void aptHookFunc(APT_HookType hookType, void *param)
 		case APTHOOK_ONWAKEUP:
 			FreeShop::SleepState::isSleeping = false;
 			FreeShop::SleepState::clock.restart();
+			FreeShop::BrowseState::clockDownloadInactivity.restart();
 			FreeShop::DownloadQueue::getInstance().resume();
 			break;
 		default:

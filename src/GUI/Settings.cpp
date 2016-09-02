@@ -140,6 +140,9 @@ void Settings::saveToConfig()
 
 	Config::set(Config::DownloadTimeout, m_sliderTimeout->GetFloatValue());
 	Config::set(Config::DownloadBufferSize, static_cast<size_t>(std::ceil(m_sliderDownloadBufferSize->GetFloatValue())));
+	Config::set(Config::PlaySoundAfterDownload, m_checkboxPlaySound->Checkbox()->IsChecked());
+	Config::set(Config::PowerOffAfterDownload, m_checkboxPowerOff->Checkbox()->IsChecked());
+	Config::set(Config::PowerOffTime, static_cast<int>(strtol(m_comboPowerOffTime->GetSelectedItem()->GetName().c_str(), nullptr, 10)));
 
 	Config::set(Config::SleepMode, m_checkboxSleep->Checkbox()->IsChecked());
 }
@@ -175,6 +178,9 @@ void Settings::loadConfig()
 	}
 
 	// Download
+	m_checkboxPlaySound->Checkbox()->SetChecked(Config::get(Config::PlaySoundAfterDownload).GetBool());
+	m_checkboxPowerOff->Checkbox()->SetChecked(Config::get(Config::PowerOffAfterDownload).GetBool());
+	m_comboPowerOffTime->SelectItemByName(_("%d", Config::get(Config::PowerOffTime).GetInt()));
 	m_sliderTimeout->SetFloatValue(Config::get(Config::DownloadTimeout).GetFloat());
 	m_sliderDownloadBufferSize->SetFloatValue(Config::get(Config::DownloadBufferSize).GetUint());
 	downloadTimeoutChanged(m_sliderTimeout);
@@ -662,6 +668,24 @@ void Settings::fillUpdatePage(Gwen::Controls::Base *page)
 
 void Settings::fillDownloadPage(Gwen::Controls::Base *page)
 {
+	m_checkboxPlaySound = new CheckBoxWithLabel(page);
+	m_checkboxPlaySound->SetBounds(0, 0, 320, 20);
+	m_checkboxPlaySound->Label()->SetText(_("Play sound when queue finishes").toAnsiString());
+
+	m_checkboxPowerOff = new CheckBoxWithLabel(page);
+	m_checkboxPowerOff->SetBounds(0, 20, 320, 20);
+	m_checkboxPowerOff->Label()->SetText(_("Power off after download inactivity").toAnsiString());
+	m_checkboxPowerOff->Checkbox()->onCheckChanged.Add(this, &Settings::downloadPowerOffClicked);
+
+	m_comboPowerOffTime = new ComboBox(page);
+	m_comboPowerOffTime->SetDisabled(true);
+	m_comboPowerOffTime->SetBounds(50, 40, 90, 20);
+	m_comboPowerOffTime->AddItem(_("1 minute"), "60");
+	m_comboPowerOffTime->AddItem(_("%d minutes", 2), "120");
+	m_comboPowerOffTime->AddItem(_("%d minutes", 3), "180");
+	m_comboPowerOffTime->AddItem(_("%d minutes", 4), "240");
+	m_comboPowerOffTime->AddItem(_("%d minutes", 5), "300");
+
 	m_labelTimeout = new Label(page);
 	m_labelTimeout->SetBounds(0, 100, 150, 20);
 	m_sliderTimeout = new HorizontalSlider(page);
@@ -682,6 +706,11 @@ void Settings::fillDownloadPage(Gwen::Controls::Base *page)
 	button->SetBounds(95, 140, 110, 18);
 	button->SetText(_("Use Defaults").toAnsiString());
 	button->onPress.Add(this, &Settings::downloadUseDefaultsClicked);
+}
+
+void Settings::downloadPowerOffClicked(Gwen::Controls::Base *base)
+{
+	m_comboPowerOffTime->SetDisabled(!m_checkboxPowerOff->Checkbox()->IsChecked());
 }
 
 void Settings::downloadUseDefaultsClicked(Gwen::Controls::Base *base)

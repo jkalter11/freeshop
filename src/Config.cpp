@@ -26,6 +26,9 @@ namespace {
 		// Download
 		"download_timeout",
 		"download_buffer_size",
+		"play_sound_after_download",
+		"power_off_after_download",
+		"power_off_time",
 		// Other
 		"sleep_mode",
 	};
@@ -107,6 +110,9 @@ void Config::loadDefaults()
 	// Download
 	ADD_DEFAULT(DownloadTimeout, 6.f);
 	ADD_DEFAULT(DownloadBufferSize, 128u);
+	ADD_DEFAULT(PlaySoundAfterDownload, true);
+	ADD_DEFAULT(PowerOffAfterDownload, false);
+	ADD_DEFAULT(PowerOffTime, 120);
 
 	// Other
 	ADD_DEFAULT(SleepMode, true);

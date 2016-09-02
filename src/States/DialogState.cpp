@@ -4,6 +4,7 @@
 #include "DialogState.hpp"
 #include "../AssetManager.hpp"
 #include "SleepState.hpp"
+#include "BrowseState.hpp"
 
 namespace FreeShop {
 
@@ -95,6 +96,7 @@ bool DialogState::update(float delta)
 
 bool DialogState::processEvent(const cpp3ds::Event &event)
 {
+	BrowseState::clockDownloadInactivity.restart();
 	SleepState::clock.restart();
 	if (m_isClosing)
 		return false;

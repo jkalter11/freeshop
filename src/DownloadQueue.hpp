@@ -4,6 +4,8 @@
 #include <bits/unique_ptr.h>
 #include <cpp3ds/Window/Event.hpp>
 #include <TweenEngine/TweenManager.h>
+#include <cpp3ds/Audio/Sound.hpp>
+#include <cpp3ds/Audio/SoundBuffer.hpp>
 #include "Download.hpp"
 #include "GUI/AppItem.hpp"
 #include "Installer.hpp"
@@ -61,6 +63,8 @@ protected:
 private:
 	std::vector<std::unique_ptr<DownloadItem>> m_downloads;
 	TweenEngine::TweenManager m_tweenManager;
+	cpp3ds::SoundBuffer m_soundBufferFinish;
+	cpp3ds::Sound m_soundFinish;
 
 	float m_scrollPos;
 	cpp3ds::Vector2f m_size;

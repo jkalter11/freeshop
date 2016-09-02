@@ -37,6 +37,8 @@ public:
 	virtual bool update(float delta);
 	virtual bool processEvent(const cpp3ds::Event& event);
 
+	static cpp3ds::Clock clockDownloadInactivity;
+
 private:
 	enum Mode {
 		App        = 0,

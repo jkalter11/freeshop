@@ -32,6 +32,9 @@ public:
 		// Download
 		DownloadTimeout,
 		DownloadBufferSize,
+		PlaySoundAfterDownload,
+		PowerOffAfterDownload,
+		PowerOffTime,
 		// Other
 		SleepMode,
 

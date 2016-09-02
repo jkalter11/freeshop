@@ -10,6 +10,7 @@
 namespace FreeShop {
 
 extern cpp3ds::Uint64 g_requestJump;
+extern bool g_requestShutdown;
 
 class FreeShop: public cpp3ds::Game {
 public:
