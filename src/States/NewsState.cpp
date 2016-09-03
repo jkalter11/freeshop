@@ -14,6 +14,7 @@ NewsState::NewsState(StateStack &stack, Context &context, StateCallback callback
 : State(stack, context, callback)
 , m_isClosing(false)
 , m_finishedFadeIn(false)
+, m_skippedFirstUpdate(false)
 {
 	m_overlay.setSize(cpp3ds::Vector2f(400.f, 240.f));
 	m_overlay.setFillColor(cpp3ds::Color(255, 255, 255, 0));
@@ -108,6 +109,12 @@ bool NewsState::update(float delta)
 {
 	if (m_message.getString().isEmpty())
 		requestStackPop();
+
+	if (!m_skippedFirstUpdate)
+	{
+		m_skippedFirstUpdate = true;
+		return true;
+	}
 
 	m_scrollbar.update(delta);
 	m_tweenManager.update(delta);

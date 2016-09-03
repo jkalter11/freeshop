@@ -24,6 +24,7 @@ public:
 	virtual const cpp3ds::Vector2f &getScrollSize();
 
 private:
+	bool m_skippedFirstUpdate;
 	bool m_isClosing;
 	bool m_finishedFadeIn;
 	util3ds::TweenRectangleShape m_overlay;
