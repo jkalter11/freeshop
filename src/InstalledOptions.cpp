@@ -120,7 +120,7 @@ void InstalledOptions::processTouchEvent(const cpp3ds::Event &event)
 					AM_DeleteTitle(m_mediaType, titleId);
 #endif
 					m_installedItem->getAppItem()->setInstalled(false);
-					Notification::spawn(_("Deleted game: %s", appTitle.toAnsiString().c_str()));
+					Notification::spawn(_("Deleted: %s", appTitle.toAnsiString().c_str()));
 					InstalledList::getInstance().refresh();
 				}
 				return true;
@@ -137,8 +137,7 @@ void InstalledOptions::processTouchEvent(const cpp3ds::Event &event)
 				if (event->type == DialogState::GetText)
 				{
 					auto str = reinterpret_cast<cpp3ds::String*>(event->data);
-					*str = _("You are deleting updates for\nthis title:\n\n");
-					str->insert(str->getSize(), appTitle);
+					*str = _("You are deleting updates for\nthis title:\n\n%s", appTitle.toAnsiString().c_str());
 					return true;
 				}
 				else if (event->type == DialogState::Response)
@@ -153,8 +152,7 @@ void InstalledOptions::processTouchEvent(const cpp3ds::Event &event)
 							m_installedItem->setUpdateStatus(id, false);
 						}
 						m_updatesInstalled = false;
-						appTitle.insert(0, _("Deleted update: "));
-						Notification::spawn(appTitle);
+						Notification::spawn(_("Deleted update: %s", appTitle.toAnsiString().c_str()));
 						update();
 					}
 					return true;
@@ -172,9 +170,8 @@ void InstalledOptions::processTouchEvent(const cpp3ds::Event &event)
 							update();
 						}
 					});
-			appTitle.insert(0, _("Queued update: "));
 			m_updatesAvailable = false;
-			Notification::spawn(appTitle);
+			Notification::spawn(_("Queued update: %s", appTitle.toAnsiString().c_str()));
 			update();
 		}
 	}
@@ -187,8 +184,7 @@ void InstalledOptions::processTouchEvent(const cpp3ds::Event &event)
 				if (event->type == DialogState::GetText)
 				{
 					auto str = reinterpret_cast<cpp3ds::String*>(event->data);
-					*str = _("You are deleting DLC for\nthis title:\n\n");
-					str->insert(str->getSize(), appTitle);
+					*str = _("You are deleting DLC for\nthis title:\n\n%s", appTitle.toAnsiString().c_str());
 					return true;
 				}
 				else if (event->type == DialogState::Response)
@@ -203,8 +199,7 @@ void InstalledOptions::processTouchEvent(const cpp3ds::Event &event)
 							m_installedItem->setDLCStatus(id, false);
 						}
 						m_dlcInstalled = false;
-						appTitle.insert(0, _("Deleted DLC: "));
-						Notification::spawn(appTitle);
+						Notification::spawn(_("Deleted DLC: %s", appTitle.toAnsiString().c_str()));
 						update();
 					}
 					return true;
@@ -222,9 +217,8 @@ void InstalledOptions::processTouchEvent(const cpp3ds::Event &event)
 							update();
 						}
 					});
-			appTitle.insert(0, _("Queued DLC: "));
 			m_dlcAvailable = false;
-			Notification::spawn(appTitle);
+			Notification::spawn(_("Queued DLC: %s", appTitle.toAnsiString().c_str()));
 			update();
 		}
 	}

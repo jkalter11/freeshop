@@ -456,8 +456,7 @@ bool AppInfo::processEvent(const cpp3ds::Event &event)
 #ifdef _3DS
 								AM_DeleteTitle(MEDIATYPE_SD, demoTitleId);
 #endif
-								appTitle.insert(0, _("Deleted demo: "));
-								Notification::spawn(appTitle);
+								Notification::spawn(_("Deleted demo: %s", appTitle.toAnsiString().c_str()));
 								InstalledList::getInstance().refresh();
 								updateInfo();
 							}
@@ -471,8 +470,7 @@ bool AppInfo::processEvent(const cpp3ds::Event &event)
 					DownloadQueue::getInstance().addDownload(m_appItem, demoTitleId, [this](bool succeeded){
 						updateInfo();
 					});
-					appTitle.insert(0, _("Queued demo: "));
-					Notification::spawn(appTitle);
+					Notification::spawn(_("Queued demo: %s", appTitle.toAnsiString().c_str()));
 				}
 			}
 		}
@@ -490,8 +488,7 @@ bool AppInfo::processEvent(const cpp3ds::Event &event)
 					if (event->type == DialogState::GetText)
 					{
 						auto str = reinterpret_cast<cpp3ds::String*>(event->data);
-						*str = _("You are deleting this game,\nincluding all save data:\n\n");
-						str->insert(str->getSize(), appTitle);
+						*str = _("You are deleting this game,\nincluding all save data:\n\n%s", appTitle.toAnsiString().c_str());
 						return true;
 					}
 					else if (event->type == DialogState::Response)
@@ -504,8 +501,7 @@ bool AppInfo::processEvent(const cpp3ds::Event &event)
 							AM_DeleteTitle(mediaType, m_appItem->getTitleId());
 #endif
 							m_appItem->setInstalled(false);
-							appTitle.insert(0, _("Deleted: "));
-							Notification::spawn(appTitle);
+							Notification::spawn(_("Deleted: %s", appTitle.toAnsiString().c_str()));
 							InstalledList::getInstance().refresh();
 							updateInfo();
 						}
@@ -524,9 +520,7 @@ bool AppInfo::processEvent(const cpp3ds::Event &event)
 						.target(230, 20, 20)
 						.start(m_tweenManager);
 
-				cpp3ds::String s = m_appItem->getTitle();
-				s.insert(0, _("Queued install: "));
-				Notification::spawn(s);
+				Notification::spawn(_("Queued install: %s", m_appItem->getTitle().toAnsiString().c_str()));
 			}
 		}
 	}

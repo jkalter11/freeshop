@@ -360,15 +360,13 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 				auto app = AppList::getInstance().getSelected()->getAppItem();
 				if (app && !DownloadQueue::getInstance().isDownloading(app))
 				{
-					cpp3ds::String s = app->getTitle();
 					if (!app->isInstalled())
 					{
 						app->queueForInstall();
-						s.insert(0, _("Queued install: "));
+						Notification::spawn(_("Queued install: %s", app->getTitle().toAnsiString().c_str()));
 					}
 					else
-						s.insert(0, _("Already installed: "));
-					Notification::spawn(s);
+						Notification::spawn(_("Already installed: %s", app->getTitle().toAnsiString().c_str()));
 				}
 				break;
 			}

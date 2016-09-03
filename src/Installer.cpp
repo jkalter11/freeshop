@@ -146,7 +146,7 @@ bool Installer::installSeed(const void *seed)
 		}
 	}
 
-	m_errorStr = _("Failed to add seed: %016llX", m_result);
+	m_errorStr = _("Need FW 9.6+, Seed failed: %016llX", m_result);
 	return false;
 }
 
@@ -217,7 +217,7 @@ bool Installer::commit()
 		}
 
 	abort();
-	m_errorStr = _("Failed to commit title install: 0x%08lX", m_result);
+	m_errorStr = _("Failed to commit title: 0x%08lX", m_result);
 	return false;
 }
 
@@ -233,7 +233,7 @@ bool Installer::finalizeTmd()
 	}
 
 	abort();
-	m_errorStr = _("Failed to finalize TMD install: 0x%08lX", m_result);
+	m_errorStr = _("Failed to finalize TMD: 0x%08lX", m_result);
 	return false;
 }
 
@@ -249,7 +249,7 @@ bool Installer::finalizeContent()
 	}
 
 	abort();
-	m_errorStr = _("Failed to finalize content install: 0x%08lX", m_result);
+	m_errorStr = _("Failed to finalize content: 0x%08lX", m_result);
 	return false;
 }
 

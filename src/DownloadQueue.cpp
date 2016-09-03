@@ -72,11 +72,11 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 	if (type != TitleKeys::Game)
 	{
 		if (type == TitleKeys::Update)
-			title.insert(0, _("[Update] "));
+			title = _("[Update] %s", title.toAnsiString().c_str());
 		else if (type == TitleKeys::Demo)
-			title.insert(0, _("[Demo] "));
+			title = _("[Demo] %s", title.toAnsiString().c_str());
 		else if (type == TitleKeys::DLC)
-			title.insert(0, _("[DLC] "));
+			title = _("[DLC] %s", title.toAnsiString().c_str());
 	}
 
 	std::string url = _("http://ccs.cdn.c.shop.nintendowifi.net/ccs/download/%016llX/tmd", titleId);
@@ -251,7 +251,6 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 
 	download->setFinishCallback([=](bool canceled, bool failed) mutable
 	{
-		cpp3ds::String notification = app->getTitle();
 		bool succeeded = false;
 
 		switch (download->getStatus())
@@ -262,8 +261,7 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 			case Download::Finished:
 				if (installer->commit())
 				{
-					notification.insert(0, _("Completed: "));
-					Notification::spawn(notification);
+					Notification::spawn(_("Completed: %s", app->getTitle().toAnsiString().c_str()));
 					download->setProgressMessage(_("Installed"));
 					succeeded = true;
 					break;
@@ -271,20 +269,16 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 				download->m_status = Download::Failed;
 				// Fall through
 			case Download::Failed:
-				notification.insert(0, _("Failed: "));
-				Notification::spawn(notification);
+				Notification::spawn(_("Failed: %s", app->getTitle().toAnsiString().c_str()));
 				installer->abort();
 
 				switch (installer->getErrorCode()) {
 					case 0: // Failed due to internet problem and not from Installer
 						download->setProgressMessage(_("Failed: Internet problem"));
 						break;
-					case 0xC8A08035:
-						download->setProgressMessage(_("Not enough space on NAND"));
-						break;
-					case 0xC86044D2:
-						download->setProgressMessage(_("Not enough space on SD"));
-						break;
+					case 0xC8A08035: download->setProgressMessage(_("Not enough space on NAND")); break;
+					case 0xC86044D2: download->setProgressMessage(_("Not enough space on SD")); break;
+					case 0xD8E0806A: download->setProgressMessage(_("Wrong title key")); break;
 					default:
 						download->setProgressMessage(installer->getErrorString());
 				}
