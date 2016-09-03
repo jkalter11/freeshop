@@ -32,14 +32,14 @@ AppInfo::AppInfo()
 	m_textDownload.setOutlineColor(cpp3ds::Color(0, 0, 0, 200));
 	m_textDownload.setOutlineThickness(2.f);
 	m_textDownload.setFont(AssetManager<cpp3ds::Font>::get("fonts/fontawesome.ttf"));
-	m_textDownload.setString(L"\uf019");
+	m_textDownload.setString("\uf019");
 	m_textDownload.setCharacterSize(30);
 	m_textDownload.setPosition(67.f, 93.f);
 	m_textDelete = m_textDownload;
-	m_textDelete.setString(L"\uf1f8");
+	m_textDelete.setString("\uf1f8");
 	m_textDelete.setPosition(70.f, 90.f);
 	m_textExecute = m_textDownload;
-	m_textExecute.setString(L"\uf01d");
+	m_textExecute.setString("\uf01d");
 	m_textExecute.setPosition(5.f, 90.f);
 
 	m_arrowLeft.setFont(AssetManager<cpp3ds::Font>::get("fonts/fontawesome.ttf"));
@@ -48,14 +48,14 @@ AppInfo::AppInfo()
 	m_arrowLeft.setOutlineColor(cpp3ds::Color(0,0,0,100));
 	m_arrowLeft.setOutlineThickness(1.f);
 	m_arrowLeft.setPosition(4.f, 100.f);
-	m_arrowLeft.setString(L"\uf053");
+	m_arrowLeft.setString("\uf053");
 	m_arrowRight = m_arrowLeft;
 	m_arrowRight.setPosition(298.f, 100.f);
-	m_arrowRight.setString(L"\uf054");
+	m_arrowRight.setString("\uf054");
 	m_close = m_arrowLeft;
 	m_close.setCharacterSize(30);
 	m_close.setPosition(285.f, 4.f);
-	m_close.setString(L"\uf00d");
+	m_close.setString("\uf00d");
 
 	m_screenshotsBackground.setFillColor(cpp3ds::Color(190, 190, 190, 255));
 	m_screenshotsBackground.setSize(cpp3ds::Vector2f(320.f, 74.f));
@@ -63,13 +63,20 @@ AppInfo::AppInfo()
 
 	m_textScreenshotsEmpty.setCharacterSize(12);
 	m_textScreenshotsEmpty.setFillColor(cpp3ds::Color(255, 255, 255, 220));
-	m_textScreenshotsEmpty.setOutlineColor(cpp3ds::Color(170, 170, 170, 255));
-	m_textScreenshotsEmpty.setStyle(cpp3ds::Text::Bold);
-	m_textScreenshotsEmpty.setOutlineThickness(1);
+	m_textScreenshotsEmpty.useSystemFont();
 	m_textScreenshotsEmpty.setString(_("No Screenshots"));
 	cpp3ds::FloatRect textRect = m_textScreenshotsEmpty.getLocalBounds();
 	m_textScreenshotsEmpty.setOrigin(textRect.left + textRect.width / 2.f, textRect.top + textRect.height / 2.f);
 	m_textScreenshotsEmpty.setPosition(160.f, 202.f);
+
+	m_textNothingSelected.setString(_("No game selected"));
+	m_textNothingSelected.setCharacterSize(16);
+	m_textNothingSelected.setFillColor(cpp3ds::Color(0, 0, 0, 120));
+	m_textNothingSelected.useSystemFont();
+	m_textNothingSelected.setPosition(160.f, 105.f);
+	m_textNothingSelected.setOrigin(m_textNothingSelected.getLocalBounds().width / 2, m_textNothingSelected.getLocalBounds().height / 2);
+	TweenEngine::Tween::to(m_textNothingSelected, m_textNothingSelected.SCALE_XY, 4.f)
+		.target(0.9f, 0.9f).repeatYoyo(-1, 0.f).start(m_tweenManager);
 
 	m_textTitle.setCharacterSize(15);
 	m_textTitle.setFillColor(cpp3ds::Color::Black);
@@ -159,9 +166,13 @@ void AppInfo::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) co
 			target.draw(*screenshot, states);
 		for (auto& screenshot : m_screenshotBottoms)
 			target.draw(*screenshot, states);
-	}
 
-	target.draw(m_fadeRect, states);
+		target.draw(m_fadeRect, states);
+	}
+	else
+	{
+		target.draw(m_textNothingSelected, states);
+	}
 
 	if (m_currentScreenshot)
 	{
@@ -564,6 +575,7 @@ void AppInfo::setDescription(const rapidjson::Value &jsonDescription)
 	cpp3ds::String description = cpp3ds::String::fromUtf8(dd, dd + jsonDescription.GetStringLength());
 	description.replace("\n", " ");
 	description.replace("<br>", "\n");
+	description.replace("<BR>", "\n");
 	description.replace("<br/>", "\n");
 
 	// Calculate word-wrapping for description

@@ -72,6 +72,7 @@ private:
 	cpp3ds::RectangleShape m_screenshotsBackground;
 	cpp3ds::Text m_textScreenshotsEmpty;
 
+	util3ds::TweenText m_textNothingSelected;
 	cpp3ds::RectangleShape m_fadeRect;
 
 	std::shared_ptr<AppItem> m_appItem;
