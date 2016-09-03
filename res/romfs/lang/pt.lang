@@ -1,7 +1,7 @@
 # src/States/SyncState.cpp
 ##########################
 Waiting for internet connection... %.0fs
-Aguardando pela conexão de internet... %.0fs
+Aguardando conexão de internet... %.0fs
 
 Fetching news for %s ...
 Buscando notícias para %s ...
@@ -28,15 +28,15 @@ Extracting latest cache...
 Extraindo o cache mais recente...
 
 Downloading title keys...
-Baixando as chaves do título...
+Baixando as chaves de título...
 
 # src/States/BrowseState.cpp
 ############################
 No title keys found.\nMake sure you have keys in\n%s\n\nManually copy keys to the directory\nor check settings to enter a URL\nfor downloading title keys.
-Chaves do título não encontrados.\nVerifique se você tem as chaves em\n%s\n\nCopie manualmente as chaves para\no diretório ou verifique as configurações\npara digitar um URL para\no download de chaves.
+Chaves de título não encontradas.\nVerifique se você tem as chaves em\n%s\n\nCopie manualmente as chaves para\no diretório ou verifique as configurações\npara digitar um URL para\n download de chaves.
 
 No cache entries found\nfor your title keys.\n\nTry refreshing cache in settings.\nIf that doesn't work, then your\ntitles simply won't work with\nfreeShop currently.
-Nenhuma entrada de cache encontrada\npara as suas chaves de título.\n\nTente atualizar o cache nas configurações.\nSe isso não funciona, então seus\ntítulos simplesmente não vai funcionar\ncom freeShop atualmente.
+Nenhuma entrada de cache encontrada\npara as suas chaves de título.\n\nTente atualizar o cache nas configurações.\nSe isso não funcionar, então seus\ntítulos simplesmente não vão funcionar\ncom a freeShop atualmente.
 
 Queued install: %s
 Instalação em fila: %s
@@ -77,7 +77,7 @@ Demo
 Demo
 
 You are deleting the demo for\nthis title:\n\n%s
-Está excluindo o demo de\neste título:\n\n%s
+Você está excluindo a demo\ndeste título:\n\n%s
 
 Deleted demo: %s
 Excluiu demo: %s
@@ -86,7 +86,7 @@ Queued demo: %s
 Demo em fila: %s
 
 You are deleting this game,\nincluding all save data:\n\n%s
-Está excluindo este jogo,\nincluindo todos os dados salvos:\n\n%s
+Você está excluindo este jogo,\nincluindo todos os dados salvos:\n\n%s
 
 Deleted: %s
 Excluiu: %s
@@ -94,13 +94,13 @@ Excluiu: %s
 # src/Download.cpp
 ##################
 Waiting for internet...
-Aguardando por internet...
+Aguardando internet...
 
 Failed
 Falhou
 
 Retry attempts exceeded
-Tentativas novas excedido
+Limite de tentativas excedido
 
 Retrying... %d
 Tentando de novo... %d
@@ -153,13 +153,13 @@ Failed: Internet problem
 Falhou: Internet problem
 
 Not enough space on NAND
-Não há espaço suficiente em NAND
+Não há espaço suficiente na NAND
 
 Not enough space on SD
-Não há espaço suficiente em SD
+Não há espaço suficiente no SD
 
 Wrong title key
-Chave de título errado
+Chave de título errada
 
 # src/InstalledOptions.cpp
 #########################
@@ -176,16 +176,16 @@ You are deleting updates for\nthis title:\n\n%s
 Está excluindo atualizações para\neste título:\n\n%s
 
 Deleted update: %s
-Excluiu a atualização: %s
+Excluida a atualização: %s
 
 Queued update: %s
 Atualização em fila: %s
 
 You are deleting DLC for\nthis title:\n\n%s
-Está excluindo DLC para\neste título:\n\n%s
+Você está excluindo DLC para\neste título:\n\n%s
 
 Deleted DLC: %s
-Excluiu DLC: %s
+Excluída DLC: %s
 
 Queued DLC: %s
 DLC em fila: %s
@@ -199,7 +199,7 @@ Failed to get seed: HTTP %d
 Falha ao obter a semente: HTTP %d
 
 Need FW 9.6+, Seed failed: %016llX
-Precisa de FW 9.6+, Semente falhou: %016llX
+Necessário FW 9.6+, Semente falhou: %016llX
 
 Failed to start: 0x%08lX
 Falha ao iniciar: 0x%08lX
@@ -211,7 +211,7 @@ Failed to suspend: 0x%08lX
 Falha ao suspender: 0x%08lX
 
 Failed to commit title: 0x%08lX
-Falha ao cometer título: 0x%08lX
+Falha ao enviar título: 0x%08lX
 
 Failed to finalize TMD: 0x%08lX
 Falha ao finalizar TMD: 0x%08lX
@@ -314,10 +314,10 @@ Russian
 Russo
 
 Filter settings saved
-Configurações de filtro salvos
+Configurações de filtro salvas
 
 Cleared saved filter settings
-Configurações de filtro apagados
+Configurações de filtro apagadas
 
 Select All
 Tudo
@@ -332,7 +332,7 @@ Size
 Tamanho
 
 Vote Score
-Vote Pontuação
+Pontuação por Votos
 
 Vote Count
 Contagem de Votos
@@ -344,10 +344,10 @@ Ascending
 Crescente
 
 Descending
-Descendente
+Decrescente
 
 Auto-update title keys from URL
-Atualizar as chaves de título com URL
+Atualizar as chaves de título por URL
 
 Auto-update freeShop
 Atualizar freeShop automaticamente
@@ -356,10 +356,10 @@ Refresh Cache
 Atualizar Cache
 
 Play sound when queue finishes
-Reproduzir som quando fila termina
+Reproduzir som quando fila terminar
 
 Power off after download inactivity
-Desligue após o download inatividade
+Desligar após inatividade no download
 
 1 minute
 1 minuto
@@ -380,16 +380,16 @@ Language:
 Idioma:
 
 Auto-detect
-Detecção Auto
+Detecção Automática
 
 View news (%s)
 Ver notícias (%s)
 
 Enable screen sleep after inactivity
-Ativar o sono tela depois de inactividade
+Ativar tela de descanso após de inatividade
 
 Remote title key URL(s)
 URL(s) remotos de chaves de título
 
 You need to restart freeShop for\n%s to be loaded.\n\nWould you like to do this now?
-Precisa reiniciar o freeShop para\ncarregar %s.\n\nDeseja fazer isso agora?
+Você precisa reiniciar o freeShop para\ncarregar %s.\n\nDeseja fazer isso agora?
