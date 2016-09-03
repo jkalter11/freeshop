@@ -37,6 +37,7 @@ public:
 		PowerOffTime,
 		// Other
 		SleepMode,
+		Language,
 
 		KEY_COUNT,
 	};

@@ -10,6 +10,8 @@
 #include "../AppList.hpp"
 #include "../TitleKeys.hpp"
 #include "../Notification.hpp"
+#include "../States/DialogState.hpp"
+#include "../States/BrowseState.hpp"
 
 #ifdef _3DS
 #include "../KeyboardApplet.hpp"
@@ -33,6 +35,21 @@ Settings::Settings(Gwen::Skin::TexturedBase *skin,  State *state)
 
 	m_tabControl = new TabControl(m_canvas);
 	m_tabControl->SetBounds(0, 40, 320, 200);
+
+	// Get country code for language-specific fetching
+	cpp3ds::Language language = cpp3ds::I18n::getLanguage();
+	switch (language) {
+		default:
+		case cpp3ds::Language::English:    m_countryCode = "US"; break;
+		case cpp3ds::Language::Spanish:    m_countryCode = "ES"; break;
+		case cpp3ds::Language::Portuguese: m_countryCode = "BR"; break;
+		case cpp3ds::Language::French:     m_countryCode = "FR"; break;
+		case cpp3ds::Language::German:     m_countryCode = "DE"; break;
+		case cpp3ds::Language::Italian:    m_countryCode = "IT"; break;
+		case cpp3ds::Language::Japanese:   m_countryCode = "JP"; break;
+		case cpp3ds::Language::Dutch:      m_countryCode = "NL"; break;
+		case cpp3ds::Language::Russian:    m_countryCode = "RU"; break;
+	}
 
 	// Filters
 	Base *page = m_tabControl->AddPage(_("Filter").toAnsiString())->GetPage();
@@ -145,6 +162,9 @@ void Settings::saveToConfig()
 	Config::set(Config::PowerOffTime, static_cast<int>(strtol(m_comboPowerOffTime->GetSelectedItem()->GetName().c_str(), nullptr, 10)));
 
 	Config::set(Config::SleepMode, m_checkboxSleep->Checkbox()->IsChecked());
+	auto language = m_listboxLanguages->GetSelectedRow();
+	if (language)
+		Config::set(Config::Language, language->GetName().c_str());
 }
 
 void Settings::loadConfig()
@@ -188,6 +208,13 @@ void Settings::loadConfig()
 
 	// Other
 	m_checkboxSleep->Checkbox()->SetChecked(Config::get(Config::SleepMode).GetBool());
+	auto languageRows = m_listboxLanguages->GetChildren().front()->GetChildren();
+	for (auto row : languageRows)
+		if (row->GetName() == Config::get(Config::Language).GetString())
+		{
+			m_listboxLanguages->SetSelectedRow(row, true);
+			break;
+		}
 }
 
 void Settings::saveFilter(Config::Key key, std::vector<Gwen::Controls::CheckBoxWithLabel*> &checkboxArray)
@@ -240,10 +267,10 @@ const cpp3ds::Vector2f &Settings::getPosition() const
 
 void Settings::fillFilterGenres(Gwen::Controls::Base *parent)
 {
-	std::string jsonFilename = FREESHOP_DIR "/cache/genres.json";
+	std::string jsonFilename = _(FREESHOP_DIR "/cache/genres.%s.json", m_countryCode.c_str());
 	if (!pathExists(jsonFilename.c_str()))
 	{
-		Download download("https://samurai.ctr.shop.nintendo.net/samurai/ws/US/genres/?shop_id=1", jsonFilename);
+		Download download(_("https://samurai.ctr.shop.nintendo.net/samurai/ws/%s/genres/?shop_id=1", m_countryCode.c_str()), jsonFilename);
 		download.setField("Accept", "application/json");
 		download.run();
 	}
@@ -306,10 +333,10 @@ void Settings::fillFilterGenres(Gwen::Controls::Base *parent)
 
 void Settings::fillFilterPlatforms(Gwen::Controls::Base *parent)
 {
-	std::string jsonFilename = FREESHOP_DIR "/cache/platforms.json";
+	std::string jsonFilename = _(FREESHOP_DIR "/cache/platforms.%s.json", m_countryCode.c_str());
 	if (!pathExists(jsonFilename.c_str()))
 	{
-		Download download("https://samurai.ctr.shop.nintendo.net/samurai/ws/US/platforms/?shop_id=1", jsonFilename);
+		Download download(_("https://samurai.ctr.shop.nintendo.net/samurai/ws/%s/platforms/?shop_id=1", m_countryCode.c_str()), jsonFilename);
 		download.setField("Accept", "application/json");
 		download.run();
 	}
@@ -696,9 +723,9 @@ void Settings::fillDownloadPage(Gwen::Controls::Base *page)
 	m_sliderTimeout->onValueChanged.Add(this, &Settings::downloadTimeoutChanged);
 
 	m_labelDownloadBufferSize = new Label(page);
-	m_labelDownloadBufferSize->SetBounds(160, 100, 150, 20);
+	m_labelDownloadBufferSize->SetBounds(155, 100, 150, 20);
 	m_sliderDownloadBufferSize = new HorizontalSlider(page);
-	m_sliderDownloadBufferSize->SetBounds(155, 116, 155, 20);
+	m_sliderDownloadBufferSize->SetBounds(150, 116, 160, 20);
 	m_sliderDownloadBufferSize->SetRange(4, 320);
 	m_sliderDownloadBufferSize->onValueChanged.Add(this, &Settings::downloadBufferSizeChanged);
 
@@ -733,13 +760,24 @@ void Settings::downloadBufferSizeChanged(Gwen::Controls::Base *base)
 
 void Settings::fillOtherPage(Gwen::Controls::Base *page)
 {
+	auto label = new Label(page);
+	label->SetBounds(0, 40, 150, 20);
+	label->SetText(_("Language:").toAnsiString());
+
+	m_listboxLanguages = new ListBox(page);
+	m_listboxLanguages->SetBounds(0, 60, 100, 100);
+	m_listboxLanguages->AddItem(_("Auto-detect").toAnsiString(), "auto");
+	m_listboxLanguages->AddItem("English", "en");
+	m_listboxLanguages->AddItem("Português", "pt");
+	m_listboxLanguages->onRowSelected.Add(this, &Settings::languageChange);
+
 	auto newsButton = new Button(page);
-	newsButton->SetBounds(0, 100, 130, 20);
+	newsButton->SetBounds(170, 140, 130, 20);
 	newsButton->SetText(_("View news (%s)", FREESHOP_VERSION).toAnsiString());
 	newsButton->onPress.Add(this, &Settings::showNews);
 
 	m_checkboxSleep = new CheckBoxWithLabel(page);
-	m_checkboxSleep->SetBounds(0, 120, 320, 20);
+	m_checkboxSleep->SetBounds(0, 0, 320, 20);
 	m_checkboxSleep->Label()->SetText(_("Enable screen sleep after inactivity").toAnsiString());
 }
 
@@ -873,6 +911,34 @@ void Settings::updateSorting(Gwen::Controls::Base *control)
 void Settings::showNews(Gwen::Controls::Base *base)
 {
 	Config::set(Config::ShowNews, true);
+}
+
+void Settings::languageChange(Gwen::Controls::Base *base)
+{
+	std::string langCode = m_listboxLanguages->GetSelectedRowName();
+	if (!langCode.empty() && langCode != Config::get(Config::Language).GetString())
+	{
+		g_browseState->requestStackPush(States::Dialog, false, [=](void *data) mutable {
+			auto event = reinterpret_cast<DialogState::Event*>(data);
+			if (event->type == DialogState::GetText)
+			{
+				auto str = reinterpret_cast<cpp3ds::String*>(event->data);
+				*str = _("You need to restart freeShop for\n%s to be loaded.\n\nWould you like to do this now?", m_listboxLanguages->GetSelectedRow()->GetText(0).c_str());
+				return true;
+			}
+			else if (event->type == DialogState::Response)
+			{
+				bool *accepted = reinterpret_cast<bool*>(event->data);
+				if (*accepted)
+				{
+					// Restart freeShop
+					g_requestJump = 0x400000F12EE00;
+				}
+				return true;
+			}
+			return false;
+		});
+	}
 }
 
 

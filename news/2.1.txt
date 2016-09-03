@@ -1,4 +1,6 @@
 • Add version news log (like it?)
+• Add language support with Portuguese
+  translation. More languages soon™!
 • Add save buttons for filters.
 • Fix bug when restarting failed installs.
 • Fix download suspension and timeouts

@@ -78,6 +78,7 @@ namespace FreeShop
 			void updateSorting(Gwen::Controls::Base* control);
 
 			void showNews(Gwen::Controls::Base* base);
+			void languageChange(Gwen::Controls::Base* base);
 
 		private:
 			cpp3ds::Vector2f m_position;
@@ -86,6 +87,7 @@ namespace FreeShop
 			Gwen::Input::cpp3dsInput m_input;
 			Gwen::Controls::Canvas *m_canvas;
 			Gwen::Controls::TabControl *m_tabControl;
+			std::string m_countryCode;
 
 			// Filter
 			Gwen::Controls::TabControl *m_filterTabControl;
@@ -119,6 +121,7 @@ namespace FreeShop
 
 			// Other
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxSleep;
+			Gwen::Controls::ListBox *m_listboxLanguages;
 		};
 	}
 }

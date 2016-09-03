@@ -64,6 +64,28 @@ FreeShop::FreeShop()
 		mkdir(path.c_str(), 0777);
 
 	Config::loadFromFile();
+
+	// If language is not set to auto-detect, load chosen language
+	std::string langCode = Config::get(Config::Language).GetString();
+	if (langCode != "auto")
+		for (int i = 0; i < cpp3ds::Language::COUNT; ++i)
+		{
+			// Try to first load by language and not file. This is so
+			// it can be better known later for fetching game data in proper language
+			auto language = static_cast<cpp3ds::Language>(i);
+			if (langCode == cpp3ds::I18n::getInstance().getLangString(language))
+			{
+				cpp3ds::I18n::loadLanguage(language);
+				break;
+			}
+			else if (i == cpp3ds::Language::COUNT - 1)
+				cpp3ds::I18n::loadLanguageFile(_("lang/%s.lang", langCode.c_str()));
+		}
+
+	// If override.lang exists, use it instead of chosen language
+	std::string testLangFilename(FREESHOP_DIR "/override.lang");
+	if (pathExists(testLangFilename.c_str()))
+		cpp3ds::I18n::loadLanguageFile(testLangFilename);
 }
 
 FreeShop::~FreeShop()

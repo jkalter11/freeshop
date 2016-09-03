@@ -31,6 +31,7 @@ namespace {
 		"power_off_time",
 		// Other
 		"sleep_mode",
+		"language",
 	};
 }
 
@@ -116,6 +117,7 @@ void Config::loadDefaults()
 
 	// Other
 	ADD_DEFAULT(SleepMode, true);
+	ADD_DEFAULT(Language, "auto");
 }
 
 void Config::set(Key key, const char *val)
