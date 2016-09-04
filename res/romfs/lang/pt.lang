@@ -28,15 +28,15 @@ Extracting latest cache...
 Extraindo o cache mais recente...
 
 Downloading title keys...
-Baixando as chaves de título...
+Baixando as chaves de títulos...
 
 # src/States/BrowseState.cpp
 ############################
 No title keys found.\nMake sure you have keys in\n%s\n\nManually copy keys to the directory\nor check settings to enter a URL\nfor downloading title keys.
-Chaves de título não encontradas.\nVerifique se você tem as chaves em\n%s\n\nCopie manualmente as chaves para\no diretório ou verifique as configurações\npara digitar um URL para\n download de chaves.
+Chaves de títulos não encontrados.\nVerifique se você tem as chaves em\n%s\n\nCopie manualmente as chaves para\no diretório ou verifique as configurações\npara digitar um URL para\no download das chaves.
 
 No cache entries found\nfor your title keys.\n\nTry refreshing cache in settings.\nIf that doesn't work, then your\ntitles simply won't work with\nfreeShop currently.
-Nenhuma entrada de cache encontrada\npara as suas chaves de título.\n\nTente atualizar o cache nas configurações.\nSe isso não funcionar, então seus\ntítulos simplesmente não vão funcionar\ncom a freeShop atualmente.
+Nenhuma entrada de cache encontrada\npara as suas chaves de títulos.\n\nTente atualizar o cache nas configurações.\nSe isso não funcionar, então seus\ntítulos simplesmente não irão funcionar\ncom a freeShop atualmente.
 
 Queued install: %s
 Instalação em fila: %s
@@ -80,7 +80,7 @@ You are deleting the demo for\nthis title:\n\n%s
 Você está excluindo a demo\ndeste título:\n\n%s
 
 Deleted demo: %s
-Excluiu demo: %s
+Demo excluída: %s
 
 Queued demo: %s
 Demo em fila: %s
@@ -103,7 +103,7 @@ Retry attempts exceeded
 Limite de tentativas excedido
 
 Retrying... %d
-Tentando de novo... %d
+Tentando novamente... %d
 
 Queued
 Em fila
@@ -143,6 +143,9 @@ Instalando %d/%d... %.1f%% (%.0f KB/s) %dm %02ds
 Suspended
 Suspenso
 
+Installed
+Instalado
+
 Completed: %s
 Completado: %s
 
@@ -150,7 +153,7 @@ Failed: %s
 Falhou: %s
 
 Failed: Internet problem
-Falhou: Internet problem
+Falhou: Problema de internet
 
 Not enough space on NAND
 Não há espaço suficiente na NAND
@@ -173,10 +176,10 @@ DLC
 DLC
 
 You are deleting updates for\nthis title:\n\n%s
-Está excluindo atualizações para\neste título:\n\n%s
+Você está excluindo atualizações para\neste título:\n\n%s
 
 Deleted update: %s
-Excluida a atualização: %s
+Atualização excluída: %s
 
 Queued update: %s
 Atualização em fila: %s
@@ -185,7 +188,7 @@ You are deleting DLC for\nthis title:\n\n%s
 Você está excluindo DLC para\neste título:\n\n%s
 
 Deleted DLC: %s
-Excluída DLC: %s
+DLC excluída: %s
 
 Queued DLC: %s
 DLC em fila: %s
@@ -211,7 +214,7 @@ Failed to suspend: 0x%08lX
 Falha ao suspender: 0x%08lX
 
 Failed to commit title: 0x%08lX
-Falha ao enviar título: 0x%08lX
+Falha ao cometer título: 0x%08lX
 
 Failed to finalize TMD: 0x%08lX
 Falha ao finalizar TMD: 0x%08lX
@@ -347,7 +350,7 @@ Descending
 Decrescente
 
 Auto-update title keys from URL
-Atualizar as chaves de título por URL
+Atualizar as chaves de títulos por URL
 
 Auto-update freeShop
 Atualizar freeShop automaticamente
@@ -380,7 +383,7 @@ Language:
 Idioma:
 
 Auto-detect
-Detecção Automática
+Auto Detecção
 
 View news (%s)
 Ver notícias (%s)
@@ -389,7 +392,7 @@ Enable screen sleep after inactivity
 Ativar tela de descanso após de inatividade
 
 Remote title key URL(s)
-URL(s) remotos de chaves de título
+URL(s) remotos de chaves de títulos
 
 You need to restart freeShop for\n%s to be loaded.\n\nWould you like to do this now?
 Você precisa reiniciar o freeShop para\ncarregar %s.\n\nDeseja fazer isso agora?
