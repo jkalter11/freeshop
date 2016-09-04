@@ -36,10 +36,10 @@ No title keys found.\nMake sure you have keys in\n%s\n\nManually copy keys to th
 Ключи для приложения не найдены.\nУбедитесь, что файл ключей находится в\n%s\n\nСкопируйте файл ключей вручную\nили зайдите в настройки и введите URL\nдля загрузки ключей через интернет.
 
 No cache entries found\nfor your title keys.\n\nTry refreshing cache in settings.\nIf that doesn't work, then your\ntitles simply won't work with\nfreeShop currently.
-Не найден подходящий кэш для ключей приложения.\n\nПопробуйте обновить кэш через настройки.\nЕсли это не помогло, то ваше приложение\nпросто не поддерживается freeShop\nна данный момент.
+Не найден подходящий кэш для ключей приложения.\n\nПопробуйте обновить кэш через настройки.\nЕсли это не помогло, то ваши приложения\nпросто не поддерживаются freeShop\nна данный момент.
 
 Queued install: %s
-Загрузка в очереди: %s
+Очередь установки: %s
 
 Already installed: %s
 Уже установлено: %s
@@ -129,7 +129,7 @@ Installing ticket...
 Установка тикета...
 
 Installing seed...
-Установка сида...
+Установка ядра...
 
 Installing TMD...
 Установка TMD...
@@ -196,13 +196,13 @@ Failed to install ticket: 0x%08lX
 Не удалось установить тикет: 0x%08lX
 
 Failed to get seed: HTTP %d
-Не удалось получить сид: HTTP %d
+Не удалось получить ядро: HTTP %d
 
 Need FW 9.6+, Seed failed: %016llX
 Необходима прошивка 9.6+, ошибка сида: %016llX
 
 Failed to start: 0x%08lX
-Не удалось запустить: 0x%08lX
+Ошибка запуска: 0x%08lX
 
 Failed to resume: 0x%08lX
 Не удалось продолжить: 0x%08lX
@@ -211,33 +211,33 @@ Failed to suspend: 0x%08lX
 Не удалось приостановить: 0x%08lX
 
 Failed to commit title: 0x%08lX
-Не удалось заверить тикет: 0x%08lX
+Ошибка установки тикета: 0x%08lX
 
 Failed to finalize TMD: 0x%08lX
-Не удалось дозавершить TMD: 0x%08lX
+Ошибка дозавершения TMD: 0x%08lX
 
 Failed to finalize content: 0x%08lX
-Не удалось дозавершить контент: 0x%08lX
+Ошибка дозавершения контента: 0x%08lX
 
 Failed to import contents: 0x%08lX
-Не удалось импортировать контент: 0x%08lX
+Ошибка импортирования контента: 0x%08lX
 
 Failed to install TMD: 0x%08lX
-Не удалось установить TMD: 0x%08lX
+Ошибка установки TMD: 0x%08lX
 
 Failed to install content: 0x%08lX
-Не удалось установить контент: 0x%08lX
+Ошибка установки контента: 0x%08lX
 
 # src/TitleKeys.cpp
 ###################
 Failed.\n\nHTTP Status: %d
-Не удалось.\n\nHTTP Status: %d
+Не удалось.\n\nСтатус HTTP: %d
 
 Invalid title key format.
 Неверный формат ключа приложения.
 
 Request timed out.\nTry again.
-Привышен предел ожидания запроса.\nПопробуйте ещё раз.
+Превышен предел ожидания запроса.\nПопробуйте ещё раз.
 
 Invalid URL.
 Неверный URL.
@@ -248,7 +248,7 @@ Filter
 Фильтр
 
 Regions
-Регион
+Регионы
 
 Genre
 Жанр
