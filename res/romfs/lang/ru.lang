@@ -214,10 +214,10 @@ Failed to commit title: 0x%08lX
 Ошибка установки тикета: 0x%08lX
 
 Failed to finalize TMD: 0x%08lX
-Ошибка дозавершения TMD: 0x%08lX
+Ошибка при завершении TMD: 0x%08lX
 
 Failed to finalize content: 0x%08lX
-Ошибка дозавершения контента: 0x%08lX
+Ошибка при завершении контента: 0x%08lX
 
 Failed to import contents: 0x%08lX
 Ошибка импортирования контента: 0x%08lX
