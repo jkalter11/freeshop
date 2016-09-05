@@ -33,7 +33,7 @@ Baixando as chaves de títulos...
 # src/States/BrowseState.cpp
 ############################
 No title keys found.\nMake sure you have keys in\n%s\n\nManually copy keys to the directory\nor check settings to enter a URL\nfor downloading title keys.
-Chaves de títulos não encontrados.\nVerifique se você tem as chaves em\n%s\n\nCopie manualmente as chaves para\no diretório ou verifique as configurações\npara digitar um URL para\no download das chaves.
+Chaves de títulos não encontradas.\nVerifique se você tem as chaves em\n%s\n\nCopie manualmente as chaves para\no diretório ou verifique as configurações\npara digitar um URL para\no download das chaves.
 
 No cache entries found\nfor your title keys.\n\nTry refreshing cache in settings.\nIf that doesn't work, then your\ntitles simply won't work with\nfreeShop currently.
 Nenhuma entrada de cache encontrada\npara as suas chaves de títulos.\n\nTente atualizar o cache nas configurações.\nSe isso não funcionar, então seus\ntítulos simplesmente não irão funcionar\ncom a freeShop atualmente.
@@ -214,7 +214,7 @@ Failed to suspend: 0x%08lX
 Falha ao suspender: 0x%08lX
 
 Failed to commit title: 0x%08lX
-Falha ao cometer título: 0x%08lX
+Falha ao consolidar título: 0x%08lX
 
 Failed to finalize TMD: 0x%08lX
 Falha ao finalizar TMD: 0x%08lX
