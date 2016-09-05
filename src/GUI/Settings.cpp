@@ -37,19 +37,7 @@ Settings::Settings(Gwen::Skin::TexturedBase *skin,  State *state)
 	m_tabControl->SetBounds(0, 40, 320, 200);
 
 	// Get country code for language-specific fetching
-	cpp3ds::Language language = cpp3ds::I18n::getLanguage();
-	switch (language) {
-		default:
-		case cpp3ds::Language::English:    m_countryCode = "US"; break;
-		case cpp3ds::Language::Spanish:    m_countryCode = "ES"; break;
-		case cpp3ds::Language::Portuguese: m_countryCode = "BR"; break;
-		case cpp3ds::Language::French:     m_countryCode = "FR"; break;
-		case cpp3ds::Language::German:     m_countryCode = "DE"; break;
-		case cpp3ds::Language::Italian:    m_countryCode = "IT"; break;
-		case cpp3ds::Language::Japanese:   m_countryCode = "JP"; break;
-		case cpp3ds::Language::Dutch:      m_countryCode = "NL"; break;
-		case cpp3ds::Language::Russian:    m_countryCode = "RU"; break;
-	}
+	m_countryCode = getCountryCode();
 
 	// Filters
 	Base *page = m_tabControl->AddPage(_("Filter").toAnsiString())->GetPage();
@@ -767,8 +755,15 @@ void Settings::fillOtherPage(Gwen::Controls::Base *page)
 	m_listboxLanguages = new ListBox(page);
 	m_listboxLanguages->SetBounds(0, 60, 100, 100);
 	m_listboxLanguages->AddItem(_("Auto-detect").toAnsiString(), "auto");
+	m_listboxLanguages->AddItem("日本語", "jp");
 	m_listboxLanguages->AddItem("English", "en");
+	m_listboxLanguages->AddItem("Français", "fr");
+	m_listboxLanguages->AddItem("Deutsche", "de");
+	m_listboxLanguages->AddItem("Español", "es");
 	m_listboxLanguages->AddItem("Português", "pt");
+	m_listboxLanguages->AddItem("Italiano", "it");
+	m_listboxLanguages->AddItem("русский", "ru");
+	m_listboxLanguages->AddItem("Ελληνικά", "greek");
 	m_listboxLanguages->onRowSelected.Add(this, &Settings::languageChange);
 
 	auto newsButton = new Button(page);

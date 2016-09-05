@@ -220,8 +220,9 @@ void AppInfo::loadApp(std::shared_ptr<AppItem> appItem)
 
 	if (appItem)
 	{
+		std::string countryCode = getCountryCode(appItem->getRegions());
 		std::string jsonFilename = appItem->getJsonFilename();
-		std::string urlTitleData = "https://samurai.ctr.shop.nintendo.net/samurai/ws/" + appItem->getUriRegion() + "/title/" + appItem->getContentId() + "/?shop_id=1";
+		std::string urlTitleData = "https://samurai.ctr.shop.nintendo.net/samurai/ws/" + countryCode + "/title/" + appItem->getContentId() + "/?shop_id=1";
 		std::string dir = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/tmp/" + appItem->getTitleIdStr());
 		if (!pathExists(dir.c_str(), false))
 			mkdir(dir.c_str(), 0777);
@@ -231,6 +232,14 @@ void AppInfo::loadApp(std::shared_ptr<AppItem> appItem)
 			Download download(urlTitleData, jsonFilename);
 			download.setField("Accept", "application/json");
 			download.run();
+
+			auto status = download.getLastResponse().getStatus();
+			if (status != cpp3ds::Http::Response::Ok && status != cpp3ds::Http::Response::PartialContent)
+			{
+				urlTitleData = "https://samurai.ctr.shop.nintendo.net/samurai/ws/" + appItem->getUriRegion() + "/title/" + appItem->getContentId() + "/?shop_id=1";
+				download.setUrl(urlTitleData);
+				download.run();
+			}
 		}
 
 		updateInfo();

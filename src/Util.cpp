@@ -1,10 +1,12 @@
 #include "Util.hpp"
+#include "Config.hpp"
 #include <dirent.h>
 #include <sys/unistd.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <cpp3ds/System/FileSystem.hpp>
+#include <cpp3ds/System/I18n.hpp>
 
 namespace FreeShop
 {
@@ -79,6 +81,26 @@ int removeDirectory(const char *path, bool onlyIfEmpty)
 		r = rmdir(path);
 
 	return r;
+}
+
+std::string getCountryCode(int region)
+{
+	std::string language = Config::get(Config::Language).GetString();
+	if (language == "auto")
+		language = cpp3ds::I18n::getInstance().getLangString(cpp3ds::I18n::getLanguage());
+
+	if (language == "pt")
+		return (region & (1 << 1)) ? "BR" : "PT";
+	else if (language == "es")
+		return (region & (1 << 1)) ? "MX" : "ES";
+	else if (language == "greek")
+		return "GR";
+	else
+	{
+		for (auto &c: language)
+			c = toupper(c);
+		return language;
+	}
 }
 
 } // namespace FreeShop
