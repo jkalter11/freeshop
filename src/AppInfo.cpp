@@ -270,7 +270,8 @@ void AppInfo::loadApp(std::shared_ptr<AppItem> appItem)
 				if (doc["title"].HasMember("screenshots"))
 					setScreenshots(doc["title"]["screenshots"]["screenshot"]);
 
-				setDescription(doc["title"]["description"]);
+				if (doc["title"].HasMember("description"))
+					setDescription(doc["title"]["description"]);
 				m_textDescription.setPosition(102.f, 49.f);
 
 				m_textTitle.setString(appItem->getTitle());
