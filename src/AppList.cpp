@@ -89,9 +89,6 @@ void AppList::refresh()
 	if (m_selectedIndex < 0 && getVisibleCount() > 0)
 		m_selectedIndex = 0;
 
-	sort();
-	filter();
-	reposition();
 	setSelectedIndex(m_selectedIndex);
 }
 
@@ -161,8 +158,12 @@ void AppList::processKeyRepeat()
 	// Don't keep changing index on top/bottom boundaries
 	if ((m_indexDelta != 1 || index % 4 != 3) && (m_indexDelta != -1 || index % 4 != 0))
 	{
-		m_soundBlip.play(1);
-		setSelectedIndex(index + m_indexDelta);
+		int newIndex = index + m_indexDelta;
+		if (newIndex >= 0 && newIndex <= getVisibleCount())
+		{
+			m_soundBlip.play(1);
+			setSelectedIndex(newIndex);
+		}
 		m_clockKeyRepeat.restart();
 	}
 }
@@ -178,6 +179,7 @@ void AppList::setSortType(AppList::SortType sortType, bool ascending)
 void AppList::sort()
 {
 	setSelectedIndex(-1);
+	m_tweenManager.killAll();
 	std::sort(m_guiAppItems.begin(), m_guiAppItems.end(), [&](const std::unique_ptr<GUI::AppItem>& a, const std::unique_ptr<GUI::AppItem>& b)
 	{
 		if (a->isFilteredOut() != b->isFilteredOut())
@@ -213,10 +215,12 @@ void AppList::sort()
 	});
 	if (!m_guiAppItems.empty())
 		setSelectedIndex(0);
+	reposition();
 }
 
 void AppList::filter()
 {
+	setSelectedIndex(-1);
 	m_tweenManager.killAll();
 	// Region filter
 	// Also resets the filter state when no region filter is set.
@@ -268,7 +272,6 @@ matchedPlatform:;
 	}
 
 	sort();
-	reposition();
 	setPosition(0.f, 0.f);
 }
 
@@ -277,7 +280,7 @@ void AppList::reposition()
 	bool segmentFound = false;
 	float destY = 4.f;
 	int i = 0;
-	float newX = m_selectedIndex / 4 * (m_collapsed ? 59.f : 200.f);
+	float newX = (m_selectedIndex ? : 0) / 4 * (m_collapsed ? 59.f : 200.f);
 
 	for (auto& app : m_guiAppItems)
 	{
@@ -316,22 +319,23 @@ void AppList::setSelectedIndex(int index)
 	if (getVisibleCount() == 0)
 		return;
 
-	if (index < 0)
-		index = 0;
-	else if (index >= getVisibleCount())
-		index = getVisibleCount() - 1;
+	if (index >= 0)
+	{
+		if (index >= getVisibleCount())
+			index = getVisibleCount() - 1;
 
-	float extra = 1.0f; //std::abs(m_appList.getSelectedIndex() - index) == 8.f ? 2.f : 1.f;
+		float extra = 1.0f; //std::abs(m_appList.getSelectedIndex() - index) == 8.f ? 2.f : 1.f;
 
-	float pos = -200.f * extra * (index / 4);
-	if (pos > m_targetPosX)
-		m_targetPosX = pos;
-	else if (pos <= m_targetPosX - 400.f)
-		m_targetPosX = pos + 200.f * extra;
+		float pos = -200.f * extra * (index / 4);
+		if (pos > m_targetPosX)
+			m_targetPosX = pos;
+		else if (pos <= m_targetPosX - 400.f)
+			m_targetPosX = pos + 200.f * extra;
 
-	TweenEngine::Tween::to(*this, AppList::POSITION_X, 0.3f)
-		.target(m_targetPosX)
-		.start(m_tweenManager);
+		TweenEngine::Tween::to(*this, AppList::POSITION_X, 0.3f)
+			.target(m_targetPosX)
+			.start(m_tweenManager);
+	}
 
 	if (m_selectedIndex >= 0)
 		m_guiAppItems[m_selectedIndex]->deselect();
