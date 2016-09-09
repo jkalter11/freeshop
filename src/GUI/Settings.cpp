@@ -601,17 +601,17 @@ void Settings::fillSortPage(Gwen::Controls::Base *page)
 {
 	m_radioSortType = new RadioButtonController(page);
 	m_radioSortType->SetBounds(10, 0, 180, 120);
-	m_radioSortType->AddOption(_("Name").toWideString(), "Name")->Select();
+	m_radioSortType->AddOption(_("Release Date").toWideString(), "Release Date")->Select();
+	m_radioSortType->AddOption(_("Name").toWideString(), "Name");
 	m_radioSortType->AddOption(_("Size").toWideString(), "Size");
 	m_radioSortType->AddOption(_("Vote Score").toWideString(), "Vote Score");
 	m_radioSortType->AddOption(_("Vote Count").toWideString(), "Vote Count");
-//	m_radioSortType->AddOption(_("Release Date").toWideString(), "Release Date");
 	m_radioSortType->onSelectionChange.Add(this, &Settings::updateSorting);
 
 	m_radioSortDirection = new RadioButtonController(page);
 	m_radioSortDirection->SetBounds(190, 5, 150, 120);
-	m_radioSortDirection->AddOption(_("Ascending").toWideString(), "Ascending")->Select();
-	m_radioSortDirection->AddOption(_("Descending").toWideString(), "Descending");
+	m_radioSortDirection->AddOption(_("Ascending").toWideString(), "Ascending");
+	m_radioSortDirection->AddOption(_("Descending").toWideString(), "Descending")->Select();
 	m_radioSortDirection->onSelectionChange.Add(this, &Settings::updateSorting);
 }
 
