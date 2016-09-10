@@ -1,45 +1,45 @@
 # src/States/SyncState.cpp
 ##########################
 Waiting for internet connection... %.0fs
-Attendendo la connessione internet... %.0fs
+In attesa di connessione internet... %.0fs
 
 Fetching news for %s ...
-Ricerca notizie per %s ...
+Ricerca notizie su %s ...
 
 Loading game list...
-Caricando la lista giochi...
+Caricamento lista giochi...
 
 Looking for freeShop update...
-Cercando un nuovo aggiornamento...
+Ricerca di un nuovo aggiornamento...
 
 Installing freeShop %s ...
-Installando freeShop %s ...
+Installazione freeShop %s ...
 
 Failed to install update: 0x%08lX
 Installazione aggiornamento fallita: 0x%08lX
 
 Checking latest cache...
-Verificando la cache più recente...
+Verifica cache più recente...
 
 Downloading latest cache: %s...
-Scaricando la cache più recente: %s...
+Scaricamento cache più recente: %s...
 
 Extracting latest cache...
-Estraendo la cache più recente...
+Estrazione cache più recente...
 
 Downloading title keys...
-Scaricando le title keys...
+Scaricamento chiavi titolo...
 
 # src/States/BrowseState.cpp
 ############################
 No title keys found.\nMake sure you have keys in\n%s\n\nManually copy keys to the directory\nor check settings to enter a URL\nfor downloading title keys.
-Nessuna Title Key trovata.\nAssicurati di avere le chiavi all'interno di\n%s\n\nCopia le chiavi all'interno della cartella,\noppure apri le impostazioni per inserire un url\nda dove scaricare le title keys.
+Nessuna chiave titolo è stata trovata.\nAssicurati di avere le chiavi all'interno di\n%s\n\nCopia le chiavi all'interno della cartella,\noppure apri le impostazioni per inserire un url\nda dove scaricare le title keys.
 
 No cache entries found\nfor your title keys.\n\nTry refreshing cache in settings.\nIf that doesn't work, then your\ntitles simply won't work with\nfreeShop currently.
-Nessuna cache trovata\nper le tue Title Keys.\n\nProva a ricaricare la cache nelle impostazioni.\nSe ciò non funziona\ni tuoi titolo semplicemente non funzioneranno\ncon freeShop attualmente.
+Nessuna cache trovata\nper le tue chiavi titolo.\n\nProva a ricaricare la cache nelle impostazioni.\nSe ciò non funziona\ni tuoi titoli non solo al momento compatibili\ncon freeShop.
 
 Queued install: %s
-Aggiunto alla Coda d'installazione: %s
+Elemento accodato: %s
 
 Already installed: %s
 Già installato: %s
@@ -50,7 +50,7 @@ Già installato: %s
  Ok
 
  Cancel
- Cancella
+ Annulla
 
 Are you sure you want\nto continue?
 Sei sicuro di voler continuare?
@@ -77,7 +77,7 @@ Demo
 Demo
 
 You are deleting the demo for\nthis title:\n\n%s
-Stai cancellando la demo per\nquesto titolo:\n\n%s
+Stai per cancellare la demo per\nquesto titolo:\n\n%s
 
 Deleted demo: %s
 Cancellata demo: %s
@@ -100,10 +100,10 @@ Failed
 Fallito
 
 Retry attempts exceeded
-Limite dei tentativi superato
+Limite tentativi superato
 
 Retrying... %d
-Riprovando... %d
+Nuovo tentativo... %d
 
 Queued
 In coda
@@ -135,10 +135,10 @@ Installing TMD...
 Installazione TMD...
 
 Importing content...
-Importo dei contenuti....
+Aggiunta contenuti....
 
 Installing %d/%d... %.1f%% (%.0f KB/s) %dm %02ds
-Installando %d/%d... %.1f%% (%.0f KB/s) %dm %02ds
+Installazione %d/%d... %.1f%% (%.0f KB/s) %dm %02ds
 
 Suspended
 Sospeso
@@ -162,7 +162,7 @@ Not enough space on SD
 Spazio insufficente nella SD
 
 Wrong title key
-Title key errata
+Chiave titolo errata
 
 # src/InstalledOptions.cpp
 #########################
@@ -214,16 +214,16 @@ Failed to suspend: 0x%08lX
 Sospensione fallita: 0x%08lX
 
 Failed to commit title: 0x%08lX
-Ultimazione del titolo fallita: 0x%08lX
+Finalizzazione del titolo fallita: 0x%08lX
 
 Failed to finalize TMD: 0x%08lX
-Ultimazione TMD fallita: 0x%08lX
+Finalizzazione TMD fallita: 0x%08lX
 
 Failed to finalize content: 0x%08lX
-Ultimazione dei contenuti fallita: 0x%08lX
+Finalizzazione contenuti fallita: 0x%08lX
 
 Failed to import contents: 0x%08lX
-Importazione contenuti fallita: 0x%08lX
+Aggiungimento contenuti fallito: 0x%08lX
 
 Failed to install TMD: 0x%08lX
 Installazione TMD fallita: 0x%08lX
@@ -237,13 +237,13 @@ Failed.\n\nHTTP Status: %d
 Fallito.\n\nStato HTTP: %d
 
 Invalid title key format.
-Formato title key invalido.
+Formato chiave titolo non valido.
 
 Request timed out.\nTry again.
 Richiesta scaduta.\nRiprova.
 
 Invalid URL.
-URL invalido.
+URL non valido.
 
 # src/GUI/Settings.cpp
 ######################
@@ -320,7 +320,7 @@ Filter settings saved
 Impostazioni filtri salvate
 
 Cleared saved filter settings
-Impostazioni filtri cancellate
+Impostazioni filtri eliminate
 
 Select All
 Seleziona tutto
@@ -350,13 +350,13 @@ Descending
 Decrescente
 
 Auto-update title keys from URL
-Aggiorna automaticamente title keys da URL
+Aggiorna automaticamente chiavi titolo da URL
 
 Auto-update freeShop
 Aggiorna automaticamente freeShop
 
 Refresh Cache
-Ricarica Cache
+Ricarica cache
 
 Play sound when queue finishes
 Riproduci suono quando la coda è terminata
@@ -374,10 +374,10 @@ Use Defaults
 Usa predefinite
 
 HTTP Timeout: %.0fs
-HTTP tempo limite: %.0fs
+Tempo limite HTTP: %.0fs
 
 Buffer size: %u KB
-Dimesione buffer: %u KB
+Dimensione buffer: %u KB
 
 Language:
 Lingua:
