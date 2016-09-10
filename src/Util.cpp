@@ -95,8 +95,6 @@ std::string getCountryCode(int region)
 		return (region & (1 << 1)) ? "BR" : "PT";
 	else if (language == "es")
 		return (region & (1 << 1)) ? "MX" : "ES";
-	else if (language == "greek")
-		return "GR";
 	else
 	{
 		for (auto &c: language)

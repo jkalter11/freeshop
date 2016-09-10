@@ -763,7 +763,7 @@ void Settings::fillOtherPage(Gwen::Controls::Base *page)
 	m_listboxLanguages->AddItem("Português", "pt");
 	m_listboxLanguages->AddItem("Italiano", "it");
 	m_listboxLanguages->AddItem("русский", "ru");
-	m_listboxLanguages->AddItem("Ελληνικά", "greek");
+	m_listboxLanguages->AddItem("Ελληνικά", "gr");
 	m_listboxLanguages->onRowSelected.Add(this, &Settings::languageChange);
 
 	auto newsButton = new Button(page);
