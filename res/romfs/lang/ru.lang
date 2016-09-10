@@ -39,7 +39,7 @@ No cache entries found\nfor your title keys.\n\nTry refreshing cache in settings
 Не найден подходящий кэш для ключей приложения.\n\nПопробуйте обновить кэш через настройки.\nЕсли это не помогло, то ваши приложения\nпросто не поддерживаются freeShop\nна данный момент.
 
 Queued install: %s
-Очередь установки: %s
+В очереди установки: %s
 
 Already installed: %s
 Уже установлено: %s
@@ -135,7 +135,7 @@ Installing TMD...
 Установка TMD...
 
 Importing content...
-Импорт приложения....
+Импорт контента....
 
 Installing %d/%d... %.1f%% (%.0f KB/s) %dm %02ds
 Установка %d/%d... %.1f%% (%.0f Кб/с) %dm %02ds
@@ -173,7 +173,7 @@ DLC
 DLC
 
 You are deleting updates for\nthis title:\n\n%s
-Вы собираетесь удалить\nобновления дляэтого приложения:\n\n%s
+Вы собираетесь удалить\nобновления для этого приложения:\n\n%s
 
 Deleted update: %s
 Обновление удалено: %s
@@ -182,7 +182,7 @@ Queued update: %s
 Обновление в очереди: %s
 
 You are deleting DLC for\nthis title:\n\n%s
-Вы собираетесь удалить DLC\nдляэтого приложения:\n\n%s
+Вы собираетесь удалить DLC\nдля этого приложения:\n\n%s
 
 Deleted DLC: %s
 DLC удалено: %s
@@ -211,13 +211,13 @@ Failed to suspend: 0x%08lX
 Не удалось приостановить: 0x%08lX
 
 Failed to commit title: 0x%08lX
-Ошибка установки тикета: 0x%08lX
+Не удалось заверить приложение: 0x%08lX
 
 Failed to finalize TMD: 0x%08lX
-Ошибка при завершении TMD: 0x%08lX
+Ошибка при завершении установки TMD: 0x%08lX
 
 Failed to finalize content: 0x%08lX
-Ошибка при завершении контента: 0x%08lX
+Ошибка при завершении установки контента: 0x%08lX
 
 Failed to import contents: 0x%08lX
 Ошибка импортирования контента: 0x%08lX
@@ -263,7 +263,7 @@ Sort
 Сортировка
 
 Update
-Обновления
+Обновление
 
 Download
 Загрузка
@@ -380,10 +380,10 @@ Language:
 Язык:
 
 Auto-detect
-Автовыбор
+Автоматически
 
 View news (%s)
-Показать новости (%s)
+Изменения (%s)
 
 Enable screen sleep after inactivity
 Включить режим сна после простоя
