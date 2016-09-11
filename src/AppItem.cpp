@@ -138,6 +138,7 @@ void AppItem::loadFromJSON(const char* titleId, const rapidjson::Value &json)
 void AppItem::loadFromSystemTitleId(cpp3ds::Uint64 titleId)
 {
 	m_titleId = titleId;
+	m_titleIdStr = _("%016llX", titleId);
 	m_updates = TitleKeys::getRelated(m_titleId, TitleKeys::Update);
 	m_demos = TitleKeys::getRelated(m_titleId, TitleKeys::Demo);
 	m_dlc = TitleKeys::getRelated(m_titleId, TitleKeys::DLC);
@@ -150,7 +151,10 @@ void AppItem::loadFromSystemTitleId(cpp3ds::Uint64 titleId)
 	AM_TitleEntry titleInfo;
 	AM_GetTitleInfo(MEDIATYPE_NAND, 1, &titleId, &titleInfo);
 	AM_GetTitleProductCode(MEDIATYPE_NAND, titleId, productCode);
+
 	m_title = productCode;
+	if (m_title.toAnsiString().compare(0, 9, "CTR-N-HMM") == 0)
+		m_title = _("Home Menu Themes");
 
 	static const u32 filePath[5] = {0x0, 0x0, 0x2, 0x6E6F6369, 0x0};
 	u32 archivePath[4] = {(u32) (titleId & 0xFFFFFFFF), (u32) ((titleId >> 32) & 0xFFFFFFFF), MEDIATYPE_NAND, 0x0};
@@ -177,10 +181,11 @@ void AppItem::loadFromSystemTitleId(cpp3ds::Uint64 titleId)
 		FSFILE_Close(fileHandle);
 	}
 #else
-	m_title = _("%016llX", titleId);
+	m_title = m_titleIdStr;
 #endif
-
 	m_normalizedTitle = m_title;
+	for (auto &c : m_normalizedTitle)
+		c = std::tolower(c);
 }
 
 void AppItem::setIconIndex(size_t iconIndex)
