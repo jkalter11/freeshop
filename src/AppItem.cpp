@@ -52,10 +52,16 @@ AppItem::AppItem()
 	, m_languages(0)
 	, m_iconIndex(-1)
 	, m_iconRect(cpp3ds::IntRect(0, 0, 48, 48))
+	, m_systemIconTexture(nullptr)
 {
 	cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get("images/missing-icon.png");
 	texture.setSmooth(true);
 	m_iconTexture = &texture;
+}
+
+AppItem::~AppItem()
+{
+	delete m_systemIconTexture;
 }
 
 const cpp3ds::String &AppItem::getTitle() const
@@ -175,6 +181,10 @@ void AppItem::loadFromSystemTitleId(cpp3ds::Uint64 titleId)
 
 				u16 *title = smdh->titles[systemLanguage].shortDescription;
 				m_title = cpp3ds::String::fromUtf16(title, title + 0x40);
+
+				delete m_systemIconTexture;
+				m_systemIconTexture = new cpp3ds::Texture();
+				m_systemIconTexture->loadFromPreprocessedMemory(smdh->largeIcon, sizeof(smdh->largeIcon), 48, 48, GPU_RGB565);
 			}
 			delete smdh;
 		}
@@ -306,7 +316,7 @@ int AppItem::getIconIndex() const
 const cpp3ds::Texture *AppItem::getIcon(cpp3ds::IntRect &outRect) const
 {
 	outRect = m_iconRect;
-	return m_iconTexture;
+	return m_systemIconTexture ? : m_iconTexture;
 }
 
 void AppItem::queueForInstall()

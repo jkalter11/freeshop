@@ -36,6 +36,7 @@ public:
 	};
 
 	AppItem();
+	~AppItem();
 
 	void loadFromJSON(const char* titleId, const rapidjson::Value &json);
 	void loadFromSystemTitleId(cpp3ds::Uint64 titleId);
@@ -105,6 +106,7 @@ private:
 	bool m_installed;
 
 	cpp3ds::Texture *m_iconTexture;
+	cpp3ds::Texture *m_systemIconTexture;
 	cpp3ds::IntRect m_iconRect;
 };
 
