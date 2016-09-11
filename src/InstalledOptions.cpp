@@ -44,9 +44,12 @@ InstalledOptions::InstalledOptions()
 void InstalledOptions::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) const
 {
 	states.transform *= getTransform();
-	target.draw(m_textGame, states);
-	target.draw(m_textIconGame, states);
 
+	if (m_titleType != TitleKeys::SystemApplet && m_titleType != TitleKeys::SystemApplication)
+	{
+		target.draw(m_textGame, states);
+		target.draw(m_textIconGame, states);
+	}
 	if (m_updatesAvailable)
 	{
 		target.draw(m_textUpdates, states);
@@ -102,31 +105,32 @@ void InstalledOptions::processTouchEvent(const cpp3ds::Event &event)
 	if (m_textIconGame.getGlobalBounds().contains(touchPos))
 	{
 		cpp3ds::Uint64 titleId = m_installedItem->getTitleId();
-		g_browseState->requestStackPush(States::Dialog, false, [=](void *data) mutable {
-			auto event = reinterpret_cast<DialogState::Event*>(data);
-			if (event->type == DialogState::GetText)
-			{
-				auto str = reinterpret_cast<cpp3ds::String*>(event->data);
-				*str = _("You are deleting this game,\nincluding all save data:\n\n%s", appTitle.toAnsiString().c_str());
-				return true;
-			}
-			else if (event->type == DialogState::Response)
-			{
-				bool *accepted = reinterpret_cast<bool*>(event->data);
-				if (*accepted)
-				{
-#ifdef _3DS
-					FS_MediaType mediaType = ((titleId >> 32) & 0x8010) != 0 ? MEDIATYPE_NAND : MEDIATYPE_SD;
-					AM_DeleteTitle(m_mediaType, titleId);
-#endif
-					m_installedItem->getAppItem()->setInstalled(false);
-					Notification::spawn(_("Deleted: %s", appTitle.toAnsiString().c_str()));
-					InstalledList::getInstance().refresh();
+		if (m_titleType != TitleKeys::SystemApplet && m_titleType != TitleKeys::SystemApplication)
+		{
+			
+			g_browseState->requestStackPush(States::Dialog, false, [=](void *data) mutable {
+				auto event = reinterpret_cast<DialogState::Event *>(data);
+				if (event->type == DialogState::GetText) {
+					auto str = reinterpret_cast<cpp3ds::String *>(event->data);
+					*str = _("You are deleting this game,\nincluding all save data:\n\n%s",
+							 appTitle.toAnsiString().c_str());
+					return true;
 				}
-				return true;
-			}
-			return false;
-		});
+				else if (event->type == DialogState::Response) {
+					bool *accepted = reinterpret_cast<bool *>(event->data);
+					if (*accepted) {
+#ifdef _3DS
+						AM_DeleteTitle(m_mediaType, titleId);
+#endif
+						m_installedItem->getAppItem()->setInstalled(false);
+						Notification::spawn(_("Deleted: %s", appTitle.toAnsiString().c_str()));
+						InstalledList::getInstance().refresh();
+					}
+					return true;
+				}
+				return false;
+			});
+		}
 	}
 	else if (m_textIconUpdates.getGlobalBounds().contains(touchPos))
 	{

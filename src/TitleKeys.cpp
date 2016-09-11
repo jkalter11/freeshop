@@ -95,10 +95,10 @@ std::vector<cpp3ds::Uint64> TitleKeys::getRelated(cpp3ds::Uint64 titleId, TitleT
 	return related;
 }
 
-std::map<cpp3ds::Uint64, cpp3ds::Uint32[4]> &TitleKeys::getList()
+std::vector<cpp3ds::Uint64> &TitleKeys::getIds()
 {
 	ensureTitleKeys();
-	return titleKeys;
+	return titleIds;
 }
 
 cpp3ds::Uint32 *TitleKeys::get(cpp3ds::Uint64 titleId)

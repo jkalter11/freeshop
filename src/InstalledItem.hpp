@@ -21,6 +21,8 @@ public:
 	void setDLCStatus(cpp3ds::Uint64 titleId, bool installed);
 	bool getUpdateStatus(cpp3ds::Uint64 titleId) { m_updates[titleId]; }
 	bool getDLCStatus(cpp3ds::Uint64 titleId) { m_dlc[titleId]; }
+	bool hasUpdates() { return !m_updates.empty(); }
+	bool hasDLC() { return !m_dlc.empty(); }
 
 	std::shared_ptr<AppItem> getAppItem() const;
 

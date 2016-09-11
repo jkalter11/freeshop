@@ -38,6 +38,7 @@ public:
 	AppItem();
 
 	void loadFromJSON(const char* titleId, const rapidjson::Value &json);
+	void loadFromSystemTitleId(cpp3ds::Uint64 titleId);
 
 	const cpp3ds::String &getTitle() const;
 	const std::string &getNormalizedTitle() const;

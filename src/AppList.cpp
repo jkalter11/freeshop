@@ -220,7 +220,6 @@ void AppList::sort()
 
 void AppList::filter()
 {
-	setSelectedIndex(-1);
 	m_tweenManager.killAll();
 	// Region filter
 	// Also resets the filter state when no region filter is set.

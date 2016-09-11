@@ -33,6 +33,7 @@ protected:
 
 private:
 	cpp3ds::Mutex m_mutexRefresh;
+	bool m_cardInserted;
 	std::vector<cpp3ds::Uint64> m_installedTitleIds;
 	std::vector<std::unique_ptr<InstalledItem>> m_installedItems;
 	TweenEngine::TweenManager m_tweenManager;

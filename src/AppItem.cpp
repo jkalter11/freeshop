@@ -13,6 +13,33 @@ namespace {
 
 std::vector<std::unique_ptr<cpp3ds::Texture>> textures;
 
+#ifdef _3DS
+typedef struct {
+    u16 shortDescription[0x40];
+    u16 longDescription[0x80];
+    u16 publisher[0x40];
+} SMDH_title;
+
+typedef struct {
+    char magic[0x04];
+    u16 version;
+    u16 reserved1;
+    SMDH_title titles[0x10];
+    u8 ratings[0x10];
+    u32 region;
+    u32 matchMakerId;
+    u64 matchMakerBitId;
+    u32 flags;
+    u16 eulaVersion;
+    u16 reserved;
+    u32 optimalBannerFrame;
+    u32 streetpassId;
+    u64 reserved2;
+    u8 smallIcon[0x480];
+    u8 largeIcon[0x1200];
+} SMDH;
+#endif
+
 }
 
 
@@ -23,8 +50,12 @@ AppItem::AppItem()
 	: m_installed(false)
 	, m_regions(0)
 	, m_languages(0)
+	, m_iconIndex(-1)
+	, m_iconRect(cpp3ds::IntRect(0, 0, 48, 48))
 {
-	//
+	cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get("images/missing-icon.png");
+	texture.setSmooth(true);
+	m_iconTexture = &texture;
 }
 
 const cpp3ds::String &AppItem::getTitle() const
@@ -102,6 +133,54 @@ void AppItem::loadFromJSON(const char* titleId, const rapidjson::Value &json)
 
 	m_platform = json[15].GetInt();
 	m_publisher = json[16].GetInt();
+}
+
+void AppItem::loadFromSystemTitleId(cpp3ds::Uint64 titleId)
+{
+	m_titleId = titleId;
+	m_updates = TitleKeys::getRelated(m_titleId, TitleKeys::Update);
+	m_demos = TitleKeys::getRelated(m_titleId, TitleKeys::Demo);
+	m_dlc = TitleKeys::getRelated(m_titleId, TitleKeys::DLC);
+
+#ifdef _3DS
+	Result res = 0;
+	Handle fileHandle;
+	char productCode[12] = {'\0'};
+
+	AM_TitleEntry titleInfo;
+	AM_GetTitleInfo(MEDIATYPE_NAND, 1, &titleId, &titleInfo);
+	AM_GetTitleProductCode(MEDIATYPE_NAND, titleId, productCode);
+	m_title = productCode;
+
+	static const u32 filePath[5] = {0x0, 0x0, 0x2, 0x6E6F6369, 0x0};
+	u32 archivePath[4] = {(u32) (titleId & 0xFFFFFFFF), (u32) ((titleId >> 32) & 0xFFFFFFFF), MEDIATYPE_NAND, 0x0};
+	FS_Path binArchPath = {PATH_BINARY, 0x10, archivePath};
+    FS_Path binFilePath = {PATH_BINARY, 0x14, filePath};
+
+	if(R_SUCCEEDED(res = FSUSER_OpenFileDirectly(&fileHandle, ARCHIVE_SAVEDATA_AND_CONTENT, binArchPath, binFilePath, FS_OPEN_READ, 0)))
+	{
+		auto smdh = new SMDH();
+		if (smdh)
+		{
+			FSFILE_Read(fileHandle, nullptr, 0, smdh, sizeof(SMDH));
+
+			if (smdh->magic[0] == 'S' && smdh->magic[1] == 'M' && smdh->magic[2] == 'D' && smdh->magic[3] == 'H')
+			{
+				u8 systemLanguage = CFG_LANGUAGE_EN;
+				CFGU_GetSystemLanguage(&systemLanguage);
+
+				u16 *title = smdh->titles[systemLanguage].shortDescription;
+				m_title = cpp3ds::String::fromUtf16(title, title + 0x40);
+			}
+			delete smdh;
+		}
+		FSFILE_Close(fileHandle);
+	}
+#else
+	m_title = _("%016llX", titleId);
+#endif
+
+	m_normalizedTitle = m_title;
 }
 
 void AppItem::setIconIndex(size_t iconIndex)

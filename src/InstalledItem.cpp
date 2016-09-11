@@ -11,39 +11,37 @@ InstalledItem::InstalledItem(cpp3ds::Uint64 titleId)
 , m_updateInstallCount(0)
 , m_dlcInstallCount(0)
 {
-	bool found = false;
 	TitleKeys::TitleType titleType = static_cast<TitleKeys::TitleType>(titleId >> 32);
 
-	for (auto& appItem : AppList::getInstance().getList())
+	if (titleType == TitleKeys::SystemApplication || titleType == TitleKeys::SystemApplet)
 	{
-		m_appItem = appItem->getAppItem();
-		if (titleId == m_appItem->getTitleId())
+		m_appItem = std::make_shared<AppItem>();
+		m_appItem->loadFromSystemTitleId(titleId);
+	}
+	else
+	{
+		bool found = false;
+		for (auto& appItem : AppList::getInstance().getList())
 		{
-			found = true;
-			m_textTitle.setString(m_appItem->getTitle());
-			break;
+			m_appItem = appItem->getAppItem();
+			if (titleId == m_appItem->getTitleId())
+			{
+				found = true;
+				break;
+			}
+		}
+
+		if (!found)
+		{
+				throw 0;
 		}
 	}
 
-	if (!found)
-	{
-		throw 0;
-		if (titleType == TitleKeys::Game || titleType == TitleKeys::DSiWare)
-			throw 0;
-		else
-		{
-#ifdef _3DS
-			char productCode[16];
-			AM_TitleEntry titleInfo;
-			AM_GetTitleInfo(MEDIATYPE_NAND, 1, &titleId, &titleInfo);
-			AM_GetTitleProductCode(MEDIATYPE_NAND, titleId, productCode);
-			m_textTitle.setString(productCode);
-#endif
-		}
-	}
+	m_appItem->setInstalled(true);
 
 	m_background.setTexture(&AssetManager<cpp3ds::Texture>::get("images/installed_item_bg.9.png"));
 
+	m_textTitle.setString(m_appItem->getTitle());
 	m_textTitle.setCharacterSize(11);
 	m_textTitle.setPosition(m_background.getPadding().left, m_background.getPadding().top);
 	m_textTitle.setFillColor(cpp3ds::Color::Black);

@@ -30,9 +30,6 @@ AppItem::AppItem()
 	deselect();
 
 	m_icon.setSize(cpp3ds::Vector2f(48.f, 48.f));
-	cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get("images/missing-icon.png");
-	texture.setSmooth(true);
-	m_icon.setTexture(&texture, true);
 	m_icon.setPosition(4.f, 4.f);
 	m_icon.setFillColor(cpp3ds::Color(180,180,180));
 	m_icon.setOutlineColor(cpp3ds::Color(0, 0, 0, 50));

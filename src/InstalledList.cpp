@@ -27,7 +27,7 @@ void InstalledList::refresh()
 {
 	cpp3ds::Lock lock(m_mutexRefresh);
 	cpp3ds::Uint64 relatedTitleId;
-	std::vector<cpp3ds::Uint64> titleIds;
+	std::vector<cpp3ds::Uint64> installedTitleIds;
 
 	m_installedTitleIds.clear();
 	m_installedItems.clear();
@@ -36,50 +36,57 @@ void InstalledList::refresh()
 
 #ifdef EMULATION
 	// some hardcoded title IDs for testing
-	titleIds.push_back(0x00040000000edf00); // [US] Super Smash Bros.
-	titleIds.push_back(0x0004000000030100); // [US] Kid Icarus: Uprising
-	titleIds.push_back(0x0004000000030800); // [US] Mario Kart 7
-	titleIds.push_back(0x0004000000041700); // [US] Kirby's Dream Land
-	titleIds.push_back(0x0004008000008f00);
+	installedTitleIds.push_back(0x00040000000edf00); // [US] Super Smash Bros.
+	installedTitleIds.push_back(0x0004000e000edf00); // [US] Super Smash Bros. [UPDATE]
+	installedTitleIds.push_back(0x00040002000edf01); // [US] Super Smash Bros. [DEMO]
+	installedTitleIds.push_back(0x0004001000021800); // [US] StreetPass Mii Plaza
+	installedTitleIds.push_back(0x0004000000030800); // [US] Mario Kart 7
+	installedTitleIds.push_back(0x0004000000041700); // [US] Kirby's Dream Land
+	installedTitleIds.push_back(0x0004008000008f00); // [US] Home Menu
 #else
 	u32 titleCount;
 	AM_GetTitleCount(MEDIATYPE_SD, &titleCount);
-	titleIds.resize(titleCount);
-	AM_GetTitleList(nullptr, MEDIATYPE_SD, titleCount, &titleIds[0]);
+	installedTitleIds.resize(titleCount);
+	AM_GetTitleList(nullptr, MEDIATYPE_SD, titleCount, &installedTitleIds[0]);
 	AM_GetTitleCount(MEDIATYPE_NAND, &titleCount);
-	titleIds.resize(titleCount + titleIds.size());
-	AM_GetTitleList(nullptr, MEDIATYPE_NAND, titleCount, &titleIds[titleIds.size() - titleCount]);
+	installedTitleIds.resize(titleCount + installedTitleIds.size());
+	AM_GetTitleList(nullptr, MEDIATYPE_NAND, titleCount, &installedTitleIds[installedTitleIds.size() - titleCount]);
+
+	FS_CardType type;
+	bool cardInserted;
+	m_cardInserted = (R_SUCCEEDED(FSUSER_CardSlotIsInserted(&cardInserted)) && cardInserted && R_SUCCEEDED(FSUSER_GetCardType(&type)) && type == CARD_CTR);
+	if (m_cardInserted)
+	{
+		// Retry a bunch of times. When the card is newly inserted,
+		// it sometimes takes a short while before title can be read.
+		int retryCount = 100;
+		u64 cardTitleId;
+		while (retryCount-- > 0)
+			if (R_SUCCEEDED(AM_GetTitleList(nullptr, MEDIATYPE_GAME_CARD, 1, &cardTitleId)))
+			{
+				std::unique_ptr<InstalledItem> item(new InstalledItem(cardTitleId));
+				m_installedItems.emplace_back(std::move(item));
+				break;
+			}
+			else
+				cpp3ds::sleep(cpp3ds::milliseconds(5));
+	}
 #endif
 
-	for (auto& titleId : titleIds)
+	for (auto& titleId : installedTitleIds)
 	{
 		size_t titleType = titleId >> 32;
-		cpp3ds::Uint32 titleLower = (titleId & 0xFFFFFFFF) >> 8;
-		relatedTitleId = 0;
-
 		if (titleType == TitleKeys::Game || titleType == TitleKeys::Update ||
-				titleType == TitleKeys::DLC || titleType == TitleKeys::Demo || titleType == TitleKeys::DSiWare)
+				titleType == TitleKeys::DLC || titleType == TitleKeys::Demo || titleType == TitleKeys::DSiWare ||
+				titleType == TitleKeys::SystemApplet || titleType == TitleKeys::SystemApplication)
 			m_installedTitleIds.push_back(titleId);
-
-		if (titleType == TitleKeys::DLC || titleType == TitleKeys::Update)
-		{
-			relatedTitleId = (static_cast<cpp3ds::Uint64>(titleType) << 32) | (titleLower << 8);
-		}
-		for (auto& appItemGUI : AppList::getInstance().getList())
-		{
-			auto appItem = appItemGUI->getAppItem();
-			if (appItem->getTitleId() == (relatedTitleId ? relatedTitleId : titleId))
-			{
-				appItem->setInstalled(true);
-			}
-		}
 	}
 
 	// Add all primary game titles first
-	for (auto& titleId : titleIds)
+	for (auto& titleId : installedTitleIds)
 	{
 		TitleKeys::TitleType titleType = static_cast<TitleKeys::TitleType>(titleId >> 32);
-		if (titleType == TitleKeys::Game || titleType == TitleKeys::DSiWare)
+		if (titleType == TitleKeys::Game || titleType == TitleKeys::DSiWare || titleType == TitleKeys::SystemApplication || titleType == TitleKeys::SystemApplet)
 			try
 			{
 				std::unique_ptr<InstalledItem> item(new InstalledItem(titleId));
@@ -91,29 +98,21 @@ void InstalledList::refresh()
 			}
 	}
 
-	// Sort alphabetically
-	std::sort(m_installedItems.begin(), m_installedItems.end(), [=](const std::unique_ptr<InstalledItem>& a, const std::unique_ptr<InstalledItem>& b)
-	{
-		return a->getAppItem()->getNormalizedTitle() < b->getAppItem()->getNormalizedTitle();
-	});
-
-	repositionItems();
-
 	// Add updates that have not yet been installed for which we have a titlekey
-	for (auto& titleKey : TitleKeys::getList())
+	for (auto& titleId : TitleKeys::getIds())
 	{
-		size_t titleType = titleKey.first >> 32;
+		size_t titleType = titleId >> 32;
 		if (titleType == TitleKeys::Update || titleType == TitleKeys::DLC)
 		{
-			size_t titleLower = (titleKey.first & 0xFFFFFFFF) >> 8;
+			size_t titleLower = (titleId & 0xFFFFFFFF) >> 8;
 			for (auto& installedItem : m_installedItems)
 			{
 				if (titleLower == (installedItem->getTitleId() & 0xFFFFFFFF) >> 8)
 				{
 					if (titleType == TitleKeys::Update)
-						installedItem->setUpdateStatus(titleKey.first, false);
+						installedItem->setUpdateStatus(titleId, false);
 					else
-						installedItem->setDLCStatus(titleKey.first, false);
+						installedItem->setDLCStatus(titleId, false);
 				}
 			}
 		}
@@ -121,18 +120,16 @@ void InstalledList::refresh()
 
 	// Add all installed updates/DLC to the above titles added.
 	// If not found, attempt to fetch parent title info from system.
-	for (auto& titleId : titleIds)
+	for (auto& titleId : installedTitleIds)
 	{
 		TitleKeys::TitleType titleType = static_cast<TitleKeys::TitleType>(titleId >> 32);
 		if (titleType == TitleKeys::Update || titleType == TitleKeys::DLC)
 		{
-			bool found = false;
 			cpp3ds::Uint32 titleLower = (titleId & 0xFFFFFFFF) >> 8;
 			for (auto& installedItem : m_installedItems)
 			{
 				if (titleLower == (installedItem->getTitleId() & 0xFFFFFFFF) >> 8)
 				{
-					found = true;
 					if (titleType == TitleKeys::Update)
 						installedItem->setUpdateStatus(titleId, true);
 					else
@@ -142,6 +139,25 @@ void InstalledList::refresh()
 			}
 		}
 	}
+
+	// Remove all system titles that have no Update or DLC
+	for (auto it = m_installedItems.begin(); it != m_installedItems.end();)
+	{
+		size_t titleType = (*it)->getTitleId() >> 32;
+		if ((titleType != TitleKeys::SystemApplication && titleType != TitleKeys::SystemApplet) ||
+				((*it)->hasDLC() || (*it)->hasDLC()))
+			it++;
+		else
+			it = m_installedItems.erase(it);
+	}
+
+	// Sort alphabetically
+	std::sort(m_installedItems.begin(), m_installedItems.end(), [=](const std::unique_ptr<InstalledItem>& a, const std::unique_ptr<InstalledItem>& b)
+	{
+		return a->getAppItem()->getNormalizedTitle() < b->getAppItem()->getNormalizedTitle();
+	});
+
+	repositionItems();
 }
 
 void InstalledList::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) const
@@ -162,6 +178,12 @@ void InstalledList::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates stat
 
 void InstalledList::update(float delta)
 {
+#ifdef _3DS
+	FS_CardType type;
+	bool cardInserted;
+	if (m_cardInserted != (R_SUCCEEDED(FSUSER_CardSlotIsInserted(&cardInserted)) && cardInserted && R_SUCCEEDED(FSUSER_GetCardType(&type)) && type == CARD_CTR))
+		refresh();
+#endif
 	m_tweenManager.update(delta);
 }
 

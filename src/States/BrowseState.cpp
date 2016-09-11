@@ -78,7 +78,7 @@ void BrowseState::initialize()
 	m_textActiveDownloads.setOutlineThickness(1.f);
 	m_textActiveDownloads.setPosition(218.f, 3.f);
 
-	if (TitleKeys::getList().empty())
+	if (TitleKeys::getIds().empty())
 		m_textListEmpty.setString(_("No title keys found.\nMake sure you have keys in\n%s\n\nManually copy keys to the directory\nor check settings to enter a URL\nfor downloading title keys.", FREESHOP_DIR "/keys/"));
 	else
 		m_textListEmpty.setString(_("No cache entries found\nfor your title keys.\n\nTry refreshing cache in settings.\nIf that doesn't work, then your\ntitles simply won't work with\nfreeShop currently."));
@@ -354,7 +354,6 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 			}
 			case cpp3ds::Keyboard::B:
 				AppList::getInstance().filterBySearch("", m_textMatches);
-				AppList::getInstance().setSelectedIndex(0);
 				break;
 			case cpp3ds::Keyboard::X: {
 				auto app = AppList::getInstance().getSelected()->getAppItem();

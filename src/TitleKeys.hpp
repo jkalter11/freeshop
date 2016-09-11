@@ -17,11 +17,12 @@ public:
 		DLC = 0x4008C,
 		DSiWare = 0x48004,
 
+		SystemApplication = 0x40010,
 		SystemApplet = 0x40030,
 	};
 
 	static cpp3ds::Uint32 *get(cpp3ds::Uint64);
-	static std::map<cpp3ds::Uint64, cpp3ds::Uint32[4]> &getList();
+	static std::vector<cpp3ds::Uint64> &getIds();
 	static std::vector<cpp3ds::Uint64> getRelated(cpp3ds::Uint64 titleId, TitleType type);
 
 	static bool isValidUrl(const std::string &url, cpp3ds::String *errorOut);
