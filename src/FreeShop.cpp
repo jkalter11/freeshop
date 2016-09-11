@@ -7,7 +7,7 @@
 #include "States/SyncState.hpp"
 #include "States/BrowseState.hpp"
 #include "States/NewsState.hpp"
-#include "Config.hpp"
+#include "TitleKeys.hpp"
 #include "Util.hpp"
 #include "States/SleepState.hpp"
 #include "States/QrScannerState.hpp"
@@ -99,7 +99,7 @@ FreeShop::~FreeShop()
 		Result res = 0;
 		u8 hmac[0x20];
 		memset(hmac, 0, sizeof(hmac));
-		FS_MediaType mediaType = ((g_requestJump >> 32) & 0x8010) != 0 ? MEDIATYPE_NAND : MEDIATYPE_SD;
+		FS_MediaType mediaType = ((g_requestJump >> 32) == TitleKeys::DSiWare) ? MEDIATYPE_NAND : MEDIATYPE_SD;
 		if (R_SUCCEEDED(res = APT_PrepareToDoApplicationJump(0, g_requestJump, mediaType)))
 			res = APT_DoApplicationJump(0, 0, hmac);
 	}

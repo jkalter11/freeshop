@@ -518,7 +518,7 @@ bool AppInfo::processEvent(const cpp3ds::Event &event)
 						if (*accepted)
 						{
 #ifdef _3DS
-							FS_MediaType mediaType = ((m_appItem->getTitleId() >> 32) & 0x8010) != 0 ? MEDIATYPE_NAND : MEDIATYPE_SD;
+							FS_MediaType mediaType = ((m_appItem->getTitleId() >> 32) == TitleKeys::DSiWare) ? MEDIATYPE_NAND : MEDIATYPE_SD;
 							AM_DeleteTitle(mediaType, m_appItem->getTitleId());
 #endif
 							m_appItem->setInstalled(false);

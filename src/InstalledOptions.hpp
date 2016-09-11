@@ -6,6 +6,7 @@
 #include <cpp3ds/Window/Event.hpp>
 #include "TweenObjects.hpp"
 #include "States/BrowseState.hpp"
+#include "TitleKeys.hpp"
 
 namespace FreeShop {
 
@@ -43,6 +44,7 @@ private:
 	bool m_updatesInstalled;
 	bool m_dlcInstalled;
 
+	TitleKeys::TitleType m_titleType;
 #ifdef _3DS
 	FS_MediaType m_mediaType;
 #endif

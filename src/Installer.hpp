@@ -45,6 +45,7 @@ private:
 
 private:
 	cpp3ds::Uint64 m_titleId;
+	cpp3ds::Uint32 m_titleType;
 	int            m_currentContentIndex;
 	cpp3ds::Uint64 m_currentContentPosition;
 	cpp3ds::Mutex  m_mutex;

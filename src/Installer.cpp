@@ -39,6 +39,8 @@ Installer::Installer(cpp3ds::Uint64 titleId, int contentIndex)
 , m_currentContentIndex(-1)
 , m_currentContentPosition(0)
 {
+	m_titleType = titleId >> 32;
+	m_mediaType = (m_titleType == TitleKeys::DSiWare) ? MEDIATYPE_NAND : MEDIATYPE_SD;
 	if (contentIndex >= 0)
 	{
 		m_currentContentIndex = contentIndex;
@@ -46,7 +48,6 @@ Installer::Installer(cpp3ds::Uint64 titleId, int contentIndex)
 		m_isInstalling = true;
 		m_isInstallingContent = true;
 	}
-	m_mediaType = ((titleId >> 32) & 0x8010) != 0 ? MEDIATYPE_NAND : MEDIATYPE_SD;
 }
 
 Installer::~Installer()
@@ -146,7 +147,7 @@ bool Installer::installSeed(const void *seed)
 		}
 	}
 
-	m_errorStr = _("Need FW 9.6+, Seed failed: %016llX", m_result);
+	m_errorStr = _("Need FW 9.6+, Seed failed: %08lX", m_result);
 	return false;
 }
 

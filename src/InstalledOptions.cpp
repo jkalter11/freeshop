@@ -236,8 +236,10 @@ void InstalledOptions::setInstalledItem(InstalledItem *installedItem)
 		if (DownloadQueue::getInstance().isDownloading(id))
 			m_dlcAvailable = false;
 	update();
+
+	m_titleType = static_cast<TitleKeys::TitleType>(installedItem->getTitleId() >> 32);
 #ifdef _3DS
-	m_mediaType = ((installedItem->getTitleId() >> 32) & 0x8010) != 0 ? MEDIATYPE_NAND : MEDIATYPE_SD;
+	m_mediaType = (m_titleType == TitleKeys::DSiWare) ? MEDIATYPE_NAND : MEDIATYPE_SD;
 #endif
 }
 
