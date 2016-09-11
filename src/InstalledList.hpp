@@ -24,6 +24,7 @@ public:
 	virtual const cpp3ds::Vector2f &getScrollSize();
 
 	static bool isInstalled(cpp3ds::Uint64 titleId);
+	std::vector<std::unique_ptr<InstalledItem>> &getList() { return m_installedItems; }
 
 protected:
 	InstalledList();

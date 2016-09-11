@@ -625,19 +625,25 @@ void DownloadQueue::load()
 
 				uint64_t titleId = strtoull(strTitleId.c_str(), 0, 16);
 				uint64_t subTitleId = strtoull(strSubTitleId.c_str(), 0, 16);
+				size_t parentType = titleId >> 32;
 #ifdef _3DS
 				for (auto pendingTitleId : pendingTitleIds)
 					if (contentIndex == -1 || pendingTitleId == titleId || pendingTitleId == subTitleId)
 					{
-						for (auto& app : list)
-							if (app->getAppItem()->getTitleId() == titleId)
-								addDownload(app->getAppItem(), subTitleId, nullptr, contentIndex, progress);
-						break;
+#endif
+						// For system titles, the relevant AppItem won't be in AppList
+						if (parentType == TitleKeys::SystemApplet || parentType == TitleKeys::SystemApplication)
+							for (auto &app : InstalledList::getInstance().getList())
+							{
+								if (app->getTitleId() == titleId)
+									addDownload(app->getAppItem(), subTitleId, nullptr, contentIndex, progress);
+							}
+						else
+							for (auto &app : list)
+								if (app->getAppItem()->getTitleId() == titleId)
+									addDownload(app->getAppItem(), subTitleId, nullptr, contentIndex, progress);
+#ifdef _3DS
 					}
-#else
-				for (auto& app : list)
-					if (app->getAppItem()->getTitleId() == titleId)
-						addDownload(app->getAppItem(), subTitleId, nullptr, contentIndex, progress);
 #endif
 			}
 		}
