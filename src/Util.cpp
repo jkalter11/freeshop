@@ -88,6 +88,8 @@ std::string getCountryCode(int region)
 	std::string language = Config::get(Config::Language).GetString();
 	if (language == "auto")
 		language = cpp3ds::I18n::getInstance().getLangString(cpp3ds::I18n::getLanguage());
+	else if (language.size() > 2)
+		language = "en";
 
 	if (language == "en")
 		return (region & (1 << 1)) ? "US" : "GB";
