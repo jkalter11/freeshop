@@ -159,11 +159,15 @@ void AppList::processKeyRepeat()
 	if ((m_indexDelta != 1 || index % 4 != 3) && (m_indexDelta != -1 || index % 4 != 0))
 	{
 		int newIndex = index + m_indexDelta;
-		if (newIndex >= 0 && newIndex <= getVisibleCount())
-		{
+		if (newIndex < 0)
+			newIndex = 0;
+		if (newIndex >= getVisibleCount())
+			newIndex = getVisibleCount() - 1;
+
+		if (newIndex != index)
 			m_soundBlip.play(1);
-			setSelectedIndex(newIndex);
-		}
+
+		setSelectedIndex(newIndex);
 		m_clockKeyRepeat.restart();
 	}
 }
@@ -178,6 +182,7 @@ void AppList::setSortType(AppList::SortType sortType, bool ascending)
 void AppList::sort()
 {
 	setSelectedIndex(-1);
+	m_tweenManager.killAll();
 	std::sort(m_guiAppItems.begin(), m_guiAppItems.end(), [&](const std::unique_ptr<GUI::AppItem>& a, const std::unique_ptr<GUI::AppItem>& b)
 	{
 		if (a->isFilteredOut() != b->isFilteredOut())
