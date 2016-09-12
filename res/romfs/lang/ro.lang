@@ -326,7 +326,7 @@ Select All
 Selecteaza toate
 
 Select None
-Nu selecta nici unul
+Nu selecta nimic
 
 Name
 Nume
@@ -356,7 +356,7 @@ Auto-update freeShop
 Actualizare automata freeShop
 
 Refresh Cache
-Reimproaspata cache
+Re-incarca Cache
 
 Play sound when queue finishes
 Ruleaza sunetul cand lista se termina
@@ -371,7 +371,7 @@ Inchide dupa inactivitate la descarcare
 %d minute
 
 Use Defaults
-Foloseste Defaulturile
+Reseteaza
 
 HTTP Timeout: %.0fs
 HTTP Timeout: %.0fs
