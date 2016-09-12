@@ -64,8 +64,15 @@ void InstalledList::refresh()
 		while (retryCount-- > 0)
 			if (R_SUCCEEDED(AM_GetTitleList(nullptr, MEDIATYPE_GAME_CARD, 1, &cardTitleId)))
 			{
-				std::unique_ptr<InstalledItem> item(new InstalledItem(cardTitleId));
-				m_installedItems.emplace_back(std::move(item));
+				try
+				{
+					std::unique_ptr<InstalledItem> item(new InstalledItem(cardTitleId));
+					m_installedItems.emplace_back(std::move(item));
+				}
+				catch (int e)
+				{
+					//
+				}
 				break;
 			}
 			else
