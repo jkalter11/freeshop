@@ -173,13 +173,11 @@ void AppList::setSortType(AppList::SortType sortType, bool ascending)
 	m_sortType = sortType;
 	m_sortAscending = ascending;
 	sort();
-	reposition();
 }
 
 void AppList::sort()
 {
 	setSelectedIndex(-1);
-	m_tweenManager.killAll();
 	std::sort(m_guiAppItems.begin(), m_guiAppItems.end(), [&](const std::unique_ptr<GUI::AppItem>& a, const std::unique_ptr<GUI::AppItem>& b)
 	{
 		if (a->isFilteredOut() != b->isFilteredOut())
@@ -220,7 +218,6 @@ void AppList::sort()
 
 void AppList::filter()
 {
-	m_tweenManager.killAll();
 	// Region filter
 	// Also resets the filter state when no region filter is set.
 	if (m_filterRegions)
@@ -464,28 +461,12 @@ void AppList::filterBySearch(const std::string &searchTerm, std::vector<util3ds:
 	for (auto& item : m_guiAppItems)
 	{
 		item->setMatchTerm(searchTerm);
-		if (item->getMatchScore() > -99)
-		{
-			item->setVisible(true);
-			TweenEngine::Tween::to(*item, SCALE_XY, 0.3)
-				.target(1.f, 1.f)
-				.start(m_tweenManager);
-		}
-		else{
-			GUI::AppItem* itemptr = item.get();
-			TweenEngine::Tween::to(*item, SCALE_XY, 0.3)
-				.target(0.f, 0.f)
-				.setCallback(TweenEngine::TweenCallback::COMPLETE, [itemptr](TweenEngine::BaseTween *source) {
-					itemptr->setVisible(false);
-				})
-				.start(m_tweenManager);
-		}
+		item->setVisible(item->getMatchScore() > -99);
 	}
 
 	if (m_selectedIndex >= 0)
 		m_guiAppItems[m_selectedIndex]->deselect();
 	sort();
-	reposition();
 
 	int i = 0;
 	for (auto& textMatch : textMatches)
