@@ -19,7 +19,7 @@ Failed to install update: 0x%08lX
 Falha ao instalar a atualização: 0x%08lX
 
 Checking latest cache...
-Verificando cache mais recente...
+Verificando o cache mais recente...
 
 Downloading latest cache: %s...
 Baixando o cache mais recente: %s...
@@ -68,7 +68,7 @@ Tem certeza que quer continuar?
 # src/AppInfo.cpp
 #################
 No Screenshots
-Sem Screenshots
+Sem Capturas de Tela
 
 No game selected
 Nenhum jogo selecionado
@@ -86,7 +86,7 @@ Queued demo: %s
 Demo em fila: %s
 
 You are deleting this game,\nincluding all save data:\n\n%s
-Você está excluindo este jogo,\nincluindo todos os dados salvos:\n\n%s
+Você está excluindo este jogo,\nincluindo todos os dados de gravação:\n\n%s
 
 Deleted: %s
 Excluiu: %s
@@ -129,7 +129,7 @@ Installing ticket...
 Instalando bilhete...
 
 Installing seed...
-Instalando semente...
+Instalando semente...
 
 Installing TMD...
 Instalando TMD...
@@ -147,7 +147,7 @@ Installed
 Instalado
 
 Completed: %s
-Completado: %s
+Completado: %s
 
 Failed: %s
 Falhou: %s
@@ -243,7 +243,7 @@ Request timed out.\nTry again.
 A solicitação expirou.\nTente novamente.
 
 Invalid URL.
-URL inválida.
+URL inválido.
 
 # src/GUI/Settings.cpp
 ######################
@@ -317,13 +317,13 @@ Russian
 Russo
 
 Filter settings saved
-Configurações de filtro salvas
+Configurações do filtro salvas
 
 Cleared saved filter settings
-Configurações de filtro apagadas
+Configurações do filtro apagadas
 
 Select All
-Tudo
+Todos
 
 Select None
 Nenhum
@@ -389,7 +389,7 @@ View news (%s)
 Ver notícias (%s)
 
 Enable screen sleep after inactivity
-Ativar tela de descanso após de inatividade
+Ativar tela de descanso após inatividade
 
 Remote title key URL(s)
 URL(s) remotos de chaves de títulos

@@ -4,7 +4,7 @@ Waiting for internet connection... %.0fs
 Aguardando conexão de internet... %.0fs
 
 Fetching news for %s ...
-Buscando notícias para %s ...
+Procurando notícias para %s ...
 
 Loading game list...
 Carregando lista de jogos...
@@ -19,16 +19,16 @@ Failed to install update: 0x%08lX
 Falha ao instalar a atualização: 0x%08lX
 
 Checking latest cache...
-Verificando cache mais recente...
+Verificando a cache mais recente...
 
 Downloading latest cache: %s...
-Baixando o cache mais recente: %s...
+Transferindo a cache mais recente: %s...
 
 Extracting latest cache...
-Extraindo o cache mais recente...
+Extraindo a cache mais recente...
 
 Downloading title keys...
-Baixando as chaves de títulos...
+Transferindo as chaves de títulos...
 
 # src/States/BrowseState.cpp
 ############################
@@ -36,7 +36,7 @@ No title keys found.\nMake sure you have keys in\n%s\n\nManually copy keys to th
 Chaves de títulos não encontradas.\nVerifique se você tem as chaves em\n%s\n\nCopie manualmente as chaves para\no diretório ou verifique as configurações\npara digitar um URL para\no download das chaves.
 
 No cache entries found\nfor your title keys.\n\nTry refreshing cache in settings.\nIf that doesn't work, then your\ntitles simply won't work with\nfreeShop currently.
-Nenhuma entrada de cache encontrada\npara as suas chaves de títulos.\n\nTente atualizar o cache nas configurações.\nSe isso não funcionar, então seus\ntítulos simplesmente não irão funcionar\ncom a freeShop atualmente.
+Nenhuma entrada de cache encontrada\npara as suas chaves de títulos.\n\nTente atualizar a cache nas configurações.\nSe isso não funcionar, então seus\ntítulos simplesmente não irão funcionar\ncom a freeShop atualmente.
 
 Queued install: %s
 Instalação em fila: %s
@@ -68,7 +68,7 @@ Tem certeza que quer continuar?
 # src/AppInfo.cpp
 #################
 No Screenshots
-Sem Screenshots
+Sem Capturas de Ecrã
 
 No game selected
 Nenhum jogo selecionado
@@ -86,7 +86,7 @@ Queued demo: %s
 Demo em fila: %s
 
 You are deleting this game,\nincluding all save data:\n\n%s
-Você está excluindo este jogo,\nincluindo todos os dados salvos:\n\n%s
+Você está excluindo este jogo,\nincluindo todos os dados de gravação:\n\n%s
 
 Deleted: %s
 Excluiu: %s
@@ -243,7 +243,7 @@ Request timed out.\nTry again.
 A solicitação expirou.\nTente novamente.
 
 Invalid URL.
-URL inválida.
+URL inválido.
 
 # src/GUI/Settings.cpp
 ######################
@@ -269,7 +269,7 @@ Update
 Atualizar
 
 Download
-Baixar
+Transferir
 
 Other
 Outros
@@ -317,13 +317,13 @@ Russian
 Russo
 
 Filter settings saved
-Configurações de filtro salvas
+Configurações do filtro salvas
 
 Cleared saved filter settings
-Configurações de filtro apagadas
+Configurações do filtro apagadas
 
 Select All
-Tudo
+Todos
 
 Select None
 Nenhum
@@ -383,13 +383,13 @@ Language:
 Idioma:
 
 Auto-detect
-Auto Detecção
+Auto Deteção
 
 View news (%s)
 Ver notícias (%s)
 
 Enable screen sleep after inactivity
-Ativar tela de descanso após de inatividade
+Ativar ecrã de descanso após inatividade
 
 Remote title key URL(s)
 URL(s) remotos de chaves de títulos
