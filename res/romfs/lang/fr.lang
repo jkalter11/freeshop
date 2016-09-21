@@ -2,13 +2,13 @@
 # src/States/SyncState.cpp
 ##########################
 Waiting for internet connection... %.0fs
-En attente d'une connexion Internet... %.0fs
+En attente d'une connexion internet... %.0fs
 
 Fetching news for %s ...
 Récupération des nouvelles\ndonnées de %s ...
 
 Loading game list...
-Chargement de la liste de jeux...
+Chargement de la liste des jeux...
 
 Looking for freeShop update...
 Recherche d'une màj de freeShop...
@@ -95,7 +95,7 @@ Effacé : %s
 # src/Download.cpp
 ##################
 Waiting for internet...
-En attente d'une connexion Internet...
+En attente d'une connexion internet...
 
 Failed
 Échec
@@ -151,7 +151,7 @@ Failed: %s
 Échoué : %s
 
 Failed: Internet problem
-Échec : problème de connexion Internet
+Échec : problème de connexion internet
 
 Not enough space on NAND
 Pas assez d'espace sur la NAND
@@ -168,7 +168,7 @@ Game
 Jeu
 
 Updates
-Mise à jour
+Mises à jour
 
 DLC
 DLC
@@ -384,10 +384,10 @@ Auto-detect
 Détection auto
 
 View news (%s)
-Voir le changelog (%s)
+Voir news (%s)
 
 Enable screen sleep after inactivity
-Éteindre l'écran après un moment d'inactivité
+Mettre l'écran en veille après un moment d'inactivité
 
 Remote title key URL(s)
 URL(s) des title keys
