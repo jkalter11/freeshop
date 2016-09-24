@@ -1,7 +1,7 @@
 # src/States/SyncState.cpp
 ##########################
 Waiting for internet connection... %.0fs
-Esperando conexión de internet... %.0fs
+Esperando conexión a internet... %.0fs
 
 Fetching news for %s ...
 Buscando noticias para %s ...
@@ -33,13 +33,13 @@ Descargando las llaves de títulos...
 # src/States/BrowseState.cpp
 ############################
 No title keys found.\nMake sure you have keys in\n%s\n\nManually copy keys to the directory\nor check settings to enter a URL\nfor downloading title keys.
-No se encontraron llaves de títulos.\nVerifique que tenga las llaves en\n%s\n\nCopie manualmente las llaves al\no directorio o verifique las configuraciones\npara ingresar un URL para\no descargar las llaves.
+No se encontraron llaves de títulos.\nVerifique que tenga las llaves en\n%s\n\nCopie manualmente las llaves al\ndirectorio o verifique las configuraciones\npara ingresar una URL para\ndescargar las llaves.
 
 No cache entries found\nfor your title keys.\n\nTry refreshing cache in settings.\nIf that doesn't work, then your\ntitles simply won't work with\nfreeShop currently.
-No se encontraron entradas de caché\npara tus llaves de títulos.\n\nIntente atualizar el caché en configuraciones.\nSi eso no funciona, entonces\ntus títulos simplemente no funcionarán\ncon freeShop actualmente.
+No se encontraron entradas de caché\npara tus llaves de títulos.\n\nIntente actualizar el caché en configuraciones.\nSi eso no funciona, entonces\ntus títulos simplemente no funcionarán\nactualmente con freeShop.
 
 Queued install: %s
-Instalación en fila: %s
+Agregado a la cola: %s
 
 Already installed: %s
 Ya instalado: %s
@@ -53,7 +53,7 @@ Ya instalado: %s
  Cancelar
 
 Are you sure you want\nto continue?
-¿Está seguro de que quieres continuar?
+¿Está seguro de que quiere continuar?
 
 # src/States/NewsState.cpp
 ##########################
@@ -80,10 +80,10 @@ You are deleting the demo for\nthis title:\n\n%s
 Está borrando el demo de\neste título:\n\n%s
 
 Deleted demo: %s
-Demo borrado: %s
+Demo borrada: %s
 
 Queued demo: %s
-Demo en fila: %s
+Demo en cola: %s
 
 You are deleting this game,\nincluding all save data:\n\n%s
 Está borrando este juego,\nincluyendo todos sus datos guardados:\n\n%s
@@ -94,10 +94,10 @@ Borrado: %s
 # src/Download.cpp
 ##################
 Waiting for internet...
-Esperando por internet...
+Esperando conexión a internet...
 
 Failed
-Fallido
+Falló
 
 Retry attempts exceeded
 Reintentos excedidos
@@ -106,10 +106,10 @@ Retrying... %d
 Intentando de nuevo... %d
 
 Queued
-En fila
+En cola
 
 %s\n\nAre you sure you want to cancel\nthis installation and lose all progress?
-%s\n\n¿Está seguro de que quiere\ncancelar esta instalación y\nperder todo progreso?
+%s\n\n¿Está seguro de que quiere\ncancelar esta instalación y\nperder todo el progreso?
 
 Canceling...
 Cancelando...
@@ -147,10 +147,10 @@ Completed: %s
 Completado: %s
 
 Failed: %s
-Fallido: %s
+Error: %s
 
 Failed: Internet problem
-Fallido: Problema de internet
+Error: Problema de internet
 
 Not enough space on NAND
 No hay suficiente espacio en la NAND
@@ -159,7 +159,7 @@ Not enough space on SD
 No hay suficiente espacio en la SD
 
 Wrong title key
-Llave de título equivocado
+Llave de título equivocada
 
 # src/InstalledOptions.cpp
 #########################
@@ -173,13 +173,13 @@ DLC
 DLC
 
 You are deleting updates for\nthis title:\n\n%s
-Está borrando actualizaciones para\neste título:\n\n%s
+Está borrando las actualizaciones para\neste título:\n\n%s
 
 Deleted update: %s
 Actualización borrada: %s
 
 Queued update: %s
-Actualización en fila: %s
+Actualización en cola: %s
 
 You are deleting DLC for\nthis title:\n\n%s
 Está borrando el DLC para\neste título:\n\n%s
@@ -188,7 +188,7 @@ Deleted DLC: %s
 DLC borrado: %s
 
 Queued DLC: %s
-DLC en fila: %s
+DLC en cola: %s
 
 # src/Installer.cpp
 ###################
@@ -199,19 +199,19 @@ Failed to get seed: HTTP %d
 Fallo al obtener la semilla: HTTP %d
 
 Need FW 9.6+, Seed failed: %016llX
-Necesita de FW 9.6+, Semilla fallida: %016llX
+Necesita un FW 9.6+, Semilla fallida: %016llX
 
 Failed to start: 0x%08lX
 Fallo al iniciar: 0x%08lX
 
 Failed to resume: 0x%08lX
-Fallo al resumir: 0x%08lX
+Fallo al reanudar: 0x%08lX
 
 Failed to suspend: 0x%08lX
-Fallo al suspeder: 0x%08lX
+Fallo al suspender: 0x%08lX
 
 Failed to commit title: 0x%08lX
-Fallo al confirmar título: 0x%08lX
+Fallo al consolidar el título: 0x%08lX
 
 Failed to finalize TMD: 0x%08lX
 Fallo al finalizar TMD: 0x%08lX
@@ -231,7 +231,7 @@ Fallo al instalar el contenido: 0x%08lX
 # src/TitleKeys.cpp
 ###################
 Failed.\n\nHTTP Status: %d
-Fallido.\n\nEstado de HTTP: %d
+Error.\n\nEstado de HTTP: %d
 
 Invalid title key format.
 Formato de llave inválido.
@@ -317,7 +317,7 @@ Filter settings saved
 Configuraciones de filtro guardadas
 
 Cleared saved filter settings
-Configuraciones de filtro apagadas
+Configuraciones de filtro borradas
 
 Select All
 Seleccionar todo
@@ -338,7 +338,7 @@ Vote Count
 Conteo de Votos
 
 Release Date
-Data de Lanzamiento
+Fecha de Lanzamiento
 
 Ascending
 Ascendente
@@ -347,7 +347,7 @@ Descending
 Descendente
 
 Auto-update title keys from URL
-Actualizar las llaves de título con URL
+Actualizar las llaves de título desde URL
 
 Auto-update freeShop
 Actualizar freeShop automáticamente
@@ -356,7 +356,7 @@ Refresh Cache
 Actualizar Caché
 
 Play sound when queue finishes
-Reproducir sonido cuando la fila termine
+Reproducir sonido cuando la cola termine
 
 Power off after download inactivity
 Apagar después de inactividad en descargas
@@ -371,7 +371,7 @@ Use Defaults
 Predeterminado
 
 HTTP Timeout: %.0fs
-HTTP tiempo límite: %.0fs
+HTTP Timeout: %.0fs
 
 Buffer size: %u KB
 Tamaño de buffer: %u KB
@@ -386,7 +386,7 @@ View news (%s)
 Ver noticias (%s)
 
 Enable screen sleep after inactivity
-Activar modo de sueño después de inactividad
+Activar modo de suspensión después de inactividad
 
 Remote title key URL(s)
 URL(s) remotos de llaves de título
