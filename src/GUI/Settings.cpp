@@ -763,6 +763,7 @@ void Settings::fillOtherPage(Gwen::Controls::Base *page)
 	m_listboxLanguages->AddItem("Português", "pt");
 	m_listboxLanguages->AddItem("Italiano", "it");
 	m_listboxLanguages->AddItem("Nederlands", "nl");
+	m_listboxLanguages->AddItem("Polski", "pl");
 	m_listboxLanguages->AddItem("русский", "ru");
 	m_listboxLanguages->AddItem("Magyar", "hu");
 	m_listboxLanguages->AddItem("Română", "ro");
