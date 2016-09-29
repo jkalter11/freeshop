@@ -104,8 +104,8 @@ set(CPP3DS_ARM_FLAGS "-O2 -march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 set(CPP3DS_EMU_FLAGS "-O0")
 set(TEST_FLAGS "-O0 -coverage")
 
-set(CPP3DS_ARM_LIBS cpp3ds-window cpp3ds-network cpp3ds-graphics cpp3ds-audio cpp3ds-system citro3d ctru freetype png z vorbisenc vorbisfile vorbis ogg archive)
-set(CPP3DS_EMU_LIBS cpp3ds-emu sfml-graphics sfml-window sfml-system sfml-audio openal GLEW GL jpeg freetype vorbisenc vorbisfile vorbis ogg ssl crypto pthread archive)
+set(CPP3DS_ARM_LIBS cpp3ds-window cpp3ds-network cpp3ds-graphics cpp3ds-audio cpp3ds-system citro3d ctru freetype png z vorbisidec ogg archive)
+set(CPP3DS_EMU_LIBS cpp3ds-emu sfml-graphics sfml-window sfml-system sfml-audio openal GLEW GL jpeg freetype vorbisfile vorbis ogg ssl crypto pthread archive)
 
 add_subdirectory(${CPP3DS}/cmake/template_arm build/arm)
 if(BUILD_EMULATOR)
