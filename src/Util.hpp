@@ -10,7 +10,7 @@ namespace FreeShop
 bool pathExists(const char* path, bool escape = true);
 void makeDirectory(const char *dir, mode_t mode = 0777);
 int removeDirectory(const char *path, bool onlyIfEmpty = false);
-std::string getCountryCode(int region = 0xFFFFFFFF);
+std::string getCountryCode(int region);
 
 } // namespace FreeShop
 

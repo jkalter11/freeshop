@@ -88,23 +88,30 @@ std::string getCountryCode(int region)
 	std::string language = Config::get(Config::Language).GetString();
 	if (language == "auto")
 		language = cpp3ds::I18n::getInstance().getLangString(cpp3ds::I18n::getLanguage());
-	else if (language.size() > 2)
-		language = "en";
 
-	if (language == "en")
-		return (region & (1 << 1)) ? "US" : "GB";
-	if (language == "pt")
-		return (region & (1 << 1)) ? "BR" : "PT";
-	else if (language == "es")
-		return (region & (1 << 1)) ? "MX" : "ES";
-	else if (language == "zh")
+	if (language == "zh")
 		return "HK";
+	else if (region == 0)
+	{
+		if (language == "en") return "US";
+		else if (language == "pt_PT") return "PT";
+		else if (language == "pt_BR") return "BR";
+		else if (language == "es_US") return "MX";
+		else if (language == "es_ES") return "ES";
+	}
 	else
 	{
-		for (auto &c: language)
-			c = toupper(c);
-		return language;
+		if (language == "en")
+			return (region & (1 << 1)) ? "US" : "GB";
+		else if (language == "pt_PT" || language == "pt_BR")
+			return (region & (1 << 1)) ? "BR" : "PT";
+		else if (language == "es_US" || language == "es_ES")
+			return (region & (1 << 1)) ? "MX" : "ES";
 	}
+
+	for (auto &c: language)
+		c = toupper(c);
+	return language;
 }
 
 } // namespace FreeShop

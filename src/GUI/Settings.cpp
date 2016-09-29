@@ -37,7 +37,7 @@ Settings::Settings(Gwen::Skin::TexturedBase *skin,  State *state)
 	m_tabControl->SetBounds(0, 40, 320, 200);
 
 	// Get country code for language-specific fetching
-	m_countryCode = getCountryCode();
+	m_countryCode = getCountryCode(0);
 
 	// Filters
 	Base *page = m_tabControl->AddPage(_("Filter").toAnsiString())->GetPage();
