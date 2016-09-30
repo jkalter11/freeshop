@@ -85,9 +85,19 @@ int removeDirectory(const char *path, bool onlyIfEmpty)
 
 std::string getCountryCode(int region)
 {
+
 	std::string language = Config::get(Config::Language).GetString();
 	if (language == "auto")
 		language = cpp3ds::I18n::getInstance().getLangString(cpp3ds::I18n::getLanguage());
+
+#ifdef _3DS
+	u8 consoleRegion;
+	CFGU_SecureInfoGetRegion(&consoleRegion);
+	if (language == "pt")
+		language = (consoleRegion == CFG_REGION_USA) ? "pt_BR" : "pt_PT";
+	else if (language == "es")
+		language = (consoleRegion == CFG_REGION_USA) ? "es_US" : "es_ES";
+#endif
 
 	if (language == "zh")
 		return "HK";

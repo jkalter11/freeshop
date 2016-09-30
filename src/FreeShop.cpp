@@ -65,22 +65,21 @@ FreeShop::FreeShop()
 
 	Config::loadFromFile();
 
-	// If language is not set to auto-detect, load chosen language
+	// Load chosen language, correct auto-detect with separate Spanish/Portuguese
 	std::string langCode = Config::get(Config::Language).GetString();
+#ifdef _3DS
+	u8 region;
+	CFGU_SecureInfoGetRegion(&region);
+	if (langCode == "auto")
+	{
+		if (cpp3ds::I18n::getLanguage() == cpp3ds::Language::Spanish)
+			langCode = (region == CFG_REGION_USA) ? "es_US" : "es_ES";
+		else if (cpp3ds::I18n::getLanguage() == cpp3ds::Language::Portuguese)
+			langCode = (region == CFG_REGION_USA) ? "pt_BR" : "pt_PT";
+	}
+#endif
 	if (langCode != "auto")
-		for (int i = 0; i < cpp3ds::Language::COUNT; ++i)
-		{
-			// Try to first load by language and not file. This is so
-			// it can be better known later for fetching game data in proper language
-			auto language = static_cast<cpp3ds::Language>(i);
-			if (langCode == cpp3ds::I18n::getInstance().getLangString(language))
-			{
-				cpp3ds::I18n::loadLanguage(language);
-				break;
-			}
-			else if (i == cpp3ds::Language::COUNT - 1)
-				cpp3ds::I18n::loadLanguageFile(_("lang/%s.lang", langCode.c_str()));
-		}
+		cpp3ds::I18n::loadLanguageFile(_("lang/%s.lang", langCode.c_str()));
 
 	// If override.lang exists, use it instead of chosen language
 	std::string testLangFilename(FREESHOP_DIR "/override.lang");
