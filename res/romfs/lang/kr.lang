@@ -109,7 +109,7 @@ Queued
 대기중
 
 %s\n\nAre you sure you want to cancel\nthis installation and lose all progress?
-%s\n\n설치하던 것을 취소하고\n진행하던 것을 지우시겠습까?\n
+%s\n\n설치하던 것을 취소하고\n진행하던 것을 지우시겠습니까?\n
 
 Canceling...
 취소중...
@@ -176,7 +176,7 @@ DLC
 DLC
 
 You are deleting updates for\nthis title:\n\n%s
-이 타이틀의 \업데이트를 지우려고 합니다:\n\n%s
+이 타이틀의 업데이트를 지우려고 합니다:\n\n%s
 
 Deleted update: %s
 업데이트 지움: %s
@@ -278,7 +278,7 @@ Other
 (확인해본적 없음)
 
 (Last checked: %s)
-(마지막으로 확인한: %s)
+(마지막으로 확인함: %s)
 
 Japan
 일본
@@ -290,16 +290,16 @@ Europe
 유럽
 
 Australia
-Australia
+호주
 
 China
-China
+중국
 
 Korea
-Korea
+한국
 
 Taiwan
-Taiwan
+대만
 
 English
 영어
@@ -362,10 +362,10 @@ Descending
 내림차순
 
 Auto-update title keys from URL
-URL을 통해 title key 자동업데이트 하기
+URL을 통해 title key 자동업데이트:
 
 Auto-update freeShop
-freeShop 자동업데이트 하기
+freeShop 자동업데이트
 
 Refresh Cache
 캐시 새로고침
