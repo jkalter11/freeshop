@@ -769,7 +769,7 @@ void Settings::fillOtherPage(Gwen::Controls::Base *page)
 		case CFG_REGION_TWN:
 			m_listboxLanguages->AddItem("简体中文", "zh");
 			m_listboxLanguages->AddItem("繁體中文", "tw");
-			break;
+			// Fall through
 		default:
 			m_listboxLanguages->AddItem("日本語", "jp");
 	}
