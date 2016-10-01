@@ -151,8 +151,7 @@ void Settings::saveToConfig()
 
 	Config::set(Config::SleepMode, m_checkboxSleep->Checkbox()->IsChecked());
 	auto language = m_listboxLanguages->GetSelectedRow();
-	if (language)
-		Config::set(Config::Language, language->GetName().c_str());
+	Config::set(Config::Language, language ? language->GetName().c_str() : "auto");
 }
 
 void Settings::loadConfig()
@@ -386,7 +385,7 @@ void Settings::fillFilterPlatforms(Gwen::Controls::Base *parent)
 
 void Settings::fillFilterRegions(Gwen::Controls::Base *parent)
 {
-	for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < 7; ++i)
 	{
 		cpp3ds::String strRegion;
 		int region = 1 << i;
@@ -397,12 +396,13 @@ void Settings::fillFilterRegions(Gwen::Controls::Base *parent)
 			if (app->getAppItem()->getRegions() & region)
 				count++;
 
-		if (i == 0)
-			strRegion = _("Japan");
-		else if (i == 1)
-			strRegion = _("USA");
-		else
-			strRegion = _("Europe");
+		if (i == 0) strRegion = _("Japan");
+		else if (i == 1) strRegion = _("USA");
+		else if (i == 2) strRegion = _("Europe");
+		else if (i == 3) strRegion = _("Australia");
+		else if (i == 4) strRegion = _("China");
+		else if (i == 5) strRegion = _("Korea");
+		else strRegion = _("Taiwan");
 
 		auto labelCount = new Label(parent);
 		labelCount->SetText(_("%d", count).toAnsiString());
@@ -755,19 +755,41 @@ void Settings::fillOtherPage(Gwen::Controls::Base *page)
 	m_listboxLanguages = new ListBox(page);
 	m_listboxLanguages->SetBounds(0, 60, 100, 100);
 	m_listboxLanguages->AddItem(_("Auto-detect").toAnsiString(), "auto");
-	m_listboxLanguages->AddItem("日本語", "jp");
+
+	// Only show Korean/Chinese on their respective region consoles.
+	// Other consoles don't have the necessary system font, so it looks bad.
+#ifdef _3DS
+	u8 region;
+	CFGU_SecureInfoGetRegion(&region);
+	switch (region) {
+		case CFG_REGION_KOR:
+			m_listboxLanguages->AddItem("한국어",  "kr");
+			break;
+		case CFG_REGION_CHN:
+		case CFG_REGION_TWN:
+			m_listboxLanguages->AddItem("简体中文", "zh");
+			m_listboxLanguages->AddItem("繁體中文", "tw");
+			break;
+		default:
+			m_listboxLanguages->AddItem("日本語", "jp");
+	}
+#endif
+
 	m_listboxLanguages->AddItem("English", "en");
 	m_listboxLanguages->AddItem("Français", "fr");
 	m_listboxLanguages->AddItem("Deutsche", "de");
-	m_listboxLanguages->AddItem("Español", "es");
-	m_listboxLanguages->AddItem("Português", "pt");
+	m_listboxLanguages->AddItem("Español US", "es_US");
+	m_listboxLanguages->AddItem("Español ES", "es_ES");
+	m_listboxLanguages->AddItem("Português BR", "pt_BR");
+	m_listboxLanguages->AddItem("Português PT", "pt_PT");
 	m_listboxLanguages->AddItem("Italiano", "it");
 	m_listboxLanguages->AddItem("Nederlands", "nl");
-	m_listboxLanguages->AddItem("Polski", "pl");
 	m_listboxLanguages->AddItem("русский", "ru");
+	m_listboxLanguages->AddItem("Polski", "pl");
 	m_listboxLanguages->AddItem("Magyar", "hu");
 	m_listboxLanguages->AddItem("Română", "ro");
 	m_listboxLanguages->AddItem("Ελληνικά", "gr");
+	m_listboxLanguages->AddItem("Türkçe", "tr");
 	m_listboxLanguages->onRowSelected.Add(this, &Settings::languageChange);
 
 	auto newsButton = new Button(page);
