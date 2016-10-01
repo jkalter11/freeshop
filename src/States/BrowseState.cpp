@@ -44,7 +44,8 @@ BrowseState::BrowseState(StateStack& stack, Context& context, StateCallback call
 #else
 	m_threadInitialize.setRelativePriority(1);
 	m_threadInitialize.launch();
-	m_threadMusic.setRelativePriority(1);
+	m_threadMusic.setRelativePriority(-1);
+	m_threadMusic.setAffinity(-1);
 	m_threadMusic.launch();
 #endif
 }
@@ -101,11 +102,9 @@ void BrowseState::initialize()
 		text.useSystemFont();
 	}
 
-	m_soundBufferIntro.loadFromFile(FREESHOP_DIR "/shop-intro.ogg");
-	m_soundBufferLoop.loadFromFile(FREESHOP_DIR "/shop-loop.ogg");
-	m_soundIntro.setBuffer(m_soundBufferIntro);
-	m_soundLoop.setBuffer(m_soundBufferLoop);
-	m_soundLoop.setLoop(true);
+	m_musicIntro.openFromFile(FREESHOP_DIR "/shop-intro.ogg");
+	m_musicLoop.openFromFile(FREESHOP_DIR "/shop-loop.ogg");
+	m_musicLoop.setLoop(true);
 
 	m_scrollbarInstalledList.setPosition(314.f, 30.f);
 	m_scrollbarInstalledList.setDragRect(cpp3ds::IntRect(0, 30, 320, 210));
@@ -471,11 +470,13 @@ void BrowseState::playMusic()
 {
 	while (!g_syncComplete || !g_browserLoaded)
 		cpp3ds::sleep(cpp3ds::milliseconds(50));
+	m_musicLoop.play();
+	m_musicLoop.pause();
+	m_musicIntro.play();
 	cpp3ds::Clock clock;
-	m_soundIntro.play(0);
-	while (clock.getElapsedTime() < m_soundBufferIntro.getDuration())
+	while (clock.getElapsedTime() < m_musicIntro.getDuration())
 		cpp3ds::sleep(cpp3ds::milliseconds(5));
-	m_soundLoop.play(0);
+	m_musicLoop.play();
 }
 
 } // namespace FreeShop

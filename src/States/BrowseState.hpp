@@ -77,10 +77,8 @@ private:
 	cpp3ds::Sound  m_soundClick;
 	cpp3ds::Sound  m_soundLoading;
 
-	cpp3ds::SoundBuffer m_soundBufferIntro;
-	cpp3ds::SoundBuffer m_soundBufferLoop;
-	cpp3ds::Sound m_soundIntro;
-	cpp3ds::Sound m_soundLoop;
+	cpp3ds::Music m_musicIntro;
+	cpp3ds::Music m_musicLoop;
 	cpp3ds::Thread m_threadMusic;
 
 	// Keyboard
