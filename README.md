@@ -14,4 +14,4 @@ Open source eShop clone for the Nintendo 3DS. Allows you to browse and install t
 
 ### Credit & Thanks
 
-All the people that helped make this possible [listed here](/Cruel/freeShop/blob/master/CREDITS.md).
+All the people that helped make this possible [listed here](https://github.com/Cruel/freeShop/blob/master/CREDITS.md).
