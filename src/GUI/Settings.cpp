@@ -254,10 +254,15 @@ const cpp3ds::Vector2f &Settings::getPosition() const
 
 void Settings::fillFilterGenres(Gwen::Controls::Base *parent)
 {
+	// Use English instead of Chinese when fetching genre data (Chinese lacks most genres)
+	std::string countryCode = m_countryCode;
+	if (countryCode == "HK" || countryCode == "TW")
+		countryCode = "GB";
+
 	std::string jsonFilename = _(FREESHOP_DIR "/cache/genres.%s.json", m_countryCode.c_str());
 	if (!pathExists(jsonFilename.c_str()))
 	{
-		Download download(_("https://samurai.ctr.shop.nintendo.net/samurai/ws/%s/genres/?shop_id=1", m_countryCode.c_str()), jsonFilename);
+		Download download(_("https://samurai.ctr.shop.nintendo.net/samurai/ws/%s/genres/?shop_id=1", countryCode.c_str()), jsonFilename);
 		download.setField("Accept", "application/json");
 		download.run();
 	}
@@ -320,10 +325,15 @@ void Settings::fillFilterGenres(Gwen::Controls::Base *parent)
 
 void Settings::fillFilterPlatforms(Gwen::Controls::Base *parent)
 {
+	// Use English instead of Chinese when fetching platform data (doesn't exist in Chinese)
+	std::string countryCode = m_countryCode;
+	if (countryCode == "HK" || countryCode == "TW")
+		countryCode = "GB";
+
 	std::string jsonFilename = _(FREESHOP_DIR "/cache/platforms.%s.json", m_countryCode.c_str());
 	if (!pathExists(jsonFilename.c_str()))
 	{
-		Download download(_("https://samurai.ctr.shop.nintendo.net/samurai/ws/%s/platforms/?shop_id=1", m_countryCode.c_str()), jsonFilename);
+		Download download(_("https://samurai.ctr.shop.nintendo.net/samurai/ws/%s/platforms/?shop_id=1", countryCode.c_str()), jsonFilename);
 		download.setField("Accept", "application/json");
 		download.run();
 	}
