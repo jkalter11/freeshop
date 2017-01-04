@@ -190,7 +190,7 @@ void SyncState::sync()
 	}
 #endif
 
-	if (!pathExists(FREESHOP_DIR "/news/" FREESHOP_VERSION ".txt") || Config::get(Config::Version).GetString() != FREESHOP_VERSION)
+	if (!pathExists(FREESHOP_DIR "/news/" FREESHOP_VERSION ".txt") || std::string(FREESHOP_VERSION) != Config::get(Config::Version).GetString())
 	{
 		Config::set(Config::Version, FREESHOP_VERSION);
 		Config::set(Config::ShowNews, true);
