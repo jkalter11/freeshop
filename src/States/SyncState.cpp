@@ -190,6 +190,12 @@ void SyncState::sync()
 	}
 #endif
 
+	if (!pathExists(FREESHOP_DIR "/news/" FREESHOP_VERSION ".txt") || Config::get(Config::Version).GetString() != FREESHOP_VERSION)
+	{
+		Config::set(Config::Version, FREESHOP_VERSION);
+		Config::set(Config::ShowNews, true);
+	}
+
 	updateCache();
 	updateTitleKeys();
 
@@ -197,7 +203,7 @@ void SyncState::sync()
 	{
 		setStatus(_("Fetching news for %s ...", FREESHOP_VERSION));
 		std::string url = _("https://notabug.org/btucker/freeShop/raw/master/news/%s.txt", FREESHOP_VERSION).toAnsiString();
-		Download download(url, FREESHOP_DIR "/news.txt");
+		Download download(url, FREESHOP_DIR "/news/" FREESHOP_VERSION ".txt");
 		download.run();
 	}
 

@@ -14,6 +14,7 @@ class Config {
 public:
 	// See string deifnitions in Config.coo
 	enum Key {
+		Version,
 		CacheVersion,
 		TriggerUpdateFlag,
 		ShowNews,

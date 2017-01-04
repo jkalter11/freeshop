@@ -52,7 +52,7 @@ NewsState::NewsState(StateStack &stack, Context &context, StateCallback callback
 							 std::round((m_buttonOkText.getLocalBounds().top + m_buttonOkText.getLocalBounds().height) / 2));
 
 	cpp3ds::FileInputStream file;
-	if (file.open(FREESHOP_DIR "/news.txt"))
+	if (file.open(FREESHOP_DIR "/news/" FREESHOP_VERSION ".txt"))
 	{
 		std::string text;
 		text.resize(file.getSize());

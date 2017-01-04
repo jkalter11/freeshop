@@ -9,6 +9,7 @@
 namespace {
 	// Matches with Config::Key enum in Config.hpp
 	const char *keyStrings[] = {
+		"version",
 		"cache_version",
 		"trigger_update",
 		"show_news",
@@ -92,6 +93,7 @@ void Config::loadDefaults()
 	if (!m_json.IsObject())
 		m_json.SetObject();
 
+	ADD_DEFAULT(Version, "");
 	ADD_DEFAULT(CacheVersion, "");
 	ADD_DEFAULT(TriggerUpdateFlag, false);
 	ADD_DEFAULT(ShowNews, true);
