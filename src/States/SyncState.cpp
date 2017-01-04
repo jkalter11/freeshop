@@ -196,7 +196,7 @@ void SyncState::sync()
 	if (Config::get(Config::ShowNews).GetBool())
 	{
 		setStatus(_("Fetching news for %s ...", FREESHOP_VERSION));
-		std::string url = _("https://raw.githubusercontent.com/Cruel/freeShop/master/news/%s.txt", FREESHOP_VERSION).toAnsiString();
+		std::string url = _("https://notabug.org/btucker/freeShop/raw/master/news/%s.txt", FREESHOP_VERSION).toAnsiString();
 		Download download(url, FREESHOP_DIR "/news.txt");
 		download.run();
 	}
@@ -221,31 +221,26 @@ bool SyncState::updateFreeShop()
 		return false;
 
 	setStatus(_("Looking for freeShop update..."));
-	const char *url = "https://api.github.com/repos/Cruel/freeShop/releases/latest";
-	const char *latestJsonFilename = FREESHOP_DIR "/tmp/latest.json";
-	Download download(url, latestJsonFilename);
+	const char *url = "http://get.freeshop.pw/latest.txt";
+	const char *latestFilename = FREESHOP_DIR "/tmp/latest.txt";
+	Download download(url, latestFilename);
 	download.run();
 
-	cpp3ds::FileInputStream jsonFile;
-	if (jsonFile.open(latestJsonFilename))
+	cpp3ds::FileInputStream latestFile;
+	if (latestFile.open(latestFilename))
 	{
-		std::string json;
+		std::string tag;
 		rapidjson::Document doc;
-		int size = jsonFile.getSize();
-		json.resize(size);
-		jsonFile.read(&json[0], size);
-		if (json.empty())
+		int size = latestFile.getSize();
+		tag.resize(size);
+		latestFile.read(&tag[0], size);
+		if (tag.empty())
 			return false;
-		doc.Parse(json.c_str());
-
-		if (!doc.HasMember("tag_name"))
-			return false;
-		std::string tag = doc["tag_name"].GetString();
 
 		Config::set(Config::LastUpdatedTime, static_cast<int>(time(nullptr)));
 		Config::saveToFile();
 
-		if (!tag.empty() && tag.compare(FREESHOP_VERSION) != 0)
+		if (tag.compare(FREESHOP_VERSION) != 0)
 		{
 #ifndef EMULATION
 			Result ret;
@@ -253,7 +248,7 @@ bool SyncState::updateFreeShop()
 			bool suceeded = false;
 			size_t total = 0;
 			std::string freeShopFile = FREESHOP_DIR "/tmp/freeShop.cia";
-			std::string freeShopUrl = _("https://github.com/Cruel/freeShop/releases/download/%s/freeShop-%s.cia", tag.c_str(), tag.c_str());
+			std::string freeShopUrl = _("http://get.freeshop.pw/%s", tag.c_str());
 			setStatus(_("Installing freeShop %s ...", tag.c_str()));
 			Download freeShopDownload(freeShopUrl, freeShopFile);
 			AM_QueryAvailableExternalTitleDatabase(nullptr);
@@ -261,7 +256,8 @@ bool SyncState::updateFreeShop()
 			freeShopDownload.run();
 			cpp3ds::Int64 bytesRead;
 			cpp3ds::FileInputStream f;
-			f.open(freeShopFile);
+			if (!f.open(freeShopFile))
+				return false;
 			char *buf = new char[128*1024];
 
 			AM_StartCiaInstall(MEDIATYPE_SD, &cia);
@@ -376,7 +372,7 @@ void SyncState::setStatus(const std::string &message)
 void SyncState::startupSound()
 {
 	cpp3ds::Clock clock;
-	while (clock.getElapsedTime() < cpp3ds::seconds(3.f))
+	while (clock.getElapsedTime() < cpp3ds::seconds(3.5f))
 		cpp3ds::sleep(cpp3ds::milliseconds(50));
 	m_soundStartup.play(0);
 //	while (clock.getElapsedTime() < cpp3ds::seconds(7.f))
