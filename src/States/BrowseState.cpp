@@ -270,6 +270,9 @@ bool BrowseState::update(float delta)
 
 bool BrowseState::processEvent(const cpp3ds::Event& event)
 {
+	if (event.type == cpp3ds::Event::SliderVolumeChanged)
+		return true;
+
 	SleepState::clock.restart();
 	clockDownloadInactivity.restart();
 
