@@ -50,6 +50,9 @@ BrowseState::BrowseState(StateStack& stack, Context& context, StateCallback call
 
 BrowseState::~BrowseState()
 {
+	m_settingsGUI->saveToConfig();
+	Config::saveToFile();
+
 	if (m_settingsGUI)
 		delete m_settingsGUI;
 	if (m_gwenSkin)

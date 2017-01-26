@@ -102,7 +102,6 @@ FreeShop::FreeShop()
 FreeShop::~FreeShop()
 {
 	delete m_stateStack;
-	Config::saveToFile();
 
 #ifdef _3DS
 	if (g_requestJump != 0)
