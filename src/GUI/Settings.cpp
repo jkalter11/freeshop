@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include <cpp3ds/System/FileSystem.hpp>
 #include <cmath>
+#include <dirent.h>
+#include <stdlib.h>
 #include "Settings.hpp"
 #include "../Download.hpp"
 #include "../Util.hpp"
@@ -48,13 +50,13 @@ Settings::Settings(Gwen::Skin::TexturedBase *skin,  State *state)
 	m_buttonFilterSave = new Button(page);
 	m_buttonFilterSave->SetFont(L"fonts/fontawesome.ttf", 18, false);
 	m_buttonFilterSave->SetText("\uf0c7"); // Save floppy icon
-	m_buttonFilterSave->SetBounds(4, 140, 22, 22);
+	m_buttonFilterSave->SetBounds(0, 140, 22, 22);
 	m_buttonFilterSave->SetPadding(Gwen::Padding(0, 0, 0, 3));
 	m_buttonFilterSave->onPress.Add(this, &Settings::filterSaveClicked);
 	m_buttonFilterSaveClear = new Button(page);
 	m_buttonFilterSaveClear->SetFont(L"fonts/fontawesome.ttf", 18, false);
 	m_buttonFilterSaveClear->SetText("\uf014"); // Trash can icon
-	m_buttonFilterSaveClear->SetBounds(32, 140, 22, 22);
+	m_buttonFilterSaveClear->SetBounds(26, 140, 22, 22);
 	m_buttonFilterSaveClear->SetPadding(Gwen::Padding(0, 0, 0, 3));
 	m_buttonFilterSaveClear->onPress.Add(this, &Settings::filterClearClicked);
 
@@ -77,6 +79,9 @@ Settings::Settings(Gwen::Skin::TexturedBase *skin,  State *state)
 
 	page = m_tabControl->AddPage(_("Download").toAnsiString())->GetPage();
 	fillDownloadPage(page);
+
+	page = m_tabControl->AddPage(_("Music").toAnsiString())->GetPage();
+	fillMusicPage(page);
 
 	page = m_tabControl->AddPage(_("Other").toAnsiString())->GetPage();
 	fillOtherPage(page);
@@ -143,12 +148,19 @@ void Settings::saveToConfig()
 	}
 	Config::set(Config::KeyURLs, list);
 
+	// Download
 	Config::set(Config::DownloadTimeout, m_sliderTimeout->GetFloatValue());
 	Config::set(Config::DownloadBufferSize, static_cast<size_t>(std::ceil(m_sliderDownloadBufferSize->GetFloatValue())));
 	Config::set(Config::PlaySoundAfterDownload, m_checkboxPlaySound->Checkbox()->IsChecked());
 	Config::set(Config::PowerOffAfterDownload, m_checkboxPowerOff->Checkbox()->IsChecked());
 	Config::set(Config::PowerOffTime, static_cast<int>(strtol(m_comboPowerOffTime->GetSelectedItem()->GetName().c_str(), nullptr, 10)));
 
+	// Music
+	Config::set(Config::MusicMode, m_comboMusicMode->GetSelectedItem()->GetName().c_str());
+	auto selectedMusic = m_listboxMusicFiles->GetSelectedRow();
+	Config::set(Config::MusicFilename, selectedMusic ? selectedMusic->GetText(0).c_str() : "");
+
+	// Other
 	Config::set(Config::SleepMode, m_checkboxSleep->Checkbox()->IsChecked());
 	auto language = m_listboxLanguages->GetSelectedRow();
 	Config::set(Config::Language, language ? language->GetName().c_str() : "auto");
@@ -193,10 +205,20 @@ void Settings::loadConfig()
 	downloadTimeoutChanged(m_sliderTimeout);
 	downloadBufferSizeChanged(m_sliderDownloadBufferSize);
 
+	// Music
+	auto musicFileRows = m_listboxMusicFiles->GetChildren().front()->GetChildren();
+	for (auto& row : musicFileRows)
+		if (gwen_cast<Layout::TableRow>(row)->GetText(0) == Config::get(Config::MusicFilename).GetString())
+		{
+			m_listboxMusicFiles->SetSelectedRow(row, true);
+			break;
+		}
+	m_comboMusicMode->SelectItemByName(Config::get(Config::MusicMode).GetString());
+
 	// Other
 	m_checkboxSleep->Checkbox()->SetChecked(Config::get(Config::SleepMode).GetBool());
 	auto languageRows = m_listboxLanguages->GetChildren().front()->GetChildren();
-	for (auto row : languageRows)
+	for (auto& row : languageRows)
 		if (row->GetName() == Config::get(Config::Language).GetString())
 		{
 			m_listboxLanguages->SetSelectedRow(row, true);
@@ -756,6 +778,43 @@ void Settings::downloadBufferSizeChanged(Gwen::Controls::Base *base)
 	m_labelDownloadBufferSize->SetText(_("Buffer size: %u KB", static_cast<size_t>(std::ceil(slider->GetFloatValue()))).toAnsiString());
 }
 
+void Settings::fillMusicPage(Gwen::Controls::Base *page)
+{
+	m_comboMusicMode = new ComboBox(page);
+	m_comboMusicMode->Dock(Gwen::Pos::Top);
+
+	m_comboMusicMode->AddItem(_("Disable music"), "disable");
+	m_comboMusicMode->AddItem(_("Play eShop music"), "eshop");
+	m_comboMusicMode->AddItem(_("Play random track"), "random");
+	m_comboMusicMode->AddItem(_("Play selected track"), "selected");
+
+	m_listboxMusicFiles = new ListBox(page);
+	m_listboxMusicFiles->Dock(Gwen::Pos::Fill);
+
+	m_comboMusicMode->onSelection.Add(this, &Settings::musicComboChanged);
+	m_listboxMusicFiles->onRowSelected.Add(this, &Settings::musicFileChanged);
+
+	// Fill listbox with files from /music/ subdir
+	DIR *dir;
+	struct stat sb;
+	struct dirent *ent;
+	if (dir = opendir(cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/music").c_str()))
+	{
+		while (ent = readdir(dir))
+		{
+			std::string filename = ent->d_name;
+			std::string path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/music/") + filename;
+
+			if (filename == "." || filename == "..")
+				continue;
+
+			if (stat(path.c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
+				m_listboxMusicFiles->AddItem(filename);
+		}
+		closedir (dir);
+	}
+}
+
 void Settings::fillOtherPage(Gwen::Controls::Base *page)
 {
 	auto label = new Label(page);
@@ -937,6 +996,51 @@ void Settings::updateSorting(Gwen::Controls::Base *control)
 		sortType = AppList::ReleaseDate;
 
 	AppList::getInstance().setSortType(sortType, isAscending);
+}
+
+void Settings::musicComboChanged(Gwen::Controls::Base *combobox)
+{
+	std::string mode = m_comboMusicMode->GetSelectedItem()->GetName();
+	if (mode == "disable")
+		g_browseState->stopBGM();
+	else if (mode == "eshop")
+		g_browseState->playBGMeShop();
+	else if (mode == "random")
+		selectRandomMusicTrack();
+	else // selected
+		playSelectedMusic();
+}
+
+void Settings::musicFileChanged(Gwen::Controls::Base *base)
+{
+	std::string mode = m_comboMusicMode->GetSelectedItem()->GetName();
+	if (mode == "selected" || mode == "random")
+		playSelectedMusic();
+}
+
+void Settings::selectRandomMusicTrack()
+{
+	auto& musicRows = m_listboxMusicFiles->GetChildren().front()->GetChildren();
+	if (musicRows.size() > 0)
+	{
+		int randIndex = std::rand() % musicRows.size();
+		int i = 0;
+		for (auto it = musicRows.begin(); it != musicRows.end(); ++it, ++i)
+			if (i == randIndex)
+			{
+				m_listboxMusicFiles->SetSelectedRow(*it, true);
+				break;
+			}
+	}
+}
+
+void Settings::playSelectedMusic()
+{
+	if (!m_listboxMusicFiles->GetSelectedRow())
+		return;
+	std::string filename = m_listboxMusicFiles->GetSelectedRow()->GetText(0).c_str();
+	std::string path = FREESHOP_DIR "/music/" + filename;
+	g_browseState->playBGM(path);
 }
 
 void Settings::showNews(Gwen::Controls::Base *base)

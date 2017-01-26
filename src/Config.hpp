@@ -36,6 +36,9 @@ public:
 		PlaySoundAfterDownload,
 		PowerOffAfterDownload,
 		PowerOffTime,
+		// Music
+		MusicMode,
+		MusicFilename,
 		// Other
 		SleepMode,
 		Language,

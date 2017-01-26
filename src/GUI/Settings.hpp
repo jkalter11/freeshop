@@ -50,6 +50,7 @@ namespace FreeShop
 			void fillSortPage(Gwen::Controls::Base *page);
 			void fillUpdatePage(Gwen::Controls::Base *page);
 			void fillDownloadPage(Gwen::Controls::Base *page);
+			void fillMusicPage(Gwen::Controls::Base *page);
 			void fillOtherPage(Gwen::Controls::Base *page);
 
 			// Event Callback functions
@@ -76,6 +77,11 @@ namespace FreeShop
 
 			void updateEnabledState(Gwen::Controls::Base* control);
 			void updateSorting(Gwen::Controls::Base* control);
+
+			void musicComboChanged(Gwen::Controls::Base *combobox);
+			void musicFileChanged(Gwen::Controls::Base* base);
+			void selectRandomMusicTrack();
+			void playSelectedMusic();
 
 			void showNews(Gwen::Controls::Base* base);
 			void languageChange(Gwen::Controls::Base* base);
@@ -118,6 +124,10 @@ namespace FreeShop
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxPlaySound;
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxPowerOff;
 			Gwen::Controls::ComboBox *m_comboPowerOffTime;
+
+			// Music
+			Gwen::Controls::ComboBox *m_comboMusicMode;
+			Gwen::Controls::ListBox *m_listboxMusicFiles;
 
 			// Other
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxSleep;

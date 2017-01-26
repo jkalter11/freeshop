@@ -30,6 +30,9 @@ namespace {
 		"play_sound_after_download",
 		"power_off_after_download",
 		"power_off_time",
+		// Music
+		"music_mode",
+		"music_filename",
 		// Other
 		"sleep_mode",
 		"language",
@@ -116,6 +119,10 @@ void Config::loadDefaults()
 	ADD_DEFAULT(PlaySoundAfterDownload, true);
 	ADD_DEFAULT(PowerOffAfterDownload, false);
 	ADD_DEFAULT(PowerOffTime, 120);
+
+	// Music
+	ADD_DEFAULT(MusicMode, "eshop");
+	ADD_DEFAULT(MusicFilename, "");
 
 	// Other
 	ADD_DEFAULT(SleepMode, true);

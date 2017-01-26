@@ -198,6 +198,7 @@ void SyncState::sync()
 
 	updateCache();
 	updateTitleKeys();
+	updateEshopMusic();
 
 	if (Config::get(Config::ShowNews).GetBool())
 	{
@@ -365,6 +366,66 @@ bool SyncState::updateTitleKeys()
 	rename(tmpFilename.c_str(), keysFilename.c_str());
 
 	return true;
+}
+
+
+bool SyncState::updateEshopMusic()
+{
+#ifdef EMULATION
+	return true;
+#else
+	u32 id;
+	u8 consoleRegion;
+	CFGU_SecureInfoGetRegion(&consoleRegion);
+
+	switch (consoleRegion)
+	{
+		case CFG_REGION_USA: id = 0x219; break;
+		case CFG_REGION_JPN: id = 0x209; break;
+		case CFG_REGION_AUS: // ?
+		case CFG_REGION_EUR: id = 0x229; break;
+		case CFG_REGION_KOR: id = 0x279; break;
+		case CFG_REGION_CHN: // TODO: Figure out eShop id
+		case CFG_REGION_TWN: id = 0x289; break;
+		default:
+			return false;
+	}
+
+	Handle handle;
+	Result res;
+	std::vector<char> fileData;
+	u64 fileSize;
+
+	u32 archivePathData[3] = {MEDIATYPE_SD, id, 0};
+	FS_Path archivePath = {PATH_BINARY, sizeof(archivePathData), archivePathData};
+
+	int bgmCount = 2;
+	for (int i = 1; i <= bgmCount; ++i)
+	{
+		std::string fileName = fmt::sprintf("/boss_bgm%d", i);
+		std::string destPath = FREESHOP_DIR "/music/eshop" + fileName;
+		FS_Path filePath = {PATH_ASCII, fileName.size()+1, fileName.c_str()};
+
+		if (pathExists(destPath.c_str()))
+			continue;
+		std::cout << "getting shit!" << std::endl;
+		if (R_SUCCEEDED(res = FSUSER_OpenFileDirectly(&handle, ARCHIVE_EXTDATA, archivePath, filePath, FS_OPEN_READ, FS_ATTRIBUTE_READ_ONLY)))
+		{
+			if (R_SUCCEEDED(res = FSFILE_GetSize(handle, &fileSize)))
+			{
+				fileData.resize(fileSize);
+				if (R_SUCCEEDED(res = FSFILE_Read(handle, nullptr, 0, fileData.data(), fileSize)))
+				{
+					std::ofstream file(destPath);
+					if (file.is_open())
+						file.write(fileData.data(), fileData.size());
+				}
+			}
+			FSFILE_Close(handle);
+		}
+	}
+	return true;
+#endif
 }
 
 

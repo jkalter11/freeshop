@@ -45,6 +45,7 @@ int main(int argc, char** argv)
 #endif
 
 	cpp3ds::Service::enable(cpp3ds::Audio);
+	cpp3ds::Service::enable(cpp3ds::Config);
 	cpp3ds::Service::enable(cpp3ds::Network);
 	cpp3ds::Service::enable(cpp3ds::SSL);
 	cpp3ds::Service::enable(cpp3ds::Httpc);
@@ -55,6 +56,7 @@ int main(int argc, char** argv)
 	AM_InitializeExternalTitleDatabase(false);
 #endif
 
+	std::srand(time(nullptr));
 	auto game = new FreeShop::FreeShop();
 	game->run();
 	FreeShop::DownloadQueue::getInstance().suspend();
