@@ -28,7 +28,6 @@ BrowseState::BrowseState(StateStack& stack, Context& context, StateCallback call
 , m_appListPositionX(0.f)
 , m_threadInitialize(&BrowseState::initialize, this)
 , m_threadLoadApp(&BrowseState::loadApp, this)
-, m_threadMusic(&BrowseState::playMusic, this)
 , m_threadBusy(false)
 , m_activeDownloadCount(0)
 , m_mode(Downloads)
@@ -38,15 +37,14 @@ BrowseState::BrowseState(StateStack& stack, Context& context, StateCallback call
 , m_isTransitioning(false)
 {
 	g_browseState = this;
+	m_musicLoop.setLoop(true);
+
 #ifdef EMULATION
 	g_syncComplete = true;
 	initialize();
 #else
 	m_threadInitialize.setRelativePriority(1);
 	m_threadInitialize.launch();
-	m_threadMusic.setRelativePriority(-1);
-	m_threadMusic.setAffinity(-1);
-	m_threadMusic.launch();
 #endif
 }
 
@@ -102,9 +100,6 @@ void BrowseState::initialize()
 		text.useSystemFont();
 	}
 
-	m_musicIntro.openFromFile(FREESHOP_DIR "/shop-intro.ogg");
-	m_musicLoop.openFromFile(FREESHOP_DIR "/shop-loop.ogg");
-	m_musicLoop.setLoop(true);
 
 	m_scrollbarInstalledList.setPosition(314.f, 30.f);
 	m_scrollbarInstalledList.setDragRect(cpp3ds::IntRect(0, 30, 320, 210));
@@ -469,17 +464,44 @@ void BrowseState::setMode(BrowseState::Mode mode)
 	m_isTransitioning = true;
 }
 
-void BrowseState::playMusic()
+bool BrowseState::playBGMeShop()
 {
-	while (!g_syncComplete || !g_browserLoaded)
-		cpp3ds::sleep(cpp3ds::milliseconds(50));
-	m_musicLoop.play();
-	m_musicLoop.pause();
-	m_musicIntro.play();
-	cpp3ds::Clock clock;
-	while (clock.getElapsedTime() < m_musicIntro.getDuration())
-		cpp3ds::sleep(cpp3ds::milliseconds(5));
-	m_musicLoop.play();
+	stopBGM();
+
+	int bgmCount = 2;
+	int randIndex = (std::rand() % bgmCount) + 1;
+
+	// In case it doesn't find it, loop down until it hopefully does
+	for (int i = randIndex; i > 0; --i)
+	{
+		std::string filePath = fmt::sprintf(FREESHOP_DIR "/music/eshop/boss_bgm%d", i);
+		if (m_musicLoop.openFromFile(filePath))
+		{
+			m_musicLoop.play();
+			break;
+		}
+	}
 }
+
+bool BrowseState::playBGM(const std::string &filename)
+{
+	stopBGM();
+
+	if (m_musicLoopBCSTM.openFromFile(filename))
+		m_musicLoopBCSTM.play();
+	else if (m_musicLoop.openFromFile(filename))
+		m_musicLoop.play();
+	else
+		return false;
+
+	return true;
+}
+
+void BrowseState::stopBGM()
+{
+	m_musicLoopBCSTM.stop();
+	m_musicLoop.stop();
+}
+
 
 } // namespace FreeShop

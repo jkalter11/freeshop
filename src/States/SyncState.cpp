@@ -380,7 +380,7 @@ void SyncState::startupSound()
 	cpp3ds::Clock clock;
 	while (clock.getElapsedTime() < cpp3ds::seconds(3.5f))
 		cpp3ds::sleep(cpp3ds::milliseconds(50));
-	m_soundStartup.play(0);
+	m_soundStartup.play();
 //	while (clock.getElapsedTime() < cpp3ds::seconds(7.f))
 //		cpp3ds::sleep(cpp3ds::milliseconds(50));
 //	m_soundLoading.play(0);

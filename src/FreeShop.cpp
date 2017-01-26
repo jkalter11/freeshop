@@ -67,6 +67,14 @@ FreeShop::FreeShop()
 	if (!pathExists(path.c_str(), false))
 		mkdir(path.c_str(), 0777);
 
+	path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/music");
+	if (!pathExists(path.c_str(), false))
+		mkdir(path.c_str(), 0777);
+
+	path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/music/eshop");
+	if (!pathExists(path.c_str(), false))
+		mkdir(path.c_str(), 0777);
+
 	Config::loadFromFile();
 
 	// Load chosen language, correct auto-detect with separate Spanish/Portuguese

@@ -10,6 +10,7 @@
 #include "../IconSet.hpp"
 #include "../GUI/Settings.hpp"
 #include "../GUI/ScrollBar.hpp"
+#include "../MusicBCSTM.hpp"
 #include <cpp3ds/Graphics/Sprite.hpp>
 #include <cpp3ds/Graphics/Texture.hpp>
 #include <cpp3ds/System/Clock.hpp>
@@ -37,6 +38,10 @@ public:
 	virtual bool update(float delta);
 	virtual bool processEvent(const cpp3ds::Event& event);
 
+	bool playBGM(const std::string &filename);
+	bool playBGMeShop();
+	void stopBGM();
+
 	static cpp3ds::Clock clockDownloadInactivity;
 
 private:
@@ -49,7 +54,6 @@ private:
 	};
 
 	void initialize();
-	void playMusic();
 	void setMode(Mode mode);
 	void loadApp();
 
@@ -77,9 +81,8 @@ private:
 	cpp3ds::Sound  m_soundClick;
 	cpp3ds::Sound  m_soundLoading;
 
-	cpp3ds::Music m_musicIntro;
+	MusicBCSTM m_musicLoopBCSTM;
 	cpp3ds::Music m_musicLoop;
-	cpp3ds::Thread m_threadMusic;
 
 	// Keyboard
 	util3ds::Keyboard m_keyboard;
