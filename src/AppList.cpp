@@ -165,7 +165,7 @@ void AppList::processKeyRepeat()
 			newIndex = getVisibleCount() - 1;
 
 		if (newIndex != index)
-			m_soundBlip.play(1);
+			m_soundBlip.play();
 
 		setSelectedIndex(newIndex);
 		m_clockKeyRepeat.restart();

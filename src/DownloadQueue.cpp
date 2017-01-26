@@ -300,7 +300,7 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 		// Play sound if queue is finished
 		if (getActiveCount() == 0 && !canceled)
 			if (Config::get(Config::PlaySoundAfterDownload).GetBool())
-				m_soundFinish.play(3);
+				m_soundFinish.play();
 
 		if (callback)
 			callback(succeeded);
