@@ -122,6 +122,11 @@ void BrowseState::initialize()
 	m_gwenSkin = new Gwen::Skin::TexturedBase(m_gwenRenderer);
 	m_gwenSkin->Init("images/DefaultSkin.png");
 	m_gwenSkin->SetDefaultFont(L"", 11);
+
+	// Need to wait until title screen is done to prevent music from
+	// settings starting prematurely.
+	while(!g_syncComplete)
+		cpp3ds::sleep(cpp3ds::milliseconds(10));
 	m_settingsGUI = new GUI::Settings(m_gwenSkin, this);
 #endif
 
@@ -335,7 +340,9 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 				return true;
 			case cpp3ds::Keyboard::A:
 			{
-				// Don't load if game is already loaded
+				// Don't load if game info is already loaded or nothing is selected
+				if (!AppList::getInstance().getSelected())
+					break;
 				if (m_appInfo.getAppItem() == AppList::getInstance().getSelected()->getAppItem())
 					break;
 
@@ -356,6 +363,8 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 				AppList::getInstance().filterBySearch("", m_textMatches);
 				break;
 			case cpp3ds::Keyboard::X: {
+				if (!AppList::getInstance().getSelected())
+					break;
 				auto app = AppList::getInstance().getSelected()->getAppItem();
 				if (app && !DownloadQueue::getInstance().isDownloading(app))
 				{
