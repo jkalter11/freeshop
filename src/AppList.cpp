@@ -98,17 +98,17 @@ bool AppList::processEvent(const cpp3ds::Event &event)
 	{
 		m_processedFirstKey = false;
 		if (event.key.code & cpp3ds::Keyboard::Up) {
-			m_indexDelta = -1;
+			setIndexDelta(-1);
 		} else if (event.key.code & cpp3ds::Keyboard::Down) {
-			m_indexDelta = 1;
+			setIndexDelta(1);
 		} else if (event.key.code & cpp3ds::Keyboard::Left) {
-			m_indexDelta = -4;
+			setIndexDelta(-4);
 		} else if (event.key.code & cpp3ds::Keyboard::Right) {
-			m_indexDelta = 4;
+			setIndexDelta(4);
 		} else if (event.key.code & cpp3ds::Keyboard::L) {
-			m_indexDelta = -8;
+			setIndexDelta(-8);
 		} else if (event.key.code & cpp3ds::Keyboard::R) {
-			m_indexDelta = 8;
+			setIndexDelta(8);
 		} else
 			m_processedFirstKey = true;
 	}
@@ -123,7 +123,7 @@ bool AppList::processEvent(const cpp3ds::Event &event)
 					|| cpp3ds::Keyboard::isKeyDown(cpp3ds::Keyboard::L)
 					|| cpp3ds::Keyboard::isKeyDown(cpp3ds::Keyboard::R))
 				return false;
-			m_indexDelta = 0;
+			setIndexDelta(0);
 			m_startKeyRepeat = false;
 			m_processedFirstKey = false;
 		}
@@ -565,6 +565,11 @@ void AppList::setFilterLanguages(int languages)
 {
 	m_filterLanguages = languages;
 	filter();
+}
+
+void AppList::setIndexDelta(int indexDelta)
+{
+	m_indexDelta = indexDelta;
 }
 
 

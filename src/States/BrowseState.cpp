@@ -454,6 +454,7 @@ void BrowseState::setMode(BrowseState::Mode mode)
 			posY += 13.f;
 		}
 		AppList::getInstance().setCollapsed(true);
+		AppList::getInstance().setIndexDelta(0);
 
 		m_lastKeyboardInput = "";
 		m_keyboard.setCurrentInput(m_lastKeyboardInput);

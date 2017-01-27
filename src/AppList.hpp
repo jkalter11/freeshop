@@ -54,6 +54,8 @@ public:
 	void setFilterLanguages(int languages);
 	void setFilterRegions(int regions);
 
+	void setIndexDelta(int indexDelta);
+
 protected:
 	AppList(std::string jsonFilename);
 	virtual void draw(cpp3ds::RenderTarget& target, cpp3ds::RenderStates states) const;
