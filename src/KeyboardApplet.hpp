@@ -3,6 +3,7 @@
 
 #include <3ds.h>
 #include <cpp3ds/System/String.hpp>
+#include <vector>
 
 namespace FreeShop {
 
