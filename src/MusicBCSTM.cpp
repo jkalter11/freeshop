@@ -201,6 +201,9 @@ void MusicBCSTM::pause()
 
 void MusicBCSTM::stop()
 {
+	if (!m_isStreaming)
+		return;
+
 	{
 		cpp3ds::Lock lock(m_mutex);
 		m_isStreaming = false;
