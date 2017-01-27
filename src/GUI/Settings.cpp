@@ -30,6 +30,9 @@ Settings::Settings(Gwen::Skin::TexturedBase *skin,  State *state)
 : m_ignoreCheckboxChange(false)
 , m_state(state)
 {
+	// Seed rand in case this is initialized in loading thread
+	srand(time(NULL));
+
 	m_canvas = new Canvas(skin);
 	m_canvas->SetPos(0, 0);
 
@@ -1023,7 +1026,7 @@ void Settings::selectRandomMusicTrack()
 	auto& musicRows = m_listboxMusicFiles->GetChildren().front()->GetChildren();
 	if (musicRows.size() > 0)
 	{
-		int randIndex = std::rand() % musicRows.size();
+		size_t randIndex = rand() % musicRows.size();
 		int i = 0;
 		for (auto it = musicRows.begin(); it != musicRows.end(); ++it, ++i)
 			if (i == randIndex)

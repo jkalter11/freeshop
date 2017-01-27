@@ -56,7 +56,7 @@ int main(int argc, char** argv)
 	AM_InitializeExternalTitleDatabase(false);
 #endif
 
-	std::srand(time(nullptr));
+	srand(time(NULL));
 	auto game = new FreeShop::FreeShop();
 	game->run();
 	FreeShop::DownloadQueue::getInstance().suspend();
