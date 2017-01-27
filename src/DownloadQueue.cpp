@@ -643,6 +643,7 @@ void DownloadQueue::load()
 								if (app->getAppItem()->getTitleId() == titleId)
 									addDownload(app->getAppItem(), subTitleId, nullptr, contentIndex, progress);
 #ifdef _3DS
+						break;
 					}
 #endif
 			}
