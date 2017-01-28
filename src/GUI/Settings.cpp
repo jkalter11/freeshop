@@ -1046,6 +1046,11 @@ void Settings::playSelectedMusic()
 	g_browseState->playBGM(path);
 }
 
+void Settings::playMusic()
+{
+	musicComboChanged(nullptr);
+}
+
 void Settings::showNews(Gwen::Controls::Base *base)
 {
 	Config::set(Config::ShowNews, true);

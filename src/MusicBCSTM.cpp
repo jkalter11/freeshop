@@ -26,6 +26,9 @@ MusicBCSTM::~MusicBCSTM()
 
 bool MusicBCSTM::openFromFile(const std::string &filename)
 {
+	if (!cpp3ds::Service::isEnabled(cpp3ds::Audio))
+		return false;
+
 	stop();
 
 	if (!m_file.open(filename))

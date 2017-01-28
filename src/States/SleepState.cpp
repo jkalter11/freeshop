@@ -66,6 +66,8 @@ bool SleepState::update(float delta)
 
 bool SleepState::processEvent(const cpp3ds::Event& event)
 {
+	if (event.type == cpp3ds::Event::SliderVolumeChanged)
+		return false;
 	if (m_sleepEnding)
 		return false;
 
@@ -79,7 +81,7 @@ bool SleepState::processEvent(const cpp3ds::Event& event)
 		})
 		.start(m_tweenManager);
 
-	return false;
+	return true;
 }
 
 } // namespace FreeShop

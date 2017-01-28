@@ -220,6 +220,7 @@ bool BrowseState::update(float delta)
 	// Go into sleep state after inactivity
 	if (!SleepState::isSleeping && Config::get(Config::SleepMode).GetBool() && SleepState::clock.getElapsedTime() > cpp3ds::seconds(SECONDS_TO_SLEEP))
 	{
+		stopBGM();
 		requestStackPush(States::Sleep);
 		return false;
 	}
@@ -273,8 +274,12 @@ bool BrowseState::update(float delta)
 
 bool BrowseState::processEvent(const cpp3ds::Event& event)
 {
-	if (event.type == cpp3ds::Event::SliderVolumeChanged)
+	if (SleepState::isSleeping)
+	{
+		m_settingsGUI->playMusic();
 		return true;
+	}
+
 
 	SleepState::clock.restart();
 	clockDownloadInactivity.restart();

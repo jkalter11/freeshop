@@ -36,6 +36,8 @@ namespace FreeShop
 			virtual int getValues(int tweenType, float *returnValues);
 			virtual void setValues(int tweenType, float *newValues);
 
+			void playMusic(); // For recovery from Sleep state
+
 		private:
 			void saveFilter(Config::Key key, std::vector<Gwen::Controls::CheckBoxWithLabel*> &checkboxArray);
 			void loadFilter(Config::Key key, std::vector<Gwen::Controls::CheckBoxWithLabel*> &checkboxArray);
