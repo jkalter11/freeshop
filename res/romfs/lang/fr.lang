@@ -268,6 +268,9 @@ Mise à jour
 Download
 Téléchargement
 
+Music
+Musique
+
 Other
 Autre
 
@@ -387,6 +390,18 @@ Limite de temps HTTP : %.0fs
 
 Buffer size: %u KB
 Taille m. tampon : %u Ko
+
+Disable music
+Désactiver la musique
+
+Play eShop music
+Lecture de la musique de l'eShop
+
+Play random track
+Lecture aléatoire
+
+Play selected track
+Lecture de la piste sélectionné
 
 Language:
 Langue :
