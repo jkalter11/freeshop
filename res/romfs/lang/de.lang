@@ -33,7 +33,7 @@ Lade Title-Keys...
 # src/States/BrowseState.cpp
 ############################
 No title keys found.\nMake sure you have keys in\n%s\n\nManually copy keys to the directory\nor check settings to enter a URL\nfor downloading title keys.
-Keine Title-Keys gefunden.\nÜberprüfe deine Keys in\n%\s\n\nKopiere die Keys manuell in das Verzeichnis\noder überprüfe die Einstellungen, um eine URL aufzurufen,\num die Titel Keys herunterzuladen.
+Keine Title-Keys gefunden.\nÜberprüfe deine Keys in\n%s\n\nKopiere die Keys manuell in das Verzeichnis\noder überprüfe die Einstellungen, um eine URL aufzurufen,\num die Titel Keys herunterzuladen.
 
 No cache entries found\nfor your title keys.\n\nTry refreshing cache in settings.\nIf that doesn't work, then your\ntitles simply won't work with\nfreeShop currently.
 Keine Cache-Einträge\nfür deine Title-Keys gefunden.\n\nVersuche, den Cache in den Einstellungen zu aktualisieren.\nWenn das nicht hilft, dann funktionieren\ndeine Titel zur Zeit nicht mit\ndem freeShop.
@@ -86,7 +86,7 @@ Queued demo: %s
 Demo in Warteschlange: %s
 
 You are deleting this game,\nincluding all save data:\n\n%s
-Du deinstallierst folgendes Spiel,\ninklusive alle Speicherdaten:\n\%s
+Du deinstallierst folgendes Spiel,\ninklusive alle Speicherdaten:\n\n%s
 
 Deleted: %s
 Gelöscht: %s
