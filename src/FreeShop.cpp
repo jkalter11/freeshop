@@ -90,6 +90,7 @@ FreeShop::FreeShop()
 			langCode = (region == CFG_REGION_USA) ? "pt_BR" : "pt_PT";
 	}
 #endif
+
 	if (langCode != "auto")
 		cpp3ds::I18n::loadLanguageFile(_("lang/%s.lang", langCode.c_str()));
 

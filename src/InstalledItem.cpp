@@ -39,14 +39,16 @@ InstalledItem::InstalledItem(cpp3ds::Uint64 titleId)
 
 	m_appItem->setInstalled(true);
 
-	m_background.setTexture(&AssetManager<cpp3ds::Texture>::get("images/installed_item_bg.9.png"));
+	/*if (fopen(FREESHOP_DIR "/theme/images/installed_item_bg.9.png", "rb"))
+		m_background.setTexture(&AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/installed_item_bg.9.png"));
+	else*/
+		m_background.setTexture(&AssetManager<cpp3ds::Texture>::get("images/installed_item_bg.9.png"));
 
 	m_textTitle.setString(m_appItem->getTitle());
 	m_textTitle.setCharacterSize(11);
 	m_textTitle.setPosition(m_background.getPadding().left, m_background.getPadding().top);
 	m_textTitle.setFillColor(cpp3ds::Color::Black);
 	m_textTitle.useSystemFont();
-
 	m_textWarningUpdate.setFont(AssetManager<cpp3ds::Font>::get("fonts/fontawesome.ttf"));
 	m_textWarningUpdate.setString(L"\uf071");
 	m_textWarningUpdate.setCharacterSize(14);

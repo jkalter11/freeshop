@@ -104,6 +104,7 @@ namespace FreeShop {
 
 bool g_syncComplete = false;
 bool g_browserLoaded = false;
+bool SyncState::exitRequired = false;
 
 SyncState::SyncState(StateStack& stack, Context& context, StateCallback callback)
 : State(stack, context, callback)
@@ -113,7 +114,10 @@ SyncState::SyncState(StateStack& stack, Context& context, StateCallback callback
 	g_syncComplete = false;
 	g_browserLoaded = false;
 
-	m_soundStartup.setBuffer(AssetManager<cpp3ds::SoundBuffer>::get("sounds/startup.ogg"));
+	/*if (fopen(FREESHOP_DIR "/theme/sounds/startup.ogg", "rb"))
+		m_soundStartup.setBuffer(AssetManager<cpp3ds::SoundBuffer>::get(FREESHOP_DIR "/theme/sounds/startup.ogg"));
+	else*/
+		m_soundStartup.setBuffer(AssetManager<cpp3ds::SoundBuffer>::get("sounds/startup.ogg"));
 
 	m_soundLoading.setBuffer(AssetManager<cpp3ds::SoundBuffer>::get("sounds/loading.ogg"));
 	m_soundLoading.setLoop(true);
@@ -166,9 +170,10 @@ void SyncState::sync()
 {
 	m_timer.restart();
 
+	//No internet connection
 	if (!cpp3ds::Service::isEnabled(cpp3ds::Httpc))
 	{
-		while (!cpp3ds::Service::isEnabled(cpp3ds::Httpc) && m_timer.getElapsedTime() < cpp3ds::seconds(30.f))
+		while (!cpp3ds::Service::isEnabled(cpp3ds::Httpc) && m_timer.getElapsedTime() < cpp3ds::seconds(30.f) && !exitRequired)
 		{
 			setStatus(_("Waiting for internet connection... %.0fs", 30.f - m_timer.getElapsedTime().asSeconds()));
 			cpp3ds::sleep(cpp3ds::milliseconds(200));
@@ -203,7 +208,7 @@ void SyncState::sync()
 	if (Config::get(Config::ShowNews).GetBool())
 	{
 		setStatus(_("Fetching news for %s ...", FREESHOP_VERSION));
-		std::string url = _("https://notabug.org/btucker/freeShop/raw/master/news/%s.txt", FREESHOP_VERSION).toAnsiString();
+		std::string url = _("https://notabug.org/arc13/freeShop/raw/master/news/%s.txt", FREESHOP_VERSION).toAnsiString();
 		Download download(url, FREESHOP_DIR "/news/" FREESHOP_VERSION ".txt");
 		download.run();
 	}
@@ -228,7 +233,7 @@ bool SyncState::updateFreeShop()
 		return false;
 
 	setStatus(_("Looking for freeShop update..."));
-	const char *url = "http://get.freeshop.pw/latest.txt";
+	const char *url = "https://pastebin.com/raw/JS605QD2";
 	const char *latestFilename = FREESHOP_DIR "/tmp/latest.txt";
 	Download download(url, latestFilename);
 	download.run();
@@ -255,7 +260,7 @@ bool SyncState::updateFreeShop()
 			bool suceeded = false;
 			size_t total = 0;
 			std::string freeShopFile = FREESHOP_DIR "/tmp/freeShop.cia";
-			std::string freeShopUrl = _("http://get.freeshop.pw/%s", tag.c_str());
+			std::string freeShopUrl = _("https://notabug.org/arc13/freeshop-versions/raw/master/%s", tag.c_str());
 			setStatus(_("Installing freeShop %s ...", tag.c_str()));
 			Download freeShopDownload(freeShopUrl, freeShopFile);
 			AM_QueryAvailableExternalTitleDatabase(nullptr);

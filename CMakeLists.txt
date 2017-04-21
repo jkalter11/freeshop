@@ -8,12 +8,12 @@ project("freeshop")
 
 set(APP_TITLE "freeShop")
 set(APP_DESCRIPTION "Open source eShop clone")
-set(APP_AUTHOR "Cruel")
+set(APP_AUTHOR "arc13 / Cruel")
 set(APP_ICON ${PROJECT_SOURCE_DIR}/res/app/icon.png)
 
 # First one is Title Version, second is the readable version
-set(APP_VERSION 10)
-add_definitions(-DFREESHOP_VERSION="2.2.0")
+set(APP_VERSION 11)
+add_definitions(-DFREESHOP_VERSION="3.0.0")
 add_definitions(-DFREESHOP_DIR="sdmc:/3ds/data/freeShop")
 
 # CIA settings
@@ -62,6 +62,7 @@ set(SOURCE_FILES
 	${PROJECT_SOURCE_DIR}/src/AssetManager.hpp
 	${PROJECT_SOURCE_DIR}/src/Notification.cpp
 	${PROJECT_SOURCE_DIR}/src/TitleKeys.cpp
+	${PROJECT_SOURCE_DIR}/src/TopInformations.cpp
 	${PROJECT_SOURCE_DIR}/src/Keyboard/Keyboard.cpp
 	${PROJECT_SOURCE_DIR}/src/Keyboard/tinyxml2.cpp
 	${PROJECT_SOURCE_DIR}/src/GUI/AppItem.cpp

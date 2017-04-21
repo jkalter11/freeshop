@@ -167,6 +167,7 @@ void Settings::saveToConfig()
 	Config::set(Config::SleepMode, m_checkboxSleep->Checkbox()->IsChecked());
 	auto language = m_listboxLanguages->GetSelectedRow();
 	Config::set(Config::Language, language ? language->GetName().c_str() : "auto");
+	Config::set(Config::Keyboard, m_listboxKeyboards->GetSelectedRow()->GetName().c_str());
 }
 
 void Settings::loadConfig()
@@ -225,6 +226,13 @@ void Settings::loadConfig()
 		if (row->GetName() == Config::get(Config::Language).GetString())
 		{
 			m_listboxLanguages->SetSelectedRow(row, true);
+			break;
+		}
+	auto keyboardRows = m_listboxKeyboards->GetChildren().front()->GetChildren();
+	for (auto& row : keyboardRows)
+		if (row->GetName() == Config::get(Config::Keyboard).GetString())
+		{
+			m_listboxKeyboards->SetSelectedRow(row, true);
 			break;
 		}
 }
@@ -824,9 +832,20 @@ void Settings::fillOtherPage(Gwen::Controls::Base *page)
 	label->SetBounds(0, 40, 150, 20);
 	label->SetText(_("Language:").toAnsiString());
 
+	auto label2 = new Label(page);
+	label2->SetBounds(110, 40, 150, 20);
+	label2->SetText(_("Keyboard:").toAnsiString());
+
 	m_listboxLanguages = new ListBox(page);
 	m_listboxLanguages->SetBounds(0, 60, 100, 100);
 	m_listboxLanguages->AddItem(_("Auto-detect").toAnsiString(), "auto");
+
+	m_listboxKeyboards = new ListBox(page);
+	m_listboxKeyboards->SetBounds(110, 60, 100, 100);
+	m_listboxKeyboards->AddItem("QWERTY", "qwerty");
+	m_listboxKeyboards->AddItem("AZERTY", "azerty");
+	m_listboxKeyboards->AddItem("Chinese [TODO]", "chinese");
+	m_listboxKeyboards->onRowSelected.Add(this, &Settings::keyboardChange);
 
 	// Only show Korean/Chinese on their respective region consoles.
 	// Other consoles don't have the necessary system font, so it looks bad.
@@ -865,8 +884,8 @@ void Settings::fillOtherPage(Gwen::Controls::Base *page)
 	m_listboxLanguages->onRowSelected.Add(this, &Settings::languageChange);
 
 	auto newsButton = new Button(page);
-	newsButton->SetBounds(170, 140, 130, 20);
-	newsButton->SetText(_("View news (%s)", FREESHOP_VERSION).toAnsiString());
+	newsButton->SetBounds(220, 140, 85, 20);
+	newsButton->SetText(_("News", FREESHOP_VERSION).toAnsiString());
 	newsButton->onPress.Add(this, &Settings::showNews);
 
 	m_checkboxSleep = new CheckBoxWithLabel(page);
@@ -1067,6 +1086,34 @@ void Settings::languageChange(Gwen::Controls::Base *base)
 			{
 				auto str = reinterpret_cast<cpp3ds::String*>(event->data);
 				*str = _("You need to restart freeShop for\n%s to be loaded.\n\nWould you like to do this now?", m_listboxLanguages->GetSelectedRow()->GetText(0).c_str());
+				return true;
+			}
+			else if (event->type == DialogState::Response)
+			{
+				bool *accepted = reinterpret_cast<bool*>(event->data);
+				if (*accepted)
+				{
+					// Restart freeShop
+					g_requestJump = 0x400000F12EE00;
+				}
+				return true;
+			}
+			return false;
+		});
+	}
+}
+
+void Settings::keyboardChange(Gwen::Controls::Base *base)
+{
+	std::string keyCode = m_listboxKeyboards->GetSelectedRowName();
+	if (!keyCode.empty() && keyCode != Config::get(Config::Keyboard).GetString())
+	{
+		g_browseState->requestStackPush(States::Dialog, false, [=](void *data) mutable {
+			auto event = reinterpret_cast<DialogState::Event*>(data);
+			if (event->type == DialogState::GetText)
+			{
+				auto str = reinterpret_cast<cpp3ds::String*>(event->data);
+				*str = _("You need to restart freeShop for\n%s to be loaded.\n\nWould you like to do this now?", m_listboxKeyboards->GetSelectedRow()->GetText(0).c_str());
 				return true;
 			}
 			else if (event->type == DialogState::Response)

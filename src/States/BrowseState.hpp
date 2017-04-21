@@ -8,6 +8,7 @@
 #include "../Keyboard/Keyboard.hpp"
 #include "../RichText.hpp"
 #include "../IconSet.hpp"
+#include "../TopInformations.hpp"
 #include "../GUI/Settings.hpp"
 #include "../GUI/ScrollBar.hpp"
 #include "../MusicBCSTM.hpp"
@@ -70,12 +71,20 @@ private:
 	bool m_threadBusy;
 
 	IconSet m_iconSet;
+	TopInformations m_topInfos;
 
 	size_t m_activeDownloadCount;
 	util3ds::TweenText m_textActiveDownloads;
 
 	ScrollBar m_scrollbarInstalledList;
 	ScrollBar m_scrollbarDownloadQueue;
+
+	// Backgrounds
+	bool m_topBG;
+	bool m_botBG;
+
+	gui3ds::NinePatch m_rectTopBG;
+	gui3ds::NinePatch m_rectBotBG;
 
 	// Sounds
 	cpp3ds::Sound  m_soundClick;

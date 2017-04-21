@@ -43,7 +43,10 @@ DownloadQueue::DownloadQueue()
 , m_refreshEnd(false)
 , m_size(320.f, 0.f)
 {
-	m_soundBufferFinish.loadFromFile("sounds/chime.ogg");
+	/*if (fopen(FREESHOP_DIR "/theme/sounds/chime.ogg", "rb"))
+		m_soundBufferFinish.loadFromFile(FREESHOP_DIR "/theme/sounds/chime.ogg");
+	else*/
+		m_soundBufferFinish.loadFromFile("sounds/chime.ogg");
 	m_soundFinish.setBuffer(m_soundBufferFinish);
 
 	load();

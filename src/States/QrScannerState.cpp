@@ -36,6 +36,9 @@ QrScannerState::QrScannerState(StateStack &stack, Context &context, StateCallbac
 	m_cameraScreen.setTextureRect(cpp3ds::IntRect(0, 0, WIDTH, HEIGHT));
 
 	cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get("images/qr_selector.9.png");
+	//if (fopen(FREESHOP_DIR "/theme/images/qr_selector.9.png", "rb"))
+		//texture = AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/qr_selector.9.png");
+
 	texture.setSmooth(false);
 	m_qrBorder.setTexture(&texture);
 	m_qrBorder.setContentSize(140.f, 140.f);

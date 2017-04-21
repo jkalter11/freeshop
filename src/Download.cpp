@@ -285,7 +285,11 @@ void Download::fillFromAppItem(std::shared_ptr<AppItem> app)
 
 	setProgressMessage(_("Queued"));
 
-	m_background.setTexture(&AssetManager<cpp3ds::Texture>::get("images/listitembg.9.png"));
+	/*if (fopen(FREESHOP_DIR "/theme/images/listitembg.9.png", "rb"))
+		m_background.setTexture(&AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/listitembg.9.png"));
+	else*/
+		m_background.setTexture(&AssetManager<cpp3ds::Texture>::get("images/listitembg.9.png"));
+
 	m_background.setContentSize(320.f + m_background.getPadding().width - m_background.getTexture()->getSize().x + 2.f, 24.f);
 	m_size = m_background.getSize();
 	float paddingRight = m_size.x - m_background.getContentSize().x - m_background.getPadding().left;
@@ -297,7 +301,6 @@ void Download::fillFromAppItem(std::shared_ptr<AppItem> app)
 	m_icon.setTextureRect(textureRect);
 	m_icon.setPosition(m_background.getPadding().left, m_background.getPadding().top);
 	m_icon.setScale(0.5f, 0.5f);
-
 	m_textCancel.setFont(AssetManager<cpp3ds::Font>::get("fonts/fontawesome.ttf"));
 	m_textCancel.setString(L"\uf00d");
 	m_textCancel.setCharacterSize(18);

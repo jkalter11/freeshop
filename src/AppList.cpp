@@ -29,7 +29,10 @@ AppList::AppList(std::string jsonFilename)
 , m_processedFirstKey(false)
 {
 	m_jsonFilename = jsonFilename;
-	m_soundBlip.setBuffer(AssetManager<cpp3ds::SoundBuffer>::get("sounds/blip.ogg"));
+	/*if (fopen(FREESHOP_DIR "/theme/sounds/blip.ogg", "rb"))
+		m_soundBlip.setBuffer(AssetManager<cpp3ds::SoundBuffer>::get(FREESHOP_DIR "/theme/sounds/blip.ogg"));
+	else*/	
+		m_soundBlip.setBuffer(AssetManager<cpp3ds::SoundBuffer>::get("sounds/blip.ogg"));
 }
 
 AppList::~AppList()
@@ -50,6 +53,7 @@ void AppList::refresh()
 #endif
 	cpp3ds::Clock clock;
 	cpp3ds::FileInputStream file;
+
 	if (file.open(m_jsonFilename))
 	{
 		// Read file to string
@@ -102,13 +106,13 @@ bool AppList::processEvent(const cpp3ds::Event &event)
 		} else if (event.key.code & cpp3ds::Keyboard::Down) {
 			setIndexDelta(1);
 		} else if (event.key.code & cpp3ds::Keyboard::Left) {
-			setIndexDelta(-4);
+			setIndexDelta(-3);
 		} else if (event.key.code & cpp3ds::Keyboard::Right) {
-			setIndexDelta(4);
+			setIndexDelta(3);
 		} else if (event.key.code & cpp3ds::Keyboard::L) {
-			setIndexDelta(-8);
+			setIndexDelta(-6);
 		} else if (event.key.code & cpp3ds::Keyboard::R) {
-			setIndexDelta(8);
+			setIndexDelta(6);
 		} else
 			m_processedFirstKey = true;
 	}
@@ -156,7 +160,7 @@ void AppList::processKeyRepeat()
 {
 	int index = getSelectedIndex();
 	// Don't keep changing index on top/bottom boundaries
-	if ((m_indexDelta != 1 || index % 4 != 3) && (m_indexDelta != -1 || index % 4 != 0))
+	if ((m_indexDelta != 1 || index % 3 != 2) && (m_indexDelta != -1 || index % 3 != 0))
 	{
 		int newIndex = index + m_indexDelta;
 		if (newIndex < 0)
@@ -279,16 +283,16 @@ matchedPlatform:;
 void AppList::reposition()
 {
 	bool segmentFound = false;
-	float destY = 4.f;
+	float destY = 63.f;
 	int i = 0;
-	float newX = (m_selectedIndex ? : 0) / 4 * (m_collapsed ? 59.f : 200.f);
+	float newX = (m_selectedIndex ? : 0) / 3 * (m_collapsed ? 59.f : 200.f);
 
 	for (auto& app : m_guiAppItems)
 	{
 		if (!app->isVisible() || app->isFilteredOut())
 			continue;
 
-		float destX = 3.f + (i/4) * (m_collapsed ? 59.f : 200.f);
+		float destX = 3.f + (i/3) * (m_collapsed ? 59.f : 200.f);
 		float itemPosX = app->getPosition().x + getPosition().x;
 		if ((destX-newX < -200.f || destX-newX > 400.f) && (itemPosX < -200 || itemPosX > 400.f))
 		{
@@ -308,8 +312,8 @@ void AppList::reposition()
 				.start(m_tweenManager);
 		}
 
-		if (++i % 4 == 0)
-			destY = 4.f;
+		if (++i % 3 == 0)
+			destY = 63.f;
 		else
 			destY += 59.f;
 	}
@@ -327,7 +331,7 @@ void AppList::setSelectedIndex(int index)
 
 		float extra = 1.0f; //std::abs(m_appList.getSelectedIndex() - index) == 8.f ? 2.f : 1.f;
 
-		float pos = -200.f * extra * (index / 4);
+		float pos = -200.f * extra * (index / 3);
 		if (pos > m_targetPosX)
 			m_targetPosX = pos;
 		else if (pos <= m_targetPosX - 400.f)

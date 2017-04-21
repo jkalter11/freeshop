@@ -162,6 +162,9 @@ std::shared_ptr<::FreeShop::AppItem> AppItem::getAppItem() const
 void AppItem::select()
 {
 	cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get("images/itembg-selected.9.png");
+	//if (fopen(FREESHOP_DIR "/theme/images/itembg-selected.9.png", "rb"))
+		//texture = AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/itembg-selected.9.png");
+
 	m_background.setTexture(&texture);
 	m_background.setColor(cpp3ds::Color(255, 255, 255, 200));
 	m_icon.setOutlineThickness(2.f);
@@ -170,6 +173,8 @@ void AppItem::select()
 void AppItem::deselect()
 {
 	cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get("images/itembg.9.png");
+	//if (fopen(FREESHOP_DIR "/theme/images/itembg.9.png", "rb"))
+		//texture = AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/itembg.9.png");
 	m_background.setTexture(&texture);
 	m_background.setColor(cpp3ds::Color(255, 255, 255, 40));
 	m_icon.setOutlineThickness(0.f);
@@ -275,7 +280,11 @@ void AppItem::setFilesize(cpp3ds::Uint64 filesize)
 void AppItem::addRegionFlag(FreeShop::AppItem::Region region)
 {
 	cpp3ds::Sprite flag;
+	
 	cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get("images/flags.png");
+	//if (fopen(FREESHOP_DIR "/theme/images/flags.png", "rb"))
+		//texture = AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/flags.png");
+
 	texture.setSmooth(true);
 	flag.setTexture(texture);
 

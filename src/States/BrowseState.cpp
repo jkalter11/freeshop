@@ -14,6 +14,7 @@
 #include <sstream>
 #include <cpp3ds/System/I18n.hpp>
 #include <cpp3ds/System/FileSystem.hpp>
+#include <time.h>
 
 #define SECONDS_TO_SLEEP 60.f
 
@@ -67,6 +68,9 @@ void BrowseState::initialize()
 	AppList::getInstance().refresh();
 	InstalledList::getInstance().refresh();
 
+	m_topBG = false;
+	m_botBG = false;
+
 	m_iconSet.addIcon(L"\uf290");
 	m_iconSet.addIcon(L"\uf019");
 	m_iconSet.addIcon(L"\uf11b");
@@ -80,6 +84,7 @@ void BrowseState::initialize()
 	m_textActiveDownloads.setOutlineThickness(1.f);
 	m_textActiveDownloads.setPosition(218.f, 3.f);
 
+	//If there's no title key available, or no cache, one of these messages will appear
 	if (TitleKeys::getIds().empty())
 		m_textListEmpty.setString(_("No title keys found.\nMake sure you have keys in\n%s\n\nManually copy keys to the directory\nor check settings to enter a URL\nfor downloading title keys.", FREESHOP_DIR "/keys/"));
 	else
@@ -87,14 +92,19 @@ void BrowseState::initialize()
 	m_textListEmpty.useSystemFont();
 	m_textListEmpty.setCharacterSize(16);
 	m_textListEmpty.setFillColor(cpp3ds::Color(80, 80, 80, 255));
-	m_textListEmpty.setPosition(200.f, 120.f);
+	m_textListEmpty.setPosition(200.f, 140.f);
 	m_textListEmpty.setOrigin(m_textListEmpty.getLocalBounds().width / 2, m_textListEmpty.getLocalBounds().height / 2);
 
+	//White screen used for transitions
 	m_whiteScreen.setPosition(0.f, 30.f);
 	m_whiteScreen.setSize(cpp3ds::Vector2f(320.f, 210.f));
 	m_whiteScreen.setFillColor(cpp3ds::Color::White);
 
-	m_keyboard.loadFromFile("kb/keyboard.xml");
+	//Loading the keyboard locale file
+	if (std::string(Config::get(Config::Keyboard).GetString()) == "azerty")
+		m_keyboard.loadFromFile("kb/keyboard.azerty.xml");
+	else
+		m_keyboard.loadFromFile("kb/keyboard.qwerty.xml");
 
 	m_textMatches.resize(4);
 	for (auto& text : m_textMatches)
@@ -120,7 +130,12 @@ void BrowseState::initialize()
 	while (!m_gwenRenderer)
 		cpp3ds::sleep(cpp3ds::milliseconds(10));
 	m_gwenSkin = new Gwen::Skin::TexturedBase(m_gwenRenderer);
-	m_gwenSkin->Init("images/DefaultSkin.png");
+
+	if (fopen(FREESHOP_DIR "/theme/images/DefaultSkin.png", "rb"))
+		m_gwenSkin->Init(FREESHOP_DIR "/theme/images/DefaultSkin.png");
+	else
+		m_gwenSkin->Init("images/DefaultSkin.png");
+
 	m_gwenSkin->SetDefaultFont(L"", 11);
 
 	// Need to wait until title screen is done to prevent music from
@@ -129,6 +144,21 @@ void BrowseState::initialize()
 		cpp3ds::sleep(cpp3ds::milliseconds(10));
 	m_settingsGUI = new GUI::Settings(m_gwenSkin, this);
 #endif
+
+
+	if (fopen(FREESHOP_DIR "/theme/images/topBG.png", "rb")) {
+		m_rectTopBG.setTexture(&AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/topBG.png"));
+		m_rectTopBG.setPosition(0.f, 0.f);
+		m_topBG = true;
+	}
+
+	if (fopen(FREESHOP_DIR "/theme/images/botBG.png", "rb")) {
+		m_rectBotBG.setTexture(&AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/botBG.png"));
+		m_rectBotBG.setPosition(0.f, 0.f);
+		m_botBG = true;
+		printf("hello");
+	}
+
 
 	g_browserLoaded = true;
 
@@ -142,10 +172,16 @@ void BrowseState::renderTopScreen(cpp3ds::Window& window)
 	if (!g_syncComplete || !g_browserLoaded)
 		return;
 
-	if (AppList::getInstance().getList().size() == 0)
+	if (m_topBG == true)
+		window.draw(m_rectTopBG);
+
+	if (AppList::getInstance().getList().size() == 0) {
 		window.draw(m_textListEmpty);
-	else
+	} else {
 		window.draw(AppList::getInstance());
+	}
+
+	window.draw(m_topInfos);
 
 	// Special draw method to draw top screenshot if selected
 	m_appInfo.drawTop(window);
@@ -159,13 +195,22 @@ void BrowseState::renderBottomScreen(cpp3ds::Window& window)
 
 #ifdef EMULATION
 		m_gwenSkin = new Gwen::Skin::TexturedBase(m_gwenRenderer);
-		m_gwenSkin->Init("images/DefaultSkin.png");
+
+		if (fopen(FREESHOP_DIR "/theme/images/DefaultSkin.png", "rb")) {
+			m_gwenSkin->Init(FREESHOP_DIR "/theme/images/DefaultSkin.png");
+		} else {
+			m_gwenSkin->Init("images/DefaultSkin.png");
+		}
+
 		m_gwenSkin->SetDefaultFont(L"", 11);
 		m_settingsGUI = new GUI::Settings(m_gwenSkin, this);
 #endif
 	}
 	if (!g_syncComplete || !g_browserLoaded)
 		return;
+
+	if (m_botBG == true)
+		window.draw(m_rectBotBG);
 
 	if (m_mode == Search)
 	{
@@ -267,8 +312,10 @@ bool BrowseState::update(float delta)
 	}
 
 	m_iconSet.update(delta);
+	m_topInfos.update();
 	AppList::getInstance().update(delta);
 	m_tweenManager.update(delta);
+
 	return true;
 }
 

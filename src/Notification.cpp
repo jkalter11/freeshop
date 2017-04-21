@@ -15,6 +15,7 @@ Notification::Notification()
 {
 	if (m_texture.getSize().x == 0)
 		m_texture.loadFromFile("images/notification.9.png");
+
 	setTexture(&m_texture);
 	getText().setCharacterSize(12);
 }

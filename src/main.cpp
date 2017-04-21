@@ -2,6 +2,11 @@
 #include "DownloadQueue.hpp"
 #include "States/BrowseState.hpp"
 #include "States/SleepState.hpp"
+#include "States/SyncState.hpp"
+
+#ifndef EMULATION
+#include <3ds.h>
+#endif
 
 #ifndef EMULATION
 namespace {
@@ -27,6 +32,9 @@ void aptHookFunc(APT_HookType hookType, void *param)
 			FreeShop::SleepState::clock.restart();
 			FreeShop::BrowseState::clockDownloadInactivity.restart();
 			FreeShop::DownloadQueue::getInstance().resume();
+			break;
+		case APTHOOK_ONEXIT:
+			FreeShop::SyncState::exitRequired = true;
 			break;
 		default:
 			break;
@@ -54,6 +62,7 @@ int main(int argc, char** argv)
 #ifndef EMULATION
 	aptHook(&cookie, aptHookFunc, nullptr);
 	AM_InitializeExternalTitleDatabase(false);
+	//aptSetSleepAllowed(false);
 #endif
 
 	srand(time(NULL));

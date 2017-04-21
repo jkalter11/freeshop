@@ -42,6 +42,7 @@ public:
 		// Other
 		SleepMode,
 		Language,
+		Keyboard,
 
 		KEY_COUNT,
 	};

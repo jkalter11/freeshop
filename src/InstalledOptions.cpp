@@ -26,7 +26,6 @@ InstalledOptions::InstalledOptions()
 	m_textDLC = m_textUpdates;
 	m_textDLC.setString(_("DLC"));
 	m_textDLC.move(m_textUpdates.getLocalBounds().width + 40.f, 0.f);
-
 	m_textIconGame.setFont(AssetManager<cpp3ds::Font>::get("fonts/fontawesome.ttf"));
 	m_textIconGame.setString(L"\uf1f8");
 	m_textIconGame.setFillColor(cpp3ds::Color(50, 100, 50));

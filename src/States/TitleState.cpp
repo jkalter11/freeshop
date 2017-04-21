@@ -26,12 +26,20 @@ TitleState::TitleState(StateStack& stack, Context& context, StateCallback callba
 	m_textFree.setPosition(23, 64);
 	m_textFree.setStyle(cpp3ds::Text::Bold);
 
-	m_textureEshop.loadFromFile("images/eshop.png");
+	if (fopen(FREESHOP_DIR "/theme/images/eshop.png", "rb"))
+		m_textureEshop.loadFromFile(FREESHOP_DIR "/theme/images/eshop.png");
+	else
+		m_textureEshop.loadFromFile("images/eshop.png");
+
 	m_spriteEshop.setTexture(m_textureEshop, true);
 	m_spriteEshop.setColor(cpp3ds::Color(0xf4, 0x6c, 0x26, 0x00));
 	m_spriteEshop.setPosition(390.f - m_spriteEshop.getLocalBounds().width, 40.f);
 
-	m_textureBag.loadFromFile("images/bag.png");
+	if (fopen(FREESHOP_DIR "/theme/images/bag.png", "rb"))
+		m_textureBag.loadFromFile(FREESHOP_DIR "/theme/images/bag.png");
+	else
+		m_textureBag.loadFromFile("images/bag.png");
+
 	m_spriteBag.setTexture(m_textureBag, true);
 	m_spriteBag.setColor(cpp3ds::Color(0xf4, 0x6c, 0x26, 0x00));
 	m_spriteBag.setPosition(50.f, 50.f);

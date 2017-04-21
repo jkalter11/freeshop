@@ -8,6 +8,9 @@
 #include <cpp3ds/Window/Event.hpp>
 #include "TweenObjects.hpp"
 #include "AppItem.hpp"
+#include <cpp3ds/Window/Window.hpp>
+#include "States/State.hpp"
+#include "TweenObjects.hpp"
 
 namespace FreeShop {
 
@@ -17,6 +20,8 @@ public:
 
 	AppInfo();
 	~AppInfo();
+
+	static AppInfo &getInstance();
 
 	void drawTop(cpp3ds::Window &window);
 

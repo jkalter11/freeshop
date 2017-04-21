@@ -41,7 +41,6 @@ AppInfo::AppInfo()
 	m_textExecute = m_textDownload;
 	m_textExecute.setString("\uf01d");
 	m_textExecute.setPosition(5.f, 90.f);
-
 	m_arrowLeft.setFont(AssetManager<cpp3ds::Font>::get("fonts/fontawesome.ttf"));
 	m_arrowLeft.setCharacterSize(24);
 	m_arrowLeft.setFillColor(cpp3ds::Color(255,255,255,150));
@@ -97,13 +96,16 @@ AppInfo::AppInfo()
 	m_textDemo.setCharacterSize(10);
 	m_textDemo.setPosition(25.f, 140.f);
 	m_textDemo.useSystemFont();
-
 	m_textIconDemo.setFont(AssetManager<cpp3ds::Font>::get("fonts/fontawesome.ttf"));
 	m_textIconDemo.setFillColor(cpp3ds::Color(50, 100, 50));
 	m_textIconDemo.setCharacterSize(18);
 	m_textIconDemo.setPosition(5.f, 135.f);
 
-	m_fadeTextRect.setTexture(&AssetManager<cpp3ds::Texture>::get("images/fade.png"));
+	if (fopen(FREESHOP_DIR "/theme/images/fade.png", "rb"))
+		m_fadeTextRect.setTexture(&AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/fade.png"));
+	else
+		m_fadeTextRect.setTexture(&AssetManager<cpp3ds::Texture>::get("images/fade.png"));
+
 	m_fadeTextRect.setSize(cpp3ds::Vector2f(250.f, 8.f));
 	m_fadeTextRect.setOrigin(m_fadeTextRect.getSize());
 	m_fadeTextRect.setRotation(180.f);
@@ -120,6 +122,12 @@ AppInfo::AppInfo()
 AppInfo::~AppInfo()
 {
 
+}
+
+AppInfo &AppInfo::getInstance()
+{
+	static AppInfo appInfo;
+	return appInfo;
 }
 
 void AppInfo::drawTop(cpp3ds::Window &window)
@@ -676,6 +684,5 @@ void AppInfo::updateInfo()
 		}
 	}
 }
-
 
 } // namespace FreeShop

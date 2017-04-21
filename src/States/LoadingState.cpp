@@ -13,7 +13,6 @@ LoadingState::LoadingState(StateStack& stack, Context& context, StateCallback ca
 {
 	m_background.setSize(cpp3ds::Vector2f(400.f, 240.f));
 	m_background.setFillColor(cpp3ds::Color(0, 0, 0, 50));
-
 	m_icon.setFont(AssetManager<cpp3ds::Font>::get("fonts/fontawesome.ttf"));
 	m_icon.setFillColor(cpp3ds::Color(110,110,110,255));
 	m_icon.setCharacterSize(80);

@@ -87,6 +87,7 @@ namespace FreeShop
 
 			void showNews(Gwen::Controls::Base* base);
 			void languageChange(Gwen::Controls::Base* base);
+			void keyboardChange(Gwen::Controls::Base* base);
 
 		private:
 			cpp3ds::Vector2f m_position;
@@ -134,6 +135,7 @@ namespace FreeShop
 			// Other
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxSleep;
 			Gwen::Controls::ListBox *m_listboxLanguages;
+			Gwen::Controls::ListBox *m_listboxKeyboards;
 		};
 	}
 }

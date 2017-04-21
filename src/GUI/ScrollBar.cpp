@@ -19,6 +19,9 @@ ScrollBar::ScrollBar()
 , m_veloctyModifer(2000.f)
 {
 	cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get("images/scrollbar.9.png");
+	//if (fopen(FREESHOP_DIR "/theme/images/scrollbar.9.png", "rb"))
+		//cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/scrollbar.9.png");	
+
 	texture.setSmooth(true);
 	m_scrollBar.setTexture(&texture);
 	m_scrollBar.setContentSize(0.f, 100.f);

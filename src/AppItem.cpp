@@ -55,6 +55,9 @@ AppItem::AppItem()
 	, m_systemIconTexture(nullptr)
 {
 	cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get("images/missing-icon.png");
+	//if (fopen(FREESHOP_DIR "/theme/images/missing-icon.png", "rb"))
+		//texture = AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/missing-icon.png");
+
 	texture.setSmooth(true);
 	m_iconTexture = &texture;
 }

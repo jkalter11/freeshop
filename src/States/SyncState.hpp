@@ -29,6 +29,8 @@ public:
 	void startupSound();
 	void sync();
 
+	static bool exitRequired;
+
 private:
 	bool updateFreeShop();
 	bool updateCache();
@@ -44,6 +46,7 @@ private:
 
 	cpp3ds::Sound m_soundStartup;
 	cpp3ds::Sound m_soundLoading;
+
 };
 
 } // namespace FreeShop
