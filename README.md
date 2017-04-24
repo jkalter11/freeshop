@@ -14,4 +14,4 @@ Open source eShop alternative for the Nintendo 3DS. Allows you to browse and ins
 
 ### Credit & Thanks
 
-All the people that helped make this possible [listed here](https://notabug.org/btucker/freeShop/src/master/CREDITS.md).
+All the people that helped make this possible [listed here](https://notabug.org/arc13/freeShop/src/master/CREDITS.md).
