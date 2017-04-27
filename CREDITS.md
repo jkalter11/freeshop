@@ -5,6 +5,8 @@
 - [Plailect](https://github.com/Plailect/) - also for CDN/ticket related info
 - [yellows8](https://github.com/yellows8) - for all the incredible REing
 - [Noroxuz](https://github.com/Noroxuz) - help with banner
+- [PabloMK7](https://github.com/mariohacksandglitch) - for his awesome boot screen
+- [CaptainSwag101](https://notabug.org/CaptainSwag101) - for his help with code
 
 ## Translation Help
 
