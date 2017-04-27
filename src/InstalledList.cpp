@@ -102,7 +102,7 @@ void InstalledList::refresh()
 			}
 			catch (int e)
 			{
-				std::cout << "Error while adding: " << titleId << std::endl;
+				//std::cout << "Error while adding: " << titleId << std::endl;
 			}
 	}
 

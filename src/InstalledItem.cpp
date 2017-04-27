@@ -44,10 +44,7 @@ InstalledItem::InstalledItem(cpp3ds::Uint64 titleId)
 	else*/
 		m_background.setTexture(&AssetManager<cpp3ds::Texture>::get("images/installed_item_bg.9.png"));
 
-	if (found)
-		m_textTitle.setString(m_appItem->getTitle());
-	else
-		m_textTitle.setString("Not found");
+	m_textTitle.setString(m_appItem->getTitle());
 	m_textTitle.setCharacterSize(11);
 	m_textTitle.setPosition(m_background.getPadding().left, m_background.getPadding().top);
 	m_textTitle.setFillColor(cpp3ds::Color::Black);
