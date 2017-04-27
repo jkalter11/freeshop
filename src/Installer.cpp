@@ -335,5 +335,9 @@ cpp3ds::Uint64 Installer::getTitleId() const
 	return m_titleId;
 }
 
+bool sleepInstall(cpp3ds::Uint16 ticketVersion, std::string titleId)
+{
+
+}
 
 } // namespace FreeShop

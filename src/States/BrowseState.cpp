@@ -71,12 +71,13 @@ void BrowseState::initialize()
 	m_topBG = false;
 	m_botBG = false;
 
+	m_iconSet.addIcon(L"\uf0ae");
 	m_iconSet.addIcon(L"\uf290");
 	m_iconSet.addIcon(L"\uf019");
 	m_iconSet.addIcon(L"\uf11b");
 	m_iconSet.addIcon(L"\uf013");
 	m_iconSet.addIcon(L"\uf002");
-	m_iconSet.setPosition(180.f, 15.f);
+	m_iconSet.setPosition(155.f, 15.f);
 
 	m_textActiveDownloads.setCharacterSize(8);
 	m_textActiveDownloads.setFillColor(cpp3ds::Color::Black);
@@ -124,7 +125,7 @@ void BrowseState::initialize()
 	m_scrollbarInstalledList.attachObject(&InstalledList::getInstance());
 	m_scrollbarDownloadQueue.attachObject(&DownloadQueue::getInstance());
 
-	setMode(App);
+	setMode(Info);
 
 #ifdef _3DS
 	while (!m_gwenRenderer)
@@ -181,8 +182,6 @@ void BrowseState::renderTopScreen(cpp3ds::Window& window)
 		window.draw(AppList::getInstance());
 	}
 
-	window.draw(m_topInfos);
-
 	// Special draw method to draw top screenshot if selected
 	m_appInfo.drawTop(window);
 }
@@ -218,6 +217,8 @@ void BrowseState::renderBottomScreen(cpp3ds::Window& window)
 		for (auto& textMatch : m_textMatches)
 			window.draw(textMatch);
 	}
+	if (m_mode == Info)
+		window.draw(m_botInfos);
 	if (m_mode == Settings)
 	{
 		m_settingsGUI->render();
@@ -312,7 +313,7 @@ bool BrowseState::update(float delta)
 	}
 
 	m_iconSet.update(delta);
-	m_topInfos.update();
+	m_botInfos.update();
 	AppList::getInstance().update(delta);
 	m_tweenManager.update(delta);
 
@@ -424,6 +425,21 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 					{
 						app->queueForInstall();
 						Notification::spawn(_("Queued install: %s", app->getTitle().toAnsiString().c_str()));
+					}
+					else
+						Notification::spawn(_("Already installed: %s", app->getTitle().toAnsiString().c_str()));
+				}
+				break;
+			}
+			case cpp3ds::Keyboard::Y: {
+				if (!AppList::getInstance().getSelected())
+					break;
+				auto app = AppList::getInstance().getSelected()->getAppItem();
+				if (app && !DownloadQueue::getInstance().isDownloading(app))
+				{
+					if (!app->isInstalled())
+					{
+						app->queueForSleepInstall();
 					}
 					else
 						Notification::spawn(_("Already installed: %s", app->getTitle().toAnsiString().c_str()));

@@ -8,7 +8,7 @@
 #include "../Keyboard/Keyboard.hpp"
 #include "../RichText.hpp"
 #include "../IconSet.hpp"
-#include "../TopInformations.hpp"
+#include "../BotInformations.hpp"
 #include "../GUI/Settings.hpp"
 #include "../GUI/ScrollBar.hpp"
 #include "../MusicBCSTM.hpp"
@@ -47,7 +47,8 @@ public:
 
 private:
 	enum Mode {
-		App        = 0,
+		Info = 0,
+		App,
 		Downloads,
 		Installed,
 		Settings,
@@ -71,7 +72,8 @@ private:
 	bool m_threadBusy;
 
 	IconSet m_iconSet;
-	TopInformations m_topInfos;
+	IconSet m_iconInfo;
+	BotInformations m_botInfos;
 
 	size_t m_activeDownloadCount;
 	util3ds::TweenText m_textActiveDownloads;

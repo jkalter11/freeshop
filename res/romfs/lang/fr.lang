@@ -30,6 +30,9 @@ Extraction du cache le plus récent...
 Downloading title keys...
 Téléchargement des title keys...
 
+Loading services...
+Chargement des services...
+
 # src/States/BrowseState.cpp
 ############################
 No title keys found.\nMake sure you have keys in\n%s\n\nManually copy keys to the directory\nor check settings to enter a URL\nfor downloading title keys.
@@ -160,6 +163,29 @@ Pas assez d'espace sur la carte SD
 
 Wrong title key
 Mauvaise title key
+
+Ready for sleep installation: %s
+Prêt pour l'installation en veille : %s
+
+Processing sleep installation: %s
+Traitement de l'installation en veille : %s
+
+Can't install ticket: %s
+Erreur lors de l'installation du ticket : %s
+
+Ready for sleep installation: %s
+Prêt pour l'installation en veille : %s
+
+Sleep installation failed: %s
+Installation en veille échouée : %s
+
+# src/AppItem.cpp
+#################
+Already queued for sleep installation: %s
+Déjà en cours de traitement : %s
+
+Preparing for sleep installation: %s
+Préparation pour l'installation en veille : %s
 
 # src/InstalledOptions.cpp
 #########################

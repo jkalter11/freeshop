@@ -70,6 +70,9 @@ int main(int argc, char** argv)
 	game->run();
 	FreeShop::DownloadQueue::getInstance().suspend();
 	FreeShop::DownloadQueue::getInstance().save();
+#ifndef EMULATION
+	nimsExit();
+#endif
 	delete game;
 	return 0;
 }

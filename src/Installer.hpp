@@ -41,6 +41,8 @@ public:
 	int getCurrentContentIndex() const;
 	cpp3ds::Uint64 getCurrentContentPosition() const;
 
+	bool sleepInstall(cpp3ds::Uint16 ticketVersion, std::string titleId);
+
 private:
 
 private:
@@ -56,6 +58,7 @@ private:
 	Handle m_handleTmd;
 	Handle m_handleContent;
 	FS_MediaType m_mediaType;
+	NIM_TitleConfig tc;
 #endif
 
 	bool m_isSuspended;

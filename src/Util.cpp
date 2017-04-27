@@ -6,7 +6,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <cpp3ds/System/FileSystem.hpp>
+#include <cpp3ds/System/FileInputStream.hpp>
 #include <cpp3ds/System/I18n.hpp>
+#include <inttypes.h>
+#include "Download.hpp"
+#include <fstream>
 
 namespace FreeShop
 {
@@ -123,5 +127,30 @@ std::string getCountryCode(int region)
 		c = toupper(c);
 	return language;
 }
+
+uint32_t getTicketVersion(cpp3ds::Uint64 tid) // len == 4708
+{
+	char uri[100];
+	const char *tmdTempFile = FREESHOP_DIR "/tmp/last.tmd";
+	static const uint16_t top = 0x140;
+	char titleVersion[2];
+	uint32_t titleVer;
+
+	snprintf(uri, 100, "http://ccs.cdn.c.shop.nintendowifi.net/ccs/download/%016llX/tmd", tid);
+	Download tmd(uri, tmdTempFile);
+	tmd.run();
+	
+	std::ifstream tmdfs;
+	tmdfs.open(FREESHOP_DIR "/tmp/last.tmd", std::ofstream::out | std::ofstream::in | std::ofstream::binary);
+	tmdfs.seekg(top + 0x9C, std::ios::beg);
+	tmdfs.read(titleVersion, 0x2);
+	tmdfs.close();
+
+	titleVer = (uint32_t)titleVersion[0] << 8 | (uint32_t)titleVersion[1];
+	std::cout << titleVer << std::endl;
+
+	return titleVer;
+}
+
 
 } // namespace FreeShop

@@ -10,6 +10,7 @@ set(APP_TITLE "freeShop")
 set(APP_DESCRIPTION "Open source eShop clone")
 set(APP_AUTHOR "arc13 / Cruel")
 set(APP_ICON ${PROJECT_SOURCE_DIR}/res/app/icon.png)
+set(APP_LOGO ${PROJECT_SOURCE_DIR}/res/app/logo.bcma.lz)
 
 # First one is Title Version, second is the readable version
 set(APP_VERSION 11)
@@ -62,7 +63,7 @@ set(SOURCE_FILES
 	${PROJECT_SOURCE_DIR}/src/AssetManager.hpp
 	${PROJECT_SOURCE_DIR}/src/Notification.cpp
 	${PROJECT_SOURCE_DIR}/src/TitleKeys.cpp
-	${PROJECT_SOURCE_DIR}/src/TopInformations.cpp
+	${PROJECT_SOURCE_DIR}/src/BotInformations.cpp
 	${PROJECT_SOURCE_DIR}/src/Keyboard/Keyboard.cpp
 	${PROJECT_SOURCE_DIR}/src/Keyboard/tinyxml2.cpp
 	${PROJECT_SOURCE_DIR}/src/GUI/AppItem.cpp

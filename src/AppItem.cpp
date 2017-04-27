@@ -7,7 +7,11 @@
 #include "TitleKeys.hpp"
 #include "DownloadQueue.hpp"
 #include <sstream>
-
+#include "Notification.hpp"
+#include "Installer.hpp"
+#ifndef EMULATION
+#include <3ds.h>
+#endif
 
 namespace {
 
@@ -53,6 +57,7 @@ AppItem::AppItem()
 	, m_iconIndex(-1)
 	, m_iconRect(cpp3ds::IntRect(0, 0, 48, 48))
 	, m_systemIconTexture(nullptr)
+	, m_threadSleepInstall(&AppItem::queueForSleepInstallThread, this)
 {
 	cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get("images/missing-icon.png");
 	//if (fopen(FREESHOP_DIR "/theme/images/missing-icon.png", "rb"))
@@ -64,6 +69,7 @@ AppItem::AppItem()
 
 AppItem::~AppItem()
 {
+	m_threadSleepInstall.wait();
 	delete m_systemIconTexture;
 }
 
@@ -84,6 +90,7 @@ void AppItem::loadFromJSON(const char* titleId, const rapidjson::Value &json)
 	m_updates = TitleKeys::getRelated(m_titleId, TitleKeys::Update);
 	m_demos = TitleKeys::getRelated(m_titleId, TitleKeys::Demo);
 	m_dlc = TitleKeys::getRelated(m_titleId, TitleKeys::DLC);
+	m_isSleepBusy = false;
 
 	const char *title = json[0].GetString();
 	m_title = cpp3ds::String::fromUtf8(title, title + json[0].GetStringLength());
@@ -329,6 +336,27 @@ void AppItem::queueForInstall()
 		DownloadQueue::getInstance().addDownload(shared_from_this(), id);
 	for (auto &id : m_dlc)
 		DownloadQueue::getInstance().addDownload(shared_from_this(), id);
+}
+
+void AppItem::queueForSleepInstall()
+{
+#ifndef EMULATION
+	if (m_isSleepBusy) {
+		Notification::spawn(_("Already queued for sleep installation: %s", m_title.toAnsiString().c_str()));
+	} else {
+		Notification::spawn(_("Preparing for sleep installation: %s", m_title.toAnsiString().c_str()));
+		m_threadSleepInstall.launch();
+	}
+#endif
+}
+
+void AppItem::queueForSleepInstallThread()
+{
+#ifndef EMULATION
+	m_isSleepBusy = true;
+	DownloadQueue::getInstance().addSleepDownload(shared_from_this());
+	m_isSleepBusy = false;
+#endif
 }
 
 const std::vector<cpp3ds::Uint64> &AppItem::getUpdates() const

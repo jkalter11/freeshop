@@ -18,6 +18,9 @@
 #include <archive_entry.h>
 #include <dirent.h>
 #include <cpp3ds/System/FileInputStream.hpp>
+#ifndef EMULATION
+#include <3ds.h>
+#endif
 
 namespace {
 
@@ -200,6 +203,14 @@ void SyncState::sync()
 		Config::set(Config::Version, FREESHOP_VERSION);
 		Config::set(Config::ShowNews, true);
 	}
+
+	setStatus(_("Loading services..."));
+
+#ifndef EMULATION
+	//NIMS service init
+	static uint8_t nimBuf[0x20000];
+	nimsInit(nimBuf, sizeof(nimBuf));
+#endif
 
 	updateCache();
 	updateTitleKeys();

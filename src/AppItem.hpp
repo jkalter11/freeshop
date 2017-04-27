@@ -6,8 +6,14 @@
 #include <cpp3ds/Graphics/Texture.hpp>
 #include <cpp3ds/Graphics/Sprite.hpp>
 #include <rapidjson/document.h>
+#include <cpp3ds/System/Thread.hpp>
+#include <cpp3ds/System/Lock.hpp>
+#include <cpp3ds/System/Mutex.hpp>
 #include "GUI/NinePatch.hpp"
 #include "TweenObjects.hpp"
+#ifndef EMULATION
+#include <3ds.h>
+#endif
 
 namespace FreeShop {
 
@@ -72,6 +78,8 @@ public:
 	const std::string &getProductCode() const;
 
 	void queueForInstall();
+	void queueForSleepInstall();
+	void queueForSleepInstallThread();
 
 	const std::vector<cpp3ds::Uint64> &getUpdates() const;
 	const std::vector<cpp3ds::Uint64> &getDemos() const;
@@ -99,6 +107,7 @@ private:
 	time_t m_releaseDate;
 	int m_iconIndex;
 	std::string m_productCode;
+	bool m_isSleepBusy;
 
 	std::vector<cpp3ds::Uint64> m_updates;
 	std::vector<cpp3ds::Uint64> m_demos;
@@ -108,6 +117,9 @@ private:
 	cpp3ds::Texture *m_iconTexture;
 	cpp3ds::Texture *m_systemIconTexture;
 	cpp3ds::IntRect m_iconRect;
+
+	cpp3ds::Thread m_threadSleepInstall;
+	cpp3ds::Mutex m_mutexSleepInstall;
 };
 
 } // namepace FreeShop

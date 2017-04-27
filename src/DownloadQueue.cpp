@@ -17,6 +17,11 @@
 #include "TitleKeys.hpp"
 #include "InstalledList.hpp"
 #include "Config.hpp"
+#include "Util.hpp"
+#include <inttypes.h>
+#ifndef EMULATION
+#include <3ds.h>
+#endif
 
 namespace FreeShop {
 
@@ -134,6 +139,9 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 
 				titleVersion = *(cpp3ds::Uint16*)&buf[dataOffsets[sigType] + 0x9C];
 				contentCount = __builtin_bswap16(*(cpp3ds::Uint16*)&buf[dataOffsets[sigType] + 0x9E]);
+
+				//std::cout << len << std::endl;
+				//std::cout << titleVersion << std::endl;
 
 				if (isResuming)
 					installer->resume();
@@ -322,7 +330,6 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 	m_downloads.emplace_back(std::move(downloadItem));
 	realign();
 }
-
 
 void DownloadQueue::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) const
 {
@@ -652,6 +659,52 @@ void DownloadQueue::load()
 			}
 		}
 	}
+}
+
+void DownloadQueue::addSleepDownload(std::shared_ptr<AppItem> app)
+{
+#ifndef EMULATION
+	//Lock the thread so if user wants to install another app while an app is processed, this doesn't fu** up everything (and make ARM9 crashes (true story))
+	cpp3ds::Lock lock(m_mutexSleepInstall);
+
+	bool isRegistered;
+
+	//Check if the title can be downloaded: is already registered ? is in registering ?
+	NIMS_IsTaskRegistered(app->getTitleId(), &isRegistered);
+
+	if (isRegistered) {
+		Notification::spawn(_("Ready for sleep installation: %s", app->getTitle().toAnsiString().c_str()));
+		return;
+	}
+
+	Notification::spawn(_("Processing sleep installation: %s", app->getTitle().toAnsiString().c_str()));
+
+	//Some vars initialisation
+	uint32_t res;
+	NIM_TitleConfig tc;
+	cpp3ds::String appTitle = app->getTitle();
+	std::string stdAppTitle = appTitle.toAnsiString();
+	Installer *installer = new Installer(app->getTitleId(), 0);
+	FS_MediaType mediaType = ((app->getTitleId() >> 32) == TitleKeys::DSiWare) ? MEDIATYPE_NAND : MEDIATYPE_SD;
+
+	//Get the title version (and not ticket version) via the title ID
+	res = getTicketVersion(app->getTitleId());
+	printf("%" PRIu32 "\n", res);
+
+	//Install app ticket
+	if (!installer->installTicket(res)) {
+		Notification::spawn(_("Can't install ticket: %s", app->getTitle().toAnsiString().c_str()));
+		return;
+	}
+
+	//The code that register the sleep download
+	NIMS_MakeTitleConfig(&tc, app->getTitleId(), res, 0, mediaType);
+
+	if (R_SUCCEEDED(res = NIMS_RegisterTask(&tc, stdAppTitle.c_str(), "freeShop download")))
+		Notification::spawn(_("Ready for sleep installation: %s", stdAppTitle.c_str()));
+	else
+		Notification::spawn(_("Sleep installation failed: %s", stdAppTitle.c_str()));
+#endif
 }
 
 void DownloadQueue::setScroll(float position)
