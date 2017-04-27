@@ -1,6 +1,4 @@
-![freeShop](https://notabug.org/btucker/freeShop/raw/master/res/app/banner.png)
-
-[![Build Status](https://img.shields.io/magnumci/ci/e47fb132007f6e95f1255f46e7fe3bf0.svg)](https://magnum-ci.com/projects/4757) [![Codecov branch](https://img.shields.io/codecov/c/github/Cruel/freeShop/master.svg?maxAge=86400)](https://codecov.io/gh/Cruel/freeShop)
+![freeShop](https://notabug.org/arc13/freeShop/raw/master/res/app/banner.png)
 
 Open source eShop alternative for the Nintendo 3DS. Allows you to browse and install titles you own (i.e. titles for which you have the titlekey).
 
@@ -12,6 +10,21 @@ Open source eShop alternative for the Nintendo 3DS. Allows you to browse and ins
 
 3. Launch freeShop and enjoy
 
+### Building Instructions
+
+freeShop depends on the cpp3ds library, whose location must be defined
+in the environment variable CPP3DS. Therefore, freeShop also needs cpp3ds's
+dependencies as well.
+
+To build from source on a Linux/UNIX-based system, run the following commands:
+
+	mkdir -p build
+	cd build
+	cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_EMULATOR=OFF -DBUILD_TESTS=OFF ..
+	make -j4
+
+To build the emulator or unit tests, simply change the relevant flags from "OFF" to "ON".
+
 ### Credit & Thanks
 
-All the people that helped make this possible [listed here](https://notabug.org/btucker/freeShop/src/master/CREDITS.md).
+All the people that helped make this possible [listed here](https://notabug.org/arc13/freeShop/src/master/CREDITS.md).
