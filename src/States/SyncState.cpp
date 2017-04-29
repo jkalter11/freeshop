@@ -6,6 +6,8 @@
 #include "../Config.hpp"
 #include "../TitleKeys.hpp"
 #include "../FreeShop.hpp"
+#include "../Theme.hpp"
+#include "../Notification.hpp"
 #include <TweenEngine/Tween.h>
 #include <cpp3ds/Window/Window.hpp>
 #include <cpp3ds/System/I18n.hpp>
@@ -13,6 +15,8 @@
 #include <cpp3ds/System/Sleep.hpp>
 #include <sys/stat.h>
 #include <fstream>
+#include <iostream>
+#include <sstream>
 #include <cpp3ds/System/Service.hpp>
 #include <archive.h>
 #include <archive_entry.h>
@@ -117,9 +121,13 @@ SyncState::SyncState(StateStack& stack, Context& context, StateCallback callback
 	g_syncComplete = false;
 	g_browserLoaded = false;
 
-	/*if (fopen(FREESHOP_DIR "/theme/sounds/startup.ogg", "rb"))
+	std::string path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/sounds/startup.ogg");
+	if (pathExists(path.c_str(), false))
+		Theme::isSoundStartupThemed = true;
+
+	if (Theme::isSoundStartupThemed)
 		m_soundStartup.setBuffer(AssetManager<cpp3ds::SoundBuffer>::get(FREESHOP_DIR "/theme/sounds/startup.ogg"));
-	else*/
+	else
 		m_soundStartup.setBuffer(AssetManager<cpp3ds::SoundBuffer>::get("sounds/startup.ogg"));
 
 	m_soundLoading.setBuffer(AssetManager<cpp3ds::SoundBuffer>::get("sounds/loading.ogg"));
@@ -204,14 +212,8 @@ void SyncState::sync()
 		Config::set(Config::ShowNews, true);
 	}
 
-	setStatus(_("Loading services..."));
-
-#ifndef EMULATION
-	//NIMS service init
-	static uint8_t nimBuf[0x20000];
-	nimsInit(nimBuf, sizeof(nimBuf));
-#endif
-
+	loadServices();
+	loadThemeManagement();
 	updateCache();
 	updateTitleKeys();
 	updateEshopMusic();
@@ -302,6 +304,100 @@ bool SyncState::updateFreeShop()
 		}
 	}
 	return false;
+}
+
+bool SyncState::loadThemeManagement()
+{
+	setStatus(_("Loading theme manager..."));
+	std::string path;
+
+	path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/images/flags.png");
+	if (pathExists(path.c_str(), false))
+		Theme::isFlagsThemed = true;
+
+	path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/images/itembg.9.png");
+	if (pathExists(path.c_str(), false))
+		Theme::isItemBG9Themed = true;
+
+	path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/images/button-radius.9.png");
+	if (pathExists(path.c_str(), false))
+		Theme::isButtonRadius9Themed = true;
+
+	path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/images/fsbgsd.9.png");
+	if (pathExists(path.c_str(), false))
+		Theme::isFSBGSD9Themed = true;
+
+	path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/images/fsbgnand.9.png");
+	if (pathExists(path.c_str(), false))
+		Theme::isFSBGNAND9Themed = true;
+
+	path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/images/installed_item_bg.9.png");
+	if (pathExists(path.c_str(), false))
+		Theme::isInstalledItemBG9Themed = true;
+
+	path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/images/itembg-selected.9.png");
+	if (pathExists(path.c_str(), false))
+		Theme::isItemBGSelected9Themed = true;
+
+	path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/images/listitembg.9.png");
+	if (pathExists(path.c_str(), false))
+		Theme::isListItemBG9Themed = true;
+
+	path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/images/missing-icon.png");
+	if (pathExists(path.c_str(), false))
+		Theme::isMissingIconThemed = true;
+
+	path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/images/notification.9.png");
+	if (pathExists(path.c_str(), false))
+		Theme::isNotification9Themed = true;
+
+	path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/images/qr_selector.9.png");
+	if (pathExists(path.c_str(), false))
+		Theme::isQrSelector9Themed = true;
+
+	path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/images/scrollbar.9.png");
+	if (pathExists(path.c_str(), false))
+		Theme::isScrollbar9Themed = true;
+
+	path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/sounds/blip.ogg");
+	if (pathExists(path.c_str(), false))
+		Theme::isSoundBlipThemed = true;
+
+	path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/sounds/chime.ogg");
+	if (pathExists(path.c_str(), false))
+		Theme::isSoundChimeThemed = true;
+
+	path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/texts.json");
+	if (pathExists(path.c_str(), false)) {
+		if (Theme::loadFromFile()) {
+			Theme::isTextThemed = true;
+
+			std::string primaryTextValue = Theme::get("primaryText").GetString();
+			std::string secondaryTextValue = Theme::get("secondaryText").GetString();
+
+			int R, G, B;
+
+			hexToRGB(primaryTextValue, &R, &G, &B);
+			Theme::primaryTextColor = cpp3ds::Color(R, G, B);
+
+			hexToRGB(secondaryTextValue, &R, &G, &B);
+			Theme::secondaryTextColor = cpp3ds::Color(R, G, B);
+		}
+	}
+}
+
+bool SyncState::loadServices()
+{
+	setStatus(_("Loading services..."));
+
+	#ifndef EMULATION
+		Result res;
+
+		//NIMS service init
+		static uint8_t nimBuf[0x30000];
+		if (R_FAILED(res = nimsInit(nimBuf, sizeof(nimBuf))))
+			Notification::spawn(_("Unable to start NIMS: \n0x%08lX (%s)", res, R_DESCRIPTION(res)));
+	#endif
 }
 
 

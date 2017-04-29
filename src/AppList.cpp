@@ -12,7 +12,7 @@
 #include "Util.hpp"
 #include "TitleKeys.hpp"
 #include "AssetManager.hpp"
-
+#include "Theme.hpp"
 
 namespace FreeShop {
 
@@ -29,9 +29,9 @@ AppList::AppList(std::string jsonFilename)
 , m_processedFirstKey(false)
 {
 	m_jsonFilename = jsonFilename;
-	/*if (fopen(FREESHOP_DIR "/theme/sounds/blip.ogg", "rb"))
+	if (Theme::isSoundBlipThemed)
 		m_soundBlip.setBuffer(AssetManager<cpp3ds::SoundBuffer>::get(FREESHOP_DIR "/theme/sounds/blip.ogg"));
-	else*/	
+	else
 		m_soundBlip.setBuffer(AssetManager<cpp3ds::SoundBuffer>::get("sounds/blip.ogg"));
 }
 

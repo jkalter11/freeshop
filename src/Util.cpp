@@ -2,9 +2,12 @@
 #include "Config.hpp"
 #include <dirent.h>
 #include <sys/unistd.h>
+#include <sys/stat.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <iostream>
+#include <sstream>
 #include <cpp3ds/System/FileSystem.hpp>
 #include <cpp3ds/System/FileInputStream.hpp>
 #include <cpp3ds/System/I18n.hpp>
@@ -22,6 +25,11 @@ bool pathExists(const char* path, bool escape)
 		return stat(cpp3ds::FileSystem::getFilePath(path).c_str(), &buffer) == 0;
 	else
 		return stat(path, &buffer) == 0;
+}
+
+bool fileExists (const std::string& name) {
+	struct stat buffer;   
+	return (stat (name.c_str(), &buffer) == 0); 
 }
 
 void makeDirectory(const char *dir, mode_t mode)
@@ -152,5 +160,17 @@ uint32_t getTicketVersion(cpp3ds::Uint64 tid) // len == 4708
 	return titleVer;
 }
 
+void hexToRGB(std::string hexValue, int *R, int *G, int *B)
+{
+	std::string strR, strG, strB;
+
+	strR = hexValue.substr(0, 2);
+	strG = hexValue.substr(2, 2);
+	strB = hexValue.substr(4, 2);
+
+	std::istringstream(strR) >> std::hex >> *R;
+	std::istringstream(strG) >> std::hex >> *G;
+	std::istringstream(strB) >> std::hex >> *B;
+}
 
 } // namespace FreeShop

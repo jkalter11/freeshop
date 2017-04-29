@@ -5,6 +5,7 @@
 #include "AppItem.hpp"
 #include "Util.hpp"
 #include "TitleKeys.hpp"
+#include "Theme.hpp"
 #include "DownloadQueue.hpp"
 #include <sstream>
 #include "Notification.hpp"
@@ -59,12 +60,15 @@ AppItem::AppItem()
 	, m_systemIconTexture(nullptr)
 	, m_threadSleepInstall(&AppItem::queueForSleepInstallThread, this)
 {
-	cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get("images/missing-icon.png");
-	//if (fopen(FREESHOP_DIR "/theme/images/missing-icon.png", "rb"))
-		//texture = AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/missing-icon.png");
-
-	texture.setSmooth(true);
-	m_iconTexture = &texture;
+	if (Theme::isMissingIconThemed) {
+		cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/missing-icon.png");
+		texture.setSmooth(true);
+		m_iconTexture = &texture;
+	} else {
+		cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get("images/missing-icon.png");
+		texture.setSmooth(true);
+		m_iconTexture = &texture;
+	}
 }
 
 AppItem::~AppItem()

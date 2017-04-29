@@ -12,14 +12,12 @@ namespace FreeShop
 {
 
 bool pathExists(const char* path, bool escape = true);
+bool fileExists (const std::string& name);
 void makeDirectory(const char *dir, mode_t mode = 0777);
 int removeDirectory(const char *path, bool onlyIfEmpty = false);
 std::string getCountryCode(int region);
 uint32_t getTicketVersion(cpp3ds::Uint64 tid);
-#ifndef EMULATION
-Result getTitleVersion(uint64_t tid, uint16_t *version);
-static const Result tmd_FileNotFoundResult = MAKERESULT(RL_PERMANENT, RS_NOTFOUND, RM_APPLICATION, 5);
-#endif
+void hexToRGB(std::string hexValue, int *R, int *G, int *B);
 
 } // namespace FreeShop
 

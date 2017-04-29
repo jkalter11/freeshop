@@ -18,6 +18,7 @@
 #include "InstalledList.hpp"
 #include "Config.hpp"
 #include "Util.hpp"
+#include "Theme.hpp"
 #include <inttypes.h>
 #ifndef EMULATION
 #include <3ds.h>
@@ -48,10 +49,11 @@ DownloadQueue::DownloadQueue()
 , m_refreshEnd(false)
 , m_size(320.f, 0.f)
 {
-	/*if (fopen(FREESHOP_DIR "/theme/sounds/chime.ogg", "rb"))
+	if (Theme::isSoundChimeThemed)
 		m_soundBufferFinish.loadFromFile(FREESHOP_DIR "/theme/sounds/chime.ogg");
-	else*/
+	else
 		m_soundBufferFinish.loadFromFile("sounds/chime.ogg");
+
 	m_soundFinish.setBuffer(m_soundBufferFinish);
 
 	load();
@@ -704,6 +706,8 @@ void DownloadQueue::addSleepDownload(std::shared_ptr<AppItem> app)
 		Notification::spawn(_("Ready for sleep installation: %s", stdAppTitle.c_str()));
 	else
 		Notification::spawn(_("Sleep installation failed: %s", stdAppTitle.c_str()));
+
+	m_soundFinish.play();
 #endif
 }
 

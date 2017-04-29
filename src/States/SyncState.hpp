@@ -36,6 +36,8 @@ private:
 	bool updateCache();
 	bool updateTitleKeys();
 	bool updateEshopMusic();
+	bool loadServices();
+	bool loadThemeManagement();
 	void setStatus(const std::string& message);
 
 	cpp3ds::Thread m_threadSync;

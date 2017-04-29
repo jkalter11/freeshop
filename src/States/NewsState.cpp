@@ -5,6 +5,7 @@
 #include <cpp3ds/System/FileSystem.hpp>
 #include "NewsState.hpp"
 #include "../AssetManager.hpp"
+#include "../Theme.hpp"
 #include "SleepState.hpp"
 #include "BrowseState.hpp"
 
@@ -19,11 +20,14 @@ NewsState::NewsState(StateStack &stack, Context &context, StateCallback callback
 	m_overlay.setSize(cpp3ds::Vector2f(400.f, 240.f));
 	m_overlay.setFillColor(cpp3ds::Color(255, 255, 255, 0));
 
-	cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get("images/button-radius.9.png");
-	/*if (fopen(FREESHOP_DIR "/theme/images/button-radius.9.png", "rb"))
-		texture.loadFromFile(FREESHOP_DIR "/theme/images/button-radius.9.png");*/
+	if (!Theme::isButtonRadius9Themed) {
+		cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get("images/button-radius.9.png");
+		m_background.setTexture(&texture);
+	} else {
+		cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/button-radius.9.png");
+		m_background.setTexture(&texture);
+	}
 
-	m_background.setTexture(&texture);
 	m_background.setSize(cpp3ds::Vector2f(280.f, 200.f));
 	m_background.setPosition(20.f, 0.f);
 	m_background.setColor(cpp3ds::Color(200, 200, 200, 0));

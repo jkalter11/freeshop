@@ -8,6 +8,7 @@
 #include "Download.hpp"
 #include "AssetManager.hpp"
 #include "DownloadQueue.hpp"
+#include "Theme.hpp"
 #include "States/DialogState.hpp"
 #include "States/BrowseState.hpp"
 
@@ -285,9 +286,9 @@ void Download::fillFromAppItem(std::shared_ptr<AppItem> app)
 
 	setProgressMessage(_("Queued"));
 
-	/*if (fopen(FREESHOP_DIR "/theme/images/listitembg.9.png", "rb"))
+	if (Theme::isListItemBG9Themed)
 		m_background.setTexture(&AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/listitembg.9.png"));
-	else*/
+	else
 		m_background.setTexture(&AssetManager<cpp3ds::Texture>::get("images/listitembg.9.png"));
 
 	m_background.setContentSize(320.f + m_background.getPadding().width - m_background.getTexture()->getSize().x + 2.f, 24.f);
@@ -322,11 +323,17 @@ void Download::fillFromAppItem(std::shared_ptr<AppItem> app)
 	m_textTitle.setString(app->getTitle());
 	m_textTitle.setCharacterSize(10);
 	m_textTitle.setPosition(m_background.getPadding().left + 30.f, m_background.getPadding().top);
-	m_textTitle.setFillColor(cpp3ds::Color::Black);
+	if (Theme::isTextThemed)
+		m_textTitle.setFillColor(Theme::primaryTextColor);
+	else
+		m_textTitle.setFillColor(cpp3ds::Color::Black);
 	m_textTitle.useSystemFont();
 
 	m_textProgress = m_textTitle;
-	m_textProgress.setFillColor(cpp3ds::Color(130, 130, 130, 255));
+	if (Theme::isTextThemed)
+		m_textProgress.setFillColor(Theme::secondaryTextColor);
+	else
+		m_textProgress.setFillColor(cpp3ds::Color(130, 130, 130, 255));
 	m_textProgress.move(0.f, 12.f);
 
 	m_progressBar.setFillColor(cpp3ds::Color(0, 0, 0, 50));

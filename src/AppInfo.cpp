@@ -10,6 +10,7 @@
 #include "Notification.hpp"
 #include "InstalledList.hpp"
 #include "FreeShop.hpp"
+#include "Theme.hpp"
 #include "States/DialogState.hpp"
 #include <sstream>
 #include <TweenEngine/Tween.h>
@@ -61,7 +62,10 @@ AppInfo::AppInfo()
 	m_screenshotsBackground.setPosition(0.f, 166.f);
 
 	m_textScreenshotsEmpty.setCharacterSize(12);
-	m_textScreenshotsEmpty.setFillColor(cpp3ds::Color(255, 255, 255, 220));
+	if (Theme::isTextThemed)
+		m_textScreenshotsEmpty.setFillColor(Theme::secondaryTextColor);
+	else
+		m_textScreenshotsEmpty.setFillColor(cpp3ds::Color(255, 255, 255, 220));
 	m_textScreenshotsEmpty.useSystemFont();
 	m_textScreenshotsEmpty.setString(_("No Screenshots"));
 	cpp3ds::FloatRect textRect = m_textScreenshotsEmpty.getLocalBounds();
@@ -70,7 +74,10 @@ AppInfo::AppInfo()
 
 	m_textNothingSelected.setString(_("No game selected"));
 	m_textNothingSelected.setCharacterSize(16);
-	m_textNothingSelected.setFillColor(cpp3ds::Color(0, 0, 0, 120));
+	if (Theme::isTextThemed)
+		m_textNothingSelected.setFillColor(Theme::secondaryTextColor);
+	else
+		m_textNothingSelected.setFillColor(cpp3ds::Color(0, 0, 0, 120));
 	m_textNothingSelected.useSystemFont();
 	m_textNothingSelected.setPosition(160.f, 105.f);
 	m_textNothingSelected.setOrigin(m_textNothingSelected.getLocalBounds().width / 2, m_textNothingSelected.getLocalBounds().height / 2);
@@ -78,13 +85,19 @@ AppInfo::AppInfo()
 		.target(0.9f, 0.9f).repeatYoyo(-1, 0.f).start(m_tweenManager);
 
 	m_textTitle.setCharacterSize(15);
-	m_textTitle.setFillColor(cpp3ds::Color::Black);
+	if (Theme::isTextThemed)
+		m_textTitle.setFillColor(Theme::primaryTextColor);
+	else
+		m_textTitle.setFillColor(cpp3ds::Color::Black);
 	m_textTitle.setStyle(cpp3ds::Text::Bold);
 	m_textTitle.setPosition(207.f, 28.f);
 	m_textTitle.useSystemFont();
 
 	m_textDescription.setCharacterSize(12);
-	m_textDescription.setFillColor(cpp3ds::Color(100, 100, 100, 255));
+	if (Theme::isTextThemed)
+		m_textDescription.setFillColor(Theme::secondaryTextColor);
+	else
+		m_textDescription.setFillColor(cpp3ds::Color(100, 100, 100, 255));
 	m_textDescription.useSystemFont();
 
 	m_textTitleId.setCharacterSize(10);
@@ -92,7 +105,10 @@ AppInfo::AppInfo()
 	m_textTitleId.setPosition(2.f, 127.f);
 
 	m_textDemo.setString(_("Demo"));
-	m_textDemo.setFillColor(cpp3ds::Color(100, 100, 100));
+	if (Theme::isTextThemed)
+		m_textDemo.setFillColor(Theme::secondaryTextColor);
+	else
+		m_textDemo.setFillColor(cpp3ds::Color(100, 100, 100));
 	m_textDemo.setCharacterSize(10);
 	m_textDemo.setPosition(25.f, 140.f);
 	m_textDemo.useSystemFont();

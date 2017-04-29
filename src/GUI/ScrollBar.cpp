@@ -1,6 +1,7 @@
 #include <TweenEngine/Tween.h>
 #include "ScrollBar.hpp"
 #include "../AssetManager.hpp"
+#include "../Theme.hpp"
 
 namespace FreeShop {
 
@@ -18,12 +19,16 @@ ScrollBar::ScrollBar()
 , m_scrollTolerance(6.f)
 , m_veloctyModifer(2000.f)
 {
-	cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get("images/scrollbar.9.png");
-	//if (fopen(FREESHOP_DIR "/theme/images/scrollbar.9.png", "rb"))
-		//cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/scrollbar.9.png");	
+	if (Theme::isScrollbar9Themed) {
+		cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/scrollbar.9.png");
+		texture.setSmooth(true);
+		m_scrollBar.setTexture(&texture);
+	} else {
+		cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get("images/scrollbar.9.png");
+		texture.setSmooth(true);
+		m_scrollBar.setTexture(&texture);
+	}
 
-	texture.setSmooth(true);
-	m_scrollBar.setTexture(&texture);
 	m_scrollBar.setContentSize(0.f, 100.f);
 	m_scrollBar.setColor(cpp3ds::Color::Red);
 }

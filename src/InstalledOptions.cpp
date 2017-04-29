@@ -4,6 +4,7 @@
 #include "DownloadQueue.hpp"
 #include "Notification.hpp"
 #include "InstalledList.hpp"
+#include "Theme.hpp"
 #include "States/StateIdentifiers.hpp"
 #include "States/DialogState.hpp"
 #include <cpp3ds/System/I18n.hpp>
@@ -14,7 +15,10 @@ InstalledOptions::InstalledOptions()
 : m_installedItem(nullptr)
 {
 	m_textGame.setString(_("Game"));
-	m_textGame.setFillColor(cpp3ds::Color(100, 100, 100));
+	if (Theme::isTextThemed)
+		m_textGame.setFillColor(Theme::secondaryTextColor);
+	else
+		m_textGame.setFillColor(cpp3ds::Color(100, 100, 100));
 	m_textGame.setCharacterSize(10);
 	m_textGame.setPosition(20.f, 0.f);
 	m_textGame.useSystemFont();

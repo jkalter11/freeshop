@@ -2,6 +2,7 @@
 #include "AssetManager.hpp"
 #include "DownloadQueue.hpp"
 #include "Notification.hpp"
+#include "Theme.hpp"
 #include "States/StateIdentifiers.hpp"
 #include "States/DialogState.hpp"
 #include <cpp3ds/System/I18n.hpp>
@@ -16,25 +17,37 @@ BotInformations::BotInformations()
 {
 	//Texts
 	m_textSD.setString(_("SD"));
-	m_textSD.setFillColor(cpp3ds::Color::Black);
+	if (Theme::isTextThemed)
+		m_textSD.setFillColor(Theme::primaryTextColor);
+	else
+		m_textSD.setFillColor(cpp3ds::Color::Black);
 	m_textSD.setCharacterSize(10);
 	m_textSD.setPosition(2.f, 31.f);
 	m_textSD.useSystemFont();
 
 	m_textSDStorage.setString(_(""));
-	m_textSDStorage.setFillColor(cpp3ds::Color(130, 130, 130, 255));
+	if (Theme::isTextThemed)
+		m_textSDStorage.setFillColor(Theme::secondaryTextColor);
+	else
+		m_textSDStorage.setFillColor(cpp3ds::Color(130, 130, 130, 255));
 	m_textSDStorage.setCharacterSize(10);
 	m_textSDStorage.setPosition(2.f, 43.f);
 	m_textSDStorage.useSystemFont();
 
 	m_textNAND.setString(_("TWL NAND"));
-	m_textNAND.setFillColor(cpp3ds::Color::Black);
+	if (Theme::isTextThemed)
+		m_textNAND.setFillColor(Theme::primaryTextColor);
+	else
+		m_textNAND.setFillColor(cpp3ds::Color::Black);
 	m_textNAND.setCharacterSize(10);
 	m_textNAND.setPosition(2.f, 59.f);
 	m_textNAND.useSystemFont();
 
 	m_textNANDStorage.setString(_(""));
-	m_textNANDStorage.setFillColor(cpp3ds::Color(130, 130, 130, 255));
+	if (Theme::isTextThemed)
+		m_textNANDStorage.setFillColor(Theme::secondaryTextColor);
+	else
+		m_textNANDStorage.setFillColor(cpp3ds::Color(130, 130, 130, 255));
 	m_textNANDStorage.setCharacterSize(10);
 	m_textNANDStorage.setPosition(2.f, 71.f);
 	m_textNANDStorage.useSystemFont();
@@ -49,42 +62,21 @@ BotInformations::BotInformations()
 	m_progressBarSD.setSize(cpp3ds::Vector2f(0, 29));
 
 	//Progress bars' backgrounds
-	/*if (fopen(FREESHOP_DIR "/theme/images/fsbgnand.png", "rb"))
+	if (Theme::isFSBGNAND9Themed)
 		m_backgroundNAND.setTexture(&AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/fsbgnand.9.png"));
-	else*/
+	else
 		m_backgroundNAND.setTexture(&AssetManager<cpp3ds::Texture>::get("images/fsbgnand.9.png"));
 
 	m_backgroundNAND.setSize(320, 23);
 	m_backgroundNAND.setPosition(0.f, 58.f);
 
-	/*if (fopen(FREESHOP_DIR "/theme/images/fsbgsd.png", "rb"))
+	if (Theme::isFSBGSD9Themed)
 		m_backgroundSD.setTexture(&AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/fsbgsd.9.png"));
-	else*/
+	else
 		m_backgroundSD.setTexture(&AssetManager<cpp3ds::Texture>::get("images/fsbgsd.9.png"));
 
 	m_backgroundSD.setSize(320, 23);
 	m_backgroundSD.setPosition(0.f, 30.f);
-
-	//Get the time to show it in the top part of the App List
-	time_t t = time(NULL);
-	struct tm * timeinfo;
-	timeinfo = localtime(&t);
-
-	char timeTextFmt[12];
-	char tempSec[3];
-	strftime(tempSec, 3, "%S", timeinfo);
-
-	//Cool blinking effect
-	if (atoi(tempSec) % 2 == 0)
-		strftime(timeTextFmt, 12, "%d/%m %H %M", timeinfo);
-	else
-		strftime(timeTextFmt, 12, "%d/%m %H:%M", timeinfo);
-
-	m_textClock.setString(timeTextFmt);
-	m_textClock.useSystemFont();
-	m_textClock.setCharacterSize(14);
-	m_textClock.setFillColor(cpp3ds::Color(80, 80, 80, 255));
-	m_textClock.setPosition(395.f - m_textClock.getLocalBounds().width, 0.f);
 }
 
 BotInformations::~BotInformations()
@@ -109,29 +101,10 @@ void BotInformations::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates st
 	target.draw(m_textSDStorage);
 	target.draw(m_textNAND);
 	target.draw(m_textNANDStorage);
-	target.draw(m_textClock);
-
 }
 
 void BotInformations::update()
 {
-	//Update the time to show it in the top part of the App List
-	time_t t = time(NULL);
-	struct tm * timeinfo;
-	timeinfo = localtime(&t);
-
-	char timeTextFmt[12];
-	char tempSec[3];
-	strftime(tempSec, 3, "%S", timeinfo);
-
-	//Cool blinking effect
-	if (atoi(tempSec) % 2 == 0)
-		strftime(timeTextFmt, 12, "%d/%m %H %M", timeinfo);
-	else
-		strftime(timeTextFmt, 12, "%d/%m %H:%M", timeinfo);
-
-	m_textClock.setString(timeTextFmt);
-
 	//Update filesystems size and their progress bars
 #ifndef EMULATION
 	FS_ArchiveResource resource = {0};

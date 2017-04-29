@@ -9,6 +9,7 @@
 #include "../RichText.hpp"
 #include "../IconSet.hpp"
 #include "../BotInformations.hpp"
+#include "../TopInformations.hpp"
 #include "../GUI/Settings.hpp"
 #include "../GUI/ScrollBar.hpp"
 #include "../MusicBCSTM.hpp"
@@ -74,6 +75,7 @@ private:
 	IconSet m_iconSet;
 	IconSet m_iconInfo;
 	BotInformations m_botInfos;
+	TopInformations m_topInfos;
 
 	size_t m_activeDownloadCount;
 	util3ds::TweenText m_textActiveDownloads;

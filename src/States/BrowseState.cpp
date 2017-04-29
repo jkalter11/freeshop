@@ -182,6 +182,8 @@ void BrowseState::renderTopScreen(cpp3ds::Window& window)
 		window.draw(AppList::getInstance());
 	}
 
+	window.draw(m_topInfos);
+
 	// Special draw method to draw top screenshot if selected
 	m_appInfo.drawTop(window);
 }
@@ -313,6 +315,7 @@ bool BrowseState::update(float delta)
 	}
 
 	m_iconSet.update(delta);
+	m_topInfos.update();
 	m_botInfos.update();
 	AppList::getInstance().update(delta);
 	m_tweenManager.update(delta);

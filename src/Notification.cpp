@@ -1,6 +1,7 @@
 #include <TweenEngine/Tween.h>
 #include <cmath>
 #include "Notification.hpp"
+#include "Theme.hpp"
 
 namespace FreeShop {
 
@@ -13,8 +14,12 @@ std::vector<std::unique_ptr<Notification>> Notification::notifications;
 Notification::Notification()
 : m_markForDelete(false)
 {
-	if (m_texture.getSize().x == 0)
-		m_texture.loadFromFile("images/notification.9.png");
+	if (m_texture.getSize().x == 0) {
+		if (Theme::isNotification9Themed)
+			m_texture.loadFromFile(FREESHOP_DIR "/theme/images/notification.9.png");
+		else
+			m_texture.loadFromFile("images/notification.9.png");
+	}
 
 	setTexture(&m_texture);
 	getText().setCharacterSize(12);

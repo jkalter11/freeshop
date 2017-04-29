@@ -12,7 +12,7 @@ namespace FreeShop {
 
 class Config {
 public:
-	// See string deifnitions in Config.coo
+	// See string definitions in Config.cpp
 	enum Key {
 		Version,
 		CacheVersion,

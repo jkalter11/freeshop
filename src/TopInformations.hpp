@@ -21,16 +21,7 @@ protected:
 	virtual void draw(cpp3ds::RenderTarget& target, cpp3ds::RenderStates states) const;
 
 private:
-	cpp3ds::Text m_textSD;
-	cpp3ds::Text m_textSDStorage;
-	cpp3ds::Text m_textNAND;
-	cpp3ds::Text m_textNANDStorage;
 	util3ds::TweenText m_textClock;
-
-	gui3ds::NinePatch m_backgroundNAND;
-	gui3ds::NinePatch m_backgroundSD;
-	cpp3ds::RectangleShape m_progressBarNAND;
-	cpp3ds::RectangleShape m_progressBarSD;
 
 };
 

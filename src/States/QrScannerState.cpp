@@ -1,5 +1,6 @@
 #include "QrScannerState.hpp"
 #include "../AssetManager.hpp"
+#include "../Theme.hpp"
 #include <iostream>
 #include <cpp3ds/System/Sleep.hpp>
 #include <cpp3ds/System/Lock.hpp>
@@ -35,12 +36,16 @@ QrScannerState::QrScannerState(StateStack &stack, Context &context, StateCallbac
 	m_cameraScreen.setSize(cpp3ds::Vector2f(WIDTH, HEIGHT));
 	m_cameraScreen.setTextureRect(cpp3ds::IntRect(0, 0, WIDTH, HEIGHT));
 
-	cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get("images/qr_selector.9.png");
-	//if (fopen(FREESHOP_DIR "/theme/images/qr_selector.9.png", "rb"))
-		//texture = AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/qr_selector.9.png");
+	if (Theme::isQrSelector9Themed) {
+		cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/qr_selector.9.png");
+		texture.setSmooth(false);
+		m_qrBorder.setTexture(&texture);
+	} else {
+		cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get("images/qr_selector.9.png");
+		texture.setSmooth(false);
+		m_qrBorder.setTexture(&texture);
+	}
 
-	texture.setSmooth(false);
-	m_qrBorder.setTexture(&texture);
 	m_qrBorder.setContentSize(140.f, 140.f);
 	m_qrBorder.setPosition(200.f, 120.f);
 	m_qrBorder.setColor(cpp3ds::Color(255, 255, 255, 100));
