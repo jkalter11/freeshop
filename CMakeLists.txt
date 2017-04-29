@@ -65,6 +65,7 @@ set(SOURCE_FILES
 	${PROJECT_SOURCE_DIR}/src/TitleKeys.cpp
 	${PROJECT_SOURCE_DIR}/src/BotInformations.cpp
 	${PROJECT_SOURCE_DIR}/src/TopInformations.cpp
+	${PROJECT_SOURCE_DIR}/src/Theme.cpp
 	${PROJECT_SOURCE_DIR}/src/Keyboard/Keyboard.cpp
 	${PROJECT_SOURCE_DIR}/src/Keyboard/tinyxml2.cpp
 	${PROJECT_SOURCE_DIR}/src/GUI/AppItem.cpp
