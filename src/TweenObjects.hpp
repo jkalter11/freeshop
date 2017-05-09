@@ -202,15 +202,37 @@ protected:
 };
 
 template <class T>
-class TweenResizable : public TweenShape<T>
+class TweenShapeResizable : public TweenTransformable<T>
 {
 public:
+	static const int FILL_COLOR_RGB      = 11;
+	static const int FILL_COLOR_ALPHA    = 12;
+	static const int OUTLINE_COLOR_RGB   = 13;
+	static const int OUTLINE_COLOR_ALPHA = 14;
+	static const int OUTLINE_THICKNESS   = 15;
 	static const int SIZE = 16;
 
 protected:
 	virtual int getValues(int tweenType, float *returnValues)
 	{
 		switch (tweenType) {
+			case FILL_COLOR_RGB: {
+				cpp3ds::Color color = T::getFillColor();
+				returnValues[0] = color.r;
+				returnValues[1] = color.g;
+				returnValues[2] = color.b;
+				return 3;
+			}
+			case OUTLINE_COLOR_RGB: {
+				cpp3ds::Color color = T::getOutlineColor();
+				returnValues[0] = color.r;
+				returnValues[1] = color.g;
+				returnValues[2] = color.b;
+				return 3;
+			}
+			case FILL_COLOR_ALPHA: returnValues[0] = T::getFillColor().a; return 1;
+			case OUTLINE_COLOR_ALPHA: returnValues[0] = T::getOutlineColor().a; return 1;
+			case OUTLINE_THICKNESS: returnValues[0] = T::getOutlineThickness(); return 1;
 			case SIZE: {
 				returnValues[0] = T::getSize().x;
 				returnValues[1] = T::getSize().y;
@@ -224,6 +246,37 @@ protected:
 	virtual void setValues(int tweenType, float *newValues)
 	{
 		switch (tweenType) {
+			case FILL_COLOR_RGB: {
+				cpp3ds::Color color;
+				color.r = std::max(std::min(newValues[0], 255.f), 0.f);
+				color.g = std::max(std::min(newValues[1], 255.f), 0.f);
+				color.b = std::max(std::min(newValues[2], 255.f), 0.f);
+				color.a = T::getFillColor().a;
+				T::setFillColor(color);
+				break;
+			}
+			case FILL_COLOR_ALPHA: {
+				cpp3ds::Color color = T::getFillColor();
+				color.a = std::max(std::min(newValues[0], 255.f), 0.f);
+				T::setFillColor(color);
+				break;
+			}
+			case OUTLINE_COLOR_RGB: {
+				cpp3ds::Color color;
+				color.r = std::max(std::min(newValues[0], 255.f), 0.f);
+				color.g = std::max(std::min(newValues[1], 255.f), 0.f);
+				color.b = std::max(std::min(newValues[2], 255.f), 0.f);
+				color.a = T::getOutlineColor().a;
+				T::setOutlineColor(color);
+				break;
+			}
+			case OUTLINE_COLOR_ALPHA: {
+				cpp3ds::Color color = T::getOutlineColor();
+				color.a = std::max(std::min(newValues[0], 255.f), 0.f);
+				T::setOutlineColor(color);
+				break;
+			}
+			case OUTLINE_THICKNESS: T::setOutlineThickness(newValues[0]); break;
 			case SIZE: T::setSize(cpp3ds::Vector2f(newValues[0], newValues[1])); break;
 			default:
 				TweenTransformable<T>::setValues(tweenType, newValues);
@@ -237,7 +290,7 @@ typedef TweenColorTransformable<gui3ds::NinePatch> TweenNinePatch;
 typedef TweenColorTransformable<cpp3ds::Sprite> TweenSprite;
 typedef TweenShape<cpp3ds::Text> TweenText;
 
-typedef TweenResizable<cpp3ds::RectangleShape> TweenRectangleShape;
+typedef TweenShapeResizable<cpp3ds::RectangleShape> TweenRectangleShape;
 typedef TweenShape<cpp3ds::CircleShape> TweenCircleShape;
 typedef TweenShape<cpp3ds::ConvexShape> TweenConvexShape;
 

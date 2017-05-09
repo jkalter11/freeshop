@@ -161,7 +161,7 @@ void TopInformations::update(float delta)
 			m_textureSignal.loadFromFile("images/" + signalPath);
 #else
 		//Update battery icon
-		std::string batteryPath = "battery" + std::to_string(rand() % 6) + ".png";
+		std::string batteryPath = "battery" + std::to_string(rand() % 5) + ".png";
 		std::string themedBatteryPath = FREESHOP_DIR "/theme/images/" + batteryPath;
 
 		if (fopen(themedBatteryPath.c_str(), "rb"))
