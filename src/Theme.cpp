@@ -30,6 +30,7 @@ bool Theme::isSoundStartupThemed = false;
 bool Theme::isTextThemed = false;
 cpp3ds::Color Theme::primaryTextColor = cpp3ds::Color::Black;
 cpp3ds::Color Theme::secondaryTextColor = cpp3ds::Color(130, 130, 130, 255);
+cpp3ds::Color Theme::iconSetColor = cpp3ds::Color(100, 100, 100);
 
 Theme &Theme::getInstance()
 {
@@ -46,8 +47,9 @@ void Theme::loadDefaults()
 	if (!m_json.IsObject())
 		m_json.SetObject();
 
-	ADD_DEFAULT("primaryText", "FFFFFF");
-	ADD_DEFAULT("secondaryText", "FFFFFF");
+	ADD_DEFAULT("primaryText", "000000");
+	ADD_DEFAULT("secondaryText", "828282");
+	ADD_DEFAULT("iconSet", "646464");
 
 	getInstance().saveToFile();
 }

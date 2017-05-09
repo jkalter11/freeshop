@@ -346,9 +346,8 @@ void AppItem::queueForSleepInstall()
 {
 #ifndef EMULATION
 	if (m_isSleepBusy) {
-		Notification::spawn(_("Already queued for sleep installation: %s", m_title.toAnsiString().c_str()));
+		Notification::spawn(_("Already queued for sleep installation: \n%s", m_title.toAnsiString().c_str()));
 	} else {
-		Notification::spawn(_("Preparing for sleep installation: %s", m_title.toAnsiString().c_str()));
 		m_threadSleepInstall.launch();
 	}
 #endif
@@ -358,7 +357,10 @@ void AppItem::queueForSleepInstallThread()
 {
 #ifndef EMULATION
 	m_isSleepBusy = true;
+
+	Notification::spawn(_("Preparing for sleep installation: \n%s", m_title.toAnsiString().c_str()));
 	DownloadQueue::getInstance().addSleepDownload(shared_from_this());
+
 	m_isSleepBusy = false;
 #endif
 }
@@ -395,6 +397,11 @@ time_t AppItem::getReleaseDate() const
 const std::string &AppItem::getProductCode() const
 {
 	return m_productCode;
+}
+
+bool AppItem::isSleepBusy() const
+{
+	return m_isSleepBusy;
 }
 
 

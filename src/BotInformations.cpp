@@ -103,7 +103,7 @@ void BotInformations::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates st
 	target.draw(m_textNANDStorage);
 }
 
-void BotInformations::update()
+void BotInformations::update(float delta)
 {
 	//Update filesystems size and their progress bars
 #ifndef EMULATION
@@ -115,7 +115,10 @@ void BotInformations::update()
 
 		u64 usedSize = totalSize - size;
 
-		m_progressBarSD.setSize(cpp3ds::Vector2f((usedSize * 320) / totalSize, 26));
+		//m_progressBarSD.setSize(cpp3ds::Vector2f((usedSize * 320) / totalSize, 26));
+		TweenEngine::Tween::to(m_progressBarSD, util3ds::TweenRectangleShape::SIZE, 0.2f)
+					.target((usedSize * 320) / totalSize, 26.f)
+					.start(m_tweenManager);
 
 		if (usedSize > 1024 * 1024 * 1024 || totalSize > 1024 * 1024 * 1024)
 			m_textSDStorage.setString(_("%.1f/%.1f GB", static_cast<float>(usedSize) / 1024.f / 1024.f / 1024.f, static_cast<float>(totalSize) / 1024.f / 1024.f / 1024.f));
@@ -133,7 +136,10 @@ void BotInformations::update()
 
 		u64 usedSize = totalSize - size;
 
-		m_progressBarNAND.setSize(cpp3ds::Vector2f((usedSize * 320) / totalSize, 26));
+		//m_progressBarNAND.setSize(cpp3ds::Vector2f((usedSize * 320) / totalSize, 26));
+		TweenEngine::Tween::to(m_progressBarNAND, util3ds::TweenRectangleShape::SIZE, 0.2f)
+					.target((usedSize * 320) / totalSize, 26.f)
+					.start(m_tweenManager);
 
 		if (usedSize > 1024 * 1024 * 1024 || totalSize > 1024 * 1024 * 1024)
 			m_textNANDStorage.setString(_("%.1f/%.1f GB", static_cast<float>(usedSize) / 1024.f / 1024.f / 1024.f, static_cast<float>(totalSize) / 1024.f / 1024.f / 1024.f));
@@ -151,6 +157,8 @@ void BotInformations::update()
 	m_textNANDStorage.setString("200/400 MB");
 	m_progressBarNAND.setSize(cpp3ds::Vector2f(160, 26));
 #endif
+
+	m_tweenManager.update(delta);
 }
 
 } // namespace FreeShop

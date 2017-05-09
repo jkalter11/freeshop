@@ -53,6 +53,21 @@ InstalledItem::InstalledItem(cpp3ds::Uint64 titleId)
 	else
 		m_textTitle.setFillColor(cpp3ds::Color::Black);
 	m_textTitle.useSystemFont();
+	if (titleType == TitleKeys::SystemApplication || titleType == TitleKeys::SystemApplet)
+		m_textSize.setString(_(" - System Title"));
+	else if (m_appItem->getFilesize() > 1024 * 1024 * 1024)
+		m_textSize.setString(_(" - %.1f GB", static_cast<float>(m_appItem->getFilesize()) / 1024.f / 1024.f / 1024.f));
+	else if (m_appItem->getFilesize() > 1024 * 1024)
+		m_textSize.setString(_(" - %.1f MB", static_cast<float>(m_appItem->getFilesize()) / 1024.f / 1024.f));
+	else
+		m_textSize.setString(_(" - %d KB", m_appItem->getFilesize() / 1024));
+	m_textSize.setCharacterSize(11);
+	m_textSize.setPosition(m_textTitle.getLocalBounds().width + 4, m_background.getPadding().top);
+	if (Theme::isTextThemed)
+		m_textSize.setFillColor(Theme::secondaryTextColor);
+	else
+		m_textSize.setFillColor(cpp3ds::Color(150, 150, 150));
+	m_textSize.useSystemFont();
 	m_textWarningUpdate.setFont(AssetManager<cpp3ds::Font>::get("fonts/fontawesome.ttf"));
 	m_textWarningUpdate.setString(L"\uf071");
 	m_textWarningUpdate.setCharacterSize(14);
@@ -73,6 +88,7 @@ void InstalledItem::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates stat
 
 	target.draw(m_background, states);
 	target.draw(m_textTitle, states);
+	target.draw(m_textSize, states);
 	if (m_updates.size() - m_updateInstallCount > 0)
 		target.draw(m_textWarningUpdate, states);
 	if (m_dlc.size() - m_dlcInstallCount > 0)

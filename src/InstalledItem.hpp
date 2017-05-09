@@ -50,6 +50,7 @@ private:
 	size_t m_dlcInstallCount;
 
 	cpp3ds::Text m_textTitle;
+	cpp3ds::Text m_textSize;
 	util3ds::TweenText m_textWarningUpdate;
 	util3ds::TweenText m_textWarningDLC;
 

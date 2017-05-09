@@ -22,9 +22,6 @@
 #include <archive_entry.h>
 #include <dirent.h>
 #include <cpp3ds/System/FileInputStream.hpp>
-#ifndef EMULATION
-#include <3ds.h>
-#endif
 
 namespace {
 
@@ -139,7 +136,7 @@ SyncState::SyncState(StateStack& stack, Context& context, StateCallback callback
 	m_textStatus.setOutlineThickness(2.f);
 	m_textStatus.setPosition(160.f, 155.f);
 	m_textStatus.useSystemFont();
-	TweenEngine::Tween::to(m_textStatus, util3ds::TweenText::FILL_COLOR_ALPHA, 0.15f)
+	TweenEngine::Tween::to(m_textStatus, util3ds::TweenText::FILL_COLOR_ALPHA, 0.3f)
 			.target(180)
 			.repeatYoyo(-1, 0)
 			.start(m_tweenManager);
@@ -374,6 +371,7 @@ bool SyncState::loadThemeManagement()
 
 			std::string primaryTextValue = Theme::get("primaryText").GetString();
 			std::string secondaryTextValue = Theme::get("secondaryText").GetString();
+			std::string iconSetValue = Theme::get("iconSet").GetString();
 
 			int R, G, B;
 
@@ -382,6 +380,9 @@ bool SyncState::loadThemeManagement()
 
 			hexToRGB(secondaryTextValue, &R, &G, &B);
 			Theme::secondaryTextColor = cpp3ds::Color(R, G, B);
+
+			hexToRGB(iconSetValue, &R, &G, &B);
+			Theme::iconSetColor = cpp3ds::Color(R, G, B);
 		}
 	}
 }
@@ -393,10 +394,26 @@ bool SyncState::loadServices()
 	#ifndef EMULATION
 		Result res;
 
-		//NIMS service init
-		static uint8_t nimBuf[0x30000];
-		if (R_FAILED(res = nimsInit(nimBuf, sizeof(nimBuf))))
-			Notification::spawn(_("Unable to start NIMS: \n0x%08lX (%s)", res, R_DESCRIPTION(res)));
+		//AM service init for sleep download
+		if (R_FAILED(res = amInit()))
+			Notification::spawn(_("Unable to start AM: \n0x%08lX (%d)", res, R_DESCRIPTION(res)));
+
+		//NIMS service init for sleep download
+		static u8 nimBuf[0x20000];
+		if (R_FAILED(res = nimsInit(nimBuf, 0x2000)))
+			Notification::spawn(_("Unable to start NIMS: \n0x%08lX (%d)", res, R_DESCRIPTION(res)));
+
+		//PTMU service init for battery indicator
+		if (R_FAILED(res = ptmuInit()))
+			Notification::spawn(_("Unable to start PTMU: \n0x%08lX (%d)", res, R_DESCRIPTION(res)));
+
+		//AC service init for signal indicator
+		if (R_FAILED(res = acInit()))
+			Notification::spawn(_("Unable to start AC: \n0x%08lX (%d)", res, R_DESCRIPTION(res)));
+
+		//PTM:SYSM service init for shutdown
+		if (R_FAILED(res = ptmSysmInit()))
+			Notification::spawn(_("Unable to start PTMSYSM: \n0x%08lX (%d)", res, R_DESCRIPTION(res)));
 	#endif
 }
 

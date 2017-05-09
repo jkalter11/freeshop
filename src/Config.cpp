@@ -37,6 +37,7 @@ namespace {
 		"sleep_mode",
 		"language",
 		"keyboard",
+		"title_id",
 	};
 }
 
@@ -129,6 +130,7 @@ void Config::loadDefaults()
 	ADD_DEFAULT(SleepMode, true);
 	ADD_DEFAULT(Language, "auto");
 	ADD_DEFAULT(Keyboard, "qwerty");
+	ADD_DEFAULT(TitleID, false);
 }
 
 void Config::set(Key key, const char *val)

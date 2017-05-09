@@ -233,6 +233,7 @@ AccessControlInfo:
    - gsp::Lcd
    - news:u
    - nim:aoc
+   - nim:s
    - nwm::UDS
    - ptm:u
    - qtm:u

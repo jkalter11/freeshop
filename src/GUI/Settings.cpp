@@ -86,6 +86,9 @@ Settings::Settings(Gwen::Skin::TexturedBase *skin,  State *state)
 	page = m_tabControl->AddPage(_("Music").toAnsiString())->GetPage();
 	fillMusicPage(page);
 
+	page = m_tabControl->AddPage(_("Locales").toAnsiString())->GetPage();
+	fillLocalesPage(page);
+
 	page = m_tabControl->AddPage(_("Other").toAnsiString())->GetPage();
 	fillOtherPage(page);
 
@@ -168,6 +171,7 @@ void Settings::saveToConfig()
 	auto language = m_listboxLanguages->GetSelectedRow();
 	Config::set(Config::Language, language ? language->GetName().c_str() : "auto");
 	Config::set(Config::Keyboard, m_listboxKeyboards->GetSelectedRow()->GetName().c_str());
+	Config::set(Config::TitleID, m_checkboxTitleID->Checkbox()->IsChecked());
 }
 
 void Settings::loadConfig()
@@ -221,6 +225,7 @@ void Settings::loadConfig()
 
 	// Other
 	m_checkboxSleep->Checkbox()->SetChecked(Config::get(Config::SleepMode).GetBool());
+	m_checkboxTitleID->Checkbox()->SetChecked(Config::get(Config::TitleID).GetBool());
 	auto languageRows = m_listboxLanguages->GetChildren().front()->GetChildren();
 	for (auto& row : languageRows)
 		if (row->GetName() == Config::get(Config::Language).GetString())
@@ -395,6 +400,9 @@ void Settings::fillFilterPlatforms(Gwen::Controls::Base *parent)
 			std::string platformName = list[i]["name"].GetString();
 			platforms.push_back(std::make_pair(platformId, platformName));
 		}
+
+		//Put GBA games, as they are not in the eShop platforms list
+		platforms.push_back(std::make_pair(23, "Game Boy Advance"));
 
 		// Alphabetical sort
 		std::sort(platforms.begin(), platforms.end(), [=](std::pair<int, std::string>& a, std::pair<int, std::string>& b) {
@@ -757,7 +765,7 @@ void Settings::fillDownloadPage(Gwen::Controls::Base *page)
 	m_labelDownloadBufferSize->SetBounds(155, 100, 150, 20);
 	m_sliderDownloadBufferSize = new HorizontalSlider(page);
 	m_sliderDownloadBufferSize->SetBounds(150, 116, 160, 20);
-	m_sliderDownloadBufferSize->SetRange(4, 320);
+	m_sliderDownloadBufferSize->SetRange(1, 320);
 	m_sliderDownloadBufferSize->onValueChanged.Add(this, &Settings::downloadBufferSizeChanged);
 
 	auto button = new Button(page);
@@ -792,7 +800,7 @@ void Settings::downloadBufferSizeChanged(Gwen::Controls::Base *base)
 void Settings::fillMusicPage(Gwen::Controls::Base *page)
 {
 	m_comboMusicMode = new ComboBox(page);
-	m_comboMusicMode->Dock(Gwen::Pos::Top);
+	m_comboMusicMode->SetBounds(10, 0, 290, 20);
 
 	m_comboMusicMode->AddItem(_("Disable music"), "disable");
 	m_comboMusicMode->AddItem(_("Play eShop music"), "eshop");
@@ -800,7 +808,7 @@ void Settings::fillMusicPage(Gwen::Controls::Base *page)
 	m_comboMusicMode->AddItem(_("Play selected track"), "selected");
 
 	m_listboxMusicFiles = new ListBox(page);
-	m_listboxMusicFiles->Dock(Gwen::Pos::Fill);
+	m_listboxMusicFiles->SetBounds(10, 25, 290, 125);
 
 	m_comboMusicMode->onSelection.Add(this, &Settings::musicComboChanged);
 	m_listboxMusicFiles->onRowSelected.Add(this, &Settings::musicFileChanged);
@@ -824,27 +832,38 @@ void Settings::fillMusicPage(Gwen::Controls::Base *page)
 		}
 		closedir (dir);
 	}
+
+	m_labelAudioState = new Label(page);
+	m_labelAudioState->SetBounds(10, 152, 320, 20);
+	if (cpp3ds::Service::isEnabled(cpp3ds::Audio)) {
+		m_labelAudioState->SetText(_("Audio Service: Enabled").toAnsiString());
+		m_labelAudioState->SetTextColor(Gwen::Color(63, 81, 181, 255));
+	} else {
+		m_labelAudioState->SetText(_("Audio Service: Disabled, please dump your DSP").toAnsiString());
+		m_labelAudioState->SetTextColor(Gwen::Color(244, 67, 54, 255));
+	}
 }
 
-void Settings::fillOtherPage(Gwen::Controls::Base *page)
+void Settings::fillLocalesPage(Gwen::Controls::Base *page)
 {
 	auto label = new Label(page);
-	label->SetBounds(0, 40, 150, 20);
+	label->SetBounds(0, 0, 150, 20);
 	label->SetText(_("Language:").toAnsiString());
 
 	auto label2 = new Label(page);
-	label2->SetBounds(110, 40, 150, 20);
+	label2->SetBounds(130, 0, 150, 20);
 	label2->SetText(_("Keyboard:").toAnsiString());
 
 	m_listboxLanguages = new ListBox(page);
-	m_listboxLanguages->SetBounds(0, 60, 100, 100);
+	m_listboxLanguages->SetBounds(0, 20, 120, 140);
 	m_listboxLanguages->AddItem(_("Auto-detect").toAnsiString(), "auto");
 
 	m_listboxKeyboards = new ListBox(page);
-	m_listboxKeyboards->SetBounds(110, 60, 100, 100);
+	m_listboxKeyboards->SetBounds(130, 20, 120, 140);
 	m_listboxKeyboards->AddItem("QWERTY", "qwerty");
 	m_listboxKeyboards->AddItem("AZERTY", "azerty");
-	m_listboxKeyboards->AddItem("Chinese [TODO]", "chinese");
+	m_listboxKeyboards->AddItem("QWERTZ", "qwertz");
+	m_listboxKeyboards->AddItem("Katakana", "jap");
 	m_listboxKeyboards->onRowSelected.Add(this, &Settings::keyboardChange);
 
 	// Only show Korean/Chinese on their respective region consoles.
@@ -882,7 +901,10 @@ void Settings::fillOtherPage(Gwen::Controls::Base *page)
 	m_listboxLanguages->AddItem("Ελληνικά", "gr");
 	m_listboxLanguages->AddItem("Türkçe", "tr");
 	m_listboxLanguages->onRowSelected.Add(this, &Settings::languageChange);
+}
 
+void Settings::fillOtherPage(Gwen::Controls::Base *page)
+{
 	auto newsButton = new Button(page);
 	newsButton->SetBounds(220, 140, 85, 20);
 	newsButton->SetText(_("News", FREESHOP_VERSION).toAnsiString());
@@ -891,6 +913,10 @@ void Settings::fillOtherPage(Gwen::Controls::Base *page)
 	m_checkboxSleep = new CheckBoxWithLabel(page);
 	m_checkboxSleep->SetBounds(0, 0, 320, 20);
 	m_checkboxSleep->Label()->SetText(_("Enable screen sleep after inactivity").toAnsiString());
+
+	m_checkboxTitleID = new CheckBoxWithLabel(page);
+	m_checkboxTitleID->SetBounds(0, 20, 320, 20);
+	m_checkboxTitleID->Label()->SetText(_("Show Title ID in game description screen").toAnsiString());
 }
 
 void Settings::updateQrClicked(Gwen::Controls::Base *button)
@@ -1108,26 +1134,9 @@ void Settings::keyboardChange(Gwen::Controls::Base *base)
 	std::string keyCode = m_listboxKeyboards->GetSelectedRowName();
 	if (!keyCode.empty() && keyCode != Config::get(Config::Keyboard).GetString())
 	{
-		g_browseState->requestStackPush(States::Dialog, false, [=](void *data) mutable {
-			auto event = reinterpret_cast<DialogState::Event*>(data);
-			if (event->type == DialogState::GetText)
-			{
-				auto str = reinterpret_cast<cpp3ds::String*>(event->data);
-				*str = _("You need to restart freeShop for\n%s to be loaded.\n\nWould you like to do this now?", m_listboxKeyboards->GetSelectedRow()->GetText(0).c_str());
-				return true;
-			}
-			else if (event->type == DialogState::Response)
-			{
-				bool *accepted = reinterpret_cast<bool*>(event->data);
-				if (*accepted)
-				{
-					// Restart freeShop
-					g_requestJump = 0x400000F12EE00;
-				}
-				return true;
-			}
-			return false;
-		});
+		Config::set(Config::Keyboard, m_listboxKeyboards->GetSelectedRow()->GetName().c_str());
+		g_browseState->reloadKeyboard();
+		Notification::spawn(_("Keyboard changed to: %s", m_listboxKeyboards->GetSelectedRow()->GetText(0).c_str()));
 	}
 }
 

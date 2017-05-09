@@ -44,6 +44,10 @@ public:
 	bool playBGMeShop();
 	void stopBGM();
 
+	void reloadKeyboard();
+	int getMode();
+	bool isAppInfoLoaded();
+
 	static cpp3ds::Clock clockDownloadInactivity;
 
 private:

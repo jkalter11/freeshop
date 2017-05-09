@@ -85,6 +85,8 @@ public:
 	const std::vector<cpp3ds::Uint64> &getDemos() const;
 	const std::vector<cpp3ds::Uint64> &getDLC() const;
 
+	bool isSleepBusy() const;
+
 private:
 	void setIconIndex(size_t iconIndex);
 

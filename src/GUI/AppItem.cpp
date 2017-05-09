@@ -1,3 +1,5 @@
+#define FTS_FUZZY_MATCH_IMPLEMENTATION
+
 #include "AppItem.hpp"
 #include <cpp3ds/System/Err.hpp>
 #include <iostream>
@@ -8,12 +10,13 @@
 #include "../AppItem.hpp"
 #include "../Util.hpp"
 #include "../Theme.hpp"
+#include "../fts_fuzzy_match.h"
 #include <sstream>
 
 
 namespace {
 
-#include "../fuzzysearch.inl"
+
 
 }
 
@@ -272,7 +275,7 @@ void AppItem::setMatchTerm(const std::string &string)
 {
 	if (string.empty() || !m_appItem)
 		m_matchScore = 0;
-	else if (!fuzzy_match(string.c_str(), m_appItem->getNormalizedTitle().c_str(), m_matchScore))
+	else if (!fts::fuzzy_match(string.c_str(), m_appItem->getNormalizedTitle().c_str(), m_matchScore))
 		m_matchScore = -99;
 }
 

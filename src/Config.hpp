@@ -43,6 +43,7 @@ public:
 		SleepMode,
 		Language,
 		Keyboard,
+		TitleID,
 
 		KEY_COUNT,
 	};

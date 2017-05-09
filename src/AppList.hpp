@@ -11,7 +11,7 @@
 #include <cpp3ds/Audio/Sound.hpp>
 #include "GUI/AppItem.hpp"
 #include "RichText.hpp"
-
+#include "AppInfo.hpp"
 
 namespace FreeShop
 {
@@ -87,6 +87,8 @@ private:
 	std::vector<cpp3ds::Texture*> m_iconTextures;
 	bool m_collapsed;
 	TweenEngine::TweenManager m_tweenManager;
+
+	AppInfo m_appInfo;
 };
 
 } // namespace FreeShop

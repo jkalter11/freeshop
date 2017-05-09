@@ -7,12 +7,13 @@
 #include "TweenObjects.hpp"
 #include "TitleKeys.hpp"
 #include <TweenEngine/Tween.h>
+#include <TweenEngine/TweenManager.h>
 
 namespace FreeShop {
 
 class BotInformations : public cpp3ds::Drawable, public util3ds::TweenTransformable<cpp3ds::Transformable> {
 public:
-	void update();
+	void update(float delta);
 
 	BotInformations();
 	~BotInformations();
@@ -28,8 +29,10 @@ private:
 
 	gui3ds::NinePatch m_backgroundNAND;
 	gui3ds::NinePatch m_backgroundSD;
-	cpp3ds::RectangleShape m_progressBarNAND;
-	cpp3ds::RectangleShape m_progressBarSD;
+	util3ds::TweenRectangleShape m_progressBarNAND;
+	util3ds::TweenRectangleShape m_progressBarSD;
+
+	TweenEngine::TweenManager m_tweenManager;
 
 };
 

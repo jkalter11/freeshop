@@ -38,6 +38,7 @@ public:
 	static bool isTextThemed;
 	static cpp3ds::Color primaryTextColor;
 	static cpp3ds::Color secondaryTextColor;
+	static cpp3ds::Color iconSetColor;
 
 private:
 	rapidjson::Document m_json;

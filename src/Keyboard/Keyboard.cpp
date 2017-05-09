@@ -207,6 +207,8 @@ void Keyboard::loadButtons(Layout& layout, const XMLElement* layoutNode) {
 				button.rect = cpp3ds::IntRect(x, y, w, h);
 				if (m_usingFont)
 					button.text.setFont(m_font);
+				else
+					button.text.useSystemFont();
 				layout.buttons.push_back(button);
 			} else {
 				cpp3ds::err() << "Key style \"" << styleName << "\" not found. Skipping the key." << std::endl;
@@ -267,6 +269,7 @@ void Keyboard::updateVertices()
 	// Update input text position
 	const Style& style = m_styles[m_input.styleIndex];
 	m_input.text.setFillColor(cpp3ds::Color::White);
+	m_input.text.useSystemFont();
 	m_input.text.setPosition(static_cast<int>(160.f + style.defaultState.offsetX - m_input.text.getGlobalBounds().width / 2),
 							 m_input.text.getPosition().y);
 

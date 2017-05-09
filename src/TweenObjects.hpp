@@ -201,12 +201,43 @@ protected:
 	}
 };
 
+template <class T>
+class TweenResizable : public TweenShape<T>
+{
+public:
+	static const int SIZE = 16;
+
+protected:
+	virtual int getValues(int tweenType, float *returnValues)
+	{
+		switch (tweenType) {
+			case SIZE: {
+				returnValues[0] = T::getSize().x;
+				returnValues[1] = T::getSize().y;
+				return 2;
+			}
+			default:
+				return TweenTransformable<T>::getValues(tweenType, returnValues);
+		}
+	}
+
+	virtual void setValues(int tweenType, float *newValues)
+	{
+		switch (tweenType) {
+			case SIZE: T::setSize(cpp3ds::Vector2f(newValues[0], newValues[1])); break;
+			default:
+				TweenTransformable<T>::setValues(tweenType, newValues);
+				break;
+		}
+	}
+};
+
 typedef TweenColorTransformable<gui3ds::NinePatch> TweenNinePatch;
 
 typedef TweenColorTransformable<cpp3ds::Sprite> TweenSprite;
 typedef TweenShape<cpp3ds::Text> TweenText;
 
-typedef TweenShape<cpp3ds::RectangleShape> TweenRectangleShape;
+typedef TweenResizable<cpp3ds::RectangleShape> TweenRectangleShape;
 typedef TweenShape<cpp3ds::CircleShape> TweenCircleShape;
 typedef TweenShape<cpp3ds::ConvexShape> TweenConvexShape;
 

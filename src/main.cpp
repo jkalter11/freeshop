@@ -62,7 +62,7 @@ int main(int argc, char** argv)
 #ifndef EMULATION
 	aptHook(&cookie, aptHookFunc, nullptr);
 	AM_InitializeExternalTitleDatabase(false);
-	//aptSetSleepAllowed(false);
+	aptSetSleepAllowed(true);
 #endif
 
 	srand(time(NULL));
@@ -72,6 +72,10 @@ int main(int argc, char** argv)
 	FreeShop::DownloadQueue::getInstance().save();
 #ifndef EMULATION
 	nimsExit();
+	amExit();
+	ptmuExit();
+	acExit();
+	ptmSysmExit();
 #endif
 	delete game;
 	return 0;

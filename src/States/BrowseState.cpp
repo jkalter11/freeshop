@@ -77,13 +77,13 @@ void BrowseState::initialize()
 	m_iconSet.addIcon(L"\uf11b");
 	m_iconSet.addIcon(L"\uf013");
 	m_iconSet.addIcon(L"\uf002");
-	m_iconSet.setPosition(155.f, 15.f);
+	m_iconSet.setPosition(60.f, 13.f);
 
 	m_textActiveDownloads.setCharacterSize(8);
 	m_textActiveDownloads.setFillColor(cpp3ds::Color::Black);
 	m_textActiveDownloads.setOutlineColor(cpp3ds::Color::White);
 	m_textActiveDownloads.setOutlineThickness(1.f);
-	m_textActiveDownloads.setPosition(218.f, 3.f);
+	m_textActiveDownloads.setPosition(128.f, 3.f);
 
 	//If there's no title key available, or no cache, one of these messages will appear
 	if (TitleKeys::getIds().empty())
@@ -101,11 +101,8 @@ void BrowseState::initialize()
 	m_whiteScreen.setSize(cpp3ds::Vector2f(320.f, 210.f));
 	m_whiteScreen.setFillColor(cpp3ds::Color::White);
 
-	//Loading the keyboard locale file
-	if (std::string(Config::get(Config::Keyboard).GetString()) == "azerty")
-		m_keyboard.loadFromFile("kb/keyboard.azerty.xml");
-	else
-		m_keyboard.loadFromFile("kb/keyboard.qwerty.xml");
+	//Load keyboard file
+	reloadKeyboard();
 
 	m_textMatches.resize(4);
 	for (auto& text : m_textMatches)
@@ -132,7 +129,7 @@ void BrowseState::initialize()
 		cpp3ds::sleep(cpp3ds::milliseconds(10));
 	m_gwenSkin = new Gwen::Skin::TexturedBase(m_gwenRenderer);
 
-	if (fopen(FREESHOP_DIR "/theme/images/DefaultSkin.png", "rb"))
+	if (pathExists(FREESHOP_DIR "/theme/images/DefaultSkin.png", true))
 		m_gwenSkin->Init(FREESHOP_DIR "/theme/images/DefaultSkin.png");
 	else
 		m_gwenSkin->Init("images/DefaultSkin.png");
@@ -147,17 +144,16 @@ void BrowseState::initialize()
 #endif
 
 
-	if (fopen(FREESHOP_DIR "/theme/images/topBG.png", "rb")) {
+	if (pathExists(FREESHOP_DIR "/theme/images/topBG.png", true)) {
 		m_rectTopBG.setTexture(&AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/topBG.png"));
 		m_rectTopBG.setPosition(0.f, 0.f);
 		m_topBG = true;
 	}
 
-	if (fopen(FREESHOP_DIR "/theme/images/botBG.png", "rb")) {
+	if (pathExists(FREESHOP_DIR "/theme/images/botBG.png", true)) {
 		m_rectBotBG.setTexture(&AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/botBG.png"));
 		m_rectBotBG.setPosition(0.f, 0.f);
 		m_botBG = true;
-		printf("hello");
 	}
 
 
@@ -181,8 +177,6 @@ void BrowseState::renderTopScreen(cpp3ds::Window& window)
 	} else {
 		window.draw(AppList::getInstance());
 	}
-
-	window.draw(m_topInfos);
 
 	// Special draw method to draw top screenshot if selected
 	m_appInfo.drawTop(window);
@@ -209,6 +203,8 @@ void BrowseState::renderBottomScreen(cpp3ds::Window& window)
 	}
 	if (!g_syncComplete || !g_browserLoaded)
 		return;
+
+	window.draw(m_topInfos);
 
 	if (m_botBG == true)
 		window.draw(m_rectBotBG);
@@ -315,8 +311,8 @@ bool BrowseState::update(float delta)
 	}
 
 	m_iconSet.update(delta);
-	m_topInfos.update();
-	m_botInfos.update();
+	m_topInfos.update(delta);
+	m_botInfos.update(delta);
 	AppList::getInstance().update(delta);
 	m_tweenManager.update(delta);
 
@@ -449,6 +445,22 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 				}
 				break;
 			}
+			case cpp3ds::Keyboard::CStickRight: {
+				if (getMode() < 6) {
+					int newMode = getMode() + 1;
+					setMode(static_cast<Mode>(newMode));
+					m_iconSet.setSelectedIndex(newMode);
+				}
+				break;
+			}
+			case cpp3ds::Keyboard::CStickLeft: {
+				if (getMode() > 0) {
+					int newMode = getMode() - 1;
+					setMode(static_cast<Mode>(newMode));
+					m_iconSet.setSelectedIndex(newMode);
+				}
+				break;
+			}
 			default:
 				break;
 		}
@@ -508,6 +520,15 @@ void BrowseState::setMode(BrowseState::Mode mode)
 		}
 
 		AppList::getInstance().setCollapsed(false);
+		m_topInfos.setCollapsed(false);
+
+		TweenEngine::Tween::to(m_iconSet, IconSet::POSITION_X, 0.3f)
+					.target(60.f)
+					.start(m_tweenManager);
+
+		TweenEngine::Tween::to(m_textActiveDownloads, util3ds::TweenText::POSITION_X, 0.3f)
+					.target(128.f)
+					.start(m_tweenManager);
 	}
 	else if (m_mode == Settings)
 	{
@@ -526,6 +547,15 @@ void BrowseState::setMode(BrowseState::Mode mode)
 		}
 		AppList::getInstance().setCollapsed(true);
 		AppList::getInstance().setIndexDelta(0);
+		m_topInfos.setCollapsed(true);
+
+		TweenEngine::Tween::to(m_iconSet, IconSet::POSITION_X, 0.3f)
+					.target(155.f)
+					.start(m_tweenManager);
+
+		TweenEngine::Tween::to(m_textActiveDownloads, util3ds::TweenText::POSITION_X, 0.3f)
+					.target(223.f)
+					.start(m_tweenManager);
 
 		m_lastKeyboardInput = "";
 		m_keyboard.setCurrentInput(m_lastKeyboardInput);
@@ -587,5 +617,30 @@ void BrowseState::stopBGM()
 	m_musicLoop.stop();
 }
 
+void BrowseState::reloadKeyboard()
+{
+	//Loading the keyboard locale file
+	if (std::string(Config::get(Config::Keyboard).GetString()) == "azerty")
+		m_keyboard.loadFromFile("kb/keyboard.azerty.xml");
+	else if (std::string(Config::get(Config::Keyboard).GetString()) == "qwertz")
+		m_keyboard.loadFromFile("kb/keyboard.qwertz.xml");
+	else if (std::string(Config::get(Config::Keyboard).GetString()) == "jap")
+		m_keyboard.loadFromFile("kb/keyboard.jap.xml");
+	else
+		m_keyboard.loadFromFile("kb/keyboard.qwerty.xml");
+}
+
+int BrowseState::getMode()
+{
+	return m_mode;
+}
+
+bool BrowseState::isAppInfoLoaded()
+{
+	if (!m_appInfo.getAppItem())
+		return false;
+	else
+		return true;
+}
 
 } // namespace FreeShop

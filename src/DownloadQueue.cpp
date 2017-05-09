@@ -77,6 +77,17 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 			return;
 		titleId = app->getTitleId();
 	}
+
+#ifndef EMULATION
+	bool isRegistered;
+	NIMS_IsTaskRegistered(app->getTitleId(), &isRegistered);
+
+	if (isRegistered || app->isSleepBusy()) {
+		Notification::spawn(_("Registered for sleep download: \n%s", app->getTitle().toAnsiString().c_str()));
+		return;
+	}
+#endif
+
 	cpp3ds::String title = app->getTitle();
 	cpp3ds::Uint32 type = titleId >> 32;
 	if (type != TitleKeys::Game)
@@ -369,6 +380,7 @@ bool DownloadQueue::isDownloading(std::shared_ptr<AppItem> app)
 			if (status == Download::Queued || status == Download::Downloading || status == Download::Suspended)
 				return true;
 		}
+
 	return false;
 }
 
@@ -670,16 +682,14 @@ void DownloadQueue::addSleepDownload(std::shared_ptr<AppItem> app)
 	cpp3ds::Lock lock(m_mutexSleepInstall);
 
 	bool isRegistered;
-
-	//Check if the title can be downloaded: is already registered ? is in registering ?
 	NIMS_IsTaskRegistered(app->getTitleId(), &isRegistered);
 
 	if (isRegistered) {
-		Notification::spawn(_("Ready for sleep installation: %s", app->getTitle().toAnsiString().c_str()));
+		Notification::spawn(_("Ready for sleep installation: \n%s", app->getTitle().toAnsiString().c_str()));
 		return;
 	}
 
-	Notification::spawn(_("Processing sleep installation: %s", app->getTitle().toAnsiString().c_str()));
+	Notification::spawn(_("Processing sleep installation: \n%s", app->getTitle().toAnsiString().c_str()));
 
 	//Some vars initialisation
 	uint32_t res;
@@ -688,6 +698,7 @@ void DownloadQueue::addSleepDownload(std::shared_ptr<AppItem> app)
 	std::string stdAppTitle = appTitle.toAnsiString();
 	Installer *installer = new Installer(app->getTitleId(), 0);
 	FS_MediaType mediaType = ((app->getTitleId() >> 32) == TitleKeys::DSiWare) ? MEDIATYPE_NAND : MEDIATYPE_SD;
+	cpp3ds::Uint32 titleType = app->getTitleId() >> 32;
 
 	//Get the title version (and not ticket version) via the title ID
 	res = getTicketVersion(app->getTitleId());
@@ -695,17 +706,25 @@ void DownloadQueue::addSleepDownload(std::shared_ptr<AppItem> app)
 
 	//Install app ticket
 	if (!installer->installTicket(res)) {
-		Notification::spawn(_("Can't install ticket: %s", app->getTitle().toAnsiString().c_str()));
+		Notification::spawn(_("Can't install ticket: \n%s", app->getTitle().toAnsiString().c_str()));
 		return;
+	}
+
+	//Install app seed
+	if (titleType == TitleKeys::Game && !app->getSeed().empty()) {
+		if (!installer->installSeed(&app->getSeed()[0])) {
+			Notification::spawn(_("Can't install seed: \n%s", app->getTitle().toAnsiString().c_str()));
+			return;
+		}
 	}
 
 	//The code that register the sleep download
 	NIMS_MakeTitleConfig(&tc, app->getTitleId(), res, 0, mediaType);
 
 	if (R_SUCCEEDED(res = NIMS_RegisterTask(&tc, stdAppTitle.c_str(), "freeShop download")))
-		Notification::spawn(_("Ready for sleep installation: %s", stdAppTitle.c_str()));
+		Notification::spawn(_("Ready for sleep installation: \n%s", stdAppTitle.c_str()));
 	else
-		Notification::spawn(_("Sleep installation failed: %s", stdAppTitle.c_str()));
+		Notification::spawn(_("Sleep installation failed: \n%s", stdAppTitle.c_str()));
 
 	m_soundFinish.play();
 #endif

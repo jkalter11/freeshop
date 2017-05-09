@@ -3,6 +3,7 @@
 #include <cpp3ds/System/I18n.hpp>
 #include "AssetManager.hpp"
 #include "IconSet.hpp"
+#include "Theme.hpp"
 #include <sstream>
 #include <TweenEngine/Tween.h>
 
@@ -69,7 +70,10 @@ void IconSet::addIcon(const cpp3ds::String &string)
 	util3ds::TweenText text;
 	text.setString(string);
 	text.setCharacterSize(20);
-	text.setFillColor(cpp3ds::Color(100, 100, 100));
+	if (Theme::isTextThemed)
+		text.setFillColor(Theme::iconSetColor);
+	else
+		text.setFillColor(cpp3ds::Color(100, 100, 100));
 	text.setOutlineColor(cpp3ds::Color::White);
 	text.setOutlineThickness(2.f);
 	text.setScale(0.8f, 0.8f);

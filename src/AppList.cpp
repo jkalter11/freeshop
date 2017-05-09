@@ -13,6 +13,7 @@
 #include "TitleKeys.hpp"
 #include "AssetManager.hpp"
 #include "Theme.hpp"
+#include "States/BrowseState.hpp"
 
 namespace FreeShop {
 
@@ -101,21 +102,38 @@ bool AppList::processEvent(const cpp3ds::Event &event)
 	if (event.type == cpp3ds::Event::KeyPressed)
 	{
 		m_processedFirstKey = false;
-		if (event.key.code & cpp3ds::Keyboard::Up) {
+		if (event.key.code & cpp3ds::Keyboard::DPadUp) {
 			setIndexDelta(-1);
-		} else if (event.key.code & cpp3ds::Keyboard::Down) {
+		} else if (event.key.code & cpp3ds::Keyboard::DPadDown) {
 			setIndexDelta(1);
-		} else if (event.key.code & cpp3ds::Keyboard::Left) {
-			setIndexDelta(-3);
-		} else if (event.key.code & cpp3ds::Keyboard::Right) {
-			setIndexDelta(3);
+		} else if (event.key.code & cpp3ds::Keyboard::DPadLeft) {
+			setIndexDelta(-4);
+		} else if (event.key.code & cpp3ds::Keyboard::DPadRight) {
+			setIndexDelta(4);
+		} else if (event.key.code & cpp3ds::Keyboard::CPadUp) {
+			if ((g_browseState->getMode() != 1) || (g_browseState->getMode() == 1 && !g_browseState->isAppInfoLoaded()))
+				setIndexDelta(-1);
+		} else if (event.key.code & cpp3ds::Keyboard::CPadDown) {
+			if ((g_browseState->getMode() != 1) || (g_browseState->getMode() == 1 && !g_browseState->isAppInfoLoaded()))
+				setIndexDelta(1);
+		} else if (event.key.code & cpp3ds::Keyboard::CPadLeft) {
+			if ((g_browseState->getMode() != 1) || (g_browseState->getMode() == 1 && !g_browseState->isAppInfoLoaded()))
+				setIndexDelta(-4);
+		} else if (event.key.code & cpp3ds::Keyboard::CPadRight) {
+			if ((g_browseState->getMode() != 1) || (g_browseState->getMode() == 1 && !g_browseState->isAppInfoLoaded()))
+				setIndexDelta(4);
 		} else if (event.key.code & cpp3ds::Keyboard::L) {
-			setIndexDelta(-6);
+			setIndexDelta(-8);
 		} else if (event.key.code & cpp3ds::Keyboard::R) {
-			setIndexDelta(6);
+			setIndexDelta(8);
+		} else if (event.key.code & cpp3ds::Keyboard::ZL) {
+			setSelectedIndex(0);
+		} else if (event.key.code & cpp3ds::Keyboard::ZR) {
+			setSelectedIndex(getVisibleCount());
 		} else
 			m_processedFirstKey = true;
 	}
+	
 	else if (event.type == cpp3ds::Event::KeyReleased)
 	{
 		if (event.key.code & (cpp3ds::Keyboard::Up | cpp3ds::Keyboard::Down | cpp3ds::Keyboard::Left | cpp3ds::Keyboard::Right | cpp3ds::Keyboard::L | cpp3ds::Keyboard::R))
@@ -160,7 +178,7 @@ void AppList::processKeyRepeat()
 {
 	int index = getSelectedIndex();
 	// Don't keep changing index on top/bottom boundaries
-	if ((m_indexDelta != 1 || index % 3 != 2) && (m_indexDelta != -1 || index % 3 != 0))
+	if ((m_indexDelta != 1 || index % 4 != 3) && (m_indexDelta != -1 || index % 4 != 0))
 	{
 		int newIndex = index + m_indexDelta;
 		if (newIndex < 0)
@@ -283,16 +301,16 @@ matchedPlatform:;
 void AppList::reposition()
 {
 	bool segmentFound = false;
-	float destY = 63.f;
+	float destY = 4.f;
 	int i = 0;
-	float newX = (m_selectedIndex ? : 0) / 3 * (m_collapsed ? 59.f : 200.f);
+	float newX = (m_selectedIndex ? : 0) / 4 * (m_collapsed ? 59.f : 200.f);
 
 	for (auto& app : m_guiAppItems)
 	{
 		if (!app->isVisible() || app->isFilteredOut())
 			continue;
 
-		float destX = 3.f + (i/3) * (m_collapsed ? 59.f : 200.f);
+		float destX = 4.f + (i/4) * (m_collapsed ? 59.f : 200.f);
 		float itemPosX = app->getPosition().x + getPosition().x;
 		if ((destX-newX < -200.f || destX-newX > 400.f) && (itemPosX < -200 || itemPosX > 400.f))
 		{
@@ -312,8 +330,8 @@ void AppList::reposition()
 				.start(m_tweenManager);
 		}
 
-		if (++i % 3 == 0)
-			destY = 63.f;
+		if (++i % 4 == 0)
+			destY = 4.f;
 		else
 			destY += 59.f;
 	}
@@ -331,7 +349,7 @@ void AppList::setSelectedIndex(int index)
 
 		float extra = 1.0f; //std::abs(m_appList.getSelectedIndex() - index) == 8.f ? 2.f : 1.f;
 
-		float pos = -200.f * extra * (index / 3);
+		float pos = -200.f * extra * (index / 4);
 		if (pos > m_targetPosX)
 			m_targetPosX = pos;
 		else if (pos <= m_targetPosX - 400.f)

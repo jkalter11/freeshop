@@ -60,6 +60,7 @@ private:
 	util3ds::TweenText m_textDownload;
 	util3ds::TweenText m_textDelete;
 	util3ds::TweenText m_textExecute;
+	util3ds::TweenText m_textSleepDownload;
 
 	std::vector<std::unique_ptr<cpp3ds::Texture>> m_screenshotTopTextures;
 	std::vector<std::unique_ptr<cpp3ds::Texture>> m_screenshotBottomTextures;

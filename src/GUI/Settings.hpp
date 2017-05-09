@@ -53,6 +53,7 @@ namespace FreeShop
 			void fillUpdatePage(Gwen::Controls::Base *page);
 			void fillDownloadPage(Gwen::Controls::Base *page);
 			void fillMusicPage(Gwen::Controls::Base *page);
+			void fillLocalesPage(Gwen::Controls::Base *page);
 			void fillOtherPage(Gwen::Controls::Base *page);
 
 			// Event Callback functions
@@ -131,11 +132,13 @@ namespace FreeShop
 			// Music
 			Gwen::Controls::ComboBox *m_comboMusicMode;
 			Gwen::Controls::ListBox *m_listboxMusicFiles;
+			Gwen::Controls::Label *m_labelAudioState;
 
 			// Other
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxSleep;
 			Gwen::Controls::ListBox *m_listboxLanguages;
 			Gwen::Controls::ListBox *m_listboxKeyboards;
+			Gwen::Controls::CheckBoxWithLabel *m_checkboxTitleID;
 		};
 	}
 }

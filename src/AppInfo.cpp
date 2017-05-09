@@ -11,6 +11,7 @@
 #include "InstalledList.hpp"
 #include "FreeShop.hpp"
 #include "Theme.hpp"
+#include "Config.hpp"
 #include "States/DialogState.hpp"
 #include <sstream>
 #include <TweenEngine/Tween.h>
@@ -36,6 +37,9 @@ AppInfo::AppInfo()
 	m_textDownload.setString("\uf019");
 	m_textDownload.setCharacterSize(30);
 	m_textDownload.setPosition(67.f, 93.f);
+	m_textSleepDownload = m_textDownload;
+	m_textSleepDownload.setString("\uf186");
+	m_textSleepDownload.setPosition(5.f, 93.f);
 	m_textDelete = m_textDownload;
 	m_textDelete.setString("\uf1f8");
 	m_textDelete.setPosition(70.f, 90.f);
@@ -72,7 +76,7 @@ AppInfo::AppInfo()
 	m_textScreenshotsEmpty.setOrigin(textRect.left + textRect.width / 2.f, textRect.top + textRect.height / 2.f);
 	m_textScreenshotsEmpty.setPosition(160.f, 202.f);
 
-	m_textNothingSelected.setString(_("No game selected"));
+	m_textNothingSelected.setString(_("Select a game to start"));
 	m_textNothingSelected.setCharacterSize(16);
 	if (Theme::isTextThemed)
 		m_textNothingSelected.setFillColor(Theme::secondaryTextColor);
@@ -100,8 +104,11 @@ AppInfo::AppInfo()
 		m_textDescription.setFillColor(cpp3ds::Color(100, 100, 100, 255));
 	m_textDescription.useSystemFont();
 
-	m_textTitleId.setCharacterSize(10);
-	m_textTitleId.setFillColor(cpp3ds::Color(80, 80, 80, 255));
+	m_textTitleId.setCharacterSize(11);
+	if (Theme::isTextThemed)
+		m_textTitleId.setFillColor(Theme::secondaryTextColor);
+	else
+		m_textTitleId.setFillColor(cpp3ds::Color(80, 80, 80, 255));
 	m_textTitleId.setPosition(2.f, 127.f);
 
 	m_textDemo.setString(_("Demo"));
@@ -164,6 +171,9 @@ void AppInfo::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) co
 
 		target.draw(m_icon, states);
 		target.draw(m_textTitle, states);
+
+		if (Config::get(Config::TitleID).GetBool())
+			target.draw(m_textTitleId, states);
 
 		states.scissor = cpp3ds::UintRect(0, 46, 320, 120);
 		target.draw(m_textDescription, states);

@@ -57,18 +57,18 @@
 		<button style="basic" x="246" y="88" w="28" h="28">9</button>
 		<button style="basic" x="276" y="88" w="28" h="28">0</button>
 
-		<button style="basic" x="10" y="118" w="28" h="28">a</button>
-		<button style="basic" x="40" y="118" w="28" h="28">z</button>
+		<button style="basic" x="10" y="118" w="28" h="28">q</button>
+		<button style="basic" x="40" y="118" w="28" h="28">w</button>
 		<button style="basic" x="70" y="118" w="28" h="28">e</button>
 		<button style="basic" x="100" y="118" w="28" h="28">r</button>
 		<button style="basic" x="130" y="118" w="28" h="28">t</button>
-		<button style="basic" x="160" y="118" w="28" h="28">y</button>
+		<button style="basic" x="160" y="118" w="28" h="28">z</button>
 		<button style="basic" x="190" y="118" w="28" h="28">u</button>
 		<button style="basic" x="220" y="118" w="28" h="28">i</button>
 		<button style="basic" x="250" y="118" w="28" h="28">o</button>
 		<button style="basic" x="280" y="118" w="28" h="28">p</button>
 
-		<button style="basic" x="18" y="148" w="28" h="28">q</button>
+		<button style="basic" x="18" y="148" w="28" h="28">a</button>
 		<button style="basic" x="48" y="148" w="28" h="28">s</button>
 		<button style="basic" x="78" y="148" w="28" h="28">d</button>
 		<button style="basic" x="108" y="148" w="28" h="28">f</button>
@@ -77,15 +77,15 @@
 		<button style="basic" x="198" y="148" w="28" h="28">j</button>
 		<button style="basic" x="228" y="148" w="28" h="28">k</button>
 		<button style="basic" x="258" y="148" w="28" h="28">l</button>
-		<button style="basic" x="288" y="148" w="28" h="28">m</button>
+		<button style="basic" x="288" y="148" w="28" h="28">'</button>
 
-		<button style="basic" x="30" y="178" w="28" h="28">w</button>
+		<button style="basic" x="30" y="178" w="28" h="28">y</button>
 		<button style="basic" x="60" y="178" w="28" h="28">x</button>
 		<button style="basic" x="90" y="178" w="28" h="28">c</button>
 		<button style="basic" x="120" y="178" w="28" h="28">v</button>
 		<button style="basic" x="150" y="178" w="28" h="28">b</button>
 		<button style="basic" x="180" y="178" w="28" h="28">n</button>
-		<button style="basic" x="210" y="178" w="28" h="28">'</button>
+		<button style="basic" x="210" y="178" w="28" h="28">m</button>
 		<button type="layoutchangetemp" layout="uppercase" style="shift" x="250" y="178" w="56" h="28"></button>
 
 		<button style="basic" x="194" y="208" w="28" h="28">,</button>
@@ -109,18 +109,18 @@
 		<button style="basic" x="246" y="88" w="28" h="28">(</button>
 		<button style="basic" x="276" y="88" w="28" h="28">)</button>
 
-		<button style="basic" x="10" y="118" w="28" h="28">A</button>
-		<button style="basic" x="40" y="118" w="28" h="28">Z</button>
+		<button style="basic" x="10" y="118" w="28" h="28">Q</button>
+		<button style="basic" x="40" y="118" w="28" h="28">W</button>
 		<button style="basic" x="70" y="118" w="28" h="28">E</button>
 		<button style="basic" x="100" y="118" w="28" h="28">R</button>
 		<button style="basic" x="130" y="118" w="28" h="28">T</button>
-		<button style="basic" x="160" y="118" w="28" h="28">Y</button>
+		<button style="basic" x="160" y="118" w="28" h="28">Z</button>
 		<button style="basic" x="190" y="118" w="28" h="28">U</button>
 		<button style="basic" x="220" y="118" w="28" h="28">I</button>
 		<button style="basic" x="250" y="118" w="28" h="28">O</button>
 		<button style="basic" x="280" y="118" w="28" h="28">P</button>
 
-		<button style="basic" x="18" y="148" w="28" h="28">Q</button>
+		<button style="basic" x="18" y="148" w="28" h="28">A</button>
 		<button style="basic" x="48" y="148" w="28" h="28">S</button>
 		<button style="basic" x="78" y="148" w="28" h="28">D</button>
 		<button style="basic" x="108" y="148" w="28" h="28">F</button>
@@ -129,15 +129,15 @@
 		<button style="basic" x="198" y="148" w="28" h="28">J</button>
 		<button style="basic" x="228" y="148" w="28" h="28">K</button>
 		<button style="basic" x="258" y="148" w="28" h="28">L</button>
-		<button style="basic" x="288" y="148" w="28" h="28">M</button>
+		<button style="basic" x="288" y="148" w="28" h="28">"</button>
 
-		<button style="basic" x="30" y="178" w="28" h="28">W</button>
+		<button style="basic" x="30" y="178" w="28" h="28">Y</button>
 		<button style="basic" x="60" y="178" w="28" h="28">X</button>
 		<button style="basic" x="90" y="178" w="28" h="28">C</button>
 		<button style="basic" x="120" y="178" w="28" h="28">V</button>
 		<button style="basic" x="150" y="178" w="28" h="28">B</button>
 		<button style="basic" x="180" y="178" w="28" h="28">N</button>
-		<button style="basic" x="210" y="178" w="28" h="28">"</button>
+		<button style="basic" x="210" y="178" w="28" h="28">M</button>
 		<button type="layoutchange" layout="lowercase" style="shift" x="250" y="178" w="56" h="28"></button>
 
 		<button style="basic" x="194" y="208" w="28" h="28">-</button>

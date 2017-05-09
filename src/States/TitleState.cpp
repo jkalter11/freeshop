@@ -3,6 +3,7 @@
 #include <cpp3ds/Window/Window.hpp>
 #include <cpp3ds/System/I18n.hpp>
 #include <cpp3ds/System/Service.hpp>
+#include <cpp3ds/System/Sleep.hpp>
 #include "../Config.hpp"
 
 using namespace TweenEngine;
@@ -82,6 +83,11 @@ TitleState::TitleState(StateStack& stack, Context& context, StateCallback callba
 			.target(0, 0, 0)
 			.delay(3.5f)
 			.start(m_manager);
+}
+
+TitleState::~TitleState()
+{
+
 }
 
 void TitleState::renderTopScreen(cpp3ds::Window& window)

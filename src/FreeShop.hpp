@@ -28,6 +28,8 @@ private:
 	// Shared State context variables
 	std::vector<char*> m_data;
 	cpp3ds::String m_text;
+
+	void PTM_ShutdownAsync();
 };
 
 }

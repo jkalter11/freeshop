@@ -41,8 +41,6 @@ public:
 	int getCurrentContentIndex() const;
 	cpp3ds::Uint64 getCurrentContentPosition() const;
 
-	bool sleepInstall(cpp3ds::Uint16 ticketVersion, std::string titleId);
-
 private:
 
 private:

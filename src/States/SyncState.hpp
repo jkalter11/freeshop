@@ -9,7 +9,9 @@
 #include <cpp3ds/System/Thread.hpp>
 #include <cpp3ds/System/Clock.hpp>
 #include <cpp3ds/Audio/Sound.hpp>
-
+#ifndef EMULATION
+#include <3ds.h>
+#endif
 
 namespace FreeShop {
 
