@@ -61,7 +61,7 @@ TopInformations::TopInformations()
 	m_textTwoPoints = m_textClock;
 	m_textTwoPoints.setString(":");
 	m_textTwoPoints.setCharacterSize(14);
-	m_textTwoPoints.setPosition(m_textClock.getPosition().x + (m_textClock.getLocalBounds().width / 2), m_textClock.getPosition().y);
+	m_textTwoPoints.setPosition((m_textClock.getPosition().x + (m_textClock.getLocalBounds().width / 2)) - 3, m_textClock.getPosition().y);
 
 	//Used for frame skipping in battery and signal icons updates
 	skipFrames = 60;
