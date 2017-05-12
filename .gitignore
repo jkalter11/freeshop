@@ -6,6 +6,7 @@ cmake_install.cmake
 install_manifest.txt
 build
 bin
+3ds_portlibs
 
 res/sdmc
 *.shbin

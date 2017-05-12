@@ -21,6 +21,8 @@ public:
 
 	static std::vector<std::unique_ptr<Notification>> notifications;
 
+	static void sendNews(cpp3ds::String title, cpp3ds::String message);
+
 private:
 	static cpp3ds::Texture m_texture;
 	static float m_spawnPositionY;

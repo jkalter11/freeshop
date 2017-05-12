@@ -232,6 +232,7 @@ AccessControlInfo:
    - ldr:ro
    - gsp::Lcd
    - news:u
+   - news:s
    - nim:aoc
    - nim:s
    - nwm::UDS
