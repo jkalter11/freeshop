@@ -26,11 +26,7 @@ TopInformations::TopInformations()
 	char tempSec[3];
 	strftime(tempSec, 3, "%S", timeinfo);
 
-	//Cool blinking effect
-	if (atoi(tempSec) % 2 == 0)
-		strftime(timeTextFmt, 12, "%H %M", timeinfo);
-	else
-		strftime(timeTextFmt, 12, "%H:%M", timeinfo);
+	strftime(timeTextFmt, 12, "%H %M", timeinfo);
 
 	m_textClock.setString(timeTextFmt);
 	m_textClock.useSystemFont();
@@ -61,6 +57,12 @@ TopInformations::TopInformations()
 	//Define clock position
 	m_textClock.setPosition(308.f - (m_textureBattery.getSize().x + m_textClock.getLocalBounds().width), -50.f);
 
+	//Two points in clock
+	m_textTwoPoints = m_textClock;
+	m_textTwoPoints.setString(":");
+	m_textTwoPoints.setCharacterSize(14);
+	m_textTwoPoints.setPosition(m_textClock.getPosition().x + (m_textClock.getLocalBounds().width / 2), m_textClock.getPosition().y);
+
 	//Used for frame skipping in battery and signal icons updates
 	skipFrames = 60;
 
@@ -77,8 +79,12 @@ TopInformations::TopInformations()
 	TweenEngine::Tween::to(obj, obj.POSITION_X, 0.6f).target(posX).start(m_tweenManager);
 
 	TWEEN_IN(m_textClock, 4.f);
+	TWEEN_IN(m_textTwoPoints, 4.f);
 	TWEEN_IN_X(m_batteryIcon, 318.f - m_textureBattery.getSize().x);
 	TWEEN_IN_X(m_signalIcon, 2.f);
+
+	//Two points animation
+	TweenEngine::Tween::to(m_textTwoPoints, util3ds::TweenText::FILL_COLOR_ALPHA, 1.f).target(0).repeatYoyo(-1, 0).start(m_tweenManager);
 }
 
 TopInformations::~TopInformations()
@@ -92,6 +98,7 @@ void TopInformations::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates st
 
 	//Draw clock
 	target.draw(m_textClock);
+	target.draw(m_textTwoPoints);
 
 	//Draw battery
 	target.draw(m_batteryIcon);
@@ -112,11 +119,7 @@ void TopInformations::update(float delta)
 	char tempSec[3];
 	strftime(tempSec, 3, "%S", timeinfo);
 
-	//Cool blinking effect
-	if (atoi(tempSec) % 2 == 0)
-		strftime(timeTextFmt, 12, "%H %M", timeinfo);
-	else
-		strftime(timeTextFmt, 12, "%H:%M", timeinfo);
+	strftime(timeTextFmt, 12, "%H %M", timeinfo);
 
 	m_textClock.setString(timeTextFmt);
 	m_tweenManager.update(delta);
@@ -187,10 +190,12 @@ void TopInformations::setCollapsed(bool collapsed)
 {
 	if (collapsed) {
 		TWEEN_IN_NOWAIT(m_textClock, -50.f);
+		TWEEN_IN_NOWAIT(m_textTwoPoints, -50.f);
 		TWEEN_IN_X_NOWAIT(m_batteryIcon, 370.f - m_textureBattery.getSize().x);
 		TWEEN_IN_X_NOWAIT(m_signalIcon, -50.f);
 	} else {
 		TWEEN_IN(m_textClock, 4.f);
+		TWEEN_IN(m_textTwoPoints, 4.f);
 		TWEEN_IN_X(m_batteryIcon, 318.f - m_textureBattery.getSize().x);
 		TWEEN_IN_X(m_signalIcon, 2.f);
 	}

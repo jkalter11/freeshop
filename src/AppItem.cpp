@@ -360,6 +360,10 @@ void AppItem::queueForSleepInstallThread()
 
 	Notification::spawn(_("Preparing for sleep installation: \n%s", m_title.toAnsiString().c_str()));
 	DownloadQueue::getInstance().addSleepDownload(shared_from_this());
+	for (auto &id : m_updates)
+		DownloadQueue::getInstance().addSleepDownload(shared_from_this(), id);
+	for (auto &id : m_dlc)
+		DownloadQueue::getInstance().addSleepDownload(shared_from_this(), id);
 
 	m_isSleepBusy = false;
 #endif
@@ -404,5 +408,9 @@ bool AppItem::isSleepBusy() const
 	return m_isSleepBusy;
 }
 
+void AppItem::setSleepBusy(bool newState)
+{
+	m_isSleepBusy = newState;
+}
 
 } // namespace FreeShop

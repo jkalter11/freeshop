@@ -153,9 +153,6 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 				titleVersion = *(cpp3ds::Uint16*)&buf[dataOffsets[sigType] + 0x9C];
 				contentCount = __builtin_bswap16(*(cpp3ds::Uint16*)&buf[dataOffsets[sigType] + 0x9E]);
 
-				//std::cout << len << std::endl;
-				//std::cout << titleVersion << std::endl;
-
 				if (isResuming)
 					installer->resume();
 
@@ -458,6 +455,9 @@ void DownloadQueue::update(float delta)
 			}
 			else
 				++it;
+
+		if (!download->markedForDelete())
+			download->update(delta);
 		}
 		if (changed)
 			realign();
@@ -675,51 +675,71 @@ void DownloadQueue::load()
 	}
 }
 
-void DownloadQueue::addSleepDownload(std::shared_ptr<AppItem> app)
+void DownloadQueue::addSleepDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 titleId)
 {
 #ifndef EMULATION
 	//Lock the thread so if user wants to install another app while an app is processed, this doesn't fu** up everything (and make ARM9 crashes (true story))
 	cpp3ds::Lock lock(m_mutexSleepInstall);
 
+	if (titleId == 0)
+	{
+		if (app->isInstalled()) // Don't allow reinstalling without deleting
+			return;
+		titleId = app->getTitleId();
+	}
+
 	bool isRegistered;
-	NIMS_IsTaskRegistered(app->getTitleId(), &isRegistered);
+	NIMS_IsTaskRegistered(titleId, &isRegistered);
+
+	//Get title type
+	cpp3ds::Uint32 type = titleId >> 32;
+
+	//Get title name
+	cpp3ds::String appTitle;
+	if (type == TitleKeys::Game)
+		appTitle = app->getTitle();
+	else if (type == TitleKeys::Update)
+		appTitle = _("[Update] %s", app->getTitle().toAnsiString().c_str());
+	else if (type == TitleKeys::Demo)
+		appTitle = _("[Demo] %s", app->getTitle().toAnsiString().c_str());
+	else if (type == TitleKeys::DLC)
+		appTitle = _("[DLC] %s", app->getTitle().toAnsiString().c_str());
+	std::string stdAppTitle = appTitle.toAnsiString();
 
 	if (isRegistered) {
 		Notification::spawn(_("Ready for sleep installation: \n%s", app->getTitle().toAnsiString().c_str()));
 		return;
 	}
 
-	Notification::spawn(_("Processing sleep installation: \n%s", app->getTitle().toAnsiString().c_str()));
+	Notification::spawn(_("Processing sleep installation: \n%s", stdAppTitle.c_str()));
 
 	//Some vars initialisation
 	uint32_t res;
 	NIM_TitleConfig tc;
-	cpp3ds::String appTitle = app->getTitle();
-	std::string stdAppTitle = appTitle.toAnsiString();
-	Installer *installer = new Installer(app->getTitleId(), 0);
-	FS_MediaType mediaType = ((app->getTitleId() >> 32) == TitleKeys::DSiWare) ? MEDIATYPE_NAND : MEDIATYPE_SD;
-	cpp3ds::Uint32 titleType = app->getTitleId() >> 32;
+	Installer *installer = new Installer(titleId, 0);
+	FS_MediaType mediaType = ((titleId >> 32) == TitleKeys::DSiWare) ? MEDIATYPE_NAND : MEDIATYPE_SD;
+	cpp3ds::Uint32 titleType = titleId >> 32;
 
 	//Get the title version (and not ticket version) via the title ID
-	res = getTicketVersion(app->getTitleId());
+	res = getTicketVersion(titleId);
 	printf("%" PRIu32 "\n", res);
 
 	//Install app ticket
 	if (!installer->installTicket(res)) {
-		Notification::spawn(_("Can't install ticket: \n%s", app->getTitle().toAnsiString().c_str()));
+		Notification::spawn(_("Can't install ticket: \n%s", stdAppTitle.c_str()));
 		return;
 	}
 
 	//Install app seed
 	if (titleType == TitleKeys::Game && !app->getSeed().empty()) {
 		if (!installer->installSeed(&app->getSeed()[0])) {
-			Notification::spawn(_("Can't install seed: \n%s", app->getTitle().toAnsiString().c_str()));
+			Notification::spawn(_("Can't install seed: \n%s", stdAppTitle.c_str()));
 			return;
 		}
 	}
 
 	//The code that register the sleep download
-	NIMS_MakeTitleConfig(&tc, app->getTitleId(), res, 0, mediaType);
+	NIMS_MakeTitleConfig(&tc, titleId, res, 0, mediaType);
 
 	if (R_SUCCEEDED(res = NIMS_RegisterTask(&tc, stdAppTitle.c_str(), "freeShop download")))
 		Notification::spawn(_("Ready for sleep installation: \n%s", stdAppTitle.c_str()));

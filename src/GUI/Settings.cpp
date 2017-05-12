@@ -864,6 +864,7 @@ void Settings::fillLocalesPage(Gwen::Controls::Base *page)
 	m_listboxKeyboards->AddItem("AZERTY", "azerty");
 	m_listboxKeyboards->AddItem("QWERTZ", "qwertz");
 	m_listboxKeyboards->AddItem("Katakana", "jap");
+	m_listboxKeyboards->AddItem("Title ID", "tid");
 	m_listboxKeyboards->onRowSelected.Add(this, &Settings::keyboardChange);
 
 	// Only show Korean/Chinese on their respective region consoles.

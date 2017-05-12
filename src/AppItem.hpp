@@ -86,6 +86,7 @@ public:
 	const std::vector<cpp3ds::Uint64> &getDLC() const;
 
 	bool isSleepBusy() const;
+	void setSleepBusy(bool newState);
 
 private:
 	void setIconIndex(size_t iconIndex);

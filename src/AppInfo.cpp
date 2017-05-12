@@ -38,8 +38,9 @@ AppInfo::AppInfo()
 	m_textDownload.setCharacterSize(30);
 	m_textDownload.setPosition(67.f, 93.f);
 	m_textSleepDownload = m_textDownload;
+	m_textSleepDownload.setFillColor(cpp3ds::Color::White);
 	m_textSleepDownload.setString("\uf186");
-	m_textSleepDownload.setPosition(5.f, 93.f);
+	m_textSleepDownload.setPosition(5.f, 91.f);
 	m_textDelete = m_textDownload;
 	m_textDelete.setString("\uf1f8");
 	m_textDelete.setPosition(70.f, 90.f);
@@ -188,6 +189,7 @@ void AppInfo::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) co
 		else if (!DownloadQueue::getInstance().isDownloading(m_appItem))
 		{
 			target.draw(m_textDownload, states);
+			target.draw(m_textSleepDownload, states);
 		}
 
 		if (!m_appItem->getDemos().empty() && !DownloadQueue::getInstance().isDownloading(m_appItem->getDemos()[0]))
@@ -312,6 +314,7 @@ void AppInfo::loadApp(std::shared_ptr<AppItem> appItem)
 				m_textTitle.setOrigin(std::min(m_textTitle.getLocalBounds().width, 205.f) / 2.f, 0.f);
 
 				m_textDownload.setFillColor(cpp3ds::Color::White);
+				m_textSleepDownload.setFillColor(cpp3ds::Color::White);
 			}
 		}
 	}
@@ -576,6 +579,18 @@ bool AppInfo::processEvent(const cpp3ds::Event &event)
 						.start(m_tweenManager);
 
 				Notification::spawn(_("Queued install: %s", m_appItem->getTitle().toAnsiString().c_str()));
+			}
+		}
+		else if (m_textSleepDownload.getGlobalBounds().contains(event.touch.x, event.touch.y))
+		{
+			if (!DownloadQueue::getInstance().isDownloading(m_appItem))
+			{
+				DownloadQueue::getInstance().addSleepDownload(m_appItem);
+				TweenEngine::Tween::to(m_textSleepDownload, util3ds::TweenText::FILL_COLOR_RGB, 0.5f)
+						.target(230, 20, 20)
+						.start(m_tweenManager);
+
+				Notification::spawn(_("Preparing for sleep installation: \n%s", m_appItem->getTitle().toAnsiString().c_str()));
 			}
 		}
 	}

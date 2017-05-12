@@ -47,6 +47,8 @@ public:
 	void reloadKeyboard();
 	int getMode();
 	bool isAppInfoLoaded();
+	bool getJapKeyboard();
+	bool getTIDKeyboard();
 
 	static cpp3ds::Clock clockDownloadInactivity;
 
@@ -106,6 +108,9 @@ private:
 	cpp3ds::String m_lastKeyboardInput;
 
 	std::vector<util3ds::RichText> m_textMatches;
+
+	bool m_isJapKeyboard;
+	bool m_isTIDKeyboard;
 
 	// Transitioning
 	bool m_isTransitioning;

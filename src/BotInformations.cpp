@@ -61,6 +61,10 @@ BotInformations::BotInformations()
 	m_progressBarSD.setPosition(0.f, 30.f);
 	m_progressBarSD.setSize(cpp3ds::Vector2f(0, 29));
 
+	//Initializing booleans for transitions
+	m_isProgressSDTransitioning = false;
+	m_isProgressNANDTransitioning = false;
+
 	//Progress bars' backgrounds
 	if (Theme::isFSBGNAND9Themed)
 		m_backgroundNAND.setTexture(&AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/fsbgnand.9.png"));
@@ -116,9 +120,15 @@ void BotInformations::update(float delta)
 		u64 usedSize = totalSize - size;
 
 		//m_progressBarSD.setSize(cpp3ds::Vector2f((usedSize * 320) / totalSize, 26));
-		TweenEngine::Tween::to(m_progressBarSD, util3ds::TweenRectangleShape::SIZE, 0.2f)
-					.target((usedSize * 320) / totalSize, 26.f)
-					.start(m_tweenManager);
+		if (!m_isProgressSDTransitioning) {
+			m_isProgressSDTransitioning = true;
+			TweenEngine::Tween::to(m_progressBarSD, util3ds::TweenRectangleShape::SIZE, 0.2f)
+						.target((usedSize * 320) / totalSize, 26.f)
+						.setCallback(TweenEngine::TweenCallback::COMPLETE, [=](TweenEngine::BaseTween* source) {
+							m_isProgressSDTransitioning = false;
+						})
+						.start(m_tweenManager);
+		}
 
 		if (usedSize > 1024 * 1024 * 1024 || totalSize > 1024 * 1024 * 1024)
 			m_textSDStorage.setString(_("%.1f/%.1f GB", static_cast<float>(usedSize) / 1024.f / 1024.f / 1024.f, static_cast<float>(totalSize) / 1024.f / 1024.f / 1024.f));
@@ -137,9 +147,15 @@ void BotInformations::update(float delta)
 		u64 usedSize = totalSize - size;
 
 		//m_progressBarNAND.setSize(cpp3ds::Vector2f((usedSize * 320) / totalSize, 26));
-		TweenEngine::Tween::to(m_progressBarNAND, util3ds::TweenRectangleShape::SIZE, 0.2f)
-					.target((usedSize * 320) / totalSize, 26.f)
-					.start(m_tweenManager);
+		if (!m_isProgressNANDTransitioning) {
+			m_isProgressNANDTransitioning = true;
+			TweenEngine::Tween::to(m_progressBarNAND, util3ds::TweenRectangleShape::SIZE, 0.2f)
+						.target((usedSize * 320) / totalSize, 26.f)
+						.setCallback(TweenEngine::TweenCallback::COMPLETE, [=](TweenEngine::BaseTween* source) {
+							m_isProgressNANDTransitioning = false;
+						})
+						.start(m_tweenManager);
+		}
 
 		if (usedSize > 1024 * 1024 * 1024 || totalSize > 1024 * 1024 * 1024)
 			m_textNANDStorage.setString(_("%.1f/%.1f GB", static_cast<float>(usedSize) / 1024.f / 1024.f / 1024.f, static_cast<float>(totalSize) / 1024.f / 1024.f / 1024.f));

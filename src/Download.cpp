@@ -27,6 +27,7 @@ Download::Download(const std::string &url, const std::string &destination)
 , m_timesToRetry(3)
 , m_timeout(cpp3ds::seconds(10))
 , m_bufferSize(16*1024)
+, m_isProgressTransitioning(false)
 {
 	setUrl(url);
 	setDestination(destination);
@@ -229,7 +230,16 @@ bool Download::isCanceled()
 void Download::setProgress(float progress)
 {
 	m_progress = progress;
-	m_progressBar.setSize(cpp3ds::Vector2f(m_progress * m_size.x, m_size.y));
+	//m_progressBar.setSize(cpp3ds::Vector2f(m_progress * m_size.x, m_size.y));
+	if (!m_isProgressTransitioning) {
+		m_isProgressTransitioning = true;
+		TweenEngine::Tween::to(m_progressBar, util3ds::TweenRectangleShape::SIZE, 0.2f)
+					.target(m_progress * m_size.x, m_size.y)
+					.setCallback(TweenEngine::TweenCallback::COMPLETE, [=](TweenEngine::BaseTween* source) {
+						m_isProgressTransitioning = false;
+					})
+					.start(m_tweenManager);
+	}
 }
 
 
@@ -483,5 +493,9 @@ void Download::setBufferSize(size_t size)
 	m_bufferSize = size;
 }
 
+void Download::update(float delta)
+{
+	m_tweenManager.update(delta);
+}
 
 } // namespace FreeShop

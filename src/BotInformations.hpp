@@ -34,6 +34,10 @@ private:
 
 	TweenEngine::TweenManager m_tweenManager;
 
+	//Booleans used for transitions
+	bool m_isProgressSDTransitioning;
+	bool m_isProgressNANDTransitioning;
+
 };
 
 } // namespace FreeShop

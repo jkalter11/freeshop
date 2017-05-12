@@ -25,6 +25,7 @@ protected:
 
 private:
 	util3ds::TweenText m_textClock;
+	util3ds::TweenText m_textTwoPoints;
 
 	cpp3ds::Texture m_textureBattery;
 	util3ds::TweenSprite m_batteryIcon;

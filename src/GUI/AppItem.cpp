@@ -11,6 +11,7 @@
 #include "../Util.hpp"
 #include "../Theme.hpp"
 #include "../fts_fuzzy_match.h"
+#include "../States/BrowseState.hpp"
 #include <sstream>
 
 
@@ -273,10 +274,25 @@ int AppItem::getValues(int tweenType, float *returnValues)
 
 void AppItem::setMatchTerm(const std::string &string)
 {
-	if (string.empty() || !m_appItem)
+	if (string.empty() || !m_appItem) {
 		m_matchScore = 0;
-	else if (!fts::fuzzy_match(string.c_str(), m_appItem->getNormalizedTitle().c_str(), m_matchScore))
-		m_matchScore = -99;
+		return;
+	}
+
+	if (g_browseState->getJapKeyboard()) {
+		std::size_t found = m_appItem->getNormalizedTitle().find(string);
+
+		if (found == std::string::npos)
+			m_matchScore = -99;
+		else
+			m_matchScore = found;
+	} else if (g_browseState->getTIDKeyboard()) {
+		if (!fts::fuzzy_match(string.c_str(), m_appItem->getTitleIdStr().c_str(), m_matchScore))
+			m_matchScore = -99;
+	} else {
+		if (!fts::fuzzy_match(string.c_str(), m_appItem->getNormalizedTitle().c_str(), m_matchScore))
+			m_matchScore = -99;
+	}
 }
 
 int AppItem::getMatchScore() const

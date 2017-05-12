@@ -12,6 +12,8 @@
 #include "TweenObjects.hpp"
 #include "GUI/NinePatch.hpp"
 #include "AppItem.hpp"
+#include <TweenEngine/Tween.h>
+#include <TweenEngine/TweenManager.h>
 
 
 namespace FreeShop {
@@ -79,6 +81,8 @@ public:
 
 	bool markedForDelete();
 
+	void update(float delta);
+
 protected:
 	virtual void draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) const;
 
@@ -111,7 +115,7 @@ private:
 	// For queue UI
 	gui3ds::NinePatch m_background;
 	cpp3ds::RectangleShape m_icon;
-	cpp3ds::RectangleShape m_progressBar;
+	util3ds::TweenRectangleShape m_progressBar;
 
 	cpp3ds::Text m_textTitle;
 	cpp3ds::Text m_textProgress;
@@ -125,6 +129,9 @@ private:
 	int m_timesToRetry;
 	cpp3ds::Vector2f m_size;
 	std::string m_progressMessage;
+
+	TweenEngine::TweenManager m_tweenManager;
+	bool m_isProgressTransitioning;
 };
 
 } // namespace FreeShop

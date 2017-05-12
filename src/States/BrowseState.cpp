@@ -36,6 +36,8 @@ BrowseState::BrowseState(StateStack& stack, Context& context, StateCallback call
 , m_gwenSkin(nullptr)
 , m_settingsGUI(nullptr)
 , m_isTransitioning(false)
+, m_isJapKeyboard(false)
+, m_isTIDKeyboard(false)
 {
 	g_browseState = this;
 	m_musicLoop.setLoop(true);
@@ -619,13 +621,22 @@ void BrowseState::stopBGM()
 
 void BrowseState::reloadKeyboard()
 {
+	m_isJapKeyboard = false;
+	m_isTIDKeyboard = false;
+
 	//Loading the keyboard locale file
 	if (std::string(Config::get(Config::Keyboard).GetString()) == "azerty")
 		m_keyboard.loadFromFile("kb/keyboard.azerty.xml");
 	else if (std::string(Config::get(Config::Keyboard).GetString()) == "qwertz")
 		m_keyboard.loadFromFile("kb/keyboard.qwertz.xml");
-	else if (std::string(Config::get(Config::Keyboard).GetString()) == "jap")
+	else if (std::string(Config::get(Config::Keyboard).GetString()) == "jap") {
 		m_keyboard.loadFromFile("kb/keyboard.jap.xml");
+		m_isJapKeyboard = true;
+	}
+	else if (std::string(Config::get(Config::Keyboard).GetString()) == "tid") {
+		m_keyboard.loadFromFile("kb/keyboard.titleid.xml");
+		m_isTIDKeyboard = true;
+	}
 	else
 		m_keyboard.loadFromFile("kb/keyboard.qwerty.xml");
 }
@@ -641,6 +652,16 @@ bool BrowseState::isAppInfoLoaded()
 		return false;
 	else
 		return true;
+}
+
+bool BrowseState::getJapKeyboard()
+{
+	return m_isJapKeyboard;
+}
+
+bool BrowseState::getTIDKeyboard()
+{
+	return m_isTIDKeyboard;
 }
 
 } // namespace FreeShop
