@@ -22,6 +22,8 @@
 #include <archive_entry.h>
 #include <dirent.h>
 #include <cpp3ds/System/FileInputStream.hpp>
+#include <algorithm>
+#include <cstring>
 
 namespace {
 
@@ -414,6 +416,10 @@ bool SyncState::loadServices()
 		//PTM:SYSM service init for shutdown
 		if (R_FAILED(res = ptmSysmInit()))
 			Notification::spawn(_("Unable to start PTMSYSM: \n0x%08lX (%d)", res, R_DESCRIPTION(res)));
+
+		//NEWS service init for notifications
+		if (R_FAILED(res = newsInit()))
+			Notification::spawn(_("Unable to start NEWS: \n0x%08lX (%d)", res, R_DESCRIPTION(res)));
 	#endif
 }
 

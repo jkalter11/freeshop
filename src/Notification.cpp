@@ -2,6 +2,9 @@
 #include <cmath>
 #include "Notification.hpp"
 #include "Theme.hpp"
+#ifndef EMULATION
+#include <3ds.h>
+#endif
 
 namespace FreeShop {
 
@@ -85,6 +88,21 @@ void Notification::animate()
 			m_markForDelete = true;
 		})
 		.delay(NOTIFICATION_DURATION).start(m_tweenManager);
+}
+
+void Notification::sendNews(cpp3ds::String title, cpp3ds::String message)
+{
+#ifndef EMULATION
+	u16 utfTitle[256];
+	u16 utfMessage[256];
+
+	copy( title.begin(), title.end(), utfTitle );
+    	utfTitle[title.getSize()] = 0;
+	copy( message.begin(), message.end(), utfMessage );
+    	utfMessage[message.getSize()] = 0;
+
+	NEWS_AddNotification(utfTitle, 256 /* 4 */, utfMessage, 256 /* 7 */, NULL, 0, false);
+#endif
 }
 
 } // namespace FreeShop

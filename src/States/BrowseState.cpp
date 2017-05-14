@@ -164,6 +164,8 @@ void BrowseState::initialize()
 	SleepState::clock.restart();
 	clockDownloadInactivity.restart();
 	requestStackClearUnder();
+
+	//Notification::sendNews(_("freeShop download"), _("A download has been finished:\nhééééé macaréna!"));
 }
 
 void BrowseState::renderTopScreen(cpp3ds::Window& window)
