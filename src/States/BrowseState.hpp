@@ -52,6 +52,8 @@ public:
 
 	static cpp3ds::Clock clockDownloadInactivity;
 
+	std::string getCtrSdPath();
+
 private:
 	enum Mode {
 		Info = 0,
@@ -121,6 +123,9 @@ private:
 	Gwen::Renderer::cpp3dsRenderer *m_gwenRenderer;
 	Gwen::Skin::TexturedBase *m_gwenSkin;
 	GUI::Settings *m_settingsGUI;
+
+	//Nintendo 3DS SD Folder
+	std::string m_ctrSdPath;
 };
 
 extern BrowseState *g_browseState;

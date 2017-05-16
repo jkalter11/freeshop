@@ -70,8 +70,10 @@ void BrowseState::initialize()
 	AppList::getInstance().refresh();
 	InstalledList::getInstance().refresh();
 
+	//Var init
 	m_topBG = false;
 	m_botBG = false;
+	m_ctrSdPath = "";
 
 	m_iconSet.addIcon(L"\uf0ae");
 	m_iconSet.addIcon(L"\uf290");
@@ -158,14 +160,31 @@ void BrowseState::initialize()
 		m_botBG = true;
 	}
 
+#ifndef EMULATION
+	fsInit();
+	u8 * outdata = static_cast<u8 *>(malloc(1024));
+	FSUSER_GetSdmcCtrRootPath(outdata, 1024);
+	char* charOut;
+	std::string ctrPath;
+
+	for (size_t i = 0; i < 158; ++i) {
+  		if (i % 2 == 0) {
+			charOut = (char*)outdata + i;
+			ctrPath += charOut;
+		}
+	}
+
+	fsExit();
+
+	m_ctrSdPath = ctrPath;
+	free(outdata);
+#endif
 
 	g_browserLoaded = true;
 
 	SleepState::clock.restart();
 	clockDownloadInactivity.restart();
 	requestStackClearUnder();
-
-	//Notification::sendNews(_("freeShop download"), _("A download has been finished:\nhééééé macaréna!"));
 }
 
 void BrowseState::renderTopScreen(cpp3ds::Window& window)
@@ -664,6 +683,11 @@ bool BrowseState::getJapKeyboard()
 bool BrowseState::getTIDKeyboard()
 {
 	return m_isTIDKeyboard;
+}
+
+std::string BrowseState::getCtrSdPath()
+{
+	return m_ctrSdPath;
 }
 
 } // namespace FreeShop

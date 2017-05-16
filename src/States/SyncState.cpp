@@ -22,8 +22,9 @@
 #include <archive_entry.h>
 #include <dirent.h>
 #include <cpp3ds/System/FileInputStream.hpp>
-#include <algorithm>
-#include <cstring>
+#ifndef EMULATION
+#include <3ds/ipc.h>
+#endif
 
 namespace {
 

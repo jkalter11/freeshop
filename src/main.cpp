@@ -76,6 +76,7 @@ int main(int argc, char** argv)
 	ptmuExit();
 	acExit();
 	ptmSysmExit();
+	newsExit();
 #endif
 	delete game;
 	return 0;
