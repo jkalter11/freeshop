@@ -9,7 +9,7 @@ The hyped update.
     icon on the app description screen
 • QWERTZ, Katakana keyboards implemented +
   Search by Title ID
-• Brand new Theme-Engine™
+• Brand new Theme-Engine™ (codenamed Timmy)
   For themers: Please read the guide
   uploaded on the GBATemp thread
 • Storage informations are now on the bottom
@@ -33,3 +33,5 @@ The hyped update.
   list
 • Download/Storage progress bars are now
   animated on progress
+
+Des chiens sur des bananes !
