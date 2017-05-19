@@ -110,6 +110,7 @@ private:
 	cpp3ds::String m_lastKeyboardInput;
 
 	std::vector<util3ds::RichText> m_textMatches;
+	std::vector<int> m_keyHistory;
 
 	bool m_isJapKeyboard;
 	bool m_isTIDKeyboard;

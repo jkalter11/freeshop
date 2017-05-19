@@ -15,7 +15,7 @@ Language | Contributors
 Japanese | Februarysn0w
 French | Omegadrien, MarioErmando, cynosura, Sp4rks, [moutonnoireu](https://github.com/moutonnoireu)
 German | [Traiver](https://github.com/Traiver), [Brawl345](https://github.com/Brawl345), DarkGabbz
-Italian | [CapraTheBest](https://github.com/CapraTheBest), [sykhro](https://github.com/sykhro)
+Italian | [CapraTheBest](https://github.com/CapraTheBest), [sykhro](https://github.com/sykhro), [Filo97](https://gbatemp.net/members/filo97.373223/)
 Spanish US | [ShadowOne333](https://github.com/ShadowOne333)
 Spanish ES | Txustra
 Simplified Chinese | pdapanda, [arition](https://github.com/arition)

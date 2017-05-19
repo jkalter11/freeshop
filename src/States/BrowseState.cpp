@@ -74,6 +74,7 @@ void BrowseState::initialize()
 	m_topBG = false;
 	m_botBG = false;
 	m_ctrSdPath = "";
+	m_keyHistory = {};
 
 	m_iconSet.addIcon(L"\uf0ae");
 	m_iconSet.addIcon(L"\uf290");
@@ -407,6 +408,17 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 	if (event.type == cpp3ds::Event::KeyPressed)
 	{
 		int index = AppList::getInstance().getSelectedIndex();
+
+		//Dat secret block of code
+		m_keyHistory.push_back(event.key.code);
+		if (m_keyHistory.size() > 10) {
+			m_keyHistory.erase(m_keyHistory.begin());
+		}
+		if (m_keyHistory.size() >= 10) {
+			if (m_keyHistory[0] == cpp3ds::Keyboard::DPadUp && m_keyHistory[1] == cpp3ds::Keyboard::DPadUp && m_keyHistory[2] == cpp3ds::Keyboard::DPadDown && m_keyHistory[3] == cpp3ds::Keyboard::DPadDown && m_keyHistory[4] == cpp3ds::Keyboard::DPadLeft && m_keyHistory[5] == cpp3ds::Keyboard::DPadRight && m_keyHistory[6] == cpp3ds::Keyboard::DPadLeft && m_keyHistory[7] == cpp3ds::Keyboard::DPadRight && m_keyHistory[8] == cpp3ds::Keyboard::B && m_keyHistory[9] == cpp3ds::Keyboard::A) {
+				Notification::spawn(_("Soon™"));
+			}
+		}
 
 		switch (event.key.code)
 		{
