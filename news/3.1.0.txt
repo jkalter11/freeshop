@@ -9,12 +9,13 @@ The hyped update.
     icon on the app description screen
 • QWERTZ, Katakana keyboards implemented +
   Search by Title ID
-• Brand new Theme-Engine™ (codenamed Timmy)
-  For themers: Please read the guide
+• Brand new Theme-Engine™ (named Timmy)
+  For theme makers: Please read the guide
   uploaded on the GBATemp thread
-• Storage informations are now on the bottom
-  screen + Status bar on the bottom screen
-• PabloMK7's Boot Screen
+• Storage informations are now on the
+  bottom  screen + Status bar on the
+  bottom screen
+• PabloMK7's Awesome Boot Screen
 • Game size on the installed game list
 • You can show the Title ID of a game
   on the game description screen
