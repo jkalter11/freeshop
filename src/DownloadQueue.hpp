@@ -31,7 +31,7 @@ public:
 
 	void addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 titleId = 0, DownloadCompleteCallback callback = nullptr, int contentIndex = -1, float progress = 0.f);
 	void restartDownload(Download *download);
-	void addSleepDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 titleId = 0);
+	void addSleepDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 titleId = 0, cpp3ds::String title = "");
 
 	bool isDownloading(std::shared_ptr<AppItem> app);
 	bool isDownloading(cpp3ds::Uint64 titleId);
@@ -75,6 +75,10 @@ private:
 	cpp3ds::Mutex m_mutexSleepInstall;
 	cpp3ds::Clock m_clockRefresh;
 	volatile bool m_refreshEnd;
+
+	//Installer for sleep download
+	Installer *m_sleepInstaller;
+	bool m_isSleepInstalling;
 };
 
 } // namespace FreeShop

@@ -886,6 +886,8 @@ void Settings::fillLocalesPage(Gwen::Controls::Base *page)
 	}
 #endif
 
+	if (Config::get(Config::Skiddo).GetBool())
+		m_listboxLanguages->AddItem("Skiddo", "sk");
 	m_listboxLanguages->AddItem("English", "en");
 	m_listboxLanguages->AddItem("Français", "fr");
 	m_listboxLanguages->AddItem("Deutsche", "de");

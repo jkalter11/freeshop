@@ -64,7 +64,6 @@ int main(int argc, char** argv)
 	AM_InitializeExternalTitleDatabase(false);
 	aptSetSleepAllowed(true);
 #endif
-
 	srand(time(NULL));
 	auto game = new FreeShop::FreeShop();
 	game->run();
@@ -77,6 +76,17 @@ int main(int argc, char** argv)
 	acExit();
 	ptmSysmExit();
 	newsExit();
+	
+	if (FreeShop::g_requestShutdown)
+	{
+		/*cpp3ds::sleep(cpp3ds::milliseconds(1000));
+		srvInit();
+		srvPublishToSubscriber(0x203, 0);
+		srvExit();*/
+		ptmSysmInit();
+		PTMSYSM_ShutdownAsync(0);
+		ptmSysmExit();
+	}
 #endif
 	delete game;
 	return 0;

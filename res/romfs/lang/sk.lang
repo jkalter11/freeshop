@@ -1,0 +1,407 @@
+# src/States/SyncState.cpp
+##########################
+Waiting for internet connection... %.0fs
+Skiddo Skiddo Skiddo Skiddo... %.0fs
+
+Fetching news for %s ...
+Skiddo Skiddo Skiddo %s ...
+
+Loading game list...
+Skiddo Skiddo Skiddo...
+
+Looking for freeShop update...
+Skiddo Skiddo SkiddoShop Skiddo...
+
+Installing freeShop %s ...
+Skiddo SkiddoShop %s ...
+
+Failed to install update: 0x%08lX
+Skiddo Skiddo Skiddo Skiddo: 0x%08lX
+
+Checking latest cache...
+Skiddo Skiddo Skiddo...
+
+Downloading latest cache: %s...
+Skiddo Skiddo Skiddo: %s...
+
+Extracting latest cache...
+Skiddo Skiddo Skiddo...
+
+Downloading title keys...
+Skiddo Skiddo Skiddo...
+
+# src/States/BrowseState.cpp
+############################
+No title keys found.\nMake sure you have keys in\n%s\n\nManually copy keys to the directory\nor check settings to enter a URL\nfor downloading title keys.
+Skiddo Skiddo Skiddo Skiddo.\nSkiddo Skiddo Skiddo Skiddo Skiddo Skiddo\n%s\n\nSkiddo Skiddo Skiddo Skiddo Skiddo Skiddo\noSkiddo Skiddo Skiddo Skiddo Skiddo Skiddo Skiddo\neSkiddo Skiddo Skiddo Skiddo.
+
+No cache entries found\nfor your title keys.\n\nTry refreshing cache in settings.\nIf that doesn't work, then your\ntitles simply won't work with\nfreeShop currently.
+Skiddo Skiddo Skiddo Skiddo\nSkiddo Skiddo Skiddo Skiddo.\n\nSkiddo Skiddo Skiddo Skiddo Skiddo.\nSkiddo Skiddo Skiddo Skiddo, Skiddo Skiddo\nSkiddo Skiddo Skiddo Skiddo Skiddo\nSkiddoShop Skiddo.
+
+Queued install: %s
+Skiddo Skiddo: %s
+
+Already installed: %s
+Skiddo Skiddo : %s
+
+# src/States/DialogState.cpp
+############################
+ Ok
+ Skiddo
+
+ Cancel
+ Skiddo
+
+Are you sure you want\nto continue?
+Skiddo Skiddo Skiddo Skiddo\nSkiddo? 
+
+# src/States/NewsState.cpp
+##########################
+ Close
+ Skiddo 
+
+# src/States/QrScannerState.cpp
+###############################
+ Retry
+ Skiddo 
+
+# src/AppInfo.cpp
+#################
+No Screenshots
+Skiddo Skiddo Skiddo
+
+No game selected
+Skiddo Skiddo Skiddo 
+
+Demo
+Skiddo
+
+You are deleting the demo for\nthis title:\n\n%s
+Skiddo Skiddo Skiddo Skiddo Skiddo Skiddo\nSkiddo Skiddo:\n\n%s
+
+Deleted demo: %s
+Skiddo Skiddo: %s
+
+Queued demo: %s
+Skiddo Skiddo: %s
+
+You are deleting this game,\nincluding all save data:\n\n%s
+Skiddo Skiddo Skiddo Skiddo Skiddo,\nSkiddo Skiddo Skiddo Skiddo:\n\n%s
+
+Deleted: %s
+Skiddo: %s
+
+# src/Download.cpp
+##################
+Waiting for internet...
+Skiddo Skiddo Skiddo...
+
+Failed
+Skiddo 
+
+Retry attempts exceeded
+Skiddo Skiddo Skiddo
+
+Retrying... %d
+Skiddo... %d
+
+Queued
+Skiddo 
+
+%s\n\nAre you sure you want to cancel\nthis installation and lose all progress?
+%s\n\nSkiddo Skiddo Skiddo Skiddo\nSkiddo Skiddo Skiddo\nSkiddo Skiddo Skiddo\nSkiddo Skiddo Skiddo?
+
+Canceling...
+Skiddo...
+
+# src/DownloadQueue.cpp
+#######################
+[Update] %s
+[Skiddo] %s
+
+[Demo] %s
+[Skiddo] %s
+
+[DLC] %s
+[Skiddo] %s
+
+Installing ticket...
+Skiddo...
+
+Installing seed...
+Skiddo...
+
+Installing TMD...
+Skiddo...
+
+Importing content...
+Skiddo....
+
+Installing %d/%d... %.1f%% (%.0f KB/s) %dm %02ds
+Skiddo %d/%d... %.1f%% (%.0f KB/s) %dm %02ds
+
+Suspended
+Skiddo 
+
+Completed: %s
+Skiddo: %s
+
+Failed: %s
+Skiddo: %s
+
+Failed: Internet problem
+Skiddo: Skiddo Skiddo
+
+Not enough space on NAND
+Skiddo Skiddo Skiddo Skiddo Skiddo 
+
+Not enough space on SD
+Skiddo Skiddo Skiddo Skiddo Skiddo 
+
+Wrong title key
+Skiddo Skiddo Skiddo 
+
+# src/InstalledOptions.cpp
+#########################
+Game
+Skiddo
+
+Updates
+Skiddo
+
+DLC
+Skiddo
+
+You are deleting updates for\nthis title:\n\n%s
+Skiddo Skiddo Skiddo Skiddo Skiddo \nSkiddo Skiddo:\n\n%s
+
+Deleted update: %s
+Skiddo Skiddo: %s
+
+Queued update: %s
+Skiddo Skiddo: %s
+
+You are deleting DLC for\nthis title:\n\n%s
+Skiddo Skiddo Skiddo Skiddo Skiddo\nSkiddo:\n\n%s
+
+Deleted DLC: %s
+Skiddo Skiddo: %s
+
+Queued DLC: %s
+Skiddo Skiddo: %s
+
+# src/Installer.cpp
+###################
+Failed to install ticket: 0x%08lX
+Skiddo Skiddo Skiddo Skiddo: 0x%08lX
+
+Failed to get seed: HTTP %d
+Skiddo Skiddo Skiddo Skiddo: Skiddo %d
+
+Need FW 9.6+, Seed failed: %016llX
+Skiddo Skiddo 9.6+, Skiddo Skiddo: %016llX
+
+Failed to start: 0x%08lX
+Skiddo Skiddo Skiddo: 0x%08lX
+
+Failed to resume: 0x%08lX
+Skiddo Skiddo Skiddo: 0x%08lX
+
+Failed to suspend: 0x%08lX
+Skiddo Skiddo Skiddo: 0x%08lX
+
+Failed to commit title: 0x%08lX
+Skiddo Skiddo Skiddo Skiddo: 0x%08lX
+
+Failed to finalize TMD: 0x%08lX
+Skiddo Skiddo Skiddo Skiddo: 0x%08lX
+
+Failed to finalize content: 0x%08lX
+Skiddo Skiddo Skiddo Skiddo: 0x%08lX
+
+Failed to import contents: 0x%08lX
+Skiddo Skiddo Skiddo Skiddo: 0x%08lX
+
+Failed to install TMD: 0x%08lX
+Skiddo Skiddo Skiddo Skiddo: 0x%08lX
+
+Failed to install content: 0x%08lX
+Skiddo Skiddo Skiddo Skiddo: 0x%08lX
+
+# src/TitleKeys.cpp
+###################
+Failed.\n\nHTTP Status: %d
+Skiddo.\n\nSkiddo Skiddo: %d
+
+Invalid title key format.
+Skiddo Skiddo Skiddo Skiddo.
+
+Request timed out.\nTry again.
+Skiddo Skiddo Skiddo.\nSkiddo Skiddo.
+
+Invalid URL.
+Skiddo Skiddo.
+
+# src/GUI/Settings.cpp
+######################
+Filter
+Skiddo
+
+Regions
+Skiddo
+
+Genre
+Skiddo
+
+Language
+Skiddo
+
+Platform
+Skiddo
+
+Sort
+Skiddo
+
+Update
+Skiddo
+
+Download
+Skiddo
+
+Other
+Skiddo
+
+(Never checked)
+(Skiddo Skiddo)
+
+(Last checked: %s)
+(Skiddo Skiddo: %s)
+
+Japan
+Japan Skiddo 
+
+USA
+USA Skiddo 
+
+Europe
+Europe Skiddo
+
+Australia
+Australia Skiddo 
+
+China
+China Skiddo 
+
+Korea
+Korea Skiddo 
+
+Taiwan
+Taiwan 
+
+English
+Skiddo 
+
+Japanese
+Skiddo 
+
+Spanish
+Skiddo 
+
+French
+Skiddo 
+
+German
+Skiddo 
+
+Italian
+Skiddo 
+
+Dutch
+Skiddo 
+
+Portuguese
+Skiddo 
+
+Russian
+Skiddo 
+
+Filter settings saved
+Skiddo Skiddo Skiddo
+
+Cleared saved filter settings
+Skiddo Skiddo Skiddo Skiddo
+
+Select All
+Skiddo Skiddo 
+
+Select None
+Skiddo Skiddo 
+
+Name
+Skiddo 
+
+Size
+Skiddo 
+
+Vote Score
+Skiddo Skiddo 
+
+Vote Count
+Skiddo Skiddo 
+
+Release Date
+Skiddo Skiddo 
+
+Ascending
+Skiddo
+
+Descending
+Skiddo
+
+Auto-update title keys from URL
+Skiddo-Skiddo Skiddo Skiddo Skiddo Skiddo 
+
+Auto-update freeShop
+Skiddo-Skiddo SkiddoShop
+
+Refresh Cache
+Skiddo Skiddo
+
+Play sound when queue finishes
+Skiddo Skiddo Skiddo Skiddo Skiddo
+
+Power off after download inactivity
+Skiddo Skiddo Skiddo Skiddo Skiddo
+
+1 minute
+1 Skiddo
+
+%d minutes
+%d Skiddos
+
+Use Defaults
+Skiddo Skiddo
+
+HTTP Timeout: %.0fs
+Skiddo Skiddo: %.0fs
+
+Buffer size: %u KB
+Skiddo Skiddo: %u KB
+
+Language:
+Skiddo:
+
+Auto-detect
+Skiddo
+
+View news (%s)
+Skiddo (%s)
+
+Enable screen sleep after inactivity
+Skiddo Skiddo Skiddo Skiddo Skiddo 
+
+Remote title key URL(s)
+Skiddo Skiddo Skiddo Skiddo(s)
+
+You need to restart freeShop for\n%s to be loaded.\n\nWould you like to do this now?
+Skiddo Skiddo Skiddo Skiddo SkiddoShop Skiddo\n%s Skiddo Skiddo Skiddo .\n\nSkiddo Skiddo Skiddo Skiddo Skiddo Skiddo Skiddo?

@@ -1,0 +1,16 @@
+The silent update.
+
+• Further improvements to overall system
+  stability and other minor adjustments.
+• Return to the HOME Menu while a
+  sleep download is processed should
+  be less harm.
+• Fixed bug that prevented DSiWare
+  games name to appear in sleep
+  mode download.
+• Fixed bug with the shutdown feature
+  that wasn't working properly with
+  New 3DS.
+  
+ἕν οἶδα ὅτι οὐδὲν οἶδα
+	- Socrate

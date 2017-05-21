@@ -114,12 +114,6 @@ FreeShop::~FreeShop()
 		if (R_SUCCEEDED(res = APT_PrepareToDoApplicationJump(0, g_requestJump, mediaType)))
 			res = APT_DoApplicationJump(0, 0, hmac);
 	}
-	else if (g_requestShutdown)
-	{
-		aptMainLoop();
-
-		PTM_ShutdownAsync();
-	}
 #endif
 }
 
@@ -162,30 +156,6 @@ void FreeShop::renderBottomScreen(Window& window)
 {
 	window.clear(Color::White);
 	m_stateStack->renderBottomScreen(window);
-}
-
-void FreeShop::PTM_ShutdownAsync()
-{
-#ifndef EMULATION
-	ptmSysmInit();
-
-	Handle serviceHandle = 0;
-	Result result = srvGetServiceHandle(&serviceHandle, "ptm:sysm");
-	if (result != 0) {
-		return;
-	}
-
-	u32 *commandBuffer = getThreadCommandBuffer();
-	commandBuffer[0] = 0x040700C0;
-	commandBuffer[1] = 0x00000000;
-	commandBuffer[2] = 0x00000000;
-	commandBuffer[3] = 0x00000000;
-
-	svcSendSyncRequest(serviceHandle);
-	svcCloseHandle(serviceHandle);
-
-	ptmSysmExit();
-#endif
 }
 
 } // namespace FreeShop

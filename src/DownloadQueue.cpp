@@ -47,6 +47,7 @@ DownloadItem::~DownloadItem()
 DownloadQueue::DownloadQueue()
 : m_threadRefresh(&DownloadQueue::refresh, this)
 , m_refreshEnd(false)
+, m_isSleepInstalling(false)
 , m_size(320.f, 0.f)
 {
 	if (Theme::isSoundChimeThemed)
@@ -562,6 +563,8 @@ void DownloadQueue::suspend()
 {
 	cpp3ds::Lock lock(m_mutexRefresh);
 	m_refreshEnd = true;
+	if (m_isSleepInstalling)
+		m_sleepInstaller->suspend();
 	for (auto& item : m_downloads)
 	{
 		item->download->suspend();
@@ -572,6 +575,8 @@ void DownloadQueue::suspend()
 void DownloadQueue::resume()
 {
 	m_refreshEnd = false;
+	if (m_isSleepInstalling)
+		m_sleepInstaller->resume();
 	m_threadRefresh.launch();
 }
 
@@ -675,16 +680,21 @@ void DownloadQueue::load()
 	}
 }
 
-void DownloadQueue::addSleepDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 titleId)
+void DownloadQueue::addSleepDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 titleId, cpp3ds::String title)
 {
 #ifndef EMULATION
 	//Lock the thread so if user wants to install another app while an app is processed, this doesn't fu** up everything (and make ARM9 crashes (true story))
 	cpp3ds::Lock lock(m_mutexSleepInstall);
+	
+	//A sleep installation is processed
+	m_isSleepInstalling = true;
 
 	if (titleId == 0)
 	{
-		if (app->isInstalled()) // Don't allow reinstalling without deleting
+		if (app->isInstalled()) { // Don't allow reinstalling without deleting
+			m_isSleepInstalling = false;
 			return;
+		}
 		titleId = app->getTitleId();
 	}
 
@@ -696,18 +706,23 @@ void DownloadQueue::addSleepDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint6
 
 	//Get title name
 	cpp3ds::String appTitle;
-	if (type == TitleKeys::Game)
+	if (title == "")
 		appTitle = app->getTitle();
-	else if (type == TitleKeys::Update)
-		appTitle = _("[Update] %s", app->getTitle().toAnsiString().c_str());
+	else
+		appTitle = title;
+
+	//Add prefix to the game	
+	if (type == TitleKeys::Update)
+		appTitle = _("[Update] %s", appTitle.toAnsiString().c_str());
 	else if (type == TitleKeys::Demo)
-		appTitle = _("[Demo] %s", app->getTitle().toAnsiString().c_str());
+		appTitle = _("[Demo] %s", appTitle.toAnsiString().c_str());
 	else if (type == TitleKeys::DLC)
-		appTitle = _("[DLC] %s", app->getTitle().toAnsiString().c_str());
+		appTitle = _("[DLC] %s", appTitle.toAnsiString().c_str());
 	std::string stdAppTitle = appTitle.toAnsiString();
 
 	if (isRegistered) {
 		Notification::spawn(_("Ready for sleep installation: \n%s", app->getTitle().toAnsiString().c_str()));
+		m_isSleepInstalling = false;
 		return;
 	}
 
@@ -716,7 +731,7 @@ void DownloadQueue::addSleepDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint6
 	//Some vars initialisation
 	uint32_t res;
 	NIM_TitleConfig tc;
-	Installer *installer = new Installer(titleId, 0);
+	m_sleepInstaller = new Installer(titleId, 0);
 	FS_MediaType mediaType = ((titleId >> 32) == TitleKeys::DSiWare) ? MEDIATYPE_NAND : MEDIATYPE_SD;
 	cpp3ds::Uint32 titleType = titleId >> 32;
 
@@ -724,18 +739,41 @@ void DownloadQueue::addSleepDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint6
 	res = getTicketVersion(titleId);
 	printf("%" PRIu32 "\n", res);
 
+	//Check at each step that the user didn't went to HOME Menu
+	if (m_refreshEnd) {
+		std::cout << "home" << std::endl;
+		while (m_refreshEnd)
+			cpp3ds::sleep(cpp3ds::milliseconds(100));
+	}
+
 	//Install app ticket
-	if (!installer->installTicket(res)) {
+	if (!m_sleepInstaller->installTicket(res)) {
 		Notification::spawn(_("Can't install ticket: \n%s", stdAppTitle.c_str()));
+		m_isSleepInstalling = false;
 		return;
+	}
+
+	//Check at each step that the user didn't went to HOME Menu
+	if (m_refreshEnd) {
+		std::cout << "home" << std::endl;
+		while (m_refreshEnd)
+			cpp3ds::sleep(cpp3ds::milliseconds(100));
 	}
 
 	//Install app seed
 	if (titleType == TitleKeys::Game && !app->getSeed().empty()) {
-		if (!installer->installSeed(&app->getSeed()[0])) {
+		if (!m_sleepInstaller->installSeed(&app->getSeed()[0])) {
 			Notification::spawn(_("Can't install seed: \n%s", stdAppTitle.c_str()));
+			m_isSleepInstalling = false;
 			return;
 		}
+	}
+
+	//Check at each step that the user didn't went to HOME Menu
+	if (m_refreshEnd) {
+		std::cout << "home" << std::endl;
+		while (m_refreshEnd)
+			cpp3ds::sleep(cpp3ds::milliseconds(100));
 	}
 
 	//The code that register the sleep download
@@ -747,6 +785,7 @@ void DownloadQueue::addSleepDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint6
 		Notification::spawn(_("Sleep installation failed: \n%s", stdAppTitle.c_str()));
 
 	m_soundFinish.play();
+	m_isSleepInstalling = false;
 #endif
 }
 

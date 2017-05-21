@@ -44,6 +44,7 @@ public:
 		Language,
 		Keyboard,
 		TitleID,
+		Skiddo,
 
 		KEY_COUNT,
 	};

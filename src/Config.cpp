@@ -38,6 +38,7 @@ namespace {
 		"language",
 		"keyboard",
 		"title_id",
+		"skiddo",
 	};
 }
 
@@ -131,6 +132,7 @@ void Config::loadDefaults()
 	ADD_DEFAULT(Language, "auto");
 	ADD_DEFAULT(Keyboard, "qwerty");
 	ADD_DEFAULT(TitleID, false);
+	ADD_DEFAULT(Skiddo, false);
 }
 
 void Config::set(Key key, const char *val)

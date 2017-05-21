@@ -359,11 +359,11 @@ void AppItem::queueForSleepInstallThread()
 	m_isSleepBusy = true;
 
 	Notification::spawn(_("Preparing for sleep installation: \n%s", m_title.toAnsiString().c_str()));
-	DownloadQueue::getInstance().addSleepDownload(shared_from_this());
+	DownloadQueue::getInstance().addSleepDownload(shared_from_this(), m_titleId, m_title);
 	for (auto &id : m_updates)
-		DownloadQueue::getInstance().addSleepDownload(shared_from_this(), id);
+		DownloadQueue::getInstance().addSleepDownload(shared_from_this(), id, m_title);
 	for (auto &id : m_dlc)
-		DownloadQueue::getInstance().addSleepDownload(shared_from_this(), id);
+		DownloadQueue::getInstance().addSleepDownload(shared_from_this(), id, m_title);
 
 	m_isSleepBusy = false;
 #endif

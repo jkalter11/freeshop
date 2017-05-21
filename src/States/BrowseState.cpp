@@ -416,7 +416,10 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 		}
 		if (m_keyHistory.size() >= 10) {
 			if (m_keyHistory[0] == cpp3ds::Keyboard::DPadUp && m_keyHistory[1] == cpp3ds::Keyboard::DPadUp && m_keyHistory[2] == cpp3ds::Keyboard::DPadDown && m_keyHistory[3] == cpp3ds::Keyboard::DPadDown && m_keyHistory[4] == cpp3ds::Keyboard::DPadLeft && m_keyHistory[5] == cpp3ds::Keyboard::DPadRight && m_keyHistory[6] == cpp3ds::Keyboard::DPadLeft && m_keyHistory[7] == cpp3ds::Keyboard::DPadRight && m_keyHistory[8] == cpp3ds::Keyboard::B && m_keyHistory[9] == cpp3ds::Keyboard::A) {
-				Notification::spawn(_("Soon™"));
+				if (!Config::get(Config::Skiddo).GetBool()) {				
+					Notification::spawn(_("Skiddo!"));
+					Config::set(Config::Skiddo, true);
+				}
 			}
 		}
 
@@ -481,7 +484,7 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 				break;
 			}
 			case cpp3ds::Keyboard::CStickRight: {
-				if (getMode() < 6) {
+				if (getMode() < 5) {
 					int newMode = getMode() + 1;
 					setMode(static_cast<Mode>(newMode));
 					m_iconSet.setSelectedIndex(newMode);

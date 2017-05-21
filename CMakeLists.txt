@@ -13,8 +13,8 @@ set(APP_ICON ${PROJECT_SOURCE_DIR}/res/app/icon.png)
 set(APP_LOGO ${PROJECT_SOURCE_DIR}/res/app/logo.bcma.lz)
 
 # First one is Title Version, second is the readable version
-set(APP_VERSION 3088)
-add_definitions(-DFREESHOP_VERSION="3.1.0")
+set(APP_VERSION 3089)
+add_definitions(-DFREESHOP_VERSION="3.1.1")
 add_definitions(-DFREESHOP_DIR="sdmc:/3ds/data/freeShop")
 
 # CIA settings
