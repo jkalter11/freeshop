@@ -1143,6 +1143,10 @@ void Settings::keyboardChange(Gwen::Controls::Base *base)
 	}
 }
 
+void Settings::addSkiddoLanguage()
+{
+	m_listboxLanguages->AddItem("Skiddo", "sk");
+}
 
 } // namespace GUI
 } // namespace FreeShop

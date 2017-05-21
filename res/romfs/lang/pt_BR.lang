@@ -4,16 +4,16 @@ Waiting for internet connection... %.0fs
 Aguardando conexão de internet... %.0fs
 
 Fetching news for %s ...
-Buscando notícias para %s ...
+Buscando notícias para a versão %s ...
 
 Loading game list...
 Carregando lista de jogos...
 
 Looking for freeShop update...
-Procurando por atualização de freeShop...
+Procurando por atualização da freeShop...
 
 Installing freeShop %s ...
-Instalando freeShop %s ...
+Instalando a freeShop %s ...
 
 Failed to install update: 0x%08lX
 Falha ao instalar a atualização: 0x%08lX
@@ -30,13 +30,19 @@ Extraindo o cache mais recente...
 Downloading title keys...
 Baixando as chaves de títulos...
 
+Loading theme manager...
+Carregando gerenciador de temas...
+
+Loading services...
+Carregando serviços...
+
 # src/States/BrowseState.cpp
 ############################
 No title keys found.\nMake sure you have keys in\n%s\n\nManually copy keys to the directory\nor check settings to enter a URL\nfor downloading title keys.
-Chaves de títulos não encontradas.\nVerifique se você tem as chaves em\n%s\n\nCopie manualmente as chaves para\no diretório ou verifique as configurações\npara digitar um URL para\no download das chaves.
+Chaves de títulos não encontradas.\nCertifique-se de que você tem as chaves em\n%s\n\nCopie manualmente as chaves para\no diretório ou verifique as configurações\npara digitar um URL para baixar as chaves de títulos.
 
 No cache entries found\nfor your title keys.\n\nTry refreshing cache in settings.\nIf that doesn't work, then your\ntitles simply won't work with\nfreeShop currently.
-Nenhuma entrada de cache encontrada\npara as suas chaves de títulos.\n\nTente atualizar o cache nas configurações.\nSe isso não funcionar, então seus\ntítulos simplesmente não irão funcionar\ncom a freeShop atualmente.
+Entradas de cache não encontradas\npara as suas chaves de títulos.\n\nTente atualizar o cache nas configurações.\nSe isso não funcionar, então seus\ntítulos simplesmente não irão funcionar\ncom a freeShop atualmente.
 
 Queued install: %s
 Instalação em fila: %s
@@ -53,7 +59,7 @@ Já instalado: %s
  Cancelar
 
 Are you sure you want\nto continue?
-Tem certeza que quer continuar?
+Você tem certeza de que deseja continuar?
 
 # src/States/NewsState.cpp
 ##########################
@@ -63,12 +69,12 @@ Tem certeza que quer continuar?
 # src/States/QrScannerState.cpp
 ###############################
  Retry
- Tente novamente
+ Tentar novamente
 
 # src/AppInfo.cpp
 #################
 No Screenshots
-Sem Capturas de Tela
+Sem capturas de tela
 
 No game selected
 Nenhum jogo selecionado
@@ -86,7 +92,7 @@ Queued demo: %s
 Demo em fila: %s
 
 You are deleting this game,\nincluding all save data:\n\n%s
-Você está excluindo este jogo,\nincluindo todos os dados de gravação:\n\n%s
+Você está excluindo este jogo,\nincluindo todos os dados de progresso:\n\n%s
 
 Deleted: %s
 Excluiu: %s
@@ -109,7 +115,7 @@ Queued
 Em fila
 
 %s\n\nAre you sure you want to cancel\nthis installation and lose all progress?
-%s\n\nTem certeza de que deseja\ncancelar esta instalação e\nperder todo o progresso?
+%s\n\nVocê tem certeza de que deseja\ncancelar esta instalação e\nperder todo o progresso?
 
 Canceling...
 Cancelando...
@@ -164,6 +170,37 @@ Não há espaço suficiente no SD
 Wrong title key
 Chave de título errada
 
+Ready for sleep installation: \n%s
+Pronto para a instalação em modo de descanso: \n%s
+
+Processing sleep installation: \n%s
+Processando a instalação em modo de descanso: \n%s
+
+Can't install ticket: \n%s
+Não foi possível instalar o bilhete: \n%s
+
+Can't install seed: \n%s
+Não foi possível instalar a semente: \n%s
+
+Sleep installation failed: \n%s
+A instalação em modo de descanso falhou: \n%s
+
+# src/AppItem.cpp
+#################
+Already queued for sleep installation: \n%s
+Já em fila para a instalação em modo de descanso: \n%s 
+
+Preparing for sleep installation: \n%s
+Preparando para a instalação em modo de descanso: \n%s
+
+Ready for sleep installation: \n%s
+Pronto para a instalação em modo de descanso: \n%s
+
+# src/InstalledItem.cpp
+#######################
+ - System Title
+ - Título do Sistema
+
 # src/InstalledOptions.cpp
 #########################
 Game
@@ -185,10 +222,10 @@ Queued update: %s
 Atualização em fila: %s
 
 You are deleting DLC for\nthis title:\n\n%s
-Você está excluindo DLC para\neste título:\n\n%s
+Você está excluindo o DLC para\neste título:\n\n%s
 
 Deleted DLC: %s
-DLC excluída: %s
+DLC excluído: %s
 
 Queued DLC: %s
 DLC em fila: %s
@@ -234,7 +271,7 @@ Falha ao instalar o conteúdo: 0x%08lX
 # src/TitleKeys.cpp
 ###################
 Failed.\n\nHTTP Status: %d
-Falhou.\n\nHTTP Status: %d
+Falhou.\n\nStatus do HTTP: %d
 
 Invalid title key format.
 Formato de chave inválido.
@@ -263,13 +300,13 @@ Platform
 Plataforma
 
 Sort
-Ordenar
+Ordem
 
 Update
-Atualizar
+Atualização
 
 Download
-Baixar
+Download
 
 Other
 Outros
@@ -296,7 +333,7 @@ China
 China
 
 Korea
-Coréia
+Coreia
 
 Taiwan
 Taiwan
@@ -332,7 +369,7 @@ Filter settings saved
 Configurações do filtro salvas
 
 Cleared saved filter settings
-Configurações do filtro apagadas
+Configurações do filtro salvo limpas
 
 Select All
 Todos
@@ -347,13 +384,13 @@ Size
 Tamanho
 
 Vote Score
-Pontuação por Votos
+Maiores votos
 
 Vote Count
-Contagem de Votos
+Contagem de votos
 
 Release Date
-Data de Lançamento
+Data de lançamento
 
 Ascending
 Crescente
@@ -362,16 +399,16 @@ Descending
 Decrescente
 
 Auto-update title keys from URL
-Atualizar as chaves de títulos por URL
+Autoatualizar as chaves de títulos por URL
 
 Auto-update freeShop
-Atualizar freeShop automaticamente
+Autoatualizar a freeShop
 
 Refresh Cache
-Atualizar Cache
+Atualizar cache
 
 Play sound when queue finishes
-Reproduzir som quando fila terminar
+Reproduzir som quando a fila terminar
 
 Power off after download inactivity
 Desligar após inatividade no download
@@ -383,10 +420,10 @@ Desligar após inatividade no download
 %d minutos
 
 Use Defaults
-Usar Padrões
+Usar padrões
 
 HTTP Timeout: %.0fs
-HTTP tempo limite: %.0fs
+Tempo limite do HTTP: %.0fs
 
 Buffer size: %u KB
 Tamanho do buffer: %u KB
@@ -395,16 +432,34 @@ Language:
 Idioma:
 
 Auto-detect
-Auto Detecção
+Autodetectar
 
 View news (%s)
 Ver notícias (%s)
 
 Enable screen sleep after inactivity
-Ativar tela de descanso após inatividade
+Ativar descanso de tela após inatividade
 
 Remote title key URL(s)
 URL(s) remotos de chaves de títulos
 
 You need to restart freeShop for\n%s to be loaded.\n\nWould you like to do this now?
-Você precisa reiniciar o freeShop para\ncarregar %s.\n\nDeseja fazer isso agora?
+Você precisa reiniciar a freeShop para\n%s ser carregado.\n\nGostaria de fazer isso agora?
+
+Keyboard :
+Teclado:
+
+Keyboard changed to: %s
+Teclado alterado para: %s
+
+Show Title ID in game description screen
+Exibir ID de Título na tela de descrição do jogo
+
+Locales
+Locais
+
+Audio Service: Enabled
+Serviço de Áudio: Ativado
+
+Audio Service: Disabled, please dump your DSP
+Serviço de Áudio: Desativado, por favor, despeje seu DSP

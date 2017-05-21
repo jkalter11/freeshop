@@ -36,7 +36,7 @@ Spanish ES | Txustra
 Simplified Chinese | pdapanda, [arition](https://github.com/arition)
 Korean | [DavidKang](https://github.com/mcloverkorea)
 Dutch | [StijnvandeWater](https://github.com/StijnvandeWater), [kolakcc](https://github.com/kolakcc)
-Portuguese BR | [Cruel](https://github.com/Cruel), [guisadop](https://github.com/guisadop)
+Portuguese BR | [Cruel](https://github.com/Cruel), [guisadop](https://github.com/guisadop), [Luxy](https://gbatemp.net/members/luxy.423295/)
 Portuguese PT | [poutros](https://github.com/poutros)
 Russian | mironicurse, Damin72, [rawrimlion](https://github.com/rawrimlion)
 Traditional Chinese | kane159

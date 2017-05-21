@@ -130,6 +130,7 @@ private:
 };
 
 extern BrowseState *g_browseState;
+extern bool g_isLatestFirmwareVersion;
 
 } // namespace FreeShop
 

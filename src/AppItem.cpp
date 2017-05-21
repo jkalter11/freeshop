@@ -10,6 +10,7 @@
 #include <sstream>
 #include "Notification.hpp"
 #include "Installer.hpp"
+#include "States/BrowseState.hpp"
 #ifndef EMULATION
 #include <3ds.h>
 #endif
@@ -345,10 +346,14 @@ void AppItem::queueForInstall()
 void AppItem::queueForSleepInstall()
 {
 #ifndef EMULATION
-	if (m_isSleepBusy) {
-		Notification::spawn(_("Already queued for sleep installation: \n%s", m_title.toAnsiString().c_str()));
+	if (g_isLatestFirmwareVersion) {
+		if (m_isSleepBusy) {
+			Notification::spawn(_("Already queued for sleep installation: \n%s", m_title.toAnsiString().c_str()));
+		} else {
+			m_threadSleepInstall.launch();
+		}
 	} else {
-		m_threadSleepInstall.launch();
+		Notification::spawn(_("A system update is required to download in sleep mode."));
 	}
 #endif
 }

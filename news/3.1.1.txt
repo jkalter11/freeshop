@@ -11,6 +11,8 @@ The silent update.
 • Fixed bug with the shutdown feature
   that wasn't working properly with
   New 3DS.
+• Updated Brazilian Portuguese and
+  Hungarian translations.
   
 ἕν οἶδα ὅτι οὐδὲν οἶδα
 	- Socrate

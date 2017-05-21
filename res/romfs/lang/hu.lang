@@ -4,10 +4,10 @@ Waiting for internet connection... %.0fs
 Várakozás az internetkapcsolatra... %.0fmp
 
 Fetching news for %s ...
-Újdonságok beszerzése: %s ...
+Változási napló beszerzése: %s  ...
 
 Loading game list...
-Játékok betöltése...
+Játéklista betöltése...
 
 Looking for freeShop update...
 freeShop-frissítések keresése...
@@ -30,10 +30,16 @@ Legújabb gyorsítótár kicsomagolása...
 Downloading title keys...
 Szoftverkulcsok letöltése...
 
+Loading services...
+Szolgáltatások betöltése...
+
+Loading theme manager...
+Témakezelő betöltése...
+
 # src/States/BrowseState.cpp
 ############################
 No title keys found.\nMake sure you have keys in\n%s\n\nManually copy keys to the directory\nor check settings to enter a URL\nfor downloading title keys.
-Nem található szoftverkulcs.\nEllenőrizd, hogy megvannak-e:\n%s\n\nVagy manuálisan illeszd be őket,a\nvagy állíts be egy URL-t a Beállításokban\naz automatikus letöltéshez.
+Nem található szoftverkulcs.\nEllenőrizd, hogy megvannak-e:\n%s\n\nVagy manuálisan illeszd be őket,\nvagy állíts be egy URL-t a Beállításokban\naz automatikus letöltéshez.
 
 No cache entries found\nfor your title keys.\n\nTry refreshing cache in settings.\nIf that doesn't work, then your\ntitles simply won't work with\nfreeShop currently.
 A szoftverkulcsaid nem egyeznek\na gyorsítótárral.\n\nPróbáld manuálisan frissíteni a Beállításokban.\nHa így sem működnek,\nakkor a szoftverkulcsaid\nmég nem működnek a freeShoppal.
@@ -70,8 +76,8 @@ Biztos vagy benne?
 No Screenshots
 Nincsenek Képernyőmentések
 
-No game selected
-Nincs kiválasztott játék
+Select a game to start
+Kezdésnek válassz egy játékot
 
 Demo
 Demó
@@ -89,7 +95,7 @@ You are deleting this game,\nincluding all save data:\n\n%s
 Biztosan ki akarod törölni\nezt a játékot a mentéssel együtt?\n\n%s
 
 Deleted: %s
-%s kitörölve.
+%s törölve.
 
 # src/Download.cpp
 ##################
@@ -100,13 +106,13 @@ Failed
 Sikertelen
 
 Retry attempts exceeded
-Kifogytak az újrapróbálkozási lehetőségek
+Elfogytak az újrapróbálkozási lehetőségek
 
 Retrying... %d
 Újrapróbálás... %d
 
 Queued
-A szoftver a sorba került
+A szoftver sorba került
 
 %s\n\nAre you sure you want to cancel\nthis installation and lose all progress?
 %s\n\nBiztosan félbe akarod hagyni\na telepítést?
@@ -135,7 +141,7 @@ Installing TMD...
 TMD telepítése...
 
 Importing content...
-Tartalom importálása...
+Tartalmak importálása...
 
 Installing %d/%d... %.1f%% (%.0f KB/s) %dm %02ds
 Telepítés %d/%d... %.1f%% (%.0f KB/mp) %dp %02dmp
@@ -159,10 +165,41 @@ Not enough space on NAND
 Nincs elég hely a NAND-on
 
 Not enough space on SD
-Nincs elég hely a (micro)SD-n
+Nincs elég hely az SD-n
 
 Wrong title key
 Rossz szoftverkulcs
+
+Ready for sleep installation: \n%s
+Készen áll az alvó-telepítésre: \n%s
+
+Processing sleep installation: \n%s
+Alvó-telepítés feldolgozása: \n%s
+
+Can't install ticket: \n%s
+Jegy telepítése sikertelen: \n%s
+
+Can't install seed: \n%s
+Seed telepítése sikertelen: \n%s
+
+Sleep installation failed: \n%s
+Alvó-telepítés sikertelen: \n%s
+
+# src/AppItem.cpp
+#################
+Already queued for sleep installation: \n%s
+Már sorban áll az alvó-telepítésre: \n%s
+
+Preparing for sleep installation: \n%s
+Felkészülés az alvó-telepítésre: \n%s
+
+Ready for sleep installation: \n%s
+Készen áll az alvó-telepítésre: \n%s
+
+# src/InstalledItem.cpp
+#######################
+ - System Title
+ - Rendszeralkalmazás
 
 # src/InstalledOptions.cpp
 #########################
@@ -202,7 +239,7 @@ Failed to get seed: HTTP %d
 Seed megszerzése sikertelen: HTTP %d
 
 Need FW 9.6+, Seed failed: %016llX
-Seedelés sikertelen;9.6 feletti rendszer szügséges: %016llX
+Seedelés sikertelen, 9.6 feletti rendszer szügséges: %016llX
 
 Failed to start: 0x%08lX
 Indítás sikertelen: 0x%08lX
@@ -263,7 +300,7 @@ Platform
 Platform
 
 Sort
-Sorrend
+Rendezés
 
 Update
 Frissítés
@@ -275,7 +312,7 @@ Other
 Egyéb
 
 (Never checked)
-(Még nincs ellenőrizve)
+(Sosem ellenőrizted)
 
 (Last checked: %s)
 (Legutóbbi ellenőrzés ideje: %s)
@@ -329,16 +366,16 @@ Russian
 Orosz
 
 Filter settings saved
-Filter-beállítások elmentve
+Filter mentve
 
 Cleared saved filter settings
-FIlter-beállítások kitörölve
+Filter törölve
 
 Select All
-Mind
+Összes kivál.
 
 Select None
-Egy sem
+Összes törl.
 
 Name
 Név
@@ -347,10 +384,10 @@ Size
 Méret
 
 Vote Score
-Értékelés (pontszám)
+Értékelés
 
 Vote Count
-Értékelés (mennyiség)
+Értékelések mennyisége
 
 Release Date
 Megjelenés dátuma
@@ -368,10 +405,10 @@ Auto-update freeShop
 freeShop automatikus frissítése
 
 Refresh Cache
-Gyorsítótár frissítése
+Gyorsítótár frissít.
 
 Play sound when queue finishes
-Hangjelzés a sor befejezésekor
+Hangjelzés, amikor minden letöltődött
 
 Power off after download inactivity
 Kikapcsolás letöltési inaktivitás után
@@ -386,7 +423,7 @@ Use Defaults
 Alapbeállítások
 
 HTTP Timeout: %.0fs
-HTTP Időlimit: %.0fmp
+HTTP-időlimit: %.0fmp
 
 Buffer size: %u KB
 Buffer mérete: %u KB
@@ -395,16 +432,55 @@ Language:
 Nyelv:
 
 Auto-detect
-Automatikus beállítás
+Automatikus
 
 View news (%s)
-Újdonságok megjelenítése (%s)
+Változási napló (%s)
 
 Enable screen sleep after inactivity
-Alvó Mód engedélyezése inaktivitás során
+Képernyők elsötétíse inaktivitás során
 
 Remote title key URL(s)
 Szoftverkulcs URL(-ek)
 
 You need to restart freeShop for\n%s to be loaded.\n\nWould you like to do this now?
 A %s nyelv beállításához\nújra kell indítanod a freeShopot.\n\nSzeretnéd ez most megtenni?
+
+Keyboard:
+Billentyűzet:
+
+Keyboard changed to: %s
+Billentyűzet erre változtatva: %s
+
+Show Title ID in game description screen
+Szoftverkulcs mutatása az információs képernyőn
+
+Locales
+Nyelv
+
+Audio Service: Enabled
+Hang engedélyezve
+
+Audio Service: Disabled, please dump your DSP
+Hang nincs engedélyezve, dumpold a DSP-d.
+
+Music
+Zene
+
+Disable music
+Zene letiltása
+
+Play eShop music
+Az eShop zenéjének használata
+
+Play random track
+Véletlenszerű zene
+
+Play selected track
+Zene kiválasztása
+
+Title ID
+Szoftverkulcs
+
+News
+Vált. Napl.

@@ -22,6 +22,7 @@
 namespace FreeShop {
 
 BrowseState *g_browseState = nullptr;
+bool g_isLatestFirmwareVersion = true;
 cpp3ds::Clock BrowseState::clockDownloadInactivity;
 
 BrowseState::BrowseState(StateStack& stack, Context& context, StateCallback callback)
@@ -162,6 +163,7 @@ void BrowseState::initialize()
 	}
 
 #ifndef EMULATION
+	//Get the /Nintendo 3DS/<id0>/<id1> path
 	fsInit();
 	u8 * outdata = static_cast<u8 *>(malloc(1024));
 	FSUSER_GetSdmcCtrRootPath(outdata, 1024);
@@ -179,6 +181,10 @@ void BrowseState::initialize()
 
 	m_ctrSdPath = ctrPath;
 	free(outdata);
+	
+	//Check if the system firmware is the latest for sleep download
+	NIMS_WantUpdate(&g_isLatestFirmwareVersion);
+	g_isLatestFirmwareVersion = !g_isLatestFirmwareVersion;
 #endif
 
 	g_browserLoaded = true;
@@ -419,6 +425,7 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 				if (!Config::get(Config::Skiddo).GetBool()) {				
 					Notification::spawn(_("Skiddo!"));
 					Config::set(Config::Skiddo, true);
+					m_settingsGUI->addSkiddoLanguage();
 				}
 			}
 		}
