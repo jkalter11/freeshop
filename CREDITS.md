@@ -7,6 +7,21 @@
 - [Noroxuz](https://github.com/Noroxuz) - help with banner
 - [PabloMK7](https://github.com/mariohacksandglitch) - for his awesome boot screen
 - [CaptainSwag101](https://notabug.org/CaptainSwag101) - for his help with code
+- [Crystal the Glaceon](https://gbatemp.net/members/crystal-the-glaceon.202697/) - for her [thread about the legality of freeShop](https://gbatemp.net/threads/faq-is-freeshop-legal.469135/)
+
+## Beta testing
+- [AegisCZ](https://gbatemp.net/members/aegiscz.421188/)
+- [Aletron9000](https://gbatemp.net/members/aletron9000.390452/)
+- [BL4Z3D247](https://gbatemp.net/members/bl4z3d247.139697/)
+- [Dionicio3](https://gbatemp.net/members/dionicio3.415984/)
+- [fenixcumber](https://gbatemp.net/members/fenixcumber.413803/)
+- [Filo97](https://gbatemp.net/members/filo97.373223/)
+- [Holiday_Ougi](https://gbatemp.net/members/holiday_ougi.410511/)
+- [kprovost7314](https://gbatemp.net/members/kprovost7314.358517/)
+- [maorninja](https://gbatemp.net/members/maorninja.382749/)
+- [NANASHI89](https://gbatemp.net/members/nanashi89.302438/)
+- [trainboy2019](https://gbatemp.net/members/trainboy2019.373080/)
+- [zeldaism](https://gbatemp.net/members/zeldaism.388912/)
 
 ## Translation Help
 
