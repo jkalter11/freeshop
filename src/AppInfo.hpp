@@ -11,10 +11,12 @@
 #include <cpp3ds/Window/Window.hpp>
 #include "States/State.hpp"
 #include "TweenObjects.hpp"
+#include "GUI/Scrollable.hpp"
+#include "GUI/ScrollBar.hpp"
 
 namespace FreeShop {
 
-class AppInfo : public cpp3ds::Drawable, public util3ds::TweenTransformable<cpp3ds::Transformable> {
+class AppInfo : public cpp3ds::Drawable, public util3ds::TweenTransformable<cpp3ds::Transformable>, public Scrollable {
 public:
 	static const int ALPHA = 11;
 
@@ -32,6 +34,10 @@ public:
 	const std::shared_ptr<AppItem> getAppItem() const;
 
 	void setCurrentScreenshot(int screenshotIndex);
+	
+	virtual void setScroll(float position);
+	virtual float getScroll();
+	virtual const cpp3ds::Vector2f &getScrollSize();
 
 protected:
 	virtual void draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) const;
@@ -48,7 +54,7 @@ private:
 
 	cpp3ds::Sprite m_icon;
 	cpp3ds::Text m_textTitle;
-	cpp3ds::Text m_textDescription;
+	util3ds::TweenText m_textDescription;
 	cpp3ds::Text m_textTitleId;
 	float m_descriptionVelocity;
 	cpp3ds::RectangleShape m_fadeTextRect;
@@ -84,6 +90,10 @@ private:
 	std::shared_ptr<AppItem> m_appItem;
 
 	TweenEngine::TweenManager m_tweenManager;
+	
+	ScrollBar m_scrollbar;
+	cpp3ds::Vector2f m_scrollSize;
+	float m_scrollPos;
 };
 
 } // namepace FreeShop

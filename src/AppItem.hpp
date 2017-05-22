@@ -78,8 +78,11 @@ public:
 	const std::string &getProductCode() const;
 
 	void queueForInstall();
-	void queueForSleepInstall();
+	void queueForSleepInstall(bool installRelated = true);
 	void queueForSleepInstallThread();
+	
+	void removeSleepInstall(bool removeRelated = true);
+	void askUserToRemove(cpp3ds::Uint64 titleID, cpp3ds::String titleName);
 
 	const std::vector<cpp3ds::Uint64> &getUpdates() const;
 	const std::vector<cpp3ds::Uint64> &getDemos() const;
@@ -111,6 +114,8 @@ private:
 	int m_iconIndex;
 	std::string m_productCode;
 	bool m_isSleepBusy;
+	bool m_sleepInstallRelated;
+	bool m_removeSleepRelated;
 
 	std::vector<cpp3ds::Uint64> m_updates;
 	std::vector<cpp3ds::Uint64> m_demos;

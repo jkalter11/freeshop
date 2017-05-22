@@ -103,18 +103,6 @@ FreeShop::FreeShop()
 FreeShop::~FreeShop()
 {
 	delete m_stateStack;
-
-#ifdef _3DS
-	if (g_requestJump != 0)
-	{
-		Result res = 0;
-		u8 hmac[0x20];
-		memset(hmac, 0, sizeof(hmac));
-		FS_MediaType mediaType = ((g_requestJump >> 32) == TitleKeys::DSiWare) ? MEDIATYPE_NAND : MEDIATYPE_SD;
-		if (R_SUCCEEDED(res = APT_PrepareToDoApplicationJump(0, g_requestJump, mediaType)))
-			res = APT_DoApplicationJump(0, 0, hmac);
-	}
-#endif
 }
 
 void FreeShop::update(float delta)

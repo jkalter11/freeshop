@@ -11,6 +11,7 @@
 #include "Notification.hpp"
 #include "Installer.hpp"
 #include "States/BrowseState.hpp"
+#include "States/DialogState.hpp"
 #ifndef EMULATION
 #include <3ds.h>
 #endif
@@ -343,13 +344,14 @@ void AppItem::queueForInstall()
 		DownloadQueue::getInstance().addDownload(shared_from_this(), id);
 }
 
-void AppItem::queueForSleepInstall()
+void AppItem::queueForSleepInstall(bool installRelated)
 {
 #ifndef EMULATION
 	if (g_isLatestFirmwareVersion) {
 		if (m_isSleepBusy) {
 			Notification::spawn(_("Already queued for sleep installation: \n%s", m_title.toAnsiString().c_str()));
 		} else {
+			m_sleepInstallRelated = installRelated;
 			m_threadSleepInstall.launch();
 		}
 	} else {
@@ -365,12 +367,56 @@ void AppItem::queueForSleepInstallThread()
 
 	Notification::spawn(_("Preparing for sleep installation: \n%s", m_title.toAnsiString().c_str()));
 	DownloadQueue::getInstance().addSleepDownload(shared_from_this(), m_titleId, m_title);
-	for (auto &id : m_updates)
-		DownloadQueue::getInstance().addSleepDownload(shared_from_this(), id, m_title);
-	for (auto &id : m_dlc)
-		DownloadQueue::getInstance().addSleepDownload(shared_from_this(), id, m_title);
+	
+	if (m_sleepInstallRelated) {
+		for (auto &id : m_updates)
+			DownloadQueue::getInstance().addSleepDownload(shared_from_this(), id, m_title);
+		for (auto &id : m_dlc)
+			DownloadQueue::getInstance().addSleepDownload(shared_from_this(), id, m_title);
+	}
 
 	m_isSleepBusy = false;
+#endif
+}
+
+void AppItem::removeSleepInstall(bool removeRelated)
+{
+#ifndef EMULATION
+	m_removeSleepRelated = removeRelated;
+	askUserToRemove(m_titleId, m_title);
+	
+	if (m_removeSleepRelated) {
+		for (auto &id : m_updates)
+			askUserToRemove(id, _("[Update] %s", m_title.toAnsiString().c_str()));
+		for (auto &id : m_dlc)
+			askUserToRemove(id, _("[DLC] %s", m_title.toAnsiString().c_str()));
+	}
+#endif
+}
+
+void AppItem::askUserToRemove(cpp3ds::Uint64 titleID, cpp3ds::String titleName)
+{
+#ifndef EMULATION
+	g_browseState->requestStackPush(States::Dialog, false, [=](void *data) mutable {
+		auto event = reinterpret_cast<DialogState::Event*>(data);
+		if (event->type == DialogState::GetText)
+		{
+			auto str = reinterpret_cast<cpp3ds::String*>(event->data);
+			*str = _("%s\n\nAre you sure you want to cancel\nthis installation and lose all progress?", titleName.toAnsiString().c_str());
+			return true;
+		}
+		else if (event->type == DialogState::Response)
+		{
+			bool *accepted = reinterpret_cast<bool*>(event->data);
+			if (*accepted)
+			{
+				NIMS_UnregisterTask(titleID);
+				Notification::spawn(_("Sleep download canceled: \n%s", titleName.toAnsiString().c_str()));
+			}
+			return true;
+		}
+		return false;
+	});
 #endif
 }
 

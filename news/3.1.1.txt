@@ -1,7 +1,15 @@
-The silent update.
+The scrolled update.
 
 • Further improvements to overall system
   stability and other minor adjustments.
+• You can now scroll the game description
+  with the touchscreen!
+• The Y button will ask you if you want
+  to cancel the sleep download if the
+  selected game is already in sleep
+  download mode.
+• Storage meters now show
+  free space/total space
 • Return to the HOME Menu while a
   sleep download is processed should
   be less harm.
@@ -11,8 +19,15 @@ The silent update.
 • Fixed bug with the shutdown feature
   that wasn't working properly with
   New 3DS.
-• Updated Brazilian Portuguese and
-  Hungarian translations.
+• Updated Brazilian Portuguese,
+  Hungarian, Spanish US,
+  Spanish ES and Dutch
+  translations.
+• The moon icon for sleep download
+  don't freeze the console anymore.
+• Fixed bug that was crashing the app
+  when the user wanted to launch a game
+  through the freeShop/refresh the cache
   
 ἕν οἶδα ὅτι οὐδὲν οἶδα
 	- Socrate

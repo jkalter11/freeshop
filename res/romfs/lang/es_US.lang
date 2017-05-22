@@ -30,6 +30,9 @@ Extrayendo caché más reciente...
 Downloading title keys...
 Descargando las llaves de títulos...
 
+Loading theme manager...
+Cargando gestor de temas...
+
 # src/States/BrowseState.cpp
 ############################
 No title keys found.\nMake sure you have keys in\n%s\n\nManually copy keys to the directory\nor check settings to enter a URL\nfor downloading title keys.
@@ -70,8 +73,8 @@ Are you sure you want\nto continue?
 No Screenshots
 No hay imágenes
 
-No game selected
-Ningún juego seleccionado
+Select a game to start
+Selecciona un juego para iniciar
 
 Demo
 Demo
@@ -160,6 +163,37 @@ No hay suficiente espacio en la SD
 
 Wrong title key
 Llave de título incorrecta
+
+Ready for sleep installation: \n%s
+Listo para instalación suspendida: \n%s
+
+Processing sleep installation: \n%s
+Procesando instalación suspendida: \n%s
+
+Can't install ticket: \n%s
+No se puede instalar el ticket: \n%s
+
+Can't install seed: \n%s
+No se puede instalar la semilla: \n%s
+
+Sleep installation failed: \n%s
+Instalación suspendida ha fallado: \n%s
+
+# src/AppItem.cpp
+#################
+Already queued for sleep installation: \n%s
+Ya está en lista para instalación suspendida: \n%s
+
+Preparing for sleep installation: \n%s
+Preparando para instalación suspendida: \n%s
+
+Ready for sleep installation: \n%s
+Listo para instalación suspendida: \n%s
+
+# src/InstalledItem.cpp
+#######################
+ - System Title
+ - Título del Sistema
 
 # src/InstalledOptions.cpp
 #########################
@@ -405,3 +439,42 @@ URL(s) remotos de llaves de título
 
 You need to restart freeShop for\n%s to be loaded.\n\nWould you like to do this now?
 Necesita reiniciar freeShop para que\nsea cargado %s.\n\n¿Desea reiniciar ahora?
+
+Music
+Música
+
+Disable music
+Desactivar música
+
+Play eShop music
+Escuchar música de eShop
+
+Play random track
+Escuchar pista aleatoria
+
+Play selected track
+Escuchar pista seleccionada
+
+News
+Noticias
+
+Keyboard :
+Teclado :
+
+Keyboard changed to: %s
+El teclado ha cambiado a: %s
+
+Show Title ID in game description screen
+Mostrar Title ID en la pantalla de descripción de juego
+
+Locales
+Locales
+
+Audio Service: Enabled
+Servicio de Audio: Activado
+
+Audio Service: Disabled, please dump your DSP
+Servicio de Audio: Desactivado. Por favor, dumpea tu DSP
+
+Loading services...
+Cargando servicios...

@@ -32,10 +32,10 @@ French | Omegadrien, MarioErmando, cynosura, Sp4rks, [moutonnoireu](https://gith
 German | [Traiver](https://github.com/Traiver), [Brawl345](https://github.com/Brawl345), DarkGabbz
 Italian | [CapraTheBest](https://github.com/CapraTheBest), [sykhro](https://github.com/sykhro), [Filo97](https://gbatemp.net/members/filo97.373223/)
 Spanish US | [ShadowOne333](https://github.com/ShadowOne333)
-Spanish ES | Txustra
+Spanish ES | Txustra, [Manurocker95](https://gbatemp.net/members/manurocker95.392008/)
 Simplified Chinese | pdapanda, [arition](https://github.com/arition)
 Korean | [DavidKang](https://github.com/mcloverkorea)
-Dutch | [StijnvandeWater](https://github.com/StijnvandeWater), [kolakcc](https://github.com/kolakcc)
+Dutch | [StijnvandeWater](https://github.com/StijnvandeWater), [kolakcc](https://github.com/kolakcc), [Ev1l0rd](https://gbatemp.net/members/ev1l0rd.374341/)
 Portuguese BR | [Cruel](https://github.com/Cruel), [guisadop](https://github.com/guisadop), [Luxy](https://gbatemp.net/members/luxy.423295/)
 Portuguese PT | [poutros](https://github.com/poutros)
 Russian | mironicurse, Damin72, [rawrimlion](https://github.com/rawrimlion)

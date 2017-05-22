@@ -102,26 +102,14 @@ bool AppList::processEvent(const cpp3ds::Event &event)
 	if (event.type == cpp3ds::Event::KeyPressed)
 	{
 		m_processedFirstKey = false;
-		if (event.key.code & cpp3ds::Keyboard::DPadUp) {
+		if (event.key.code & cpp3ds::Keyboard::Up) {
 			setIndexDelta(-1);
-		} else if (event.key.code & cpp3ds::Keyboard::DPadDown) {
+		} else if (event.key.code & cpp3ds::Keyboard::Down) {
 			setIndexDelta(1);
-		} else if (event.key.code & cpp3ds::Keyboard::DPadLeft) {
+		} else if (event.key.code & cpp3ds::Keyboard::Left) {
 			setIndexDelta(-4);
-		} else if (event.key.code & cpp3ds::Keyboard::DPadRight) {
+		} else if (event.key.code & cpp3ds::Keyboard::Right) {
 			setIndexDelta(4);
-		} else if (event.key.code & cpp3ds::Keyboard::CPadUp) {
-			if ((g_browseState->getMode() != 1) || (g_browseState->getMode() == 1 && !g_browseState->isAppInfoLoaded()))
-				setIndexDelta(-1);
-		} else if (event.key.code & cpp3ds::Keyboard::CPadDown) {
-			if ((g_browseState->getMode() != 1) || (g_browseState->getMode() == 1 && !g_browseState->isAppInfoLoaded()))
-				setIndexDelta(1);
-		} else if (event.key.code & cpp3ds::Keyboard::CPadLeft) {
-			if ((g_browseState->getMode() != 1) || (g_browseState->getMode() == 1 && !g_browseState->isAppInfoLoaded()))
-				setIndexDelta(-4);
-		} else if (event.key.code & cpp3ds::Keyboard::CPadRight) {
-			if ((g_browseState->getMode() != 1) || (g_browseState->getMode() == 1 && !g_browseState->isAppInfoLoaded()))
-				setIndexDelta(4);
 		} else if (event.key.code & cpp3ds::Keyboard::L) {
 			setIndexDelta(-8);
 		} else if (event.key.code & cpp3ds::Keyboard::R) {

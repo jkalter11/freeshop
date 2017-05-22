@@ -1,5 +1,6 @@
 #include "FreeShop.hpp"
 #include "DownloadQueue.hpp"
+#include "TitleKeys.hpp"
 #include "States/BrowseState.hpp"
 #include "States/SleepState.hpp"
 #include "States/SyncState.hpp"
@@ -77,15 +78,17 @@ int main(int argc, char** argv)
 	ptmSysmExit();
 	newsExit();
 	
-	if (FreeShop::g_requestShutdown)
-	{
-		/*cpp3ds::sleep(cpp3ds::milliseconds(1000));
-		srvInit();
-		srvPublishToSubscriber(0x203, 0);
-		srvExit();*/
+	if (FreeShop::g_requestShutdown) {
 		ptmSysmInit();
 		PTMSYSM_ShutdownAsync(0);
 		ptmSysmExit();
+	} else if (FreeShop::g_requestJump != 0) {
+		Result res = 0;
+		u8 hmac[0x20];
+		memset(hmac, 0, sizeof(hmac));
+		FS_MediaType mediaType = ((FreeShop::g_requestJump >> 32) == FreeShop::TitleKeys::DSiWare) ? MEDIATYPE_NAND : MEDIATYPE_SD;
+		if (R_SUCCEEDED(res = APT_PrepareToDoApplicationJump(0, FreeShop::g_requestJump, mediaType)))
+			res = APT_DoApplicationJump(0, 0, hmac);
 	}
 #endif
 	delete game;

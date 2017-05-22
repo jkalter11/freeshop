@@ -131,11 +131,11 @@ void BotInformations::update(float delta)
 		}
 
 		if (usedSize > 1024 * 1024 * 1024 || totalSize > 1024 * 1024 * 1024)
-			m_textSDStorage.setString(_("%.1f/%.1f GB", static_cast<float>(usedSize) / 1024.f / 1024.f / 1024.f, static_cast<float>(totalSize) / 1024.f / 1024.f / 1024.f));
+			m_textSDStorage.setString(_("%.1f/%.1f GB", static_cast<float>(size) / 1024.f / 1024.f / 1024.f, static_cast<float>(totalSize) / 1024.f / 1024.f / 1024.f));
 		else if (usedSize > 1024 * 1024 || totalSize > 1024 * 1024)
-			m_textSDStorage.setString(_("%.1f/%.1f MB", static_cast<float>(usedSize) / 1024.f / 1024.f, static_cast<float>(totalSize) / 1024.f / 1024.f));
+			m_textSDStorage.setString(_("%.1f/%.1f MB", static_cast<float>(size) / 1024.f / 1024.f, static_cast<float>(totalSize) / 1024.f / 1024.f));
 		else
-			m_textSDStorage.setString(_("%d/%d KB", usedSize / 1024, totalSize / 1024));
+			m_textSDStorage.setString(_("%d/%d KB", size / 1024, totalSize / 1024));
 	} else {
 		m_textSDStorage.setString("No SD Card detected");
 	}
@@ -158,11 +158,11 @@ void BotInformations::update(float delta)
 		}
 
 		if (usedSize > 1024 * 1024 * 1024 || totalSize > 1024 * 1024 * 1024)
-			m_textNANDStorage.setString(_("%.1f/%.1f GB", static_cast<float>(usedSize) / 1024.f / 1024.f / 1024.f, static_cast<float>(totalSize) / 1024.f / 1024.f / 1024.f));
+			m_textNANDStorage.setString(_("%.1f/%.1f GB", static_cast<float>(size) / 1024.f / 1024.f / 1024.f, static_cast<float>(totalSize) / 1024.f / 1024.f / 1024.f));
 		else if (usedSize > 1024 * 1024 || totalSize > 1024 * 1024)
-			m_textNANDStorage.setString(_("%.1f/%.1f MB", static_cast<float>(usedSize) / 1024.f / 1024.f, static_cast<float>(totalSize) / 1024.f / 1024.f));
+			m_textNANDStorage.setString(_("%.1f/%.1f MB", static_cast<float>(size) / 1024.f / 1024.f, static_cast<float>(totalSize) / 1024.f / 1024.f));
 		else
-			m_textNANDStorage.setString(_("%d/%d KB", usedSize / 1024, totalSize / 1024));
+			m_textNANDStorage.setString(_("%d/%d KB", size / 1024, totalSize / 1024));
 	} else {
 		m_textNANDStorage.setString("No TWL NAND detected... Wait what ?!");
 	}

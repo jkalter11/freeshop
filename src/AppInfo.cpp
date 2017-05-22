@@ -178,6 +178,7 @@ void AppInfo::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) co
 
 		states.scissor = cpp3ds::UintRect(0, 46, 320, 120);
 		target.draw(m_textDescription, states);
+		target.draw(m_scrollbar);
 		states.scissor = cpp3ds::UintRect();
 		target.draw(m_fadeTextRect, states);
 
@@ -315,6 +316,18 @@ void AppInfo::loadApp(std::shared_ptr<AppItem> appItem)
 
 				m_textDownload.setFillColor(cpp3ds::Color::White);
 				m_textSleepDownload.setFillColor(cpp3ds::Color::White);
+				
+				m_scrollbar.setSize(cpp3ds::Vector2u(2, 102));
+				m_scrollbar.setScrollAreaSize(cpp3ds::Vector2u(320, 102));
+				m_scrollbar.setDragRect(cpp3ds::IntRect(0, 30, 320, 210));
+				m_scrollbar.setColor(cpp3ds::Color(0, 0, 0, 128));
+				m_scrollbar.setPosition(312.f, 52.f);
+				m_scrollbar.setAutoHide(false);
+				m_scrollbar.attachObject(this);
+				m_scrollbar.setScroll(0.f);
+				m_scrollbar.markDirty();
+
+				m_scrollSize = cpp3ds::Vector2f(320.f, m_textDescription.getLocalBounds().top + m_textDescription.getLocalBounds().height + 5.f);
 			}
 		}
 	}
@@ -447,6 +460,8 @@ bool AppInfo::processEvent(const cpp3ds::Event &event)
 {
 	if (!m_appItem)
 		return true;
+		
+	m_scrollbar.processEvent(event);
 
 	if (m_currentScreenshot)
 	{
@@ -585,12 +600,10 @@ bool AppInfo::processEvent(const cpp3ds::Event &event)
 		{
 			if (!DownloadQueue::getInstance().isDownloading(m_appItem))
 			{
-				DownloadQueue::getInstance().addSleepDownload(m_appItem);
+				m_appItem->queueForSleepInstall(false);
 				TweenEngine::Tween::to(m_textSleepDownload, util3ds::TweenText::FILL_COLOR_RGB, 0.5f)
 						.target(230, 20, 20)
 						.start(m_tweenManager);
-
-				Notification::spawn(_("Preparing for sleep installation: \n%s", m_appItem->getTitle().toAnsiString().c_str()));
 			}
 		}
 	}
@@ -618,12 +631,13 @@ void AppInfo::update(float delta)
 //		m_textDownload.setFillColor(cpp3ds::Color::White);
 //	}
 
-	m_textDescription.move(0.f, m_descriptionVelocity * delta);
+	/*m_textDescription.move(0.f, m_descriptionVelocity * delta);
 	if (m_textDescription.getPosition().y < 49.f - m_textDescription.getLocalBounds().height + 110.f)
 		m_textDescription.setPosition(102.f, 49.f - m_textDescription.getLocalBounds().height + 110.f);
 	if (m_textDescription.getPosition().y > 49.f)
-		m_textDescription.setPosition(102.f, 49.f);
+		m_textDescription.setPosition(102.f, 49.f);*/
 
+	m_scrollbar.update(delta);
 	m_tweenManager.update(delta);
 }
 
@@ -724,6 +738,22 @@ void AppInfo::updateInfo()
 			m_textIconDemo.setString(L"\uf019");
 		}
 	}
+}
+
+void AppInfo::setScroll(float position)
+{
+	m_scrollPos = position;
+	m_textDescription.setPosition(102.f, std::round(position + 49.f));
+}
+
+float AppInfo::getScroll()
+{
+	return m_scrollPos;
+}
+
+const cpp3ds::Vector2f &AppInfo::getScrollSize()
+{
+	return m_scrollSize;
 }
 
 } // namespace FreeShop

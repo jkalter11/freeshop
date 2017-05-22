@@ -472,6 +472,8 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 					}
 					else
 						Notification::spawn(_("Already installed: %s", app->getTitle().toAnsiString().c_str()));
+				} else {
+					Notification::spawn(_("Already in downloading: \n%s", app->getTitle().toAnsiString().c_str()));
 				}
 				break;
 			}
@@ -479,7 +481,11 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 				if (!AppList::getInstance().getSelected())
 					break;
 				auto app = AppList::getInstance().getSelected()->getAppItem();
-				if (app && !DownloadQueue::getInstance().isDownloading(app))
+				bool isSleepDownloading = false;
+#ifndef EMULATION
+				NIMS_IsTaskRegistered(app->getTitleId(), &isSleepDownloading);
+#endif
+				if (app && !DownloadQueue::getInstance().isDownloading(app) && !isSleepDownloading)
 				{
 					if (!app->isInstalled())
 					{
@@ -487,6 +493,10 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 					}
 					else
 						Notification::spawn(_("Already installed: %s", app->getTitle().toAnsiString().c_str()));
+				} else if (isSleepDownloading) {
+					app->removeSleepInstall();
+				} else {
+					Notification::spawn(_("Already in downloading: \n%s", app->getTitle().toAnsiString().c_str()));
 				}
 				break;
 			}
