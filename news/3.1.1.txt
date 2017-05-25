@@ -10,6 +10,13 @@ The scrolled update.
   download mode.
 • Storage meters now show
   free space/total space
+• Updated Timmy (1.1):
+  Theme makers should update their
+  themes, a new guide has been released
+  with the changelog.
+• Korean flag has been added.
+• Added the option to use the system
+  keyboard for game searching.
 • Return to the HOME Menu while a
   sleep download is processed should
   be less harm.

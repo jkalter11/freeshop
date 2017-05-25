@@ -31,6 +31,13 @@ bool Theme::isTextThemed = false;
 cpp3ds::Color Theme::primaryTextColor = cpp3ds::Color::Black;
 cpp3ds::Color Theme::secondaryTextColor = cpp3ds::Color(130, 130, 130, 255);
 cpp3ds::Color Theme::iconSetColor = cpp3ds::Color(100, 100, 100);
+cpp3ds::Color Theme::iconSetColorActive = cpp3ds::Color(0, 0, 0);
+cpp3ds::Color Theme::transitionScreenColor = cpp3ds::Color(255, 255, 255);
+
+//Theme informations
+std::string Theme::themeName = "Unknown Theme";
+std::string Theme::themeDesc = "A simple theme";
+std::string Theme::themeVersion = "n/a";
 
 Theme &Theme::getInstance()
 {
@@ -50,6 +57,12 @@ void Theme::loadDefaults()
 	ADD_DEFAULT("primaryText", "000000");
 	ADD_DEFAULT("secondaryText", "828282");
 	ADD_DEFAULT("iconSet", "646464");
+	ADD_DEFAULT("iconSetActive", "363636");
+	ADD_DEFAULT("transitionScreen", "FFFFFF");
+	
+	ADD_DEFAULT("themeName", "My custom theme");
+	ADD_DEFAULT("themeDesc", "Theme made by someone.");
+	ADD_DEFAULT("themeVer", "x.y");
 
 	getInstance().saveToFile();
 }

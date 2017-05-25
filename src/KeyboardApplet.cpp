@@ -42,6 +42,7 @@ KeyboardApplet::KeyboardApplet(InputType type)
 		default:
 			swkbdInit(&m_swkbdState, SWKBD_TYPE_NORMAL, 2, -1);
 			swkbdSetValidation(&m_swkbdState, SWKBD_ANYTHING, 0, 0);
+			swkbdSetFeatures(&m_swkbdState, SWKBD_PREDICTIVE_INPUT);
 	}
 //	swkbdSetPasswordMode(&m_swkbdState, SWKBD_PASSWORD_HIDE_DELAY);
 //	swkbdSetFeatures(&m_swkbdState, SWKBD_FIXED_WIDTH);

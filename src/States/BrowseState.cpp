@@ -9,6 +9,10 @@
 #include "../Config.hpp"
 #include "../TitleKeys.hpp"
 #include "../FreeShop.hpp"
+#include "../Theme.hpp"
+#ifndef EMULATION
+#include "../KeyboardApplet.hpp"
+#endif
 #include <TweenEngine/Tween.h>
 #include <cpp3ds/Window/Window.hpp>
 #include <sstream>
@@ -102,11 +106,6 @@ void BrowseState::initialize()
 	m_textListEmpty.setPosition(200.f, 140.f);
 	m_textListEmpty.setOrigin(m_textListEmpty.getLocalBounds().width / 2, m_textListEmpty.getLocalBounds().height / 2);
 
-	//White screen used for transitions
-	m_whiteScreen.setPosition(0.f, 30.f);
-	m_whiteScreen.setSize(cpp3ds::Vector2f(320.f, 210.f));
-	m_whiteScreen.setFillColor(cpp3ds::Color::White);
-
 	//Load keyboard file
 	reloadKeyboard();
 
@@ -141,11 +140,24 @@ void BrowseState::initialize()
 		m_gwenSkin->Init("images/DefaultSkin.png");
 
 	m_gwenSkin->SetDefaultFont(L"", 11);
+	
+	//Check if the system firmware is the latest for sleep download
+	NIMS_WantUpdate(&g_isLatestFirmwareVersion);
+	g_isLatestFirmwareVersion = !g_isLatestFirmwareVersion;
 
 	// Need to wait until title screen is done to prevent music from
 	// settings starting prematurely.
 	while(!g_syncComplete)
 		cpp3ds::sleep(cpp3ds::milliseconds(10));
+		
+	//White screen used for transitions
+	m_whiteScreen.setPosition(0.f, 30.f);
+	m_whiteScreen.setSize(cpp3ds::Vector2f(320.f, 210.f));
+	if (Theme::isTextThemed)
+		m_whiteScreen.setFillColor(Theme::transitionScreenColor);
+	else
+		m_whiteScreen.setFillColor(cpp3ds::Color::White);
+	
 	m_settingsGUI = new GUI::Settings(m_gwenSkin, this);
 #endif
 
@@ -181,10 +193,6 @@ void BrowseState::initialize()
 
 	m_ctrSdPath = ctrPath;
 	free(outdata);
-	
-	//Check if the system firmware is the latest for sleep download
-	NIMS_WantUpdate(&g_isLatestFirmwareVersion);
-	g_isLatestFirmwareVersion = !g_isLatestFirmwareVersion;
 #endif
 
 	g_browserLoaded = true;
@@ -233,11 +241,11 @@ void BrowseState::renderBottomScreen(cpp3ds::Window& window)
 	}
 	if (!g_syncComplete || !g_browserLoaded)
 		return;
-
-	window.draw(m_topInfos);
-
+		
 	if (m_botBG == true)
 		window.draw(m_rectBotBG);
+
+	window.draw(m_topInfos);
 
 	if (m_mode == Search)
 	{
@@ -309,8 +317,21 @@ bool BrowseState::update(float delta)
 	}
 
 	// If selected icon changed, change mode accordingly
+	// If the selected mode is Search and the "Use system keyboard" option is enabled, show the System keyboard
 	int iconIndex = m_iconSet.getSelectedIndex();
-	if (m_mode != iconIndex && iconIndex >= 0)
+	if (iconIndex == Search && Config::get(Config::SystemKeyboard).GetBool()) {
+		m_iconSet.setSelectedIndex(m_mode);
+#ifndef EMULATION
+		KeyboardApplet kb(KeyboardApplet::Text);
+		swkbdSetHintText(kb, _("Type a game name...").toAnsiString().c_str());
+		cpp3ds::String input = kb.getInput();
+		if (!input.isEmpty())
+			AppList::getInstance().filterBySearch(input.toAnsiString(), m_textMatches);
+#else
+		std::cout << "System keyboard." << std::endl;
+#endif
+	}
+	else if (m_mode != iconIndex && iconIndex >= 0)
 		setMode(static_cast<Mode>(iconIndex));
 
 	// Update the active mode
@@ -426,6 +447,10 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 					Notification::spawn(_("Skiddo!"));
 					Config::set(Config::Skiddo, true);
 					m_settingsGUI->addSkiddoLanguage();
+				} else {
+#ifndef NDEBUG
+					Notification::spawn(_("freeShop " FREESHOP_VERSION " / " __DATE__ " " __TIME__));
+#endif
 				}
 			}
 		}

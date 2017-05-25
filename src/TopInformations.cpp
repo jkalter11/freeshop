@@ -3,9 +3,11 @@
 #include "DownloadQueue.hpp"
 #include "Notification.hpp"
 #include "Theme.hpp"
+#include "Util.hpp"
 #include "States/StateIdentifiers.hpp"
 #include "States/DialogState.hpp"
 #include <cpp3ds/System/I18n.hpp>
+#include <cpp3ds/System/FileSystem.hpp>
 #include <TweenEngine/Tween.h>
 #include <time.h>
 #include <stdlib.h>
@@ -140,10 +142,10 @@ void TopInformations::update(float delta)
     		else
         		batteryPath = "battery0.png";
 
-		std::string themedBatteryPath = FREESHOP_DIR "/theme/images/" + batteryPath;
+		std::string themedBatteryPath = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/images/" + batteryPath);
 
-		if (fopen(themedBatteryPath.c_str(), "rb"))
-			m_textureBattery.loadFromFile(FREESHOP_DIR "/theme/images/" + batteryPath);
+		if (pathExists(themedBatteryPath.c_str(), false))
+			m_textureBattery.loadFromFile(themedBatteryPath);
 		else
 			m_textureBattery.loadFromFile("images/" + batteryPath);
 
@@ -156,28 +158,28 @@ void TopInformations::update(float delta)
     		else
         		signalPath = "wifi_disconnected.png";
 
-		std::string themedSignalPath = FREESHOP_DIR "/theme/images/" + signalPath;
+		std::string themedSignalPath = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/images/" + signalPath);
 
-		if (fopen(themedSignalPath.c_str(), "rb"))
-			m_textureSignal.loadFromFile(FREESHOP_DIR "/theme/images/" + signalPath);
+		if (pathExists(themedSignalPath.c_str(), false))
+			m_textureSignal.loadFromFile(themedSignalPath);
 		else
 			m_textureSignal.loadFromFile("images/" + signalPath);
 #else
 		//Update battery icon
 		std::string batteryPath = "battery" + std::to_string(rand() % 5) + ".png";
-		std::string themedBatteryPath = FREESHOP_DIR "/theme/images/" + batteryPath;
+		std::string themedBatteryPath = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/images/" + batteryPath);
 
-		if (fopen(themedBatteryPath.c_str(), "rb"))
-			m_textureBattery.loadFromFile(FREESHOP_DIR "/theme/images/" + batteryPath);
+		if (pathExists(themedBatteryPath.c_str(), false))
+			m_textureBattery.loadFromFile(themedBatteryPath);
 		else
 			m_textureBattery.loadFromFile("images/" + batteryPath);
 
 		//Update signal icon
 		std::string signalPath = "wifi" + std::to_string(rand() % 4) + ".png";
-		std::string themedSignalPath = FREESHOP_DIR "/theme/images/" + signalPath;
+		std::string themedSignalPath = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/images/" + signalPath);
 
-		if (fopen(themedSignalPath.c_str(), "rb"))
-			m_textureSignal.loadFromFile(FREESHOP_DIR "/theme/images/" + signalPath);
+		if (pathExists(themedSignalPath.c_str(), false))
+			m_textureSignal.loadFromFile(themedSignalPath);
 		else
 			m_textureSignal.loadFromFile("images/" + signalPath);
 #endif

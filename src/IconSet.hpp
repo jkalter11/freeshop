@@ -25,6 +25,8 @@ public:
 
 	void setSelectedIndex(int index);
 	int getSelectedIndex() const;
+	
+	void resetIcon(int index, bool isAnimated = true);
 
 protected:
 	virtual void draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) const;

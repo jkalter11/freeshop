@@ -33,10 +33,12 @@ namespace {
 		// Music
 		"music_mode",
 		"music_filename",
-		// Other
-		"sleep_mode",
+		// Locales
 		"language",
 		"keyboard",
+		"use_system_keyboard",
+		// Other
+		"sleep_mode",
 		"title_id",
 		"skiddo",
 	};
@@ -126,11 +128,14 @@ void Config::loadDefaults()
 	// Music
 	ADD_DEFAULT(MusicMode, "eshop");
 	ADD_DEFAULT(MusicFilename, "");
+	
+	//Locales
+	ADD_DEFAULT(Language, "auto");
+	ADD_DEFAULT(Keyboard, "qwerty");
+	ADD_DEFAULT(SystemKeyboard, false);
 
 	// Other
 	ADD_DEFAULT(SleepMode, true);
-	ADD_DEFAULT(Language, "auto");
-	ADD_DEFAULT(Keyboard, "qwerty");
 	ADD_DEFAULT(TitleID, false);
 	ADD_DEFAULT(Skiddo, false);
 }

@@ -165,12 +165,15 @@ void Settings::saveToConfig()
 	Config::set(Config::MusicMode, m_comboMusicMode->GetSelectedItem()->GetName().c_str());
 	auto selectedMusic = m_listboxMusicFiles->GetSelectedRow();
 	Config::set(Config::MusicFilename, selectedMusic ? selectedMusic->GetText(0).c_str() : "");
-
-	// Other
-	Config::set(Config::SleepMode, m_checkboxSleep->Checkbox()->IsChecked());
+	
+	// Locales
 	auto language = m_listboxLanguages->GetSelectedRow();
 	Config::set(Config::Language, language ? language->GetName().c_str() : "auto");
 	Config::set(Config::Keyboard, m_listboxKeyboards->GetSelectedRow()->GetName().c_str());
+	Config::set(Config::SystemKeyboard, m_checkboxSystemKeyboard->Checkbox()->IsChecked());
+
+	// Other
+	Config::set(Config::SleepMode, m_checkboxSleep->Checkbox()->IsChecked());
 	Config::set(Config::TitleID, m_checkboxTitleID->Checkbox()->IsChecked());
 }
 
@@ -222,10 +225,9 @@ void Settings::loadConfig()
 			break;
 		}
 	m_comboMusicMode->SelectItemByName(Config::get(Config::MusicMode).GetString());
-
-	// Other
-	m_checkboxSleep->Checkbox()->SetChecked(Config::get(Config::SleepMode).GetBool());
-	m_checkboxTitleID->Checkbox()->SetChecked(Config::get(Config::TitleID).GetBool());
+	
+	// Locales
+	m_checkboxSystemKeyboard->Checkbox()->SetChecked(Config::get(Config::SystemKeyboard).GetBool());
 	auto languageRows = m_listboxLanguages->GetChildren().front()->GetChildren();
 	for (auto& row : languageRows)
 		if (row->GetName() == Config::get(Config::Language).GetString())
@@ -240,6 +242,10 @@ void Settings::loadConfig()
 			m_listboxKeyboards->SetSelectedRow(row, true);
 			break;
 		}
+
+	// Other
+	m_checkboxSleep->Checkbox()->SetChecked(Config::get(Config::SleepMode).GetBool());
+	m_checkboxTitleID->Checkbox()->SetChecked(Config::get(Config::TitleID).GetBool());
 }
 
 void Settings::saveFilter(Config::Key key, std::vector<Gwen::Controls::CheckBoxWithLabel*> &checkboxArray)
@@ -853,13 +859,18 @@ void Settings::fillLocalesPage(Gwen::Controls::Base *page)
 	auto label2 = new Label(page);
 	label2->SetBounds(130, 0, 150, 20);
 	label2->SetText(_("Keyboard:").toAnsiString());
+	
+	m_checkboxSystemKeyboard = new CheckBoxWithLabel(page);
+	m_checkboxSystemKeyboard->SetBounds(0, 143, 320, 20);
+	m_checkboxSystemKeyboard->Label()->SetText(_("Use system keyboard").toAnsiString());
+	m_checkboxSystemKeyboard->Checkbox()->onCheckChanged.Add(this, &Settings::systemKeyboardChange);
 
 	m_listboxLanguages = new ListBox(page);
-	m_listboxLanguages->SetBounds(0, 20, 120, 140);
+	m_listboxLanguages->SetBounds(0, 20, 120, 120);
 	m_listboxLanguages->AddItem(_("Auto-detect").toAnsiString(), "auto");
 
 	m_listboxKeyboards = new ListBox(page);
-	m_listboxKeyboards->SetBounds(130, 20, 120, 140);
+	m_listboxKeyboards->SetBounds(130, 20, 120, 120);
 	m_listboxKeyboards->AddItem("QWERTY", "qwerty");
 	m_listboxKeyboards->AddItem("AZERTY", "azerty");
 	m_listboxKeyboards->AddItem("QWERTZ", "qwertz");
@@ -1146,6 +1157,11 @@ void Settings::keyboardChange(Gwen::Controls::Base *base)
 void Settings::addSkiddoLanguage()
 {
 	m_listboxLanguages->AddItem("Skiddo", "sk");
+}
+
+void Settings::systemKeyboardChange(Gwen::Controls::Base* base)
+{
+	Config::set(Config::SystemKeyboard, m_checkboxSystemKeyboard->Checkbox()->IsChecked());
 }
 
 } // namespace GUI

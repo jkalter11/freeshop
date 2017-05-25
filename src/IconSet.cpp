@@ -98,9 +98,15 @@ void IconSet::setSelectedIndex(int index)
 		TweenEngine::Tween::to(icon, SCALE_XY, 0.3f)
 			.target(0.8f, 0.8f)
 			.start(m_tweenManager);
-		TweenEngine::Tween::to(icon, util3ds::TweenText::FILL_COLOR_RGB, 0.2f)
+		if (Theme::isTextThemed) {
+			TweenEngine::Tween::to(icon, util3ds::TweenText::FILL_COLOR_RGB, 0.2f)
+			.target(Theme::iconSetColor.r, Theme::iconSetColor.g, Theme::iconSetColor.b)
+			.start(m_tweenManager);
+		} else {
+			TweenEngine::Tween::to(icon, util3ds::TweenText::FILL_COLOR_RGB, 0.2f)
 			.target(100.f, 100.f, 100.f)
 			.start(m_tweenManager);
+		}
 		TweenEngine::Tween::to(icon, util3ds::TweenText::OUTLINE_COLOR_RGB, 0.2f)
 			.target(255.f, 255.f, 255.f)
 			.start(m_tweenManager);
@@ -109,10 +115,16 @@ void IconSet::setSelectedIndex(int index)
 	TweenEngine::Tween::to(m_icons[index], SCALE_XY, 0.3f)
 		.target(1.f, 1.f)
 		.start(m_tweenManager);
-	TweenEngine::Tween::to(m_icons[index], util3ds::TweenText::FILL_COLOR_RGB, 0.2f)
+	if (Theme::isTextThemed) {
+		TweenEngine::Tween::to(m_icons[index], util3ds::TweenText::FILL_COLOR_RGB, 0.2f)
+		.target(Theme::iconSetColorActive.r, Theme::iconSetColorActive.g, Theme::iconSetColorActive.b)
+		.start(m_tweenManager);
+	} else {
+		TweenEngine::Tween::to(m_icons[index], util3ds::TweenText::FILL_COLOR_RGB, 0.2f)
 		.target(0.f, 0.f, 0.f)
 		.start(m_tweenManager);
-	TweenEngine::Tween::to(m_icons[index], util3ds::TweenText::OUTLINE_COLOR_RGB, 0.3f)
+	}
+	TweenEngine::Tween::to(m_icons[index], util3ds::TweenText::OUTLINE_COLOR_RGB, 0.2f)
 		.target(200.f, 200.f, 200.f)
 		.start(m_tweenManager);
 
@@ -132,6 +144,25 @@ void IconSet::resize()
 		icon.setPosition(posX, 0);
 		posX += icon.getLocalBounds().width + m_padding;
 	}
+}
+
+void IconSet::resetIcon(int index, bool isAnimated)
+{
+	TweenEngine::Tween::to(m_icons[index], SCALE_XY, isAnimated ? 0.3f : 0.f)
+		.target(0.8f, 0.8f)
+		.start(m_tweenManager);
+	if (Theme::isTextThemed) {
+		TweenEngine::Tween::to(m_icons[index], util3ds::TweenText::FILL_COLOR_RGB, isAnimated ? 0.2f : 0.f)
+		.target(Theme::iconSetColor.r, Theme::iconSetColor.g, Theme::iconSetColor.b)
+		.start(m_tweenManager);
+	} else {
+		TweenEngine::Tween::to(m_icons[index], util3ds::TweenText::FILL_COLOR_RGB, isAnimated ? 0.2f : 0.f)
+		.target(100.f, 100.f, 100.f)
+		.start(m_tweenManager);
+	}
+	TweenEngine::Tween::to(m_icons[index], util3ds::TweenText::OUTLINE_COLOR_RGB, isAnimated ? 0.2f : 0.f)
+		.target(255.f, 255.f, 255.f)
+		.start(m_tweenManager);
 }
 
 } // namespace FreeShop

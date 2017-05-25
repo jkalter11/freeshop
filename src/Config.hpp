@@ -39,10 +39,12 @@ public:
 		// Music
 		MusicMode,
 		MusicFilename,
-		// Other
-		SleepMode,
+		// Locales
 		Language,
 		Keyboard,
+		SystemKeyboard,
+		// Other
+		SleepMode,
 		TitleID,
 		Skiddo,
 

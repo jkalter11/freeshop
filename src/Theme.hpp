@@ -39,6 +39,13 @@ public:
 	static cpp3ds::Color primaryTextColor;
 	static cpp3ds::Color secondaryTextColor;
 	static cpp3ds::Color iconSetColor;
+	static cpp3ds::Color iconSetColorActive;
+	static cpp3ds::Color transitionScreenColor;
+	
+	//Theme informations
+	static std::string themeName;
+	static std::string themeDesc;
+	static std::string themeVersion;
 
 private:
 	rapidjson::Document m_json;

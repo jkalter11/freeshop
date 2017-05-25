@@ -150,7 +150,8 @@ void AppItem::setAppItem(std::shared_ptr<::FreeShop::AppItem> appItem)
 
 		// Region flag sprites
 		m_regionFlags.clear();
-		for (int i = 0; i < 3; ++i)
+		
+		for (int i = 0; i < 7; ++i)
 		{
 			auto region = static_cast<FreeShop::AppItem::Region>(1 << i);
 			if (region & appItem->getRegions())
@@ -315,6 +316,7 @@ void AppItem::setFilesize(cpp3ds::Uint64 filesize)
 void AppItem::addRegionFlag(FreeShop::AppItem::Region region)
 {
 	cpp3ds::Sprite flag;
+	bool isRegionRecognized = true;
 
 	if (!Theme::isFlagsThemed) {
 		cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get("images/flags.png");
@@ -328,12 +330,17 @@ void AppItem::addRegionFlag(FreeShop::AppItem::Region region)
 
 	if (region == FreeShop::AppItem::Europe)
 		flag.setTextureRect(cpp3ds::IntRect(0, 0, 30, 20));
-	if (region == FreeShop::AppItem::Japan)
+	else if (region == FreeShop::AppItem::Japan)
 		flag.setTextureRect(cpp3ds::IntRect(30, 0, 30, 20));
 	else if (region == FreeShop::AppItem::USA)
 		flag.setTextureRect(cpp3ds::IntRect(0, 20, 30, 20));
+	else if (region == FreeShop::AppItem::Korea)
+		flag.setTextureRect(cpp3ds::IntRect(30, 20, 30, 20));
+	else
+		isRegionRecognized = false;
 
-	m_regionFlags.push_back(flag);
+	if (isRegionRecognized)
+		m_regionFlags.push_back(flag);
 }
 
 } // namespace GUI

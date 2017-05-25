@@ -87,10 +87,12 @@ namespace FreeShop
 			void musicFileChanged(Gwen::Controls::Base* base);
 			void selectRandomMusicTrack();
 			void playSelectedMusic();
-
-			void showNews(Gwen::Controls::Base* base);
+			
 			void languageChange(Gwen::Controls::Base* base);
 			void keyboardChange(Gwen::Controls::Base* base);
+			void systemKeyboardChange(Gwen::Controls::Base* base);
+
+			void showNews(Gwen::Controls::Base* base);
 
 		private:
 			cpp3ds::Vector2f m_position;
@@ -135,11 +137,14 @@ namespace FreeShop
 			Gwen::Controls::ComboBox *m_comboMusicMode;
 			Gwen::Controls::ListBox *m_listboxMusicFiles;
 			Gwen::Controls::Label *m_labelAudioState;
+			
+			// Locales
+			Gwen::Controls::ListBox *m_listboxLanguages;
+			Gwen::Controls::ListBox *m_listboxKeyboards;
+			Gwen::Controls::CheckBoxWithLabel *m_checkboxSystemKeyboard;
 
 			// Other
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxSleep;
-			Gwen::Controls::ListBox *m_listboxLanguages;
-			Gwen::Controls::ListBox *m_listboxKeyboards;
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxTitleID;
 		};
 	}
