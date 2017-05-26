@@ -263,7 +263,8 @@ void TopInformations::updateIcons(std::string timeTextFmt)
 				break;
 		}
 		
-		m_textClock.setPosition(308.f - (m_textureBattery.getSize().x + m_textClock.getLocalBounds().width), 5.f);
+		if (!m_isCollapsed)
+			m_textClock.setPosition(308.f - (m_textureBattery.getSize().x + m_textClock.getLocalBounds().width), 5.f);
 	}
 }
 

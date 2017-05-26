@@ -48,6 +48,7 @@ public:
 		TitleID,
 		Skiddo,
 		ShowBattery,
+		ShowGameCounter,
 
 		KEY_COUNT,
 	};

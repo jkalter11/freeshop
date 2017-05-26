@@ -18,6 +18,7 @@ int removeDirectory(const char *path, bool onlyIfEmpty = false);
 std::string getCountryCode(int region);
 uint32_t getTicketVersion(cpp3ds::Uint64 tid);
 void hexToRGB(std::string hexValue, int *R, int *G, int *B);
+std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
 
 } // namespace FreeShop
 

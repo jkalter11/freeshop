@@ -197,14 +197,14 @@ void SyncState::sync()
 	}
 
 	// If auto-dated, boot into launch newest freeShop
-#ifdef NDEBUG
+
 	if (updateFreeShop())
 	{
 		Config::set(Config::ShowNews, true);
 		g_requestJump = 0x400000F12EE00;
 		return;
 	}
-#endif
+
 
 	if (!pathExists(FREESHOP_DIR "/news/" FREESHOP_VERSION ".txt") || std::string(FREESHOP_VERSION) != Config::get(Config::Version).GetString())
 	{
@@ -264,8 +264,14 @@ bool SyncState::updateFreeShop()
 
 		Config::set(Config::LastUpdatedTime, static_cast<int>(time(nullptr)));
 		Config::saveToFile();
+		
+		std::string tagWithoutPoints = ReplaceAll(tag, ".", "");
+		std::cout << "Latest version: " << tagWithoutPoints << std::endl;
+		
+		std::string actualVersionWithoutPoints = ReplaceAll(FREESHOP_VERSION, ".", "");
+		std::cout << "Actual version: " << actualVersionWithoutPoints << std::endl;
 
-		if (tag.compare(FREESHOP_VERSION) != 0)
+		if (std::stoi(tagWithoutPoints) > std::stoi(actualVersionWithoutPoints))
 		{
 #ifndef EMULATION
 			Result ret;

@@ -44,6 +44,7 @@ void InstalledList::refresh()
 	installedTitleIds.emplace_back(0x0004000000041700); // [US] Kirby's Dream Land
 	installedTitleIds.emplace_back(0x0004008000008f00); // [US] Home Menu
 	installedTitleIds.emplace_back(0x0004000000162000); // [EU] Project X Zone 2
+	installedTitleIds.emplace_back(0x000400000017a400); // [EU] Fire Emblem Fates
 #else
 	u32 titleCount;
 	AM_GetTitleCount(MEDIATYPE_SD, &titleCount);
@@ -336,5 +337,9 @@ bool InstalledList::isInstalled(cpp3ds::Uint64 titleId)
 	return std::find(v.begin(), v.end(), titleId) != v.end();
 }
 
+int InstalledList::getGameCount()
+{
+	return m_installedItems.size();
+}
 
 } // namespace FreeShop

@@ -19,6 +19,9 @@ The scrolled update.
   keyboard for game searching.
 • Added an option to show the battery
   percentage.
+• A game counter has been implemented.
+  You can disable it via the Settings >
+  Other tab.
 • Return to the HOME Menu while a
   sleep download is processed should
   be less harm.

@@ -153,6 +153,7 @@ namespace FreeShop
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxSleep;
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxTitleID;
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxBatteryPercent;
+			Gwen::Controls::CheckBoxWithLabel *m_checkboxGameCounter;
 		};
 	}
 }

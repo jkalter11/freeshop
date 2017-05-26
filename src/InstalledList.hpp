@@ -25,6 +25,8 @@ public:
 
 	static bool isInstalled(cpp3ds::Uint64 titleId);
 	std::vector<std::unique_ptr<InstalledItem>> &getList() { return m_installedItems; }
+	
+	int getGameCount();
 
 protected:
 	InstalledList();

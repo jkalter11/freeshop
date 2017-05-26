@@ -180,6 +180,7 @@ void Settings::saveToConfig()
 	Config::set(Config::SleepMode, m_checkboxSleep->Checkbox()->IsChecked());
 	Config::set(Config::TitleID, m_checkboxTitleID->Checkbox()->IsChecked());
 	Config::set(Config::ShowBattery, m_checkboxBatteryPercent->Checkbox()->IsChecked());
+	Config::set(Config::ShowGameCounter, m_checkboxGameCounter->Checkbox()->IsChecked());
 }
 
 void Settings::loadConfig()
@@ -252,6 +253,7 @@ void Settings::loadConfig()
 	m_checkboxSleep->Checkbox()->SetChecked(Config::get(Config::SleepMode).GetBool());
 	m_checkboxTitleID->Checkbox()->SetChecked(Config::get(Config::TitleID).GetBool());
 	m_checkboxBatteryPercent->Checkbox()->SetChecked(Config::get(Config::ShowBattery).GetBool());
+	m_checkboxGameCounter->Checkbox()->SetChecked(Config::get(Config::ShowGameCounter).GetBool());
 }
 
 void Settings::saveFilter(Config::Key key, std::vector<Gwen::Controls::CheckBoxWithLabel*> &checkboxArray)
@@ -941,6 +943,10 @@ void Settings::fillOtherPage(Gwen::Controls::Base *page)
 	m_checkboxBatteryPercent = new CheckBoxWithLabel(page);
 	m_checkboxBatteryPercent->SetBounds(0, 40, 320, 20);
 	m_checkboxBatteryPercent->Label()->SetText(_("Show battery percentage and clock").toAnsiString());
+	
+	m_checkboxGameCounter = new CheckBoxWithLabel(page);
+	m_checkboxGameCounter->SetBounds(0, 60, 320, 20);
+	m_checkboxGameCounter->Label()->SetText(_("Show the number of game you have").toAnsiString());
 }
 
 void Settings::updateQrClicked(Gwen::Controls::Base *button)

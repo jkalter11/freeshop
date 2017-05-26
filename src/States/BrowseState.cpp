@@ -94,6 +94,9 @@ void BrowseState::initialize()
 	m_textActiveDownloads.setOutlineColor(cpp3ds::Color::White);
 	m_textActiveDownloads.setOutlineThickness(1.f);
 	m_textActiveDownloads.setPosition(128.f, 3.f);
+	
+	m_textInstalledCount = m_textActiveDownloads;
+	m_textInstalledCount.setPosition(162.f, 3.f);
 
 	//If there's no title key available, or no cache, one of these messages will appear
 	if (TitleKeys::getIds().empty())
@@ -267,6 +270,9 @@ void BrowseState::renderBottomScreen(cpp3ds::Window& window)
 
 	if (m_activeDownloadCount > 0)
 		window.draw(m_textActiveDownloads);
+		
+	if (InstalledList::getInstance().getGameCount() > 0 && Config::get(Config::ShowGameCounter).GetBool())
+		window.draw(m_textInstalledCount);
 
 	if (m_mode == App)
 		window.draw(m_appInfo);
@@ -374,6 +380,8 @@ bool BrowseState::update(float delta)
 		m_activeDownloadCount = DownloadQueue::getInstance().getActiveCount();
 		m_textActiveDownloads.setString(_("%u", m_activeDownloadCount));
 	}
+	
+	m_textInstalledCount.setString(_("%u", InstalledList::getInstance().getGameCount()));
 
 	m_iconSet.update(delta);
 	m_topInfos.update(delta);
@@ -623,6 +631,10 @@ void BrowseState::setMode(BrowseState::Mode mode)
 		TweenEngine::Tween::to(m_textActiveDownloads, util3ds::TweenText::POSITION_X, 0.3f)
 					.target(128.f)
 					.start(m_tweenManager);
+					
+		TweenEngine::Tween::to(m_textInstalledCount, util3ds::TweenText::POSITION_X, 0.3f)
+					.target(162.f)
+					.start(m_tweenManager);
 	}
 	else if (m_mode == Settings)
 	{
@@ -649,6 +661,10 @@ void BrowseState::setMode(BrowseState::Mode mode)
 
 		TweenEngine::Tween::to(m_textActiveDownloads, util3ds::TweenText::POSITION_X, 0.3f)
 					.target(223.f)
+					.start(m_tweenManager);
+					
+		TweenEngine::Tween::to(m_textInstalledCount, util3ds::TweenText::POSITION_X, 0.3f)
+					.target(257.f)
 					.start(m_tweenManager);
 
 		m_lastKeyboardInput = "";

@@ -87,6 +87,7 @@ private:
 
 	size_t m_activeDownloadCount;
 	util3ds::TweenText m_textActiveDownloads;
+	util3ds::TweenText m_textInstalledCount;
 
 	ScrollBar m_scrollbarInstalledList;
 	ScrollBar m_scrollbarDownloadQueue;
