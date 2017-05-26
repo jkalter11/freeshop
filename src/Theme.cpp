@@ -35,7 +35,7 @@ cpp3ds::Color Theme::iconSetColorActive = cpp3ds::Color(0, 0, 0);
 cpp3ds::Color Theme::transitionScreenColor = cpp3ds::Color(255, 255, 255);
 
 //Theme informations
-std::string Theme::themeName = "freeShop Theme";
+std::string Theme::themeName = "Classic";
 std::string Theme::themeDesc = "The default theme of freeShop.\nMade by arc13 / Cruel.";
 std::string Theme::themeVersion = FREESHOP_VERSION;
 

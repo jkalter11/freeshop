@@ -80,12 +80,15 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 	}
 
 #ifndef EMULATION
-	bool isRegistered;
-	NIMS_IsTaskRegistered(app->getTitleId(), &isRegistered);
+	//Check if the title is not the HOME Menu Theme (because it pass the verification for some reason)
+	if (app->getTitle().toAnsiString().compare(0, 16, "Home Menu Themes") != 0) {
+		bool isRegistered;
+		NIMS_IsTaskRegistered(app->getTitleId(), &isRegistered);
 
-	if (isRegistered || app->isSleepBusy()) {
-		Notification::spawn(_("Registered for sleep download: \n%s", app->getTitle().toAnsiString().c_str()));
-		return;
+		if (isRegistered || app->isSleepBusy()) {
+			Notification::spawn(_("Registered for sleep download: \n%s", app->getTitle().toAnsiString().c_str()));
+			return;
+		}
 	}
 #endif
 

@@ -196,6 +196,9 @@ void BrowseState::initialize()
 #endif
 
 	g_browserLoaded = true;
+	
+	m_topInfos.resetModeTimer();
+	m_topInfos.setModeChangeEnabled(true);
 
 	SleepState::clock.restart();
 	clockDownloadInactivity.restart();
@@ -286,6 +289,7 @@ bool BrowseState::update(float delta)
 {
 	if (!g_syncComplete || !g_browserLoaded)
 		return true;
+	
 	if (m_threadBusy)
 	{
 		clockDownloadInactivity.restart();

@@ -20,6 +20,9 @@ public:
 	void update(float delta);
 
 	void setCollapsed(bool collapsed);
+	void setTextMode(int newMode);
+	void setModeChangeEnabled(bool newMode);
+	void resetModeTimer();
 
 	TopInformations();
 	~TopInformations();
@@ -44,8 +47,12 @@ private:
 	int skipFrames;
 	
 	bool m_isCollapsed;
+	bool m_isTransitioning;
+	bool m_canTransition;
 
 	TweenEngine::TweenManager m_tweenManager;
+	
+	void updateIcons(std::string timeTextFmt);
 	
 #ifndef EMULATION
 	Result PTMU_GetAdapterState(u8 *out);

@@ -37,6 +37,8 @@ The scrolled update.
 • Fixed bug that was crashing the app
   when the user wanted to launch a game
   through the freeShop/refresh the cache
+• Fixed the bug that was preventing
+  HOME Menu Themes to be downloaded.
   
 ἕν οἶδα ὅτι οὐδὲν οἶδα
 	- Socrate

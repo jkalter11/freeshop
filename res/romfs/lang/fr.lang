@@ -211,6 +211,9 @@ Prêt pour l'installation en veille : \n%s
 Sleep download canceled: \n%s
 Téléchargement en veille annulé : \n%s
 
+A system update is required to download in sleep mode.
+Une mise à jour système est requise pour l'installation\nen veille.
+
 # src/InstalledItem.cpp
 #######################
  - System Title
