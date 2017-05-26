@@ -39,6 +39,8 @@ The scrolled update.
   through the freeShop/refresh the cache
 • Fixed the bug that was preventing
   HOME Menu Themes to be downloaded.
+• Fixed the bug that was preventing
+  freeShop to launch games on cartridges.
   
 ἕν οἶδα ὅτι οὐδὲν οἶδα
 	- Socrate
