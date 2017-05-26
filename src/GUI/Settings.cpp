@@ -14,6 +14,7 @@
 #include "../Notification.hpp"
 #include "../States/DialogState.hpp"
 #include "../States/BrowseState.hpp"
+#include "../Theme.hpp"
 
 #ifdef _3DS
 #include "../KeyboardApplet.hpp"
@@ -88,6 +89,9 @@ Settings::Settings(Gwen::Skin::TexturedBase *skin,  State *state)
 
 	page = m_tabControl->AddPage(_("Locales").toAnsiString())->GetPage();
 	fillLocalesPage(page);
+	
+	page = m_tabControl->AddPage(_("Theme").toAnsiString())->GetPage();
+	fillThemePage(page);
 
 	page = m_tabControl->AddPage(_("Other").toAnsiString())->GetPage();
 	fillOtherPage(page);
@@ -175,6 +179,7 @@ void Settings::saveToConfig()
 	// Other
 	Config::set(Config::SleepMode, m_checkboxSleep->Checkbox()->IsChecked());
 	Config::set(Config::TitleID, m_checkboxTitleID->Checkbox()->IsChecked());
+	Config::set(Config::ShowBattery, m_checkboxBatteryPercent->Checkbox()->IsChecked());
 }
 
 void Settings::loadConfig()
@@ -246,6 +251,7 @@ void Settings::loadConfig()
 	// Other
 	m_checkboxSleep->Checkbox()->SetChecked(Config::get(Config::SleepMode).GetBool());
 	m_checkboxTitleID->Checkbox()->SetChecked(Config::get(Config::TitleID).GetBool());
+	m_checkboxBatteryPercent->Checkbox()->SetChecked(Config::get(Config::ShowBattery).GetBool());
 }
 
 void Settings::saveFilter(Config::Key key, std::vector<Gwen::Controls::CheckBoxWithLabel*> &checkboxArray)
@@ -931,6 +937,10 @@ void Settings::fillOtherPage(Gwen::Controls::Base *page)
 	m_checkboxTitleID = new CheckBoxWithLabel(page);
 	m_checkboxTitleID->SetBounds(0, 20, 320, 20);
 	m_checkboxTitleID->Label()->SetText(_("Show Title ID in game description screen").toAnsiString());
+	
+	m_checkboxBatteryPercent = new CheckBoxWithLabel(page);
+	m_checkboxBatteryPercent->SetBounds(0, 40, 320, 20);
+	m_checkboxBatteryPercent->Label()->SetText(_("Show battery percentage and clock").toAnsiString());
 }
 
 void Settings::updateQrClicked(Gwen::Controls::Base *button)
@@ -1162,6 +1172,21 @@ void Settings::addSkiddoLanguage()
 void Settings::systemKeyboardChange(Gwen::Controls::Base* base)
 {
 	Config::set(Config::SystemKeyboard, m_checkboxSystemKeyboard->Checkbox()->IsChecked());
+}
+
+void Settings::fillThemePage(Gwen::Controls::Base *page)
+{
+	m_labelThemeName = new Label(page);
+	m_labelThemeName->SetBounds(0, 0, 150, 20);
+	m_labelThemeName->SetText(Theme::themeName);
+	
+	m_labelThemeVersion = new Label(page);
+	m_labelThemeVersion->SetBounds(270, 0, 40, 20);
+	m_labelThemeVersion->SetText(Theme::themeVersion);
+	
+	m_labelThemeDescription = new Label(page);
+	m_labelThemeDescription->SetText(Theme::themeDesc);
+	m_labelThemeDescription->SetBounds(0, 20, 320, 210);
 }
 
 } // namespace GUI

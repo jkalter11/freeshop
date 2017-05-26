@@ -17,6 +17,8 @@ The scrolled update.
 • Korean flag has been added.
 • Added the option to use the system
   keyboard for game searching.
+• Added an option to show the battery
+  percentage.
 • Return to the HOME Menu while a
   sleep download is processed should
   be less harm.

@@ -232,7 +232,7 @@ AccessControlInfo:
    - ldr:ro
    - gsp::Lcd
    - news:u
-   - nim:aoc
+   - mcu::HWC
    - nim:s
    - nwm::UDS
    - ptm:u

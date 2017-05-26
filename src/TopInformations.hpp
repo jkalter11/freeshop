@@ -4,10 +4,14 @@
 #include <cpp3ds/Graphics/Drawable.hpp>
 #include <cpp3ds/Graphics/Text.hpp>
 #include <cpp3ds/Window/Event.hpp>
+#include <cpp3ds/System/Clock.hpp>
 #include "TweenObjects.hpp"
 #include "TitleKeys.hpp"
 #include <TweenEngine/Tween.h>
 #include <TweenEngine/TweenManager.h>
+#ifndef EMULATION
+#include <3ds.h>
+#endif
 
 namespace FreeShop {
 
@@ -31,10 +35,22 @@ private:
 	util3ds::TweenSprite m_batteryIcon;
 	cpp3ds::Texture m_textureSignal;
 	util3ds::TweenSprite m_signalIcon;
+	
+	cpp3ds::Clock m_switchClock;
+	int m_textClockMode;
+	
+	int m_batteryPercent;
 
 	int skipFrames;
+	
+	bool m_isCollapsed;
 
 	TweenEngine::TweenManager m_tweenManager;
+	
+#ifndef EMULATION
+	Result PTMU_GetAdapterState(u8 *out);
+	Result MCUHWC_GetBatteryLevel(u8 *out);
+#endif
 
 };
 

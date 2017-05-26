@@ -36,7 +36,10 @@ KeyboardApplet::KeyboardApplet(InputType type)
 			swkbdSetFilterCallback(&m_swkbdState, callbackUrl, this);
 			swkbdSetFeatures(&m_swkbdState, SWKBD_PREDICTIVE_INPUT);
 			break;
-
+		case TitleID:
+			swkbdInit(&m_swkbdState, SWKBD_TYPE_NORMAL, 2, 16);
+			swkbdSetValidation(&m_swkbdState, SWKBD_ANYTHING, 0, 0);
+			break;
 		case Text:
 			// Fall through
 		default:

@@ -322,11 +322,21 @@ bool BrowseState::update(float delta)
 	if (iconIndex == Search && Config::get(Config::SystemKeyboard).GetBool()) {
 		m_iconSet.setSelectedIndex(m_mode);
 #ifndef EMULATION
-		KeyboardApplet kb(KeyboardApplet::Text);
-		swkbdSetHintText(kb, _("Type a game name...").toAnsiString().c_str());
-		cpp3ds::String input = kb.getInput();
-		if (!input.isEmpty())
-			AppList::getInstance().filterBySearch(input.toAnsiString(), m_textMatches);
+		//Check if the keyboard mode is Title ID
+		if (m_isTIDKeyboard) {
+			KeyboardApplet kb(KeyboardApplet::TitleID);
+			swkbdSetHintText(kb, _("Type a game Title ID...").toAnsiString().c_str());
+			cpp3ds::String input = kb.getInput();
+			if (!input.isEmpty())
+				AppList::getInstance().filterBySearch(input.toAnsiString(), m_textMatches);
+		} else {
+			KeyboardApplet kb(KeyboardApplet::Text);
+			swkbdSetHintText(kb, _("Type a game name...").toAnsiString().c_str());
+			
+			cpp3ds::String input = kb.getInput();
+			if (!input.isEmpty())
+				AppList::getInstance().filterBySearch(input.toAnsiString(), m_textMatches);
+		}
 #else
 		std::cout << "System keyboard." << std::endl;
 #endif

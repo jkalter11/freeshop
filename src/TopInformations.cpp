@@ -4,6 +4,7 @@
 #include "Notification.hpp"
 #include "Theme.hpp"
 #include "Util.hpp"
+#include "Config.hpp"
 #include "States/StateIdentifiers.hpp"
 #include "States/DialogState.hpp"
 #include <cpp3ds/System/I18n.hpp>
@@ -11,14 +12,17 @@
 #include <TweenEngine/Tween.h>
 #include <time.h>
 #include <stdlib.h>
-#ifndef EMULATION
-#include <3ds.h>
-#endif
 
 namespace FreeShop {
 
 TopInformations::TopInformations()
+: m_batteryPercent(-1)
+, m_textClockMode(1)
+, m_isCollapsed(true)
 {
+	//Start the clock
+	m_switchClock.restart();
+	
 	//Get the time to show it in the top part of the App List
 	time_t t = time(NULL);
 	struct tm * timeinfo;
@@ -56,9 +60,9 @@ TopInformations::TopInformations()
 	m_signalIcon.setPosition(-50.f, 5.f);
 	m_signalIcon.setTexture(m_textureSignal, true);
 
-	//Define clock position
+	//Define texts position
 	m_textClock.setPosition(308.f - (m_textureBattery.getSize().x + m_textClock.getLocalBounds().width), -50.f);
-
+	
 	//Two points in clock
 	m_textTwoPoints = m_textClock;
 	m_textTwoPoints.setString(":");
@@ -80,7 +84,7 @@ TopInformations::TopInformations()
 #define TWEEN_IN_X_NOWAIT(obj, posX) \
 	TweenEngine::Tween::to(obj, obj.POSITION_X, 0.6f).target(posX).start(m_tweenManager);
 
-	TWEEN_IN(m_textClock, 4.f);
+	TweenEngine::Tween::to(m_textClock, m_textClock.POSITION_Y, 0.6f).target(4.f).delay(0.5f).setCallback(TweenEngine::TweenCallback::COMPLETE, [this](TweenEngine::BaseTween* source) {m_isCollapsed = false;}).start(m_tweenManager);
 	TWEEN_IN(m_textTwoPoints, 4.f);
 	TWEEN_IN_X(m_batteryIcon, 318.f - m_textureBattery.getSize().x);
 	TWEEN_IN_X(m_signalIcon, 2.f);
@@ -100,9 +104,12 @@ void TopInformations::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates st
 
 	//Draw clock
 	target.draw(m_textClock);
-	target.draw(m_textTwoPoints);
+	
+	//Draw only the two points if the clock text is in clock mode
+	if (m_textClockMode == 1)
+		target.draw(m_textTwoPoints);
 
-	//Draw battery
+	//Draw battery & text
 	target.draw(m_batteryIcon);
 
 	//Draw signal
@@ -123,24 +130,33 @@ void TopInformations::update(float delta)
 
 	strftime(timeTextFmt, 12, "%H %M", timeinfo);
 
-	m_textClock.setString(timeTextFmt);
 	m_tweenManager.update(delta);
 
 	//Update battery and signal icons
 	if (skipFrames >= 60) {
 		skipFrames = 1;
 #ifndef EMULATION
-		//Update battery icon
+		//Update battery icon and percentage
 		cpp3ds::Uint8 batteryChargeState = 0;
+		cpp3ds::Uint8 isAdapterPlugged = 0;
 		cpp3ds::Uint8 batteryLevel = 0;
+		cpp3ds::Uint8 batteryPercentHolder = 0;
+		int batteryPercent = -1;
 		std::string batteryPath;
 
-		if(R_SUCCEEDED(PTMU_GetBatteryChargeState(&batteryChargeState)) && batteryChargeState)
+		if (R_SUCCEEDED(PTMU_GetBatteryChargeState(&batteryChargeState)) && batteryChargeState)
         		batteryPath = "battery_charging.png";
-    		else if(R_SUCCEEDED(PTMU_GetBatteryLevel(&batteryLevel)))
+        	else if (R_SUCCEEDED(PTMU_GetAdapterState(&isAdapterPlugged)) && isAdapterPlugged)
+        		batteryPath = "battery_charging_full.png";
+    		else if (R_SUCCEEDED(PTMU_GetBatteryLevel(&batteryLevel))) {
         		batteryPath = "battery" + std::to_string(batteryLevel - 1) + ".png";
-    		else
+        		if (R_SUCCEEDED(MCUHWC_GetBatteryLevel(&batteryPercentHolder)))
+        			batteryPercent = static_cast<int>(batteryPercentHolder);
+    		} else
         		batteryPath = "battery0.png";
+        		
+        	m_batteryPercent = batteryPercent;
+        	std::cout << m_batteryPercent << std::endl;
 
 		std::string themedBatteryPath = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/images/" + batteryPath);
 
@@ -153,7 +169,7 @@ void TopInformations::update(float delta)
 		uint32_t wifiStatus = 0;
 		std::string signalPath;
 
-		if(R_SUCCEEDED(ACU_GetWifiStatus(&wifiStatus)) && wifiStatus)
+		if (R_SUCCEEDED(ACU_GetWifiStatus(&wifiStatus)) && wifiStatus)
         		signalPath = "wifi" + std::to_string(osGetWifiStrength()) + ".png";
     		else
         		signalPath = "wifi_disconnected.png";
@@ -168,6 +184,8 @@ void TopInformations::update(float delta)
 		//Update battery icon
 		std::string batteryPath = "battery" + std::to_string(rand() % 5) + ".png";
 		std::string themedBatteryPath = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/images/" + batteryPath);
+		
+		m_batteryPercent = rand() % 101;
 
 		if (pathExists(themedBatteryPath.c_str(), false))
 			m_textureBattery.loadFromFile(themedBatteryPath);
@@ -183,6 +201,24 @@ void TopInformations::update(float delta)
 		else
 			m_textureSignal.loadFromFile("images/" + signalPath);
 #endif
+		//Change the mode of the clock if enough time passed
+		if (m_switchClock.getElapsedTime() >= cpp3ds::seconds(10)) {
+			//Reset the clock
+			m_switchClock.restart();
+			
+			//Switch mode
+			if (m_textClockMode == 1 && Config::get(Config::ShowBattery).GetBool()) {
+				//Battery percentage mode
+				m_textClockMode = 2;
+				TweenEngine::Tween::to(m_textClock, m_textClock.FILL_COLOR_ALPHA, 0.4f).target(0.f).setCallback(TweenEngine::TweenCallback::COMPLETE, [=](TweenEngine::BaseTween* source) {m_textClock.setString(std::to_string(m_batteryPercent) + "%"); if (!m_isCollapsed) m_textClock.setPosition(308.f - (m_textureBattery.getSize().x + m_textClock.getLocalBounds().width), 4.f);}).start(m_tweenManager);
+				TweenEngine::Tween::to(m_textClock, m_textClock.FILL_COLOR_ALPHA, 0.4f).target(255.f).delay(0.5f).start(m_tweenManager);
+			} else if (m_textClockMode != 1) {
+				//Clock mode
+				TweenEngine::Tween::to(m_textClock, m_textClock.FILL_COLOR_ALPHA, 0.4f).target(0.f).setCallback(TweenEngine::TweenCallback::COMPLETE, [=](TweenEngine::BaseTween* source) {m_textClock.setString(timeTextFmt); if (!m_isCollapsed) m_textClock.setPosition(308.f - (m_textureBattery.getSize().x + m_textClock.getLocalBounds().width), 4.f);}).start(m_tweenManager);
+				TweenEngine::Tween::to(m_textClock, m_textClock.FILL_COLOR_ALPHA, 0.4f).target(255.f).delay(0.5f).setCallback(TweenEngine::TweenCallback::COMPLETE, [this](TweenEngine::BaseTween* source) {m_textClockMode = 1;}).start(m_tweenManager);
+			}
+		}
+	
 	}
 
 	skipFrames++;
@@ -190,17 +226,57 @@ void TopInformations::update(float delta)
 
 void TopInformations::setCollapsed(bool collapsed)
 {
+	if (collapsed)
+		m_isCollapsed = collapsed;
+
 	if (collapsed) {
-		TWEEN_IN_NOWAIT(m_textClock, -50.f);
+		TweenEngine::Tween::to(m_textClock, m_textClock.POSITION_Y, 0.6f).target(-50.f).setCallback(TweenEngine::TweenCallback::COMPLETE, [this](TweenEngine::BaseTween* source) {m_isCollapsed = true;}).start(m_tweenManager);
 		TWEEN_IN_NOWAIT(m_textTwoPoints, -50.f);
 		TWEEN_IN_X_NOWAIT(m_batteryIcon, 370.f - m_textureBattery.getSize().x);
 		TWEEN_IN_X_NOWAIT(m_signalIcon, -50.f);
 	} else {
-		TWEEN_IN(m_textClock, 4.f);
+		TweenEngine::Tween::to(m_textClock, m_textClock.POSITION_Y, 0.6f).target(4.f).setCallback(TweenEngine::TweenCallback::COMPLETE, [this](TweenEngine::BaseTween* source) {m_isCollapsed = false;}).start(m_tweenManager);
 		TWEEN_IN(m_textTwoPoints, 4.f);
 		TWEEN_IN_X(m_batteryIcon, 318.f - m_textureBattery.getSize().x);
 		TWEEN_IN_X(m_signalIcon, 2.f);
 	}
 }
+
+#ifndef EMULATION
+Result TopInformations::PTMU_GetAdapterState(u8 *out)
+{
+	Handle serviceHandle = 0;
+	Result result = srvGetServiceHandle(&serviceHandle, "ptm:u");
+	
+	u32* ipc = getThreadCommandBuffer();
+	ipc[0] = 0x50000;
+	Result ret = svcSendSyncRequest(serviceHandle);
+	
+	svcCloseHandle(serviceHandle);
+	
+	if(ret < 0) return ret;
+	
+	*out = ipc[2];
+	return ipc[1];
+}
+
+// Saw on the awesome 3DShell file explorer homebrew
+Result TopInformations::MCUHWC_GetBatteryLevel(u8 *out)
+{
+	Handle serviceHandle = 0;
+	Result result = srvGetServiceHandle(&serviceHandle, "mcu::HWC");
+	
+	u32* ipc = getThreadCommandBuffer();
+	ipc[0] = 0x50000;
+	Result ret = svcSendSyncRequest(serviceHandle);
+	
+	svcCloseHandle(serviceHandle);
+	
+	if(ret < 0) return ret;
+	
+	*out = ipc[2];
+	return ipc[1];
+}
+#endif
 
 } // namespace FreeShop

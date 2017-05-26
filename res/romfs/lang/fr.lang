@@ -56,6 +56,9 @@ Déjà en cours de téléchargement : \n%s
 Type a game name...
 Ecrivez le nom d'un jeu...
 
+Type a game Title ID...
+Ecrivez le Title ID d'un jeu...
+
 # src/States/DialogState.cpp
 ############################
  Ok
@@ -190,6 +193,9 @@ Installation en veille échouée : \n%s
 
 Processing for sleep download: \n%s
 En cours de traitement pour l'installation en veille : \n%s
+
+Registered for sleep download: \n%s
+Enregistré pour l'installation en veille : \n%s
 
 # src/AppItem.cpp
 #################
@@ -487,3 +493,9 @@ Service Audio : Activé
 
 Audio Service: Disabled, please dump your DSP
 Service Audio : Désactivé, veuillez dumper votre DSP
+
+Use system keyboard
+Utiliser le clavier système
+
+Show battery percentage and clock
+Afficher le niveau de batterie et l'horloge

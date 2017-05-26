@@ -47,6 +47,7 @@ public:
 		SleepMode,
 		TitleID,
 		Skiddo,
+		ShowBattery,
 
 		KEY_COUNT,
 	};

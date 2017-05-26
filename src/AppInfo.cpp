@@ -378,19 +378,19 @@ void AppInfo::setCurrentScreenshot(int screenshotIndex)
 
 			TweenEngine::Tween::to(m_screenshotTopBottom, util3ds::TweenSprite::SCALE_XY, 0.5f)
 					.target(0.18f, 0.18f)
-					.ease(TweenEngine::TweenEquations::easeOutElastic)
+					.ease(TweenEngine::TweenEquations::easeOutQuart)
 					.start(m_tweenManager);
 			TweenEngine::Tween::to(m_screenshotTopBottom, util3ds::TweenSprite::POSITION_XY, 0.5f)
 					.targetRelative(-6.f, -6.f)
-					.ease(TweenEngine::TweenEquations::easeOutElastic)
+					.ease(TweenEngine::TweenEquations::easeOutQuart)
 					.start(m_tweenManager);
 			TweenEngine::Tween::to(m_screenshotBottom, util3ds::TweenSprite::SCALE_XY, 0.5f)
 					.target(0.18f, 0.18f)
-					.ease(TweenEngine::TweenEquations::easeOutElastic)
+					.ease(TweenEngine::TweenEquations::easeOutQuart)
 					.start(m_tweenManager);
 			TweenEngine::Tween::to(m_screenshotBottom, util3ds::TweenSprite::POSITION_XY, 0.5f)
 					.targetRelative(-6.f, 0.f)
-					.ease(TweenEngine::TweenEquations::easeOutElastic)
+					.ease(TweenEngine::TweenEquations::easeOutQuart)
 					.start(m_tweenManager);
 
 			TweenEngine::Tween::to(m_screenshotTopTop, util3ds::TweenSprite::SCALE_XY, 0.7f)

@@ -41,6 +41,7 @@ namespace {
 		"sleep_mode",
 		"title_id",
 		"skiddo",
+		"show_battery_percentage",
 	};
 }
 
@@ -138,6 +139,7 @@ void Config::loadDefaults()
 	ADD_DEFAULT(SleepMode, true);
 	ADD_DEFAULT(TitleID, false);
 	ADD_DEFAULT(Skiddo, false);
+	ADD_DEFAULT(ShowBattery, false);
 }
 
 void Config::set(Key key, const char *val)

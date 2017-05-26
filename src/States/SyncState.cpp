@@ -372,12 +372,19 @@ bool SyncState::loadThemeManagement()
 		if (Theme::loadFromFile()) {
 			Theme::isTextThemed = true;
 
+			//Load differents colors
 			std::string primaryTextValue = Theme::get("primaryText").GetString();
 			std::string secondaryTextValue = Theme::get("secondaryText").GetString();
 			std::string iconSetValue = Theme::get("iconSet").GetString();
 			std::string iconSetActiveValue = Theme::get("iconSetActive").GetString();
 			std::string transitionScreenValue = Theme::get("transitionScreen").GetString();
+			
+			//Load the theme information
+			std::string themeNameValue = Theme::get("themeName").GetString();
+			std::string themeVerValue = Theme::get("themeVer").GetString();
+			std::string themeDescValue = Theme::get("themeDesc").GetString();
 
+			//Set the colors
 			int R, G, B;
 
 			hexToRGB(primaryTextValue, &R, &G, &B);
@@ -394,6 +401,11 @@ bool SyncState::loadThemeManagement()
 			
 			hexToRGB(transitionScreenValue, &R, &G, &B);
 			Theme::transitionScreenColor = cpp3ds::Color(R, G, B);
+			
+			//Set the theme informations
+			Theme::themeName = themeNameValue;
+			Theme::themeVersion = themeVerValue;
+			Theme::themeDesc = themeDescValue;
 		}
 	}
 }
