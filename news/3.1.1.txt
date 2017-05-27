@@ -45,5 +45,5 @@ The scrolled update.
 • Fixed the bug that was preventing
   freeShop to launch games on cartridges.
   
-ἕν οἶδα ὅτι οὐδὲν οἶδα
-	- Socrate
+Hey, Listen!
+	- Someone you hate
