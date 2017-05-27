@@ -1,5 +1,6 @@
 #include <cpp3ds/System/FileSystem.hpp>
 #include "Keyboard.hpp"
+#include "../Util.hpp"
 
 using namespace tinyxml2;
 
@@ -31,7 +32,14 @@ void Keyboard::loadFromFile(const std::string &filename)
 	const char* defaultLayoutName = keyboard->Attribute("default-layout");
 	const char* image = keyboard->Attribute("image");
 	const char* font = keyboard->Attribute("font");
-	std::string path = m_filename.substr(0, m_filename.find_last_of("/"));
+	std::string path;
+	if (image && FreeShop::fileExists(cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/kb/" + std::string(image))))
+		path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/kb");
+	else
+		path = m_filename.substr(0, m_filename.find_last_of("/"));
+		
+	std::cout << path + "/" + image << std::endl;
+
 	if (image)
 		m_texture.loadFromFile(path + "/" + image);
 	m_usingFont = font != NULL;
