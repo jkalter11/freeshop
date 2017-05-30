@@ -44,6 +44,15 @@ In Warteschlange: %s
 Already installed: %s
 Bereits installiert: %s
 
+Already in downloading: \n%s
+Wird aktuell schon heruntergeladen:
+
+Type a game name...
+Gebe den Namen eines Spieles ein...
+
+Type a game Title ID...
+Gebe die Title ID ein...
+
 # src/States/DialogState.cpp
 ############################
  Ok
@@ -160,6 +169,17 @@ Nicht genügend Speicher auf der SD
 
 Wrong title key
 Falscher Title-Key
+
+Processing for sleep download: \n%s
+Verarbeitungen für den Download im Schlafmodus:
+
+# src/AppItem.cpp
+#################
+Sleep download canceled: \n%s
+Download im Schlafmodus fehlgeschlagen:
+
+A system update is required to download in sleep mode.
+Ein Systemupdate wird benötigt, um die Downloadfunktion im Schlafmodus nutzen zu können.
 
 # src/InstalledOptions.cpp
 #########################

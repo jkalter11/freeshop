@@ -50,6 +50,15 @@ Queued install: %s
 Already installed: %s
 A(z) %s már telepítve van.
 
+Already in downloading: \n%s
+A(z) \n%s \nmár sorban áll.
+
+Type a game name...
+Írd be egy játék címét...
+
+Type a game Title ID...
+Írd be egy játék Termékazonosítóját...
+
 # src/States/DialogState.cpp
 ############################
  Ok
@@ -185,6 +194,9 @@ Seed telepítése sikertelen: \n%s
 Sleep installation failed: \n%s
 Alvó-telepítés sikertelen: \n%s
 
+Processing for sleep download: \n%s
+%s \nfelkészítése az Alvó Letöltésre...
+
 # src/AppItem.cpp
 #################
 Already queued for sleep installation: \n%s
@@ -195,6 +207,12 @@ Felkészülés az alvó-telepítésre: \n%s
 
 Ready for sleep installation: \n%s
 Készen áll az alvó-telepítésre: \n%s
+
+Sleep download canceled: \n%s
+%s \nAlvó Letöltése félbeszakítva.
+
+A system update is required to download in sleep mode.
+Nem elég friss a rendszered az Alvó Letöltéshez.
 
 # src/InstalledItem.cpp
 #######################

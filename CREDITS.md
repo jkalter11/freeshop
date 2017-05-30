@@ -8,6 +8,7 @@
 - [PabloMK7](https://github.com/mariohacksandglitch) - for his awesome boot screen
 - [CaptainSwag101](https://notabug.org/CaptainSwag101) - for his help with code
 - [Crystal the Glaceon](https://gbatemp.net/members/crystal-the-glaceon.202697/) - for her [thread about the legality of freeShop](https://gbatemp.net/threads/faq-is-freeshop-legal.469135/)
+- [MarcusD](https://github.com/MarcuzD) - for his help with MCU stuff and sysmodules
 
 ## Beta testing
 - [AegisCZ](https://gbatemp.net/members/aegiscz.421188/)
@@ -29,7 +30,7 @@ Language | Contributors
 --- | ---
 Japanese | Februarysn0w
 French | Omegadrien, MarioErmando, cynosura, Sp4rks, [moutonnoireu](https://github.com/moutonnoireu)
-German | [Traiver](https://github.com/Traiver), [Brawl345](https://github.com/Brawl345), DarkGabbz
+German | [Traiver](https://github.com/Traiver), [Brawl345](https://github.com/Brawl345), DarkGabbz, [xXPaulMcXx](https://gbatemp.net/members/xxpaulmcxx.390960/), [Dayme](https://gbatemp.net/members/dayme.420104/)
 Italian | [CapraTheBest](https://github.com/CapraTheBest), [sykhro](https://github.com/sykhro), [Filo97](https://gbatemp.net/members/filo97.373223/)
 Spanish US | [ShadowOne333](https://github.com/ShadowOne333)
 Spanish ES | Txustra, [Manurocker95](https://gbatemp.net/members/manurocker95.392008/)
