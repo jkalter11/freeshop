@@ -1150,6 +1150,8 @@ void Settings::languageChange(Gwen::Controls::Base *base)
 				if (*accepted)
 				{
 					// Restart freeShop
+					Config::set(Config::Language, langCode.c_str());
+					Config::saveToFile();
 					g_requestJump = 0x400000F12EE00;
 				}
 				return true;
