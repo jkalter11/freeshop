@@ -25,6 +25,7 @@ TopInformations::TopInformations()
 {
 	//Start the clock
 	m_switchClock.restart();
+	m_updateClock.restart();
 	
 	//Get the time to show it in the top part of the App List
 	time_t t = time(NULL);
@@ -72,9 +73,6 @@ TopInformations::TopInformations()
 	m_textTwoPoints.setCharacterSize(14);
 	m_textTwoPoints.setPosition((m_textClock.getPosition().x + (m_textClock.getLocalBounds().width / 2)) - 3, m_textClock.getPosition().y);
 
-	//Used for frame skipping in battery and signal icons updates
-	skipFrames = 60;
-
 #define TWEEN_IN(obj, posY) \
 	TweenEngine::Tween::to(obj, obj.POSITION_Y, 0.6f).target(posY).delay(0.5f).start(m_tweenManager);
 
@@ -109,7 +107,7 @@ void TopInformations::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates st
 	target.draw(m_textClock);
 	
 	//Draw only the two points if the clock text is in clock mode
-	if (m_textClockMode == 1)
+	if (m_textClockMode == 1 && !m_isTransitioning)
 		target.draw(m_textTwoPoints);
 
 	//Draw battery & text
@@ -136,12 +134,10 @@ void TopInformations::update(float delta)
 	m_tweenManager.update(delta);
 
 	//Update battery and signal icons
-	if (skipFrames >= 60) {
-		skipFrames = 1;
+	if (m_updateClock.getElapsedTime() >= cpp3ds::seconds(2)) {
+		m_updateClock.restart();
 		updateIcons(std::string(timeTextFmt));
 	}
-
-	skipFrames++;
 }
 
 void TopInformations::setCollapsed(bool collapsed)
@@ -238,12 +234,47 @@ void TopInformations::updateIcons(std::string timeTextFmt)
 		if (m_textClockMode == 1 && Config::get(Config::ShowBattery).GetBool() && m_canTransition) {
 			//Battery percentage mode
 			m_textClockMode = 2;
-			TweenEngine::Tween::to(m_textClock, m_textClock.FILL_COLOR_ALPHA, 0.4f).target(0.f).setCallback(TweenEngine::TweenCallback::COMPLETE, [=](TweenEngine::BaseTween* source) {m_textClock.setString(std::to_string(m_batteryPercent) + "%"); if (!m_isCollapsed) m_textClock.setPosition(308.f - (m_textureBattery.getSize().x + m_textClock.getLocalBounds().width), 5.f);}).start(m_tweenManager);
-			TweenEngine::Tween::to(m_textClock, m_textClock.FILL_COLOR_ALPHA, 0.4f).target(255.f).delay(0.5f).setCallback(TweenEngine::TweenCallback::COMPLETE, [=](TweenEngine::BaseTween* source) {m_isTransitioning = false;}).start(m_tweenManager);
+			
+			//Fade out the old text
+			TweenEngine::Tween::to(m_textClock, m_textClock.FILL_COLOR_ALPHA, 0.4f)
+				.target(0.f)
+				.setCallback(TweenEngine::TweenCallback::COMPLETE, [=](TweenEngine::BaseTween* source) {
+						m_textClock.setString(std::to_string(m_batteryPercent) + "%");
+						if (!m_isCollapsed) 
+							m_textClock.setPosition(308.f - (m_textureBattery.getSize().x + m_textClock.getLocalBounds().width), 5.f);
+					})
+				.start(m_tweenManager);
+			
+			//Fade in the new text
+			TweenEngine::Tween::to(m_textClock, m_textClock.FILL_COLOR_ALPHA, 0.4f)
+				.target(255.f)
+				.delay(0.5f)
+				.setCallback(TweenEngine::TweenCallback::COMPLETE, [=](TweenEngine::BaseTween* source) {
+					m_isTransitioning = false;
+				})
+				.start(m_tweenManager);
 		} else if (m_textClockMode != 1) {
 			//Clock mode
-			TweenEngine::Tween::to(m_textClock, m_textClock.FILL_COLOR_ALPHA, 0.4f).target(0.f).setCallback(TweenEngine::TweenCallback::COMPLETE, [=](TweenEngine::BaseTween* source) {m_textClock.setString(timeTextFmt); if (!m_isCollapsed) m_textClock.setPosition(308.f - (m_textureBattery.getSize().x + m_textClock.getLocalBounds().width), 5.f);}).start(m_tweenManager);
-			TweenEngine::Tween::to(m_textClock, m_textClock.FILL_COLOR_ALPHA, 0.4f).target(255.f).delay(0.5f).setCallback(TweenEngine::TweenCallback::COMPLETE, [this](TweenEngine::BaseTween* source) {m_textClockMode = 1; m_isTransitioning = false;}).start(m_tweenManager);
+			m_textClockMode = 1;
+			
+			//Fade out old text
+			TweenEngine::Tween::to(m_textClock, m_textClock.FILL_COLOR_ALPHA, 0.4f)
+				.target(0.f)
+				.setCallback(TweenEngine::TweenCallback::COMPLETE, [=](TweenEngine::BaseTween* source) {
+				m_textClock.setString(timeTextFmt);
+				if (!m_isCollapsed)
+					m_textClock.setPosition(308.f - (m_textureBattery.getSize().x + m_textClock.getLocalBounds().width), 5.f);
+				})
+				.start(m_tweenManager);
+			
+			//Fade in new text
+			TweenEngine::Tween::to(m_textClock, m_textClock.FILL_COLOR_ALPHA, 0.4f)
+				.target(255.f)
+				.delay(0.5f)
+				.setCallback(TweenEngine::TweenCallback::COMPLETE, [this](TweenEngine::BaseTween* source) {
+					m_isTransitioning = false;
+				})
+				.start(m_tweenManager);
 		}
 	}
 

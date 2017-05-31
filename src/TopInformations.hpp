@@ -40,11 +40,10 @@ private:
 	util3ds::TweenSprite m_signalIcon;
 	
 	cpp3ds::Clock m_switchClock;
+	cpp3ds::Clock m_updateClock;
 	int m_textClockMode;
 	
 	int m_batteryPercent;
-
-	int skipFrames;
 	
 	bool m_isCollapsed;
 	bool m_isTransitioning;
