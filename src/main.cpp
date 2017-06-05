@@ -77,7 +77,7 @@ int main(int argc, char** argv)
 	acExit();
 	ptmSysmExit();
 	newsExit();
-	
+
 	if (FreeShop::g_requestShutdown) {
 		//Init the services and turn off the console
 		ptmSysmInit();
@@ -88,10 +88,10 @@ int main(int argc, char** argv)
 		Result res = 0;
 		u8 hmac[0x20];
 		memset(hmac, 0, sizeof(hmac));
-		
+
 		//Check on which media launch the title
 		FS_MediaType mediaType = ((FreeShop::g_requestJump >> 32) == FreeShop::TitleKeys::DSiWare) ? MEDIATYPE_NAND : MEDIATYPE_SD;
-		
+
 		FS_CardType type;
 		bool cardInserted;
 		cardInserted = (R_SUCCEEDED(FSUSER_CardSlotIsInserted(&cardInserted)) && cardInserted && R_SUCCEEDED(FSUSER_GetCardType(&type)) && type == CARD_CTR);
@@ -118,7 +118,7 @@ int main(int argc, char** argv)
 				else
 					cpp3ds::sleep(cpp3ds::milliseconds(5));
 		}
-		
+
 		//Do the application jump
 		if (R_SUCCEEDED(res = APT_PrepareToDoApplicationJump(0, FreeShop::g_requestJump, mediaType)))
 			res = APT_DoApplicationJump(0, 0, hmac);

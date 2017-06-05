@@ -1,5 +1,19 @@
 The scrolled update.
 
+------------------------
+|   DISCLAIMER   |
+------------------------
+Maybe you know that already, but my
+laptop's HDD died recently, I'm unable
+to work on freeShop correctly, the
+updates may be delayed until I replace
+the disk.
+	- arc13
+
+--------------------------
+|   CHANGELOG   |
+--------------------------
+
 • Further improvements to overall system
   stability and other minor adjustments.
 • You can now scroll the game description

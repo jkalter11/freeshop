@@ -11,6 +11,8 @@ InstalledList::InstalledList()
 : m_scrollPos(0.f)
 , m_size(320.f, 0.f)
 , m_expandedItem(nullptr)
+, m_isUpdatingList(false)
+, m_gameCount(0)
 {
 	// Make install options initially transparent for fade in
 	TweenEngine::Tween::set(m_options, InstalledOptions::ALPHA)
@@ -28,6 +30,7 @@ void InstalledList::refresh()
 	cpp3ds::Lock lock(m_mutexRefresh);
 	cpp3ds::Uint64 relatedTitleId;
 	std::vector<cpp3ds::Uint64> installedTitleIds;
+	m_isUpdatingList = true;
 
 	m_installedTitleIds.clear();
 	m_installedItems.clear();
@@ -167,6 +170,7 @@ void InstalledList::refresh()
 	});
 
 	repositionItems();
+	m_isUpdatingList = false;
 }
 
 void InstalledList::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) const
@@ -339,7 +343,10 @@ bool InstalledList::isInstalled(cpp3ds::Uint64 titleId)
 
 int InstalledList::getGameCount()
 {
-	return m_installedItems.size();
+	if (!m_isUpdatingList)
+		m_gameCount = m_installedItems.size();
+	
+	return m_gameCount;
 }
 
 } // namespace FreeShop
