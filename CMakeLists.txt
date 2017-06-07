@@ -13,8 +13,8 @@ set(APP_ICON ${PROJECT_SOURCE_DIR}/res/app/icon.png)
 set(APP_LOGO ${PROJECT_SOURCE_DIR}/res/app/logo.bcma.lz)
 
 # First one is Title Version, second is the readable version
-set(APP_VERSION 3089)
-add_definitions(-DFREESHOP_VERSION="3.1.1")
+set(APP_VERSION 3090)
+add_definitions(-DFREESHOP_VERSION="3.1.2")
 add_definitions(-DFREESHOP_DIR="sdmc:/3ds/data/freeShop")
 
 # CIA settings
@@ -56,6 +56,7 @@ set(SOURCE_FILES
 	${PROJECT_SOURCE_DIR}/src/InstalledList.cpp
 	${PROJECT_SOURCE_DIR}/src/FreeShop.cpp
 	${PROJECT_SOURCE_DIR}/src/MusicBCSTM.cpp
+	${PROJECT_SOURCE_DIR}/src/MusicMP3.cpp
 	${PROJECT_SOURCE_DIR}/src/Util.cpp
 	${PROJECT_SOURCE_DIR}/src/RichText.cpp
 	${PROJECT_SOURCE_DIR}/src/Download.cpp
@@ -111,8 +112,8 @@ set(CPP3DS_EMU_FLAGS "-O0")
 set(TEST_FLAGS "-O0 -coverage")
 include_directories(${DEVKITPRO}/portlibs/armv6k/include)
 
-set(CPP3DS_ARM_LIBS cpp3ds-window cpp3ds-network cpp3ds-graphics cpp3ds-audio cpp3ds-system citro3d ctru freetype png z vorbisidec ogg archive faad fmt)
-set(CPP3DS_EMU_LIBS cpp3ds-emu sfml-graphics sfml-window sfml-system sfml-audio openal GLEW GL jpeg freetype vorbisfile vorbis ogg ssl crypto pthread archive faad fmt)
+set(CPP3DS_ARM_LIBS cpp3ds-window cpp3ds-network cpp3ds-graphics cpp3ds-audio cpp3ds-system citro3d ctru freetype png z vorbisidec ogg archive faad fmt mpg123)
+set(CPP3DS_EMU_LIBS cpp3ds-emu sfml-graphics sfml-window sfml-system sfml-audio openal GLEW GL jpeg freetype vorbisfile vorbis ogg ssl crypto pthread archive faad fmt mpg123)
 
 add_subdirectory(${CPP3DS}/cmake/template_arm build/arm)
 if(BUILD_EMULATOR)

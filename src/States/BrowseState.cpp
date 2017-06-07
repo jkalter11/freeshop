@@ -43,6 +43,7 @@ BrowseState::BrowseState(StateStack& stack, Context& context, StateCallback call
 , m_isTransitioning(false)
 , m_isJapKeyboard(false)
 , m_isTIDKeyboard(false)
+, m_musicMode(0)
 {
 	g_browseState = this;
 	m_musicLoop.setLoop(true);
@@ -80,6 +81,7 @@ void BrowseState::initialize()
 	m_botBG = false;
 	m_ctrSdPath = "";
 	m_keyHistory = {};
+	m_musicFileName = "";
 
 	m_iconSet.addIcon(L"\uf0ae");
 	m_iconSet.addIcon(L"\uf290");
@@ -94,7 +96,7 @@ void BrowseState::initialize()
 	m_textActiveDownloads.setOutlineColor(cpp3ds::Color::White);
 	m_textActiveDownloads.setOutlineThickness(1.f);
 	m_textActiveDownloads.setPosition(128.f, 3.f);
-	
+
 	m_textInstalledCount = m_textActiveDownloads;
 	m_textInstalledCount.setPosition(162.f, 3.f);
 
@@ -143,7 +145,7 @@ void BrowseState::initialize()
 		m_gwenSkin->Init("images/DefaultSkin.png");
 
 	m_gwenSkin->SetDefaultFont(L"", 11);
-	
+
 	//Check if the system firmware is the latest for sleep download
 	NIMS_WantUpdate(&g_isLatestFirmwareVersion);
 	g_isLatestFirmwareVersion = !g_isLatestFirmwareVersion;
@@ -152,7 +154,7 @@ void BrowseState::initialize()
 	// settings starting prematurely.
 	while(!g_syncComplete)
 		cpp3ds::sleep(cpp3ds::milliseconds(10));
-		
+
 	//White screen used for transitions
 	m_whiteScreen.setPosition(0.f, 30.f);
 	m_whiteScreen.setSize(cpp3ds::Vector2f(320.f, 210.f));
@@ -160,7 +162,7 @@ void BrowseState::initialize()
 		m_whiteScreen.setFillColor(Theme::transitionScreenColor);
 	else
 		m_whiteScreen.setFillColor(cpp3ds::Color::White);
-	
+
 	m_settingsGUI = new GUI::Settings(m_gwenSkin, this);
 #endif
 
@@ -199,7 +201,7 @@ void BrowseState::initialize()
 #endif
 
 	g_browserLoaded = true;
-	
+
 	m_topInfos.resetModeTimer();
 	m_topInfos.setModeChangeEnabled(true);
 
@@ -247,7 +249,7 @@ void BrowseState::renderBottomScreen(cpp3ds::Window& window)
 	}
 	if (!g_syncComplete || !g_browserLoaded)
 		return;
-		
+
 	if (m_botBG == true)
 		window.draw(m_rectBotBG);
 
@@ -270,7 +272,7 @@ void BrowseState::renderBottomScreen(cpp3ds::Window& window)
 
 	if (m_activeDownloadCount > 0)
 		window.draw(m_textActiveDownloads);
-		
+
 	if (InstalledList::getInstance().getGameCount() > 0 && Config::get(Config::ShowGameCounter).GetBool())
 		window.draw(m_textInstalledCount);
 
@@ -295,7 +297,7 @@ bool BrowseState::update(float delta)
 {
 	if (!g_syncComplete || !g_browserLoaded)
 		return true;
-	
+
 	if (m_threadBusy)
 	{
 		clockDownloadInactivity.restart();
@@ -342,7 +344,7 @@ bool BrowseState::update(float delta)
 		} else {
 			KeyboardApplet kb(KeyboardApplet::Text);
 			swkbdSetHintText(kb, _("Type a game name...").toAnsiString().c_str());
-			
+
 			cpp3ds::String input = kb.getInput();
 			if (!input.isEmpty())
 				AppList::getInstance().filterBySearch(input.toAnsiString(), m_textMatches);
@@ -380,7 +382,7 @@ bool BrowseState::update(float delta)
 		m_activeDownloadCount = DownloadQueue::getInstance().getActiveCount();
 		m_textActiveDownloads.setString(_("%u", m_activeDownloadCount));
 	}
-	
+
 	m_textInstalledCount.setString(_("%u", InstalledList::getInstance().getGameCount()));
 
 	m_iconSet.update(delta);
@@ -465,7 +467,7 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 		}
 		if (m_keyHistory.size() >= 10) {
 			if (m_keyHistory[0] == cpp3ds::Keyboard::DPadUp && m_keyHistory[1] == cpp3ds::Keyboard::DPadUp && m_keyHistory[2] == cpp3ds::Keyboard::DPadDown && m_keyHistory[3] == cpp3ds::Keyboard::DPadDown && m_keyHistory[4] == cpp3ds::Keyboard::DPadLeft && m_keyHistory[5] == cpp3ds::Keyboard::DPadRight && m_keyHistory[6] == cpp3ds::Keyboard::DPadLeft && m_keyHistory[7] == cpp3ds::Keyboard::DPadRight && m_keyHistory[8] == cpp3ds::Keyboard::B && m_keyHistory[9] == cpp3ds::Keyboard::A) {
-				if (!Config::get(Config::Skiddo).GetBool()) {				
+				if (!Config::get(Config::Skiddo).GetBool()) {
 					Notification::spawn(_("Skiddo!"));
 					Config::set(Config::Skiddo, true);
 					m_settingsGUI->addSkiddoLanguage();
@@ -631,7 +633,7 @@ void BrowseState::setMode(BrowseState::Mode mode)
 		TweenEngine::Tween::to(m_textActiveDownloads, util3ds::TweenText::POSITION_X, 0.3f)
 					.target(128.f)
 					.start(m_tweenManager);
-					
+
 		TweenEngine::Tween::to(m_textInstalledCount, util3ds::TweenText::POSITION_X, 0.3f)
 					.target(162.f)
 					.start(m_tweenManager);
@@ -662,7 +664,7 @@ void BrowseState::setMode(BrowseState::Mode mode)
 		TweenEngine::Tween::to(m_textActiveDownloads, util3ds::TweenText::POSITION_X, 0.3f)
 					.target(223.f)
 					.start(m_tweenManager);
-					
+
 		TweenEngine::Tween::to(m_textInstalledCount, util3ds::TweenText::POSITION_X, 0.3f)
 					.target(257.f)
 					.start(m_tweenManager);
@@ -711,12 +713,21 @@ bool BrowseState::playBGM(const std::string &filename)
 {
 	stopBGM();
 
-	if (m_musicLoopBCSTM.openFromFile(filename))
+	if (m_musicLoopBCSTM.openFromFile(filename)) {
 		m_musicLoopBCSTM.play();
-	else if (m_musicLoop.openFromFile(filename))
+		m_musicMode = 1;
+	} else if (m_musicLoopMP3.openFromFile(filename)) {
+		m_musicLoopMP3.play();
+		m_musicMode = 2;
+	} else if (m_musicLoop.openFromFile(filename)) {
 		m_musicLoop.play();
-	else
+		m_musicMode = 3;
+	} else {
+		Notification::spawn(_("This song file type isn't supported."));
 		return false;
+	}
+
+	m_musicFileName = filename;
 
 	return true;
 }
@@ -724,7 +735,10 @@ bool BrowseState::playBGM(const std::string &filename)
 void BrowseState::stopBGM()
 {
 	m_musicLoopBCSTM.stop();
+	m_musicLoopMP3.stop();
 	m_musicLoop.stop();
+
+	m_musicMode = 0;
 }
 
 void BrowseState::reloadKeyboard()

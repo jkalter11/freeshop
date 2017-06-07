@@ -13,6 +13,7 @@
 #include "../GUI/Settings.hpp"
 #include "../GUI/ScrollBar.hpp"
 #include "../MusicBCSTM.hpp"
+#include "../MusicMP3.hpp"
 #include <cpp3ds/Graphics/Sprite.hpp>
 #include <cpp3ds/Graphics/Texture.hpp>
 #include <cpp3ds/System/Clock.hpp>
@@ -103,8 +104,12 @@ private:
 	cpp3ds::Sound  m_soundClick;
 	cpp3ds::Sound  m_soundLoading;
 
+	MusicMP3 m_musicLoopMP3;
 	MusicBCSTM m_musicLoopBCSTM;
 	cpp3ds::Music m_musicLoop;
+
+	int m_musicMode;
+	std::string m_musicFileName;
 
 	// Keyboard
 	util3ds::Keyboard m_keyboard;

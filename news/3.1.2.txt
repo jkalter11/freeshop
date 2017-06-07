@@ -1,0 +1,7 @@
+The colorful update.
+
+• Further improvements to overall system
+  stability and other minor adjustments.
+• EXPERIMENTAL: The MP3 files are now
+		supported for the BGM.
+  (Thanks to @MaK11-12 and his ctrmus)
