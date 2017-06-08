@@ -34,11 +34,6 @@ public:
 protected:
 	void streamData();
 
-	uint8_t read8();
-	uint16_t read16();
-	uint32_t read32();
-	bool fileAdvance(uint64_t byteSize);
-
 	void fillBuffers();
 
 private:

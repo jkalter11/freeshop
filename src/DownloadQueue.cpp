@@ -688,7 +688,7 @@ void DownloadQueue::addSleepDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint6
 #ifndef EMULATION
 	//Lock the thread so if user wants to install another app while an app is processed, this doesn't fu** up everything (and make ARM9 crashes (true story))
 	cpp3ds::Lock lock(m_mutexSleepInstall);
-	
+
 	//A sleep installation is processed
 	m_isSleepInstalling = true;
 
@@ -714,7 +714,7 @@ void DownloadQueue::addSleepDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint6
 	else
 		appTitle = title;
 
-	//Add prefix to the game	
+	//Add prefix to the game
 	if (type == TitleKeys::Update)
 		appTitle = _("[Update] %s", appTitle.toAnsiString().c_str());
 	else if (type == TitleKeys::Demo)
@@ -744,7 +744,6 @@ void DownloadQueue::addSleepDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint6
 
 	//Check at each step that the user didn't went to HOME Menu
 	if (m_refreshEnd) {
-		std::cout << "home" << std::endl;
 		while (m_refreshEnd)
 			cpp3ds::sleep(cpp3ds::milliseconds(100));
 	}
@@ -758,7 +757,6 @@ void DownloadQueue::addSleepDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint6
 
 	//Check at each step that the user didn't went to HOME Menu
 	if (m_refreshEnd) {
-		std::cout << "home" << std::endl;
 		while (m_refreshEnd)
 			cpp3ds::sleep(cpp3ds::milliseconds(100));
 	}
@@ -774,7 +772,6 @@ void DownloadQueue::addSleepDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint6
 
 	//Check at each step that the user didn't went to HOME Menu
 	if (m_refreshEnd) {
-		std::cout << "home" << std::endl;
 		while (m_refreshEnd)
 			cpp3ds::sleep(cpp3ds::milliseconds(100));
 	}

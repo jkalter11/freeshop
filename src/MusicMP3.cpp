@@ -241,27 +241,6 @@ void MusicMP3::streamData()
 	}
 }
 
-uint32_t MusicMP3::read32()
-{
-	uint32_t v;
-	m_file.read(&v, sizeof(v));
-	return (m_isLittleEndian ? v : htonl(v));
-}
-
-uint16_t MusicMP3::read16()
-{
-	uint16_t v;
-	m_file.read(&v, sizeof(v));
-	return (m_isLittleEndian ? v : htons(v));
-}
-
-uint8_t MusicMP3::read8()
-{
-	uint8_t v;
-	m_file.read(&v, sizeof(v));
-	return v;
-}
-
 void MusicMP3::fillBuffers()
 {
 #ifndef EMULATION
@@ -316,12 +295,6 @@ while(!m_isStopped && !songFinished && m_isStreaming)
 		DSP_FlushDataCache(m_buffer2, *m_buffSize * sizeof(int16_t));
 	}
 #endif
-}
-
-bool MusicMP3::fileAdvance(uint64_t byteSize)
-{
-	uint64_t seekPosition = m_file.tell() + byteSize;
-	return (m_file.seek(seekPosition) == seekPosition);
 }
 
 #ifndef EMULATION
