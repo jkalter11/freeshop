@@ -5,6 +5,10 @@
 #include <cpp3ds/System/Service.hpp>
 #include <cpp3ds/System/Sleep.hpp>
 #include "../Config.hpp"
+#include "../Notification.hpp"
+#ifndef EMULATION
+#include "../MCU/Mcu.hpp"
+#endif
 
 using namespace TweenEngine;
 using namespace util3ds;
@@ -82,6 +86,17 @@ TitleState::TitleState(StateStack& stack, Context& context, StateCallback callba
 	Tween::to(m_spriteEshop, TweenSprite::COLOR_RGB, 1.f)
 			.target(0, 0, 0)
 			.delay(3.5f)
+			.setCallback(TweenEngine::TweenCallback::BEGIN, [=](TweenEngine::BaseTween* source) {
+#ifndef EMULATION
+					if (Config::get(Config::LEDStartup).GetBool()) {
+						cpp3ds::sleep(cpp3ds::milliseconds(100));
+						if (R_SUCCEEDED(MCU::getInstance().mcuInit())) {
+							MCU::getInstance().ledBlinkOnce(0x19A4FF);
+							MCU::getInstance().mcuExit();
+						}
+					}
+#endif
+				})
 			.start(m_manager);
 }
 

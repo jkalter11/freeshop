@@ -6,6 +6,8 @@
 #include "Installer.hpp"
 #include "TitleKeys.hpp"
 #include "ticket.h"
+#include "Config.hpp"
+#include "MCU/Mcu.hpp"
 
 namespace {
 
@@ -109,6 +111,7 @@ bool Installer::installTicket(cpp3ds::Uint16 titleVersion)
 	}
 
 	m_errorStr = _("Failed to install ticket: 0x%08lX", m_result);
+	applyErrorLedPattern();
 	return false;
 }
 
@@ -143,11 +146,13 @@ bool Installer::installSeed(const void *seed)
 		else
 		{
 			m_errorStr = _("Failed to get seed: HTTP %d", (int)status);
+			applyErrorLedPattern();
 			return false;
 		}
 	}
 
 	m_errorStr = _("Need FW 9.6+, Seed failed: %08lX", m_result);
+	applyErrorLedPattern();
 	return false;
 }
 
@@ -164,6 +169,7 @@ bool Installer::start(bool deleteTitle)
 			return true;
 		}
 		m_errorStr = _("Failed to start: 0x%08lX", m_result);
+		applyErrorLedPattern();
 		return false;
 	}
 }
@@ -183,6 +189,7 @@ bool Installer::resume()
 
 	abort();
 	m_errorStr = _("Failed to resume: 0x%08lX", m_result);
+	applyErrorLedPattern();
 	return false;
 }
 
@@ -202,6 +209,7 @@ bool Installer::suspend()
 		return true;
 
 	m_errorStr = _("Failed to suspend: 0x%08lX", m_result);
+	applyErrorLedPattern();
 	return false;
 }
 
@@ -219,6 +227,7 @@ bool Installer::commit()
 
 	abort();
 	m_errorStr = _("Failed to commit title: 0x%08lX", m_result);
+	applyErrorLedPattern();
 	return false;
 }
 
@@ -235,6 +244,7 @@ bool Installer::finalizeTmd()
 
 	abort();
 	m_errorStr = _("Failed to finalize TMD: 0x%08lX", m_result);
+	applyErrorLedPattern();
 	return false;
 }
 
@@ -251,6 +261,7 @@ bool Installer::finalizeContent()
 
 	abort();
 	m_errorStr = _("Failed to finalize content: 0x%08lX", m_result);
+	applyErrorLedPattern();
 	return false;
 }
 
@@ -265,6 +276,7 @@ bool Installer::importContents(size_t count, cpp3ds::Uint16 *indices)
 
 	abort();
 	m_errorStr = _("Failed to import contents: 0x%08lX", m_result);
+	applyErrorLedPattern();
 	return false;
 }
 
@@ -281,6 +293,7 @@ bool Installer::installTmd(const void *data, size_t size)
 
 	abort();
 	m_errorStr = _("Failed to install TMD: 0x%08lX", m_result);
+	applyErrorLedPattern();
 	return false;
 }
 
@@ -307,6 +320,7 @@ bool Installer::installContent(const void *data, size_t size, cpp3ds::Uint16 ind
 
 	abort();
 	m_errorStr = _("Failed to install content: 0x%08lX", m_result);
+	applyErrorLedPattern();
 	return false;
 }
 
@@ -333,6 +347,24 @@ cpp3ds::Uint64 Installer::getCurrentContentPosition() const
 cpp3ds::Uint64 Installer::getTitleId() const
 {
 	return m_titleId;
+}
+
+bool Installer::applyErrorLedPattern()
+{
+#ifndef EMULATION
+	if (Config::get(Config::LEDDownloadError).GetBool()) {
+		if (R_SUCCEEDED(MCU::getInstance().mcuInit())) {
+			MCU::getInstance().ledBlinkThrice(0x0D09A1);
+			MCU::getInstance().mcuExit();
+
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		return false;
+	}
+#endif
 }
 
 } // namespace FreeShop

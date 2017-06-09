@@ -24,6 +24,7 @@
 #include <cpp3ds/System/FileInputStream.hpp>
 #ifndef EMULATION
 #include <3ds/ipc.h>
+#include "../MCU/Mcu.hpp"
 #endif
 
 namespace {
@@ -264,10 +265,10 @@ bool SyncState::updateFreeShop()
 
 		Config::set(Config::LastUpdatedTime, static_cast<int>(time(nullptr)));
 		Config::saveToFile();
-		
+
 		std::string tagWithoutPoints = ReplaceAll(tag, ".", "");
 		std::cout << "Latest version: " << tagWithoutPoints << std::endl;
-		
+
 		std::string actualVersionWithoutPoints = ReplaceAll(FREESHOP_VERSION, ".", "");
 		std::cout << "Actual version: " << actualVersionWithoutPoints << std::endl;
 
@@ -384,7 +385,7 @@ bool SyncState::loadThemeManagement()
 			std::string iconSetValue = Theme::get("iconSet").GetString();
 			std::string iconSetActiveValue = Theme::get("iconSetActive").GetString();
 			std::string transitionScreenValue = Theme::get("transitionScreen").GetString();
-			
+
 			//Load the theme information
 			std::string themeNameValue = Theme::get("themeName").GetString();
 			std::string themeVerValue = Theme::get("themeVer").GetString();
@@ -401,13 +402,13 @@ bool SyncState::loadThemeManagement()
 
 			hexToRGB(iconSetValue, &R, &G, &B);
 			Theme::iconSetColor = cpp3ds::Color(R, G, B);
-			
+
 			hexToRGB(iconSetActiveValue, &R, &G, &B);
 			Theme::iconSetColorActive = cpp3ds::Color(R, G, B);
-			
+
 			hexToRGB(transitionScreenValue, &R, &G, &B);
 			Theme::transitionScreenColor = cpp3ds::Color(R, G, B);
-			
+
 			//Set the theme informations
 			Theme::themeName = themeNameValue;
 			Theme::themeVersion = themeVerValue;

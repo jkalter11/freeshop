@@ -37,7 +37,7 @@ namespace FreeShop
 			virtual void setValues(int tweenType, float *newValues);
 
 			void playMusic(); // For recovery from Sleep state
-			
+
 			void addSkiddoLanguage();
 
 		private:
@@ -57,6 +57,7 @@ namespace FreeShop
 			void fillMusicPage(Gwen::Controls::Base *page);
 			void fillLocalesPage(Gwen::Controls::Base *page);
 			void fillThemePage(Gwen::Controls::Base *page);
+			void fillNotifiersPage(Gwen::Controls::Base *page);
 			void fillOtherPage(Gwen::Controls::Base *page);
 
 			// Event Callback functions
@@ -88,7 +89,7 @@ namespace FreeShop
 			void musicFileChanged(Gwen::Controls::Base* base);
 			void selectRandomMusicTrack();
 			void playSelectedMusic();
-			
+
 			void languageChange(Gwen::Controls::Base* base);
 			void keyboardChange(Gwen::Controls::Base* base);
 			void systemKeyboardChange(Gwen::Controls::Base* base);
@@ -138,16 +139,23 @@ namespace FreeShop
 			Gwen::Controls::ComboBox *m_comboMusicMode;
 			Gwen::Controls::ListBox *m_listboxMusicFiles;
 			Gwen::Controls::Label *m_labelAudioState;
-			
+
 			// Locales
 			Gwen::Controls::ListBox *m_listboxLanguages;
 			Gwen::Controls::ListBox *m_listboxKeyboards;
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxSystemKeyboard;
-			
+
 			//Theme
 			Gwen::Controls::Label *m_labelThemeName;
 			Gwen::Controls::Label *m_labelThemeVersion;
 			Gwen::Controls::Label *m_labelThemeDescription;
+
+			// Notifiers
+			Gwen::Controls::CheckBoxWithLabel *m_checkboxLEDStartup;
+			Gwen::Controls::CheckBoxWithLabel *m_checkboxLEDDownloadFinished;
+			Gwen::Controls::CheckBoxWithLabel *m_checkboxLEDDownloadErrored;
+			Gwen::Controls::CheckBoxWithLabel *m_checkboxNEWSDownloadFinished;
+			Gwen::Controls::CheckBoxWithLabel *m_checkboxNEWSNoLED;
 
 			// Other
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxSleep;

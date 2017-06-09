@@ -89,9 +89,12 @@ Settings::Settings(Gwen::Skin::TexturedBase *skin,  State *state)
 
 	page = m_tabControl->AddPage(_("Locales").toAnsiString())->GetPage();
 	fillLocalesPage(page);
-	
+
 	page = m_tabControl->AddPage(_("Theme").toAnsiString())->GetPage();
 	fillThemePage(page);
+
+	page = m_tabControl->AddPage(_("Notifiers").toAnsiString())->GetPage();
+	fillNotifiersPage(page);
 
 	page = m_tabControl->AddPage(_("Other").toAnsiString())->GetPage();
 	fillOtherPage(page);
@@ -169,12 +172,19 @@ void Settings::saveToConfig()
 	Config::set(Config::MusicMode, m_comboMusicMode->GetSelectedItem()->GetName().c_str());
 	auto selectedMusic = m_listboxMusicFiles->GetSelectedRow();
 	Config::set(Config::MusicFilename, selectedMusic ? selectedMusic->GetText(0).c_str() : "");
-	
+
 	// Locales
 	auto language = m_listboxLanguages->GetSelectedRow();
 	Config::set(Config::Language, language ? language->GetName().c_str() : "auto");
 	Config::set(Config::Keyboard, m_listboxKeyboards->GetSelectedRow()->GetName().c_str());
 	Config::set(Config::SystemKeyboard, m_checkboxSystemKeyboard->Checkbox()->IsChecked());
+
+	// Notifiers
+	Config::set(Config::LEDStartup, m_checkboxLEDStartup->Checkbox()->IsChecked());
+	Config::set(Config::LEDDownloadFinished, m_checkboxLEDDownloadFinished->Checkbox()->IsChecked());
+	Config::set(Config::LEDDownloadError, m_checkboxLEDDownloadErrored->Checkbox()->IsChecked());
+	Config::set(Config::NEWSDownloadFinished, m_checkboxNEWSDownloadFinished->Checkbox()->IsChecked());
+	Config::set(Config::NEWSNoLED, m_checkboxNEWSNoLED->Checkbox()->IsChecked());
 
 	// Other
 	Config::set(Config::SleepMode, m_checkboxSleep->Checkbox()->IsChecked());
@@ -231,7 +241,7 @@ void Settings::loadConfig()
 			break;
 		}
 	m_comboMusicMode->SelectItemByName(Config::get(Config::MusicMode).GetString());
-	
+
 	// Locales
 	m_checkboxSystemKeyboard->Checkbox()->SetChecked(Config::get(Config::SystemKeyboard).GetBool());
 	auto languageRows = m_listboxLanguages->GetChildren().front()->GetChildren();
@@ -248,6 +258,13 @@ void Settings::loadConfig()
 			m_listboxKeyboards->SetSelectedRow(row, true);
 			break;
 		}
+
+	// Notifiers
+	m_checkboxLEDStartup->Checkbox()->SetChecked(Config::get(Config::LEDStartup).GetBool());
+	m_checkboxLEDDownloadFinished->Checkbox()->SetChecked(Config::get(Config::LEDDownloadFinished).GetBool());
+	m_checkboxLEDDownloadErrored->Checkbox()->SetChecked(Config::get(Config::LEDDownloadError).GetBool());
+	m_checkboxNEWSDownloadFinished->Checkbox()->SetChecked(Config::get(Config::NEWSDownloadFinished).GetBool());
+	m_checkboxNEWSNoLED->Checkbox()->SetChecked(Config::get(Config::NEWSNoLED).GetBool());
 
 	// Other
 	m_checkboxSleep->Checkbox()->SetChecked(Config::get(Config::SleepMode).GetBool());
@@ -867,7 +884,7 @@ void Settings::fillLocalesPage(Gwen::Controls::Base *page)
 	auto label2 = new Label(page);
 	label2->SetBounds(130, 0, 150, 20);
 	label2->SetText(_("Keyboard:").toAnsiString());
-	
+
 	m_checkboxSystemKeyboard = new CheckBoxWithLabel(page);
 	m_checkboxSystemKeyboard->SetBounds(0, 143, 320, 20);
 	m_checkboxSystemKeyboard->Label()->SetText(_("Use system keyboard").toAnsiString());
@@ -939,11 +956,11 @@ void Settings::fillOtherPage(Gwen::Controls::Base *page)
 	m_checkboxTitleID = new CheckBoxWithLabel(page);
 	m_checkboxTitleID->SetBounds(0, 20, 320, 20);
 	m_checkboxTitleID->Label()->SetText(_("Show Title ID in game description screen").toAnsiString());
-	
+
 	m_checkboxBatteryPercent = new CheckBoxWithLabel(page);
 	m_checkboxBatteryPercent->SetBounds(0, 40, 320, 20);
 	m_checkboxBatteryPercent->Label()->SetText(_("Show battery percentage and clock").toAnsiString());
-	
+
 	m_checkboxGameCounter = new CheckBoxWithLabel(page);
 	m_checkboxGameCounter->SetBounds(0, 60, 320, 20);
 	m_checkboxGameCounter->Label()->SetText(_("Show the number of game you have").toAnsiString());
@@ -1187,14 +1204,37 @@ void Settings::fillThemePage(Gwen::Controls::Base *page)
 	m_labelThemeName = new Label(page);
 	m_labelThemeName->SetBounds(0, 0, 150, 20);
 	m_labelThemeName->SetText(Theme::themeName);
-	
+
 	m_labelThemeVersion = new Label(page);
 	m_labelThemeVersion->SetBounds(270, 0, 40, 20);
 	m_labelThemeVersion->SetText(Theme::themeVersion);
-	
+
 	m_labelThemeDescription = new Label(page);
 	m_labelThemeDescription->SetText(Theme::themeDesc);
 	m_labelThemeDescription->SetBounds(0, 20, 320, 210);
+}
+
+void Settings::fillNotifiersPage(Gwen::Controls::Base *page)
+{
+	m_checkboxLEDStartup = new CheckBoxWithLabel(page);
+	m_checkboxLEDStartup->SetBounds(0, 0, 320, 20);
+	m_checkboxLEDStartup->Label()->SetText(_("Blink the LED on freeShop startup").toAnsiString());
+
+	m_checkboxLEDDownloadFinished = new CheckBoxWithLabel(page);
+	m_checkboxLEDDownloadFinished->SetBounds(0, 30, 320, 20);
+	m_checkboxLEDDownloadFinished->Label()->SetText(_("Blink the LED when a download finished").toAnsiString());
+
+	m_checkboxLEDDownloadErrored = new CheckBoxWithLabel(page);
+	m_checkboxLEDDownloadErrored->SetBounds(0, 50, 320, 20);
+	m_checkboxLEDDownloadErrored->Label()->SetText(_("Blink the LED when a download failed").toAnsiString());
+
+	m_checkboxNEWSDownloadFinished = new CheckBoxWithLabel(page);
+	m_checkboxNEWSDownloadFinished->SetBounds(0, 80, 320, 20);
+	m_checkboxNEWSDownloadFinished->Label()->SetText(_("Send a notification (News applet) when a download finished").toAnsiString());
+
+	m_checkboxNEWSNoLED = new CheckBoxWithLabel(page);
+	m_checkboxNEWSNoLED->SetBounds(0, 100, 320, 20);
+	m_checkboxNEWSNoLED->Label()->SetText(_("Disable the LED when the notification is sent").toAnsiString());
 }
 
 } // namespace GUI

@@ -139,8 +139,8 @@ void BrowseState::initialize()
 		cpp3ds::sleep(cpp3ds::milliseconds(10));
 	m_gwenSkin = new Gwen::Skin::TexturedBase(m_gwenRenderer);
 
-	if (pathExists(FREESHOP_DIR "/theme/images/DefaultSkin.png", true))
-		m_gwenSkin->Init(FREESHOP_DIR "/theme/images/DefaultSkin.png");
+	if (pathExists(cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/images/DefaultSkin.png").c_str(), true))
+		m_gwenSkin->Init(cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/images/DefaultSkin.png"));
 	else
 		m_gwenSkin->Init("images/DefaultSkin.png");
 
@@ -237,11 +237,12 @@ void BrowseState::renderBottomScreen(cpp3ds::Window& window)
 #ifdef EMULATION
 		m_gwenSkin = new Gwen::Skin::TexturedBase(m_gwenRenderer);
 
-		if (fopen(FREESHOP_DIR "/theme/images/DefaultSkin.png", "rb")) {
-			m_gwenSkin->Init(FREESHOP_DIR "/theme/images/DefaultSkin.png");
-		} else {
+		std::cout << cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/images/DefaultSkin.png").c_str() << std::endl;
+
+		if (pathExists(cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/images/DefaultSkin.png").c_str(), true))
+			m_gwenSkin->Init(cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/images/DefaultSkin.png"));
+		else
 			m_gwenSkin->Init("images/DefaultSkin.png");
-		}
 
 		m_gwenSkin->SetDefaultFont(L"", 11);
 		m_settingsGUI = new GUI::Settings(m_gwenSkin, this);

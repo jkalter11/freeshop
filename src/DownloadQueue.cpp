@@ -22,6 +22,7 @@
 #include <inttypes.h>
 #ifndef EMULATION
 #include <3ds.h>
+#include "MCU/Mcu.hpp"
 #endif
 
 namespace FreeShop {
@@ -289,6 +290,15 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 					Notification::spawn(_("Completed: %s", app->getTitle().toAnsiString().c_str()));
 					download->setProgressMessage(_("Installed"));
 					succeeded = true;
+#ifndef EMULATION
+					if (Config::get(Config::LEDDownloadFinished).GetBool()) {
+						cpp3ds::sleep(cpp3ds::milliseconds(100));
+						if (R_SUCCEEDED(MCU::getInstance().mcuInit())) {
+							MCU::getInstance().ledBlinkOnce(0xFFA419);
+							MCU::getInstance().mcuExit();
+						}
+					}
+#endif
 					break;
 				}
 				download->m_status = Download::Failed;
@@ -784,7 +794,9 @@ void DownloadQueue::addSleepDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint6
 	else
 		Notification::spawn(_("Sleep installation failed: \n%s", stdAppTitle.c_str()));
 
-	m_soundFinish.play();
+	if (Config::get(Config::PlaySoundAfterDownload).GetBool())
+		m_soundFinish.play();
+	
 	m_isSleepInstalling = false;
 #endif
 }

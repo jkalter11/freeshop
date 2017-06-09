@@ -57,6 +57,8 @@ private:
 	Handle m_handleContent;
 	FS_MediaType m_mediaType;
 	NIM_TitleConfig tc;
+
+	bool applyErrorLedPattern();
 #endif
 
 	bool m_isSuspended;

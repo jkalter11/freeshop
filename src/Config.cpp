@@ -37,6 +37,12 @@ namespace {
 		"language",
 		"keyboard",
 		"use_system_keyboard",
+		// Notifiers
+		"led_startup",
+		"led_on_download_finish",
+		"led_on_download_error",
+		"news_download_finish",
+		"news_no_led",
 		// Other
 		"sleep_mode",
 		"title_id",
@@ -130,11 +136,18 @@ void Config::loadDefaults()
 	// Music
 	ADD_DEFAULT(MusicMode, "eshop");
 	ADD_DEFAULT(MusicFilename, "");
-	
+
 	//Locales
 	ADD_DEFAULT(Language, "auto");
 	ADD_DEFAULT(Keyboard, "qwerty");
 	ADD_DEFAULT(SystemKeyboard, false);
+
+	// Notifiers
+	ADD_DEFAULT(LEDStartup, true);
+	ADD_DEFAULT(LEDDownloadFinished, true);
+	ADD_DEFAULT(LEDDownloadError, true);
+	ADD_DEFAULT(NEWSDownloadFinished, false);
+	ADD_DEFAULT(NEWSNoLED, false);
 
 	// Other
 	ADD_DEFAULT(SleepMode, true);

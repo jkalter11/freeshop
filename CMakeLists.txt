@@ -94,6 +94,7 @@ set(SOURCE_FILES
 set(ARM_SOURCE_FILES
 	${PROJECT_SOURCE_DIR}/src/KeyboardApplet.cpp
 	${PROJECT_SOURCE_DIR}/src/Installer.cpp
+	${PROJECT_SOURCE_DIR}/src/MCU/Mcu.cpp
 )
 
 set(EMU_SOURCE_FILES

@@ -43,6 +43,12 @@ public:
 		Language,
 		Keyboard,
 		SystemKeyboard,
+		// Notifiers
+		LEDStartup,
+		LEDDownloadFinished,
+		LEDDownloadError,
+		NEWSDownloadFinished,
+		NEWSNoLED,
 		// Other
 		SleepMode,
 		TitleID,
