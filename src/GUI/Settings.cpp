@@ -1230,7 +1230,7 @@ void Settings::fillNotifiersPage(Gwen::Controls::Base *page)
 
 	m_checkboxNEWSDownloadFinished = new CheckBoxWithLabel(page);
 	m_checkboxNEWSDownloadFinished->SetBounds(0, 80, 320, 20);
-	m_checkboxNEWSDownloadFinished->Label()->SetText(_("Send a notification (News applet) when a download finished").toAnsiString());
+	m_checkboxNEWSDownloadFinished->Label()->SetText(_("Send a notification when a download finished").toAnsiString());
 
 	m_checkboxNEWSNoLED = new CheckBoxWithLabel(page);
 	m_checkboxNEWSNoLED->SetBounds(0, 100, 320, 20);

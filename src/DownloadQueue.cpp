@@ -11,6 +11,7 @@
 #include <cpp3ds/System/FileInputStream.hpp>
 #include <cpp3ds/System/Lock.hpp>
 #include <cmath>
+#include <ctime>
 #include "DownloadQueue.hpp"
 #include "Notification.hpp"
 #include "AppList.hpp"
@@ -291,8 +292,40 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 					download->setProgressMessage(_("Installed"));
 					succeeded = true;
 #ifndef EMULATION
+					if (Config::get(Config::NEWSDownloadFinished).GetBool()) {
+						//Get the time to print it on Notification
+						time_t t = time(NULL);
+						struct tm * timeinfo;
+						timeinfo = localtime(&t);
+						char timeTextFmt[20];
+						strftime(timeTextFmt, 20, "%Ex %EX", timeinfo);
+
+						//Get the formatted game size
+						std::string gameSize;
+						if (app->getFilesize() > 1024 * 1024 * 1024)
+							gameSize = _("%.1f GB", static_cast<float>(app->getFilesize()) / 1024.f / 1024.f / 1024.f).toAnsiString();
+						else if (app->getFilesize() > 1024 * 1024)
+							gameSize = _("%.1f MB", static_cast<float>(app->getFilesize()) / 1024.f / 1024.f).toAnsiString();
+						else
+							gameSize = _("%.1f KB", static_cast<float>(app->getFilesize()) / 1024).toAnsiString();
+
+						//No blink functionnality
+						bool canBlink = true;
+						if (Config::get(Config::NEWSNoLED).GetBool() || Config::get(Config::LEDDownloadFinished).GetBool()) {
+							if (R_SUCCEEDED(MCU::getInstance().mcuInit())) {
+								canBlink = false;
+							}
+						}
+
+						Notification::sendNews(_("%s has been installed", app->getTitle().toAnsiString().c_str()), _("The game %s (%s) has been installed on \n%s", app->getTitle().toAnsiString().c_str(), gameSize, timeTextFmt));
+
+						if (!canBlink) {
+							MCU::getInstance().ledReset();
+							MCU::getInstance().mcuExit();
+						}
+					}
+
 					if (Config::get(Config::LEDDownloadFinished).GetBool()) {
-						cpp3ds::sleep(cpp3ds::milliseconds(100));
 						if (R_SUCCEEDED(MCU::getInstance().mcuInit())) {
 							MCU::getInstance().ledBlinkOnce(0xFFA419);
 							MCU::getInstance().mcuExit();
@@ -796,7 +829,7 @@ void DownloadQueue::addSleepDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint6
 
 	if (Config::get(Config::PlaySoundAfterDownload).GetBool())
 		m_soundFinish.play();
-	
+
 	m_isSleepInstalling = false;
 #endif
 }
