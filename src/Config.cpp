@@ -43,8 +43,13 @@ namespace {
 		"led_on_download_error",
 		"news_download_finish",
 		"news_no_led",
-		// Other
+		// Inactivity
 		"sleep_mode",
+		"sleep_mode_bottom",
+		"dim_leds",
+		"sound_on_inactivity",
+		"inactivity_seconds",
+		// Other
 		"title_id",
 		"skiddo",
 		"show_battery_percentage",
@@ -149,8 +154,14 @@ void Config::loadDefaults()
 	ADD_DEFAULT(NEWSDownloadFinished, false);
 	ADD_DEFAULT(NEWSNoLED, false);
 
-	// Other
+	// Inactivity
 	ADD_DEFAULT(SleepMode, true);
+	ADD_DEFAULT(SleepModeBottom, false);
+	ADD_DEFAULT(DimLEDs, false);
+	ADD_DEFAULT(SoundOnInactivity, true);
+	ADD_DEFAULT(InactivitySeconds, 60.f);
+
+	// Other
 	ADD_DEFAULT(TitleID, false);
 	ADD_DEFAULT(Skiddo, false);
 	ADD_DEFAULT(ShowBattery, false);

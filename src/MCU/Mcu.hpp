@@ -28,6 +28,8 @@ public:
 
   void ledReset();
 
+  void dimLeds(u8 brightness);
+
 private:
   Handle m_mcuHandle;
   RGBLedPattern m_ledPattern;

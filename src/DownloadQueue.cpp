@@ -20,6 +20,7 @@
 #include "Config.hpp"
 #include "Util.hpp"
 #include "Theme.hpp"
+#include "States/SleepState.hpp"
 #include <inttypes.h>
 #ifndef EMULATION
 #include <3ds.h>
@@ -367,7 +368,7 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 
 		// Play sound if queue is finished
 		if (getActiveCount() == 0 && !canceled)
-			if (Config::get(Config::PlaySoundAfterDownload).GetBool())
+			if ((Config::get(Config::PlaySoundAfterDownload).GetBool() && !SleepState::isSleeping) || (SleepState::isSleeping && Config::get(Config::PlaySoundAfterDownload).GetBool() && Config::get(Config::SoundOnInactivity).GetBool()))
 				m_soundFinish.play();
 
 		if (callback)
@@ -827,7 +828,10 @@ void DownloadQueue::addSleepDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint6
 	else
 		Notification::spawn(_("Sleep installation failed: \n%s", stdAppTitle.c_str()));
 
-	if (Config::get(Config::PlaySoundAfterDownload).GetBool())
+	/*The clear and simple explanation of this (LOOOONNNGGGGGGG) condition:
+	If the "Play sound after downoad queue finishes" option IS enabled AND the freeShop is NOT on it's sleeping state, the sound can be played
+	If the "Play sound after downoad queue finishes" option IS enabled AND the freeShop IS on it's sleeping state AND the "Allow sounds on inactivity mode" option IS enabled, the sound can be played*/
+	if ((Config::get(Config::PlaySoundAfterDownload).GetBool() && !SleepState::isSleeping) || (SleepState::isSleeping && Config::get(Config::PlaySoundAfterDownload).GetBool() && Config::get(Config::SoundOnInactivity).GetBool()))
 		m_soundFinish.play();
 
 	m_isSleepInstalling = false;

@@ -49,8 +49,13 @@ public:
 		LEDDownloadError,
 		NEWSDownloadFinished,
 		NEWSNoLED,
-		// Other
+		// Inactivity
 		SleepMode,
+		SleepModeBottom,
+		DimLEDs,
+		SoundOnInactivity,
+		InactivitySeconds,
+		// Other
 		TitleID,
 		Skiddo,
 		ShowBattery,

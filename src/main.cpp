@@ -7,6 +7,7 @@
 
 #ifndef EMULATION
 #include <3ds.h>
+#include "MCU/Mcu.hpp"
 #endif
 
 #ifndef EMULATION
@@ -20,8 +21,13 @@ void aptHookFunc(APT_HookType hookType, void *param)
 		case APTHOOK_ONSUSPEND:
 			if (FreeShop::SleepState::isSleeping && R_SUCCEEDED(gspLcdInit()))
 			{
-				GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_TOP);
+				GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);
 				gspLcdExit();
+			}
+
+			if (FreeShop::SleepState::isSleeping && R_SUCCEEDED(FreeShop::MCU::getInstance().mcuInit())) {
+				FreeShop::MCU::getInstance().dimLeds(0xFF);
+				FreeShop::MCU::getInstance().mcuExit();
 			}
 			// Fall through
 		case APTHOOK_ONSLEEP:

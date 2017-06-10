@@ -20,7 +20,7 @@
 #include <cpp3ds/System/FileSystem.hpp>
 #include <time.h>
 
-#define SECONDS_TO_SLEEP 60.f
+#define SECONDS_TO_SLEEP 3.f
 
 
 namespace FreeShop {
@@ -313,7 +313,7 @@ bool BrowseState::update(float delta)
 	}
 
 	// Go into sleep state after inactivity
-	if (!SleepState::isSleeping && Config::get(Config::SleepMode).GetBool() && SleepState::clock.getElapsedTime() > cpp3ds::seconds(SECONDS_TO_SLEEP))
+	if (!SleepState::isSleeping && (Config::get(Config::SleepMode).GetBool() || Config::get(Config::SleepModeBottom).GetBool() || Config::get(Config::DimLEDs).GetBool()) && SleepState::clock.getElapsedTime() > cpp3ds::seconds(Config::get(Config::InactivitySeconds).GetFloat()))
 	{
 		stopBGM();
 		requestStackPush(States::Sleep);

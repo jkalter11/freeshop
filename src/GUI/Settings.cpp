@@ -96,6 +96,9 @@ Settings::Settings(Gwen::Skin::TexturedBase *skin,  State *state)
 	page = m_tabControl->AddPage(_("Notifiers").toAnsiString())->GetPage();
 	fillNotifiersPage(page);
 
+	page = m_tabControl->AddPage(_("Inactivity").toAnsiString())->GetPage();
+	fillInactivityPage(page);
+
 	page = m_tabControl->AddPage(_("Other").toAnsiString())->GetPage();
 	fillOtherPage(page);
 
@@ -185,9 +188,15 @@ void Settings::saveToConfig()
 	Config::set(Config::LEDDownloadError, m_checkboxLEDDownloadErrored->Checkbox()->IsChecked());
 	Config::set(Config::NEWSDownloadFinished, m_checkboxNEWSDownloadFinished->Checkbox()->IsChecked());
 	Config::set(Config::NEWSNoLED, m_checkboxNEWSNoLED->Checkbox()->IsChecked());
+	Config::set(Config::InactivitySeconds, m_sliderInactivityTime->GetFloatValue());
+
+	// Inactivity
+	Config::set(Config::SleepMode, m_checkboxSleep->Checkbox()->IsChecked());
+	Config::set(Config::SleepModeBottom, m_checkboxSleepBottom->Checkbox()->IsChecked());
+	Config::set(Config::DimLEDs, m_checkboxDimLEDs->Checkbox()->IsChecked());
+	Config::set(Config::SoundOnInactivity, m_checkboxInactivitySoundAllowed->Checkbox()->IsChecked());
 
 	// Other
-	Config::set(Config::SleepMode, m_checkboxSleep->Checkbox()->IsChecked());
 	Config::set(Config::TitleID, m_checkboxTitleID->Checkbox()->IsChecked());
 	Config::set(Config::ShowBattery, m_checkboxBatteryPercent->Checkbox()->IsChecked());
 	Config::set(Config::ShowGameCounter, m_checkboxGameCounter->Checkbox()->IsChecked());
@@ -265,9 +274,16 @@ void Settings::loadConfig()
 	m_checkboxLEDDownloadErrored->Checkbox()->SetChecked(Config::get(Config::LEDDownloadError).GetBool());
 	m_checkboxNEWSDownloadFinished->Checkbox()->SetChecked(Config::get(Config::NEWSDownloadFinished).GetBool());
 	m_checkboxNEWSNoLED->Checkbox()->SetChecked(Config::get(Config::NEWSNoLED).GetBool());
+	m_sliderInactivityTime->SetFloatValue(Config::get(Config::InactivitySeconds).GetFloat());
+	inactivityTimeChanged(m_sliderInactivityTime);
+
+	// Inactivity
+	m_checkboxSleep->Checkbox()->SetChecked(Config::get(Config::SleepMode).GetBool());
+	m_checkboxSleepBottom->Checkbox()->SetChecked(Config::get(Config::SleepModeBottom).GetBool());
+	m_checkboxDimLEDs->Checkbox()->SetChecked(Config::get(Config::DimLEDs).GetBool());
+	m_checkboxInactivitySoundAllowed->Checkbox()->SetChecked(Config::get(Config::SoundOnInactivity).GetBool());
 
 	// Other
-	m_checkboxSleep->Checkbox()->SetChecked(Config::get(Config::SleepMode).GetBool());
 	m_checkboxTitleID->Checkbox()->SetChecked(Config::get(Config::TitleID).GetBool());
 	m_checkboxBatteryPercent->Checkbox()->SetChecked(Config::get(Config::ShowBattery).GetBool());
 	m_checkboxGameCounter->Checkbox()->SetChecked(Config::get(Config::ShowGameCounter).GetBool());
@@ -949,20 +965,16 @@ void Settings::fillOtherPage(Gwen::Controls::Base *page)
 	newsButton->SetText(_("News", FREESHOP_VERSION).toAnsiString());
 	newsButton->onPress.Add(this, &Settings::showNews);
 
-	m_checkboxSleep = new CheckBoxWithLabel(page);
-	m_checkboxSleep->SetBounds(0, 0, 320, 20);
-	m_checkboxSleep->Label()->SetText(_("Enable screen sleep after inactivity").toAnsiString());
-
 	m_checkboxTitleID = new CheckBoxWithLabel(page);
-	m_checkboxTitleID->SetBounds(0, 20, 320, 20);
+	m_checkboxTitleID->SetBounds(0, 0, 320, 20);
 	m_checkboxTitleID->Label()->SetText(_("Show Title ID in game description screen").toAnsiString());
 
 	m_checkboxBatteryPercent = new CheckBoxWithLabel(page);
-	m_checkboxBatteryPercent->SetBounds(0, 40, 320, 20);
+	m_checkboxBatteryPercent->SetBounds(0, 20, 320, 20);
 	m_checkboxBatteryPercent->Label()->SetText(_("Show battery percentage and clock").toAnsiString());
 
 	m_checkboxGameCounter = new CheckBoxWithLabel(page);
-	m_checkboxGameCounter->SetBounds(0, 60, 320, 20);
+	m_checkboxGameCounter->SetBounds(0, 40, 320, 20);
 	m_checkboxGameCounter->Label()->SetText(_("Show the number of game you have").toAnsiString());
 }
 
@@ -1235,6 +1247,40 @@ void Settings::fillNotifiersPage(Gwen::Controls::Base *page)
 	m_checkboxNEWSNoLED = new CheckBoxWithLabel(page);
 	m_checkboxNEWSNoLED->SetBounds(0, 100, 320, 20);
 	m_checkboxNEWSNoLED->Label()->SetText(_("Disable the LED when the notification is sent").toAnsiString());
+}
+
+void Settings::fillInactivityPage(Gwen::Controls::Base *page)
+{
+	m_checkboxSleep = new CheckBoxWithLabel(page);
+	m_checkboxSleep->SetBounds(0, 0, 320, 20);
+	m_checkboxSleep->Label()->SetText(_("Enable top screen sleep after inactivity").toAnsiString());
+
+	m_checkboxSleepBottom = new CheckBoxWithLabel(page);
+	m_checkboxSleepBottom->SetBounds(0, 20, 320, 20);
+	m_checkboxSleepBottom->Label()->SetText(_("Enable bottom screen sleep after inactivity").toAnsiString());
+
+	m_checkboxDimLEDs = new CheckBoxWithLabel(page);
+	m_checkboxDimLEDs->SetBounds(0, 50, 320, 20);
+	m_checkboxDimLEDs->Label()->SetText(_("Dim the LEDs after inactivity").toAnsiString());
+
+	m_checkboxInactivitySoundAllowed = new CheckBoxWithLabel(page);
+	m_checkboxInactivitySoundAllowed->SetBounds(0, 80, 320, 20);
+	m_checkboxInactivitySoundAllowed->Label()->SetText(_("Allow sounds on inactivity mode").toAnsiString());
+
+	m_labelInactivityTime = new Label(page);
+	m_labelInactivityTime->SetBounds(0, 125, 305, 20);
+	m_sliderInactivityTime = new HorizontalSlider(page);
+	m_sliderInactivityTime->SetBounds(0, 140, 305, 20);
+	m_sliderInactivityTime->SetRange(10, 60);
+	m_sliderInactivityTime->SetNotchCount(50);
+	m_sliderInactivityTime->SetClampToNotches(true);
+	m_sliderInactivityTime->onValueChanged.Add(this, &Settings::inactivityTimeChanged);
+}
+
+void Settings::inactivityTimeChanged(Gwen::Controls::Base* base)
+{
+	auto slider = gwen_cast<HorizontalSlider>(base);
+	m_labelInactivityTime->SetText(_("Go into inactivity mode after %.0fs", slider->GetFloatValue()).toAnsiString());
 }
 
 } // namespace GUI

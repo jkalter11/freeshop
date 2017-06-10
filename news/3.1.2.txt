@@ -8,3 +8,12 @@ The colorful update.
 • Added "Notifiers" settings tab, with
   support for the 3DS's RGB LED (thanks
   to Sono) and the Notification applet.
+• Improved Sleep/Inactivity mode:
+  - You can now choose which screen
+    you want to turn off after a
+    certain amount of inactivity.
+  - You can also choose to dim the Power
+    and WiFi LEDs.
+  - You can also choose after how many
+    seconds the freeShop will go into
+    sleep mode.

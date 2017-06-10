@@ -58,6 +58,7 @@ namespace FreeShop
 			void fillLocalesPage(Gwen::Controls::Base *page);
 			void fillThemePage(Gwen::Controls::Base *page);
 			void fillNotifiersPage(Gwen::Controls::Base *page);
+			void fillInactivityPage(Gwen::Controls::Base *page);
 			void fillOtherPage(Gwen::Controls::Base *page);
 
 			// Event Callback functions
@@ -93,6 +94,8 @@ namespace FreeShop
 			void languageChange(Gwen::Controls::Base* base);
 			void keyboardChange(Gwen::Controls::Base* base);
 			void systemKeyboardChange(Gwen::Controls::Base* base);
+
+			void inactivityTimeChanged(Gwen::Controls::Base* base);
 
 			void showNews(Gwen::Controls::Base* base);
 
@@ -157,8 +160,15 @@ namespace FreeShop
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxNEWSDownloadFinished;
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxNEWSNoLED;
 
-			// Other
+			// Inactivity
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxSleep;
+			Gwen::Controls::CheckBoxWithLabel *m_checkboxSleepBottom;
+			Gwen::Controls::CheckBoxWithLabel *m_checkboxDimLEDs;
+			Gwen::Controls::CheckBoxWithLabel *m_checkboxInactivitySoundAllowed;
+			Gwen::Controls::Label *m_labelInactivityTime;
+			Gwen::Controls::HorizontalSlider *m_sliderInactivityTime;
+
+			// Other
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxTitleID;
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxBatteryPercent;
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxGameCounter;

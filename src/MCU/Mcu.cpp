@@ -1,6 +1,8 @@
 #include "Mcu.hpp"
 #include <cstring>
 
+//Thanks to Sono and his research on MCU
+
 namespace FreeShop
 {
 
@@ -100,6 +102,11 @@ void MCU::ledReset()
   m_ledPattern.ani = 0xFF0000;
 
   ledApply();
+}
+
+void MCU::dimLeds(u8 brightness)
+{
+  mcuWriteRegister(0x28, &brightness, sizeof(brightness));
 }
 
 } // namespace FreeShop
