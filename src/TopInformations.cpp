@@ -26,7 +26,7 @@ TopInformations::TopInformations()
 	//Start the clock
 	m_switchClock.restart();
 	m_updateClock.restart();
-	
+
 	//Get the time to show it in the top part of the App List
 	time_t t = time(NULL);
 	struct tm * timeinfo;
@@ -66,7 +66,7 @@ TopInformations::TopInformations()
 
 	//Define texts position
 	m_textClock.setPosition(308.f - (m_textureBattery.getSize().x + m_textClock.getLocalBounds().width), -50.f);
-	
+
 	//Two points in clock
 	m_textTwoPoints = m_textClock;
 	m_textTwoPoints.setString(":");
@@ -105,7 +105,7 @@ void TopInformations::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates st
 
 	//Draw clock
 	target.draw(m_textClock);
-	
+
 	//Draw only the two points if the clock text is in clock mode
 	if (m_textClockMode == 1 && !m_isTransitioning)
 		target.draw(m_textTwoPoints);
@@ -176,7 +176,7 @@ void TopInformations::updateIcons(std::string timeTextFmt)
        		batteryPath = "battery" + std::to_string(batteryLevel - 1) + ".png";
 	else
        		batteryPath = "battery0.png";
-       	
+
        	//Update battery percentage
        	if (R_SUCCEEDED(MCUHWC_GetBatteryLevel(&batteryPercentHolder)))
        			m_batteryPercent = static_cast<int>(batteryPercentHolder);
@@ -207,7 +207,7 @@ void TopInformations::updateIcons(std::string timeTextFmt)
 	//Update battery icon
 	std::string batteryPath = "battery" + std::to_string(rand() % 5) + ".png";
 	std::string themedBatteryPath = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/images/" + batteryPath);
-	
+
 	m_batteryPercent = rand() % 101;
 
 	if (pathExists(themedBatteryPath.c_str(), false))
@@ -229,22 +229,22 @@ void TopInformations::updateIcons(std::string timeTextFmt)
 		//Reset the clock
 		m_switchClock.restart();
 		m_isTransitioning = true;
-		
+
 		//Switch mode
 		if (m_textClockMode == 1 && Config::get(Config::ShowBattery).GetBool() && m_canTransition) {
 			//Battery percentage mode
 			m_textClockMode = 2;
-			
+
 			//Fade out the old text
 			TweenEngine::Tween::to(m_textClock, m_textClock.FILL_COLOR_ALPHA, 0.4f)
 				.target(0.f)
 				.setCallback(TweenEngine::TweenCallback::COMPLETE, [=](TweenEngine::BaseTween* source) {
 						m_textClock.setString(std::to_string(m_batteryPercent) + "%");
-						if (!m_isCollapsed) 
+						if (!m_isCollapsed)
 							m_textClock.setPosition(308.f - (m_textureBattery.getSize().x + m_textClock.getLocalBounds().width), 5.f);
 					})
 				.start(m_tweenManager);
-			
+
 			//Fade in the new text
 			TweenEngine::Tween::to(m_textClock, m_textClock.FILL_COLOR_ALPHA, 0.4f)
 				.target(255.f)
@@ -256,7 +256,7 @@ void TopInformations::updateIcons(std::string timeTextFmt)
 		} else if (m_textClockMode != 1) {
 			//Clock mode
 			m_textClockMode = 1;
-			
+
 			//Fade out old text
 			TweenEngine::Tween::to(m_textClock, m_textClock.FILL_COLOR_ALPHA, 0.4f)
 				.target(0.f)
@@ -266,7 +266,7 @@ void TopInformations::updateIcons(std::string timeTextFmt)
 					m_textClock.setPosition(308.f - (m_textureBattery.getSize().x + m_textClock.getLocalBounds().width), 5.f);
 				})
 				.start(m_tweenManager);
-			
+
 			//Fade in new text
 			TweenEngine::Tween::to(m_textClock, m_textClock.FILL_COLOR_ALPHA, 0.4f)
 				.target(255.f)
@@ -275,6 +275,8 @@ void TopInformations::updateIcons(std::string timeTextFmt)
 					m_isTransitioning = false;
 				})
 				.start(m_tweenManager);
+		} else {
+			m_isTransitioning = false;
 		}
 	}
 
@@ -293,7 +295,7 @@ void TopInformations::updateIcons(std::string timeTextFmt)
 				//We should never be here
 				break;
 		}
-		
+
 		if (!m_isCollapsed)
 			m_textClock.setPosition(308.f - (m_textureBattery.getSize().x + m_textClock.getLocalBounds().width), 5.f);
 	}
@@ -311,7 +313,7 @@ void TopInformations::setTextMode(int newMode)
 	strftime(tempSec, 3, "%S", timeinfo);
 
 	strftime(timeTextFmt, 12, "%H %M", timeinfo);
-	
+
 	m_textClockMode = newMode;
 	updateIcons(timeTextFmt);
 }
@@ -331,15 +333,15 @@ Result TopInformations::PTMU_GetAdapterState(u8 *out)
 {
 	Handle serviceHandle = 0;
 	Result result = srvGetServiceHandle(&serviceHandle, "ptm:u");
-	
+
 	u32* ipc = getThreadCommandBuffer();
 	ipc[0] = 0x50000;
 	Result ret = svcSendSyncRequest(serviceHandle);
-	
+
 	svcCloseHandle(serviceHandle);
-	
+
 	if(ret < 0) return ret;
-	
+
 	*out = ipc[2];
 	return ipc[1];
 }
@@ -349,15 +351,15 @@ Result TopInformations::MCUHWC_GetBatteryLevel(u8 *out)
 {
 	Handle serviceHandle = 0;
 	Result result = srvGetServiceHandle(&serviceHandle, "mcu::HWC");
-	
+
 	u32* ipc = getThreadCommandBuffer();
 	ipc[0] = 0x50000;
 	Result ret = svcSendSyncRequest(serviceHandle);
-	
+
 	svcCloseHandle(serviceHandle);
-	
+
 	if(ret < 0) return ret;
-	
+
 	*out = ipc[2];
 	return ipc[1];
 }
