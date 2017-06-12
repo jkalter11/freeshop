@@ -345,7 +345,7 @@ int InstalledList::getGameCount()
 {
 	if (!m_isUpdatingList)
 		m_gameCount = m_installedItems.size();
-	
+
 	return m_gameCount;
 }
 

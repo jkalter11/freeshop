@@ -33,6 +33,7 @@ namespace {
 		// Music
 		"music_mode",
 		"music_filename",
+		"music_off_low_slider",
 		// Locales
 		"language",
 		"keyboard",
@@ -54,6 +55,8 @@ namespace {
 		"skiddo",
 		"show_battery_percentage",
 		"show_game_counter",
+		// Internals
+		"reset_eshop_music",
 	};
 }
 
@@ -141,8 +144,9 @@ void Config::loadDefaults()
 	// Music
 	ADD_DEFAULT(MusicMode, "eshop");
 	ADD_DEFAULT(MusicFilename, "");
+	ADD_DEFAULT(MusicTurnOffSlider, true);
 
-	//Locales
+	// Locales
 	ADD_DEFAULT(Language, "auto");
 	ADD_DEFAULT(Keyboard, "qwerty");
 	ADD_DEFAULT(SystemKeyboard, false);
@@ -166,6 +170,9 @@ void Config::loadDefaults()
 	ADD_DEFAULT(Skiddo, false);
 	ADD_DEFAULT(ShowBattery, false);
 	ADD_DEFAULT(ShowGameCounter, true);
+
+	// Internals
+	ADD_DEFAULT(ResetEshopMusic, false);
 }
 
 void Config::set(Key key, const char *val)

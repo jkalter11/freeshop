@@ -111,6 +111,8 @@ private:
 	int m_musicMode;
 	std::string m_musicFileName;
 
+	bool m_isSliderOff;
+
 	// Keyboard
 	util3ds::Keyboard m_keyboard;
 	cpp3ds::String m_lastKeyboardInput;

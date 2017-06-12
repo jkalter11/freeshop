@@ -90,6 +90,7 @@ namespace FreeShop
 			void musicFileChanged(Gwen::Controls::Base* base);
 			void selectRandomMusicTrack();
 			void playSelectedMusic();
+			void resetEshopMusicClicked(Gwen::Controls::Base *button);
 
 			void languageChange(Gwen::Controls::Base* base);
 			void keyboardChange(Gwen::Controls::Base* base);
@@ -142,13 +143,15 @@ namespace FreeShop
 			Gwen::Controls::ComboBox *m_comboMusicMode;
 			Gwen::Controls::ListBox *m_listboxMusicFiles;
 			Gwen::Controls::Label *m_labelAudioState;
+			Gwen::Controls::CheckBoxWithLabel *m_checkboxTurnOffMusicSlider;
+			Gwen::Controls::Button *m_buttonResetEshopMusic;
 
 			// Locales
 			Gwen::Controls::ListBox *m_listboxLanguages;
 			Gwen::Controls::ListBox *m_listboxKeyboards;
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxSystemKeyboard;
 
-			//Theme
+			// Theme
 			Gwen::Controls::Label *m_labelThemeName;
 			Gwen::Controls::Label *m_labelThemeVersion;
 			Gwen::Controls::Label *m_labelThemeDescription;

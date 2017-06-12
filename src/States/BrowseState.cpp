@@ -20,9 +20,6 @@
 #include <cpp3ds/System/FileSystem.hpp>
 #include <time.h>
 
-#define SECONDS_TO_SLEEP 3.f
-
-
 namespace FreeShop {
 
 BrowseState *g_browseState = nullptr;
@@ -44,6 +41,7 @@ BrowseState::BrowseState(StateStack& stack, Context& context, StateCallback call
 , m_isJapKeyboard(false)
 , m_isTIDKeyboard(false)
 , m_musicMode(0)
+, m_isSliderOff(false)
 {
 	g_browseState = this;
 	m_musicLoop.setLoop(true);
@@ -568,6 +566,16 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 			}
 			default:
 				break;
+		}
+	} else if (event.type == cpp3ds::Event::SliderVolumeChanged) {
+		if (event.slider.value < 0.1 && !m_isSliderOff && Config::get(Config::MusicTurnOffSlider).GetBool()) {
+			// The volume slider is under 10%, stop the music
+			m_isSliderOff = true;
+			stopBGM();
+		} else if (event.slider.value >= 0.1 && m_isSliderOff && Config::get(Config::MusicTurnOffSlider).GetBool()) {
+			// The volume slider is above or equals 10%, re-launch the music
+			m_isSliderOff = false;
+			m_settingsGUI->playMusic();
 		}
 	}
 

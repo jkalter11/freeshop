@@ -175,6 +175,7 @@ void Settings::saveToConfig()
 	Config::set(Config::MusicMode, m_comboMusicMode->GetSelectedItem()->GetName().c_str());
 	auto selectedMusic = m_listboxMusicFiles->GetSelectedRow();
 	Config::set(Config::MusicFilename, selectedMusic ? selectedMusic->GetText(0).c_str() : "");
+	Config::set(Config::MusicTurnOffSlider, m_checkboxTurnOffMusicSlider->Checkbox()->IsChecked());
 
 	// Locales
 	auto language = m_listboxLanguages->GetSelectedRow();
@@ -250,6 +251,7 @@ void Settings::loadConfig()
 			break;
 		}
 	m_comboMusicMode->SelectItemByName(Config::get(Config::MusicMode).GetString());
+	m_checkboxTurnOffMusicSlider->Checkbox()->SetChecked(Config::get(Config::MusicTurnOffSlider).GetBool());
 
 	// Locales
 	m_checkboxSystemKeyboard->Checkbox()->SetChecked(Config::get(Config::SystemKeyboard).GetBool());
@@ -855,7 +857,7 @@ void Settings::fillMusicPage(Gwen::Controls::Base *page)
 	m_comboMusicMode->AddItem(_("Play selected track"), "selected");
 
 	m_listboxMusicFiles = new ListBox(page);
-	m_listboxMusicFiles->SetBounds(10, 25, 290, 125);
+	m_listboxMusicFiles->SetBounds(10, 25, 290, 95);
 
 	m_comboMusicMode->onSelection.Add(this, &Settings::musicComboChanged);
 	m_listboxMusicFiles->onRowSelected.Add(this, &Settings::musicFileChanged);
@@ -881,7 +883,7 @@ void Settings::fillMusicPage(Gwen::Controls::Base *page)
 	}
 
 	m_labelAudioState = new Label(page);
-	m_labelAudioState->SetBounds(10, 152, 320, 20);
+	m_labelAudioState->SetBounds(10, 122, 320, 20);
 	if (cpp3ds::Service::isEnabled(cpp3ds::Audio)) {
 		m_labelAudioState->SetText(_("Audio Service: Enabled").toAnsiString());
 		m_labelAudioState->SetTextColor(Gwen::Color(63, 81, 181, 255));
@@ -889,6 +891,10 @@ void Settings::fillMusicPage(Gwen::Controls::Base *page)
 		m_labelAudioState->SetText(_("Audio Service: Disabled, please dump your DSP").toAnsiString());
 		m_labelAudioState->SetTextColor(Gwen::Color(244, 67, 54, 255));
 	}
+
+	m_checkboxTurnOffMusicSlider = new CheckBoxWithLabel(page);
+	m_checkboxTurnOffMusicSlider->SetBounds(10, 140, 320, 20);
+	m_checkboxTurnOffMusicSlider->Label()->SetText(_("Turn off the music if the volume slider is too low").toAnsiString());
 }
 
 void Settings::fillLocalesPage(Gwen::Controls::Base *page)
@@ -976,6 +982,11 @@ void Settings::fillOtherPage(Gwen::Controls::Base *page)
 	m_checkboxGameCounter = new CheckBoxWithLabel(page);
 	m_checkboxGameCounter->SetBounds(0, 40, 320, 20);
 	m_checkboxGameCounter->Label()->SetText(_("Show the number of game you have").toAnsiString());
+
+	m_buttonResetEshopMusic = new Button(page);
+	m_buttonResetEshopMusic->SetBounds(0, 140, 200, 20);
+	m_buttonResetEshopMusic->SetText(_("Update eShop music").toAnsiString());
+	m_buttonResetEshopMusic->onPress.Add(this, &Settings::resetEshopMusicClicked);
 }
 
 void Settings::updateQrClicked(Gwen::Controls::Base *button)
@@ -1281,6 +1292,35 @@ void Settings::inactivityTimeChanged(Gwen::Controls::Base* base)
 {
 	auto slider = gwen_cast<HorizontalSlider>(base);
 	m_labelInactivityTime->SetText(_("Go into inactivity mode after %.0fs", slider->GetFloatValue()).toAnsiString());
+}
+
+void Settings::resetEshopMusicClicked(Gwen::Controls::Base *button)
+{
+#ifndef EMULATION
+	Config::set(Config::ResetEshopMusic, true);
+
+	g_browseState->requestStackPush(States::Dialog, false, [=](void *data) mutable {
+		auto event = reinterpret_cast<DialogState::Event*>(data);
+		if (event->type == DialogState::GetText)
+		{
+			auto str = reinterpret_cast<cpp3ds::String*>(event->data);
+			*str = _("You need to restart freeShop for\nto update the eShop music\n\nWould you like to do this now?");
+			return true;
+		}
+		else if (event->type == DialogState::Response)
+		{
+			bool *accepted = reinterpret_cast<bool*>(event->data);
+			if (*accepted)
+			{
+				// Restart freeShop
+				Config::saveToFile();
+				g_requestJump = 0x400000F12EE00;
+			}
+			return true;
+		}
+		return false;
+	});
+#endif
 }
 
 } // namespace GUI

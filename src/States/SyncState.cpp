@@ -424,7 +424,7 @@ bool SyncState::loadServices()
 	#ifndef EMULATION
 		Result res;
 
-		//AM service init for sleep download
+		//AM service init for app lists
 		if (R_FAILED(res = amInit()))
 			Notification::spawn(_("Unable to start AM: \n0x%08lX (%d)", res, R_DESCRIPTION(res)));
 
@@ -448,6 +448,17 @@ bool SyncState::loadServices()
 		//NEWS service init for notifications
 		if (R_FAILED(res = newsInit()))
 			Notification::spawn(_("Unable to start NEWS: \n0x%08lX (%d)", res, R_DESCRIPTION(res)));
+
+		//NS service to launch Sapphire
+		if (R_FAILED(res = nsInit())) {
+			Notification::spawn(_("Unable to start NS: \n0x%08lX (%d)", res, R_DESCRIPTION(res)));
+		} else {
+			u32 pid;
+      Result ret = NS_LaunchTitle(0x000401300F13EE02ULL, 0, &pid);
+
+			if (R_FAILED(ret) && ret != 0xC8804478)
+				Notification::spawn(_("Unable to start Sapphire: \n0x%08lX (%d)", ret, R_DESCRIPTION(ret)));
+		}
 	#endif
 }
 
@@ -569,7 +580,7 @@ bool SyncState::updateEshopMusic()
 		std::string destPath = FREESHOP_DIR "/music/eshop" + fileName;
 		FS_Path filePath = {PATH_ASCII, fileName.size()+1, fileName.c_str()};
 
-		if (pathExists(destPath.c_str()))
+		if (pathExists(destPath.c_str()) && !Config::get(Config::ResetEshopMusic).GetBool())
 			continue;
 		std::cout << "getting shit!" << std::endl;
 		if (R_SUCCEEDED(res = FSUSER_OpenFileDirectly(&handle, ARCHIVE_EXTDATA, archivePath, filePath, FS_OPEN_READ, FS_ATTRIBUTE_READ_ONLY)))
@@ -587,6 +598,8 @@ bool SyncState::updateEshopMusic()
 			FSFILE_Close(handle);
 		}
 	}
+
+	Config::set(Config::ResetEshopMusic, false);
 	return true;
 #endif
 }

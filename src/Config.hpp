@@ -39,6 +39,7 @@ public:
 		// Music
 		MusicMode,
 		MusicFilename,
+		MusicTurnOffSlider,
 		// Locales
 		Language,
 		Keyboard,
@@ -60,6 +61,8 @@ public:
 		Skiddo,
 		ShowBattery,
 		ShowGameCounter,
+		// Internals
+		ResetEshopMusic,
 
 		KEY_COUNT,
 	};
