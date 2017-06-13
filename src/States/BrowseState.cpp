@@ -33,7 +33,7 @@ BrowseState::BrowseState(StateStack& stack, Context& context, StateCallback call
 , m_threadLoadApp(&BrowseState::loadApp, this)
 , m_threadBusy(false)
 , m_activeDownloadCount(0)
-, m_mode(Downloads)
+, m_mode(Info)
 , m_gwenRenderer(nullptr)
 , m_gwenSkin(nullptr)
 , m_settingsGUI(nullptr)
@@ -88,6 +88,7 @@ void BrowseState::initialize()
 	m_iconSet.addIcon(L"\uf013");
 	m_iconSet.addIcon(L"\uf002");
 	m_iconSet.setPosition(60.f, 13.f);
+	m_iconSet.setSelectedIndex(m_mode);
 
 	m_textActiveDownloads.setCharacterSize(8);
 	m_textActiveDownloads.setFillColor(cpp3ds::Color::Black);
@@ -401,7 +402,7 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 	{
 		if (!Config::get(Config::MusicOnInactivity).GetBool())
 			m_settingsGUI->playMusic();
-		
+
 		return true;
 	}
 
