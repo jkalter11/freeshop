@@ -135,8 +135,27 @@ SyncState::SyncState(StateStack& stack, Context& context, StateCallback callback
 	m_soundLoading.setBuffer(AssetManager<cpp3ds::SoundBuffer>::get("sounds/loading.ogg"));
 	m_soundLoading.setLoop(true);
 
+	std::string pathTexts = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/texts.json");
+	if (pathExists(pathTexts.c_str(), false)) {
+		if (Theme::loadFromFile()) {
+			Theme::isTextThemed = true;
+
+			//Load differents colors
+			std::string loadingTextValue = Theme::get("loadingText").GetString();
+
+			//Set the colors
+			int R, G, B;
+
+			hexToRGB(loadingTextValue, &R, &G, &B);
+			Theme::loadingText = cpp3ds::Color(R, G, B);
+		}
+	}
+
 	m_textStatus.setCharacterSize(14);
-	m_textStatus.setFillColor(cpp3ds::Color::Black);
+	if (Theme::isTextThemed)
+		m_textStatus.setFillColor(Theme::loadingText);
+	else
+		m_textStatus.setFillColor(cpp3ds::Color::Black);
 	m_textStatus.setOutlineColor(cpp3ds::Color(0, 0, 0, 70));
 	m_textStatus.setOutlineThickness(2.f);
 	m_textStatus.setPosition(160.f, 155.f);

@@ -8,6 +8,10 @@ The colorful update.
 • Added Notifiers, with support
   for the 3DS's RGB LED (thanks to @Sono)
   and the Notification applet.
+• Updated Timmy (1.2):
+  Theme makers should update their
+  themes, a new guide has been released
+  with the changelog.
 • Support for the Sapphire sysmodule,
   which extends the functionnality of
   the Notifiers with sleep mode downloads,

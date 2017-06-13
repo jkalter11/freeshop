@@ -41,7 +41,11 @@ public:
 	static cpp3ds::Color iconSetColor;
 	static cpp3ds::Color iconSetColorActive;
 	static cpp3ds::Color transitionScreenColor;
-	
+	static cpp3ds::Color loadingIcon;
+	static cpp3ds::Color loadingText;
+	static cpp3ds::Color freText;
+	static cpp3ds::Color versionText;
+
 	//Theme informations
 	static std::string themeName;
 	static std::string themeDesc;

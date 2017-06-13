@@ -2,6 +2,8 @@
 #define FREESHOP_LOADINGSTATE_HPP
 
 #include "State.hpp"
+#include "../TweenObjects.hpp"
+#include "../Util.hpp"
 #include <cpp3ds/Graphics/Sprite.hpp>
 #include <cpp3ds/Graphics/Texture.hpp>
 #include <cpp3ds/System/Clock.hpp>
@@ -24,6 +26,13 @@ private:
 	cpp3ds::RectangleShape m_background;
 	cpp3ds::Text m_icon;
 	cpp3ds::Clock m_rotateClock;
+
+	// Backgrounds
+	bool m_topBG;
+	bool m_botBG;
+
+	gui3ds::NinePatch m_rectTopBG;
+	gui3ds::NinePatch m_rectBotBG;
 };
 
 } // namespace FreeShop

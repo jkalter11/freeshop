@@ -33,6 +33,10 @@ cpp3ds::Color Theme::secondaryTextColor = cpp3ds::Color(130, 130, 130, 255);
 cpp3ds::Color Theme::iconSetColor = cpp3ds::Color(100, 100, 100);
 cpp3ds::Color Theme::iconSetColorActive = cpp3ds::Color(0, 0, 0);
 cpp3ds::Color Theme::transitionScreenColor = cpp3ds::Color(255, 255, 255);
+cpp3ds::Color Theme::loadingIcon = cpp3ds::Color(110, 110, 110, 255);
+cpp3ds::Color Theme::loadingText = cpp3ds::Color::Black;
+cpp3ds::Color Theme::freText = cpp3ds::Color(255, 255, 255, 0);
+cpp3ds::Color Theme::versionText = cpp3ds::Color(0, 0, 0, 100);
 
 //Theme informations
 std::string Theme::themeName = "Classic";
@@ -59,7 +63,11 @@ void Theme::loadDefaults()
 	ADD_DEFAULT("iconSet", "646464");
 	ADD_DEFAULT("iconSetActive", "363636");
 	ADD_DEFAULT("transitionScreen", "FFFFFF");
-	
+	ADD_DEFAULT("loadingColor", "898989");
+	ADD_DEFAULT("loadingText", "353535");
+	ADD_DEFAULT("freText", "420420");
+	ADD_DEFAULT("versionText", "546978");
+
 	ADD_DEFAULT("themeName", "My custom theme");
 	ADD_DEFAULT("themeDesc", "Theme made by someone.");
 	ADD_DEFAULT("themeVer", "x.y");

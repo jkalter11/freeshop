@@ -4,8 +4,11 @@
 #include <cpp3ds/System/I18n.hpp>
 #include <cpp3ds/System/Service.hpp>
 #include <cpp3ds/System/Sleep.hpp>
+#include <cpp3ds/System/FileSystem.hpp>
 #include "../Config.hpp"
 #include "../Notification.hpp"
+#include "../Theme.hpp"
+#include "../Util.hpp"
 #ifndef EMULATION
 #include "../MCU/Mcu.hpp"
 #endif
@@ -18,15 +21,41 @@ namespace FreeShop {
 TitleState::TitleState(StateStack& stack, Context& context, StateCallback callback)
 : State(stack, context, callback)
 {
+	std::string path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/texts.json");
+	if (pathExists(path.c_str(), false)) {
+		if (Theme::loadFromFile()) {
+			Theme::isTextThemed = true;
+
+			//Load differents colors
+			std::string freTextValue = Theme::get("freText").GetString();
+			std::string versionTextValue = Theme::get("versionText").GetString();
+
+			//Set the colors
+			int R, G, B;
+
+			hexToRGB(freTextValue, &R, &G, &B);
+			Theme::freText = cpp3ds::Color(R, G, B);
+
+			hexToRGB(versionTextValue, &R, &G, &B);
+			Theme::versionText = cpp3ds::Color(R, G, B);
+		}
+	}
+
 	m_textVersion.setString(FREESHOP_VERSION);
 	m_textVersion.setCharacterSize(12);
-	m_textVersion.setFillColor(cpp3ds::Color::White);
+	if (Theme::isTextThemed)
+		m_textVersion.setFillColor(Theme::versionText);
+	else
+		m_textVersion.setFillColor(cpp3ds::Color::White);
 	m_textVersion.setOutlineColor(cpp3ds::Color(0, 0, 0, 100));
 	m_textVersion.setOutlineThickness(1.f);
 	m_textVersion.setPosition(318.f - m_textVersion.getLocalBounds().width, 222.f);
 
 	m_textFree.setString("fre");
-	m_textFree.setFillColor(cpp3ds::Color(255, 255, 255, 0));
+	if (Theme::isTextThemed)
+		m_textFree.setFillColor(cpp3ds::Color(Theme::freText.r, Theme::freText.g, Theme::freText.b, 0));
+	else
+		m_textFree.setFillColor(cpp3ds::Color(255, 255, 255, 0));
 	m_textFree.setCharacterSize(75);
 	m_textFree.setPosition(23, 64);
 	m_textFree.setStyle(cpp3ds::Text::Bold);
