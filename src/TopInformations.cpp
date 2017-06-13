@@ -177,9 +177,9 @@ void TopInformations::updateIcons(std::string timeTextFmt)
 	else
        		batteryPath = "battery0.png";
 
-       	//Update battery percentage
-       	if (R_SUCCEEDED(MCUHWC_GetBatteryLevel(&batteryPercentHolder)))
-       			m_batteryPercent = static_cast<int>(batteryPercentHolder);
+ 	//Update battery percentage
+ 	if (R_SUCCEEDED(MCUHWC_GetBatteryLevel(&batteryPercentHolder)))
+ 			m_batteryPercent = static_cast<int>(batteryPercentHolder);
 
 	std::string themedBatteryPath = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/images/" + batteryPath);
 

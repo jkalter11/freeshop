@@ -81,6 +81,16 @@ BotInformations::BotInformations()
 
 	m_backgroundSD.setSize(320, 23);
 	m_backgroundSD.setPosition(0.f, 30.f);
+
+	//Sleep download instruction text
+	m_textSleepDownloads.setString(_(""));
+	if (Theme::isTextThemed)
+		m_textSleepDownloads.setFillColor(Theme::secondaryTextColor);
+	else
+		m_textSleepDownloads.setFillColor(cpp3ds::Color(0, 0, 0, 120));
+	m_textSleepDownloads.setCharacterSize(11);
+	m_textSleepDownloads.setPosition(2.f, 190.f);
+	m_textSleepDownloads.useSystemFont();
 }
 
 BotInformations::~BotInformations()
@@ -105,6 +115,7 @@ void BotInformations::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates st
 	target.draw(m_textSDStorage);
 	target.draw(m_textNAND);
 	target.draw(m_textNANDStorage);
+	target.draw(m_textSleepDownloads);
 }
 
 void BotInformations::update(float delta)
@@ -172,6 +183,28 @@ void BotInformations::update(float delta)
 
 	m_textNANDStorage.setString("200/400 MB");
 	m_progressBarNAND.setSize(cpp3ds::Vector2f(160, 26));
+#endif
+
+// Update the sleep downloads text
+#ifndef EMULATION
+	// Init vars
+	u32 pendingTitleCountSD = 0;
+	u32 pendingTitleCountNAND = 0;
+	u32 pendingTitleCountTotal = 0;
+
+	// Get pending title count for SD (3ds Titles) and NAND (TWL Titles)
+	AM_GetPendingTitleCount(&pendingTitleCountSD, MEDIATYPE_SD, AM_STATUS_MASK_INSTALLING | AM_STATUS_MASK_AWAITING_FINALIZATION);
+	AM_GetPendingTitleCount(&pendingTitleCountNAND, MEDIATYPE_NAND, AM_STATUS_MASK_INSTALLING | AM_STATUS_MASK_AWAITING_FINALIZATION);
+
+	// Get the total count
+	pendingTitleCountTotal = pendingTitleCountSD + pendingTitleCountNAND;
+
+	if (pendingTitleCountTotal > 0)
+		m_textSleepDownloads.setString(_("%i sleep download pending\nClose the software with the Select button and close\nthe lid of your console.", pendingTitleCountTotal));
+	else
+		m_textSleepDownloads.setString(_(""));
+#else
+	m_textSleepDownloads.setString(_("%i sleep download pending\nClose the software with the Select button and close\nthe lid of your console.", rand() % 11));
 #endif
 
 	m_tweenManager.update(delta);

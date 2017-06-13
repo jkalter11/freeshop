@@ -27,6 +27,8 @@ private:
 	cpp3ds::Text m_textNAND;
 	cpp3ds::Text m_textNANDStorage;
 
+	cpp3ds::Text m_textSleepDownloads;
+
 	gui3ds::NinePatch m_backgroundNAND;
 	gui3ds::NinePatch m_backgroundSD;
 	util3ds::TweenRectangleShape m_progressBarNAND;
