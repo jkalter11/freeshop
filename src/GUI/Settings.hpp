@@ -144,7 +144,6 @@ namespace FreeShop
 			Gwen::Controls::ListBox *m_listboxMusicFiles;
 			Gwen::Controls::Label *m_labelAudioState;
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxTurnOffMusicSlider;
-			Gwen::Controls::Button *m_buttonResetEshopMusic;
 
 			// Locales
 			Gwen::Controls::ListBox *m_listboxLanguages;
@@ -168,6 +167,7 @@ namespace FreeShop
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxSleepBottom;
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxDimLEDs;
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxInactivitySoundAllowed;
+			Gwen::Controls::CheckBoxWithLabel *m_checkboxInactivityMusicAllowed;
 			Gwen::Controls::Label *m_labelInactivityTime;
 			Gwen::Controls::HorizontalSlider *m_sliderInactivityTime;
 
@@ -175,6 +175,7 @@ namespace FreeShop
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxTitleID;
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxBatteryPercent;
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxGameCounter;
+			Gwen::Controls::Button *m_buttonResetEshopMusic;
 		};
 	}
 }

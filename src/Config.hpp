@@ -55,6 +55,7 @@ public:
 		SleepModeBottom,
 		DimLEDs,
 		SoundOnInactivity,
+		MusicOnInactivity,
 		InactivitySeconds,
 		// Other
 		TitleID,

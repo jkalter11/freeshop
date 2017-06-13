@@ -49,6 +49,7 @@ namespace {
 		"sleep_mode_bottom",
 		"dim_leds",
 		"sound_on_inactivity",
+		"music_on_inactivity",
 		"inactivity_seconds",
 		// Other
 		"title_id",
@@ -163,6 +164,7 @@ void Config::loadDefaults()
 	ADD_DEFAULT(SleepModeBottom, false);
 	ADD_DEFAULT(DimLEDs, false);
 	ADD_DEFAULT(SoundOnInactivity, true);
+	ADD_DEFAULT(MusicOnInactivity, false);
 	ADD_DEFAULT(InactivitySeconds, 60.f);
 
 	// Other

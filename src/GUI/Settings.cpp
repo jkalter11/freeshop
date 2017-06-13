@@ -196,6 +196,7 @@ void Settings::saveToConfig()
 	Config::set(Config::SleepModeBottom, m_checkboxSleepBottom->Checkbox()->IsChecked());
 	Config::set(Config::DimLEDs, m_checkboxDimLEDs->Checkbox()->IsChecked());
 	Config::set(Config::SoundOnInactivity, m_checkboxInactivitySoundAllowed->Checkbox()->IsChecked());
+	Config::set(Config::MusicOnInactivity, m_checkboxInactivityMusicAllowed->Checkbox()->IsChecked());
 
 	// Other
 	Config::set(Config::TitleID, m_checkboxTitleID->Checkbox()->IsChecked());
@@ -276,14 +277,15 @@ void Settings::loadConfig()
 	m_checkboxLEDDownloadErrored->Checkbox()->SetChecked(Config::get(Config::LEDDownloadError).GetBool());
 	m_checkboxNEWSDownloadFinished->Checkbox()->SetChecked(Config::get(Config::NEWSDownloadFinished).GetBool());
 	m_checkboxNEWSNoLED->Checkbox()->SetChecked(Config::get(Config::NEWSNoLED).GetBool());
-	m_sliderInactivityTime->SetFloatValue(Config::get(Config::InactivitySeconds).GetFloat());
-	inactivityTimeChanged(m_sliderInactivityTime);
 
 	// Inactivity
 	m_checkboxSleep->Checkbox()->SetChecked(Config::get(Config::SleepMode).GetBool());
 	m_checkboxSleepBottom->Checkbox()->SetChecked(Config::get(Config::SleepModeBottom).GetBool());
 	m_checkboxDimLEDs->Checkbox()->SetChecked(Config::get(Config::DimLEDs).GetBool());
 	m_checkboxInactivitySoundAllowed->Checkbox()->SetChecked(Config::get(Config::SoundOnInactivity).GetBool());
+	m_checkboxInactivityMusicAllowed->Checkbox()->SetChecked(Config::get(Config::MusicOnInactivity).GetBool());
+	m_sliderInactivityTime->SetFloatValue(Config::get(Config::InactivitySeconds).GetFloat());
+	inactivityTimeChanged(m_sliderInactivityTime);
 
 	// Other
 	m_checkboxTitleID->Checkbox()->SetChecked(Config::get(Config::TitleID).GetBool());
@@ -1277,6 +1279,10 @@ void Settings::fillInactivityPage(Gwen::Controls::Base *page)
 	m_checkboxInactivitySoundAllowed = new CheckBoxWithLabel(page);
 	m_checkboxInactivitySoundAllowed->SetBounds(0, 80, 320, 20);
 	m_checkboxInactivitySoundAllowed->Label()->SetText(_("Allow sounds on inactivity mode").toAnsiString());
+
+	m_checkboxInactivityMusicAllowed = new CheckBoxWithLabel(page);
+	m_checkboxInactivityMusicAllowed->SetBounds(0, 100, 320, 20);
+	m_checkboxInactivityMusicAllowed->Label()->SetText(_("Allow music on inactivity mode").toAnsiString());
 
 	m_labelInactivityTime = new Label(page);
 	m_labelInactivityTime->SetBounds(0, 125, 305, 20);

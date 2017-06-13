@@ -14,7 +14,8 @@ The colorful update.
   it will blink the LED when a sleep mode
   download is finished. (Thanks to @Sono
   again, download links on the GBAtemp
-  thread)
+  thread, a system firmware >= 11.0 is
+  required.)
 • Improved Sleep/Inactivity mode:
   - You can now choose which screen
     you want to turn off after a

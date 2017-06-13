@@ -313,7 +313,9 @@ bool BrowseState::update(float delta)
 	// Go into sleep state after inactivity
 	if (!SleepState::isSleeping && (Config::get(Config::SleepMode).GetBool() || Config::get(Config::SleepModeBottom).GetBool() || Config::get(Config::DimLEDs).GetBool()) && SleepState::clock.getElapsedTime() > cpp3ds::seconds(Config::get(Config::InactivitySeconds).GetFloat()))
 	{
-		stopBGM();
+		if (!Config::get(Config::MusicOnInactivity).GetBool())
+			stopBGM();
+
 		requestStackPush(States::Sleep);
 		return false;
 	}
@@ -397,7 +399,9 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 {
 	if (SleepState::isSleeping)
 	{
-		m_settingsGUI->playMusic();
+		if (!Config::get(Config::MusicOnInactivity).GetBool())
+			m_settingsGUI->playMusic();
+		
 		return true;
 	}
 
