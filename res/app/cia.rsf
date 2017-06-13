@@ -220,7 +220,6 @@ AccessControlInfo:
    - ac:u
    - act:u
    - am:net
-   - boss:U
    - cam:u
    - cecd:u
    - dsp::DSP
@@ -242,7 +241,7 @@ AccessControlInfo:
    - ptm:sysm
    - am:u
    - ns:s
-
+   - nwm::EXT
 
 SystemControlInfo:
   SaveDataSize: 0K

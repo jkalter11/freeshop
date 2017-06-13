@@ -31,3 +31,8 @@ The colorful update.
 • The music will now stop if the volume
   slider is too low (this can be disabled
   in the Music settings).
+• You can now press the A button at any
+  time on the loading screen to enable
+  WiFi.
+• A notification is sent if the battery
+  level is low.

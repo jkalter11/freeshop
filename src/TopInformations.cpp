@@ -22,6 +22,7 @@ TopInformations::TopInformations()
 , m_isCollapsed(true)
 , m_isTransitioning(false)
 , m_canTransition(false)
+, m_lowBatteryNotified(false)
 {
 	//Start the clock
 	m_switchClock.restart();
@@ -168,14 +169,22 @@ void TopInformations::updateIcons(std::string timeTextFmt)
 	cpp3ds::Uint8 batteryPercentHolder = 0;
 	std::string batteryPath;
 
-	if (R_SUCCEEDED(PTMU_GetBatteryChargeState(&batteryChargeState)) && batteryChargeState)
-       		batteryPath = "battery_charging.png";
-       	else if (R_SUCCEEDED(PTMU_GetAdapterState(&isAdapterPlugged)) && isAdapterPlugged)
-       		batteryPath = "battery_charging_full.png";
-	else if (R_SUCCEEDED(PTMU_GetBatteryLevel(&batteryLevel)))
-       		batteryPath = "battery" + std::to_string(batteryLevel - 1) + ".png";
+	if (R_SUCCEEDED(PTMU_GetBatteryChargeState(&batteryChargeState)) && batteryChargeState) {
+    batteryPath = "battery_charging.png";
+		m_lowBatteryNotified = false;
+  } else if (R_SUCCEEDED(PTMU_GetAdapterState(&isAdapterPlugged)) && isAdapterPlugged) {
+    batteryPath = "battery_charging_full.png";
+		m_lowBatteryNotified = false;
+	} else if (R_SUCCEEDED(PTMU_GetBatteryLevel(&batteryLevel))) {
+  	batteryPath = "battery" + std::to_string(batteryLevel - 1) + ".png";
+
+		if (batteryLevel - 1 == 1 && !m_lowBatteryNotified) {
+			Notification::spawn(_("Battery power is running low"));
+			m_lowBatteryNotified = true;
+		}
+	}
 	else
-       		batteryPath = "battery0.png";
+  	batteryPath = "battery0.png";
 
  	//Update battery percentage
  	if (R_SUCCEEDED(MCUHWC_GetBatteryLevel(&batteryPercentHolder)))

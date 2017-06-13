@@ -1,4 +1,5 @@
 #include "SyncState.hpp"
+#include "DialogState.hpp"
 #include "../Download.hpp"
 #include "../Installer.hpp"
 #include "../Util.hpp"
@@ -175,6 +176,20 @@ bool SyncState::update(float delta)
 
 bool SyncState::processEvent(const cpp3ds::Event& event)
 {
+	if (event.type == cpp3ds::Event::KeyPressed) {
+		switch (event.key.code)	{
+			case cpp3ds::Keyboard::A: {
+#ifndef EMULATION
+				if (R_SUCCEEDED(nwmExtInit())) {
+					NWMEXT_ControlWirelessEnabled(true);
+					nwmExtExit();
+				}
+				break;
+#endif
+			}
+		}
+	}
+
 	return true;
 }
 
@@ -185,6 +200,7 @@ void SyncState::sync()
 	//No internet connection
 	if (!cpp3ds::Service::isEnabled(cpp3ds::Httpc))
 	{
+		Notification::spawn(_("Press the A button to enable WiFi"));
 		while (!cpp3ds::Service::isEnabled(cpp3ds::Httpc) && m_timer.getElapsedTime() < cpp3ds::seconds(30.f) && !exitRequired)
 		{
 			setStatus(_("Waiting for internet connection... %.0fs", 30.f - m_timer.getElapsedTime().asSeconds()));
@@ -456,7 +472,7 @@ bool SyncState::loadServices()
 			u32 pid;
       Result ret = NS_LaunchTitle(0x000401300F13EE02ULL, 0, &pid);
 
-			if (R_FAILED(ret) && ret != 0xC8804478)
+			if (R_FAILED(ret) && ret != 0xC8804478 && ret != 0xD9001413)
 				Notification::spawn(_("Unable to start Sapphire: \n0x%08lX (%d)", ret, R_DESCRIPTION(ret)));
 		}
 	#endif

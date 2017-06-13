@@ -38,21 +38,23 @@ private:
 	util3ds::TweenSprite m_batteryIcon;
 	cpp3ds::Texture m_textureSignal;
 	util3ds::TweenSprite m_signalIcon;
-	
+
 	cpp3ds::Clock m_switchClock;
 	cpp3ds::Clock m_updateClock;
 	int m_textClockMode;
-	
+
 	int m_batteryPercent;
-	
+
 	bool m_isCollapsed;
 	bool m_isTransitioning;
 	bool m_canTransition;
 
 	TweenEngine::TweenManager m_tweenManager;
-	
+
 	void updateIcons(std::string timeTextFmt);
-	
+
+	bool m_lowBatteryNotified;
+
 #ifndef EMULATION
 	Result PTMU_GetAdapterState(u8 *out);
 	Result MCUHWC_GetBatteryLevel(u8 *out);

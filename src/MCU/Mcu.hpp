@@ -30,6 +30,8 @@ public:
 
   void dimLeds(u8 brightness);
 
+  Result mcuReadRegister(u8 reg, void* data, u32 size);
+
 private:
   Handle m_mcuHandle;
   RGBLedPattern m_ledPattern;
