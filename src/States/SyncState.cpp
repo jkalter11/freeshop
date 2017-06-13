@@ -229,6 +229,13 @@ void SyncState::sync()
 		Config::set(Config::ShowNews, true);
 	}
 
+	// Check if the last session exited correctly
+	if (!Config::get(Config::CleanExit).GetBool()) {
+		Notification::spawn(_("The freeShop wasn't closed correctly the last time.\nDelete the " FREESHOP_DIR " folder\nand/or reinstall freeShop if the problem persists."));
+	}
+	Config::set(Config::CleanExit, false);
+	Config::saveToFile();
+
 	loadServices();
 	loadThemeManagement();
 	updateCache();

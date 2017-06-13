@@ -58,6 +58,7 @@ namespace {
 		"show_game_counter",
 		// Internals
 		"reset_eshop_music",
+		"clean_exit",
 	};
 }
 
@@ -175,6 +176,7 @@ void Config::loadDefaults()
 
 	// Internals
 	ADD_DEFAULT(ResetEshopMusic, false);
+	ADD_DEFAULT(CleanExit, true);
 }
 
 void Config::set(Key key, const char *val)

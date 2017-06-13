@@ -1,6 +1,7 @@
 #include "FreeShop.hpp"
 #include "DownloadQueue.hpp"
 #include "TitleKeys.hpp"
+#include "Config.hpp"
 #include "States/BrowseState.hpp"
 #include "States/SleepState.hpp"
 #include "States/SyncState.hpp"
@@ -76,6 +77,9 @@ int main(int argc, char** argv)
 	game->run();
 	FreeShop::DownloadQueue::getInstance().suspend();
 	FreeShop::DownloadQueue::getInstance().save();
+
+	FreeShop::Config::set(FreeShop::Config::CleanExit, true);
+	FreeShop::Config::saveToFile();
 #ifndef EMULATION
 	nimsExit();
 	amExit();
