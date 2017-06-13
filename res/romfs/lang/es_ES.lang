@@ -36,6 +36,12 @@ Cargando servicios...
 Loading theme manager...
 Cargando gestionador de temas...
 
+Press the A button to enable WiFi
+Pulsa el botón A para activar el WiFi
+
+The freeShop wasn't closed correctly the last time.\nDelete the %s folder\nand/or reinstall freeShop if the problem persists.
+La freeShop no se cerró correctamente la última vez.\nBorra la carpeta %s\ny/o reinstala la freeShop si el problema persiste.
+
 # src/States/BrowseState.cpp
 ############################
 No title keys found.\nMake sure you have keys in\n%s\n\nManually copy keys to the directory\nor check settings to enter a URL\nfor downloading title keys.
@@ -58,6 +64,9 @@ Escribe el nombre de un juego...
 
 Type a game Title ID...
 Escribe el Title ID de un juego...
+
+This song file type isn't supported.
+El tipo de este archivo de audio no está soportado. 
 
 # src/States/DialogState.cpp
 ############################
@@ -194,6 +203,12 @@ La instalación en modo reposo ha fallado: \n%s
 Processing for sleep download: \n%s
 Procesando para descarga en modo reposo: \n%s
 
+%s has been installed
+Se ha instalado %s
+
+The game %s (%s) has been installed on \n%s
+El juego %s (%s) se ha instalado en \n%s
+
 # src/AppItem.cpp
 #################
 Already queued for sleep installation: \n%s
@@ -296,6 +311,16 @@ La solicitud expiró.\nInténtalo de nuevo.
 
 Invalid URL.
 URL inválida.
+
+# src/TopInformations.cpp
+#########################
+Battery power is running low
+Queda poca batería
+
+# src/BotInformations.cpp
+#########################
+%i sleep download pending\nClose the software with the Select button and close\nthe lid of your console.
+%i de descarga en modo reposo pendiente\nCierra el programa con el botón Select y cierra\nla tapa de la consola.
 
 # src/GUI/Settings.cpp
 ######################
@@ -496,3 +521,54 @@ Escuchar pista seleccionada
 
 News
 Noticias
+
+Notifiers
+Notificaciones
+
+Show the number of game you have
+Mostrar el número de juegos que tienes
+
+Blink the LED on freeShop startup
+Parpadear el LED al iniciar la freeShop
+
+Blink the LED when a download finished
+Parpadear el LED cuando una descarga haya finalizado
+
+Blink the LED when a download failed
+Parpadear el LED cuando una descarga haya fallado
+
+Send a notification when a download finished
+Enviar una notificación cuando una descarga haya finalizado
+
+Disable the LED when the notification is sent
+Desactivar el LED cuando la notificación haya sido enviada
+
+Inactivity
+Inactividad
+
+Enable top screen sleep after inactivity
+Activar el modo reposo de la pantalla superior tras inactividad
+
+Enable bottom screen sleep after inactivity
+Activar el modo reposo de la pantalla inferior tras inactividad
+
+Dim the LEDs after inactivity
+Atenuar el LED después de inactividad
+
+Allow sounds on inactivity mode
+Permitir sonidos en modo de inactividad
+
+Go into inactivity mode after %.0fs
+Ir al modo de inactividad después de %.0fs
+
+Turn off the music if the volume slider is too low
+Apagar la música si la barra de volumen está demasiado baja
+
+Update eShop music
+Actualizar la música de eShop
+
+You need to restart freeShop\nto update the eShop music\n\nWould you like to do this now?
+Necesitas reiniciar la freeShop\npara actualizar la música de eShop\n\n¿Te gustaría hacerlo ahora?
+
+Allow music on inactivity mode
+Permitir música en modo de inactividad

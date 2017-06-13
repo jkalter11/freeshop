@@ -30,6 +30,12 @@ Extrahiere neusten Cache...
 Downloading title keys...
 Lade Title-Keys...
 
+Press the A button to enable WiFi
+Drücke den A-Knopf um WiFi zu aktivieren.
+
+The freeShop wasn't closed correctly the last time.\nDelete the %s folder\nand/or reinstall freeShop if the problem persists.
+Der freeShop wurde das letzte Mal nicht korrekt geschlossen. \nLösche den %s Ordner\nund/oder installiere freeShop neu, wenn das Problem weiter besteht.
+
 # src/States/BrowseState.cpp
 ############################
 No title keys found.\nMake sure you have keys in\n%s\n\nManually copy keys to the directory\nor check settings to enter a URL\nfor downloading title keys.
@@ -52,6 +58,9 @@ Gebe den Namen eines Spieles ein...
 
 Type a game Title ID...
 Gebe die Title ID ein...
+
+This song file type isn't supported.
+Dieser Dateityp des Liedes wird nicht unterstützt.
 
 # src/States/DialogState.cpp
 ############################
@@ -173,6 +182,12 @@ Falscher Title-Key
 Processing for sleep download: \n%s
 Verarbeitungen für den Download im Schlafmodus:
 
+%s has been installed
+%s wurde installiert.
+
+The game %s (%s) has been installed on \n%s
+Das Spiel %s (%s) wurde am \n%s installiert.
+
 # src/AppItem.cpp
 #################
 Sleep download canceled: \n%s
@@ -261,6 +276,16 @@ Zeitüberschreitung.\nVersuche es erneut.
 
 Invalid URL.
 Ungültige URL.
+
+# src/TopInformations.cpp
+#########################
+Battery power is running low
+Die Batterie ist fast leer.
+
+# src/BotInformations.cpp
+#########################
+%i sleep download pending\nClose the software with the Select button and close\nthe lid of your console.
+%i 
 
 # src/GUI/Settings.cpp
 ######################
@@ -425,3 +450,54 @@ Title-Key URL(s) Fernsteuerung
 
 You need to restart freeShop for\n%s to be loaded.\n\nWould you like to do this now?
 Du musst freeShop neu starten, um\n%s zu laden.\n\nMöchtest du jetzt neustarten?
+
+Notifiers
+Benachrichtigungen
+
+Show the number of game you have
+Zeige die Anzahl der Spiele die du besitzt.
+
+Blink the LED on freeShop startup
+Blinken der LED beim Starten des freeShop.
+
+Blink the LED when a download finished
+Blinken der LED wenn ein Download fertig wurde.
+
+Blink the LED when a download failed
+Blinken der LED wenn ein Download fehlgeschlagen ist.
+
+Send a notification when a download finished
+Sende eine Benachrichtigungen wenn ein Download fertig wurde.
+
+Disable the LED when the notification is sent
+Deaktiviere die LED wenn die Benachrichtigung gesendet wurde.
+
+Inactivity
+Inaktivität
+
+Enable top screen sleep after inactivity
+Deaktiviere den oberen Bildschirm bei Inaktivität
+
+Enable bottom screen sleep after inactivity
+Deaktiviere den unteren Bildschirm bei Inaktivität
+
+Dim the LEDs after inactivity
+Dimme die LEDs bei Inaktivität
+
+Allow sounds on inactivity mode
+Erlaube Töne im Inaktivitäts-Modus
+
+Go into inactivity mode after %.0fs
+Gehe in den Inaktivitäts-Modus nach %.0fs.
+
+Turn off the music if the volume slider is too low
+Schalte die Musik ab, wenn der Schalter zu niedrig ist.
+
+Update eShop music
+Aktualisiere die eShop Musik.
+
+You need to restart freeShop\nto update the eShop music\n\nWould you like to do this now?
+Du musst den freeShop neustarten\num die eShop Musik zu updaten.\n\nMöchtest du dies jetzt tun?
+
+Allow music on inactivity mode
+Erlaube Musik im Inaktivitäts-Modus.

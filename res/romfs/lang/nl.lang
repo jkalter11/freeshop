@@ -36,6 +36,12 @@ Thema manager aan het laden...
 Loading services...
 Services laden...
 
+Press the A button to enable WiFi
+Druk op de A knop om WiFi aan te zetten
+
+The freeShop wasn't closed correctly the last time.\nDelete the %s folder\nand/or reinstall freeShop if the problem persists.
+freeShop was de vorige keer niet correct afgesloten.\nVerwijder de %s map\nand/of herinstalleer freeShop als het probleem blijft aanhouden.
+
 # src/States/BrowseState.cpp
 ############################
 No title keys found.\nMake sure you have keys in\n%s\n\nManually copy keys to the directory\nor check settings to enter a URL\nfor downloading title keys.
@@ -58,6 +64,9 @@ Typ een game naam...
 
 Type a game Title ID...
 Typ een Title ID...
+
+This song file type isn't supported.
+Dit filetype muziek word niet ondersteund.
 
 # src/States/DialogState.cpp
 ############################
@@ -197,6 +206,12 @@ Slaapstand installatie mislukt: \n%s
 Processing for sleep download: \n%s
 Slaapstand download verwerken: \n%s
 
+%s has been installed
+%s is geinstalleerd.
+
+The game %s (%s) has been installed on \n%s
+De game %s is geinstalleerd op \n%s
+
 # src/AppItem.cpp
 #################
 Already queued for sleep installation: \n%s
@@ -299,6 +314,16 @@ Aanvraag timeout.\nProbeer opnieuw.
 
 Invalid URL.
 Ongeldige URL.
+
+# src/TopInformations.cpp
+#########################
+Battery power is running low
+Batterijlading is laag.
+
+# src/BotInformations.cpp
+#########################
+%i sleep download pending\nClose the software with the Select button and close\nthe lid of your console.
+%i slaapstand download voorbereid\nSluit de software af met de Select knop en sluit\nde console.
 
 # src/GUI/Settings.cpp
 ######################
@@ -499,3 +524,54 @@ Speel geselecteerde track
 
 News
 Nieuws
+
+Notifiers
+Notificaties
+
+Show the number of game you have
+Toon het aantal games die je hebt.
+
+Blink the LED on freeShop startup
+Knipper de LED bij het opstarten van freeShop.
+
+Blink the LED when a download finished
+Knipper de LED wanneer een download voltooid is.
+
+Blink the LED when a download failed
+Knipper de LED wanneer een download mislukt.
+
+Send a notification when a download finished
+Stuur een notificatie wanneer een download voltooid is.
+
+Disable the LED when the notification is sent
+Zet de LED uit waneer de notificatie gestuurd is.
+
+Inactivity
+Inactiviteit
+
+Enable top screen sleep after inactivity
+Activeer scherm-standby op het bovenste scherm terwijl inactief.
+
+Enable bottom screen sleep after inactivity
+Activeer scherm-standby op het onderste scherm terwijl inactivitief.
+
+Dim the LEDs after inactivity
+Dim de LEDS terwijl inactief.
+
+Allow sounds on inactivity mode
+Sta geluiden toe terwijl inactief.
+
+Go into inactivity mode after %.0fs
+Ga in activiteitmodus na %.0fs
+
+Turn off the music if the volume slider is too low
+Zet de muziek uit als de volume slider te laag is.
+
+Update eShop music
+Update eShop muziek.
+
+You need to restart freeShop\nto update the eShop music\n\nWould you like to do this now?
+Je moet freeShop herstarten om\nde muziek te updaten.\n\nZou je dit nu willen doen?
+
+Allow music on inactivity mode
+Sta muziek toe terwijl inactief.
