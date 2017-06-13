@@ -40,3 +40,7 @@ The colorful update.
   WiFi.
 • A notification is sent if the battery
   level is low.
+• Bugfix: The Informations icon is now
+  selected by default on freeShop boot
+• Bugfix: The system app DLC & Updates
+  are now installable without problems
