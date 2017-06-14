@@ -30,12 +30,12 @@ Estrazione cache più recente...
 Downloading title keys...
 Scaricamento chiavi titolo...
 
-+Press the A button to enable WiFi
-+Premi il bottone A per abilitare il WiFi.
-+
-+The freeShop wasn't closed correctly the last time.\nDelete the %s folder\nand/or reinstall freeShop if the problem persists.
-+freeShop non è stato chiuso correttamente l'ultima volta.\nElimina la %s cartella\nand/o reinstalla freeShop se il problema persiste.
-+
+Press the A button to enable WiFi
+Premi il bottone A per abilitare il WiFi.
+
+The freeShop wasn't closed correctly the last time.\nDelete the %s folder\nand/or reinstall freeShop if the problem persists.
+freeShop non è stato chiuso correttamente l'ultima volta.\nElimina la %s cartella\nand/o reinstalla freeShop se il problema persiste.
+
 
 Loading theme manager...
 Avviando manager temi...
@@ -57,17 +57,17 @@ Elemento accodato: %s
 Already installed: %s
 Già installato: %s
 
-+
-+Type a game name...
-+Scrivi il nome di un gioco...
-+
-+Type a game Title ID...
-+Scrivi il Title ID di un gioco...
-+
 
-+This song file type isn't supported.
-+Il formato del file di questa canzone non è supportato.
-+
+Type a game name...
+Scrivi il nome di un gioco...
+
+Type a game Title ID...
+Scrivi il Title ID di un gioco...
+
+
+This song file type isn't supported.
+Il formato del file di questa canzone non è supportato.
+
 
 # src/States/DialogState.cpp
 ############################
@@ -204,16 +204,16 @@ Impossibile installare seed: \n%s
 Sleep installation failed: \n%s
 Installazione modalità riposo fallita: \n%s
 
-+Processing for sleep download: \n%s
-+Elaborazione del download in modalità riposo: \n%s
-+
+Processing for sleep download: \n%s
+Elaborazione del download in modalità riposo: \n%s
 
-+%s has been installed
-+%s è stato installato.
-+
-+The game %s (%s) has been installed on \n%s
-+Il gioco %s (%s) è stato installato su \n%s.
-+
+
+%s has been installed
+%s è stato installato.
+
+The game %s (%s) has been installed on \n%s
+Il gioco %s (%s) è stato installato su \n%s.
+
 
 # src/AppItem.cpp
 #################
@@ -226,12 +226,12 @@ Preparazione per installazione in modalità riposo: \n%s
 Ready for sleep installation: \n%s
 Pronto per installazione in modalità riposo: \n%s
 
-+Sleep download canceled: \n%s
-+Il download in modalità riposo è stato cancellato: \n%s
-+
-+A system update is required to download in sleep mode.
-+Il download in modalità riposo richiede un aggiornamento del sistema.
-+
+Sleep download canceled: \n%s
+Il download in modalità riposo è stato cancellato: \n%s
+
+A system update is required to download in sleep mode.
+Il download in modalità riposo richiede un aggiornamento del sistema.
+
 
 # src/InstalledItem.cpp
 #######################
@@ -319,16 +319,16 @@ Richiesta scaduta.\nRiprova.
 Invalid URL.
 URL non valido.
 
-+# src/TopInformations.cpp
-+#########################
-+Battery power is running low
-+La batteria si sta scaricando.
-+
-+# src/BotInformations.cpp
-+#########################
-+%i sleep download pending\nClose the software with the Select button and close\nthe lid of your console.
-+%i Download in modalità riposo sospeso\nChiudi il software premendo il bottone Select e\nchiudi il coperchio della tua console.
-+
+# src/TopInformations.cpp
+#########################
+Battery power is running low
+La batteria si sta scaricando.
+
+# src/BotInformations.cpp
+#########################
+%i sleep download pending\nClose the software with the Select button and close\nthe lid of your console.
+%i Download in modalità riposo sospeso\nChiudi il software premendo il bottone Select e\nchiudi il coperchio della tua console.
+
 
 # src/GUI/Settings.cpp
 ######################
@@ -509,57 +509,57 @@ URL(s) remoto delle title keys
 You need to restart freeShop for\n%s to be loaded.\n\nWould you like to do this now?
 Devi riavviare freeShop per\n caricare %s.\n\nDesideri farlo ora?
 
-+
-+Notifiers
-+Notifiche
-+
-+Show the number of game you have
-+Mostra il numero di giochi che possiedi.
-+
-+Blink the LED on freeShop startup
-+Fai lampeggiare il LED all'avvio di freeShop.
-+
-+Blink the LED when a download finished
-+Fai lampeggiare il LED quando un download è finito.
-+
-+Blink the LED when a download failed
-+Fai lampeggiare il LED quando un download è fallito.
-+
-+Send a notification when a download finished
-+Manda una notifica quando un download è finito.
-+
-+Disable the LED when the notification is sent
-+Disabilita il LED quando la notifica viene mandata.
-+
-+Inactivity
-+Inattività
-+
-+Enable top screen sleep after inactivity
-+Abilita lo spegnimento dello schermo superiore dopo l'inattività
-+
-+Enable bottom screen sleep after inactivity
-+Abilita lo spegnimento dello schermo inferiore dopo l'inattività
-+
-+Dim the LEDs after inactivity
-+Oscura il led dopo l'inattività
-+
-+Allow sounds on inactivity mode
-+Abilita i suoni sulla modalità di inattività
-+
-+Go into inactivity mode after %.0fs
-+Vai in modalità di inattività dopo %.0fs.
-+
-+Turn off the music if the volume slider is too low
-+Spegni la musica se il regolatore del volume è troppo basso.
-+
-+Update eShop music
-+Aggiorna la musica dell'eShop.
-+
-+You need to restart freeShop\nto update the eShop music\n\nWould you like to do this now?
-+Devi riavviare freeShop\nper aggiornare la musica dell'eShop.\n\nDesideri farlo ora?
-+
-+Allow music on inactivity mode
-+Consenti la riproduzione di musica in modalità di inattività
+
+Notifiers
+Notifiche
+
+Show the number of game you have
+Mostra il numero di giochi che possiedi.
+
+Blink the LED on freeShop startup
+Fai lampeggiare il LED all'avvio di freeShop.
+
+Blink the LED when a download finished
+Fai lampeggiare il LED quando un download è finito.
+
+Blink the LED when a download failed
+Fai lampeggiare il LED quando un download è fallito.
+
+Send a notification when a download finished
+Manda una notifica quando un download è finito.
+
+Disable the LED when the notification is sent
+Disabilita il LED quando la notifica viene mandata.
+
+Inactivity
+Inattività
+
+Enable top screen sleep after inactivity
+Abilita lo spegnimento dello schermo superiore dopo l'inattività
+
+Enable bottom screen sleep after inactivity
+Abilita lo spegnimento dello schermo inferiore dopo l'inattività
+
+Dim the LEDs after inactivity
+Disabilita il led dopo l'inattività
+
+Allow sounds on inactivity mode
+Abilita i suoni sulla modalità di inattività
+
+Go into inactivity mode after %.0fs
+Vai in modalità di inattività dopo %.0fs.
+
+Turn off the music if the volume slider is too low
+Spegni la musica se il regolatore del volume è troppo basso.
+
+Update eShop music
+Aggiorna la musica dell'eShop.
+
+You need to restart freeShop\nto update the eShop music\n\nWould you like to do this now?
+Devi riavviare freeShop\nper aggiornare la musica dell'eShop.\n\nDesideri farlo ora?
+
+Allow music on inactivity mode
+Consenti la riproduzione di musica in modalità di inattività
 
 Keyboard:
 Tastiera :
