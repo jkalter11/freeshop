@@ -152,7 +152,7 @@ void TopInformations::setCollapsed(bool collapsed)
 		TWEEN_IN_X_NOWAIT(m_batteryIcon, 370.f - m_textureBattery.getSize().x);
 		TWEEN_IN_X_NOWAIT(m_signalIcon, -50.f);
 	} else {
-		TweenEngine::Tween::to(m_textClock, m_textClock.POSITION_Y, 0.6f).target(5.f).setCallback(TweenEngine::TweenCallback::COMPLETE, [this](TweenEngine::BaseTween* source) {m_isCollapsed = false;}).start(m_tweenManager);
+		TweenEngine::Tween::to(m_textClock, m_textClock.POSITION_Y, 0.6f).target(5.f).delay(0.5f).setCallback(TweenEngine::TweenCallback::COMPLETE, [this](TweenEngine::BaseTween* source) {m_isCollapsed = false;}).start(m_tweenManager);
 		TWEEN_IN(m_textTwoPoints, 5.f);
 		TWEEN_IN_X(m_batteryIcon, 318.f - m_textureBattery.getSize().x);
 		TWEEN_IN_X(m_signalIcon, 2.f);

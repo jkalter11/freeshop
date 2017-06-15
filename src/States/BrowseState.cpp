@@ -161,6 +161,7 @@ void BrowseState::initialize()
 		m_whiteScreen.setFillColor(Theme::transitionScreenColor);
 	else
 		m_whiteScreen.setFillColor(cpp3ds::Color::White);
+	m_whiteScreen.setFillColor(cpp3ds::Color(m_whiteScreen.getFillColor().r, m_whiteScreen.getFillColor().g, m_whiteScreen.getFillColor().b, 0));
 
 	m_settingsGUI = new GUI::Settings(m_gwenSkin, this);
 #endif
