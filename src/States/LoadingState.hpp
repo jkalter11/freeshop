@@ -4,6 +4,7 @@
 #include "State.hpp"
 #include "../TweenObjects.hpp"
 #include "../Util.hpp"
+#include "../LoadInformations.hpp"
 #include <cpp3ds/Graphics/Sprite.hpp>
 #include <cpp3ds/Graphics/Texture.hpp>
 #include <cpp3ds/System/Clock.hpp>
@@ -33,6 +34,8 @@ private:
 
 	gui3ds::NinePatch m_rectTopBG;
 	gui3ds::NinePatch m_rectBotBG;
+
+	LoadInformations m_loadInfos;
 };
 
 } // namespace FreeShop

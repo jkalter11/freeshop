@@ -44,6 +44,7 @@ LoadingState::LoadingState(StateStack& stack, Context& context, StateCallback ca
 	m_icon.setPosition(160.f, 120.f);
 	m_icon.setScale(0.5f, 0.5f);
 
+	// Used to theme the loading background
 	if (pathExists(FREESHOP_DIR "/theme/images/topBG.png", true)) {
 		m_rectTopBG.setTexture(&AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/topBG.png"));
 		m_rectTopBG.setPosition(0.f, 0.f);
@@ -55,20 +56,25 @@ LoadingState::LoadingState(StateStack& stack, Context& context, StateCallback ca
 		m_rectBotBG.setPosition(0.f, 0.f);
 		m_botBG = true;
 	}
+
+	// Reset the load informations at each state load
+	LoadInformations::getInstance().reset();
 }
 
 void LoadingState::renderTopScreen(cpp3ds::Window& window)
 {
-	if (m_topBG == true)
+	if (m_topBG && LoadInformations::getInstance().m_isTopBGThemeAllowed)
 		window.draw(m_rectTopBG);
 }
 
 void LoadingState::renderBottomScreen(cpp3ds::Window& window)
 {
-	if (m_botBG == true)
+	if (m_botBG && LoadInformations::getInstance().m_isBotBGThemeAllowed)
 		window.draw(m_rectBotBG);
 
 	window.draw(m_icon);
+
+	window.draw(LoadInformations::getInstance());
 }
 
 bool LoadingState::update(float delta)

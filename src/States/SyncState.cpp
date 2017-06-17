@@ -9,6 +9,7 @@
 #include "../FreeShop.hpp"
 #include "../Theme.hpp"
 #include "../Notification.hpp"
+#include "../LoadInformations.hpp"
 #include <TweenEngine/Tween.h>
 #include <cpp3ds/Window/Window.hpp>
 #include <cpp3ds/System/I18n.hpp>
@@ -24,7 +25,7 @@
 #include <dirent.h>
 #include <cpp3ds/System/FileInputStream.hpp>
 #ifndef EMULATION
-#include <3ds/ipc.h>
+#include <3ds.h>
 #include "../MCU/Mcu.hpp"
 #endif
 
@@ -122,6 +123,10 @@ SyncState::SyncState(StateStack& stack, Context& context, StateCallback callback
 {
 	g_syncComplete = false;
 	g_browserLoaded = false;
+
+	// Allow TopBG & BotBG to be themed for the startup
+	LoadInformations::getInstance().m_isBotBGThemeAllowed = true;
+	LoadInformations::getInstance().m_isTopBGThemeAllowed = true;
 
 	std::string path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/sounds/startup.ogg");
 	if (pathExists(path.c_str(), false))
@@ -501,6 +506,8 @@ bool SyncState::loadServices()
 			if (R_FAILED(ret) && ret != 0xC8804478 && ret != 0xD9001413)
 				Notification::spawn(_("Unable to start Sapphire: \n0x%08lX (%d)", ret, R_DESCRIPTION(ret)));
 		}
+
+		std::cout << "isHb: " << envIsHomebrew() << std::endl;
 	#endif
 }
 
