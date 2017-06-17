@@ -204,9 +204,11 @@ bool SyncState::processEvent(const cpp3ds::Event& event)
 		switch (event.key.code)	{
 			case cpp3ds::Keyboard::A: {
 #ifndef EMULATION
-				if (R_SUCCEEDED(nwmExtInit())) {
-					NWMEXT_ControlWirelessEnabled(true);
-					nwmExtExit();
+				if (!cpp3ds::Service::isEnabled(cpp3ds::Httpc)) {
+					if (R_SUCCEEDED(nwmExtInit())) {
+						NWMEXT_ControlWirelessEnabled(true);
+						nwmExtExit();
+					}
 				}
 				break;
 #endif
@@ -224,11 +226,17 @@ void SyncState::sync()
 	//No internet connection
 	if (!cpp3ds::Service::isEnabled(cpp3ds::Httpc))
 	{
-		Notification::spawn(_("Press the A button to enable WiFi"));
+		bool isMessagesPrinted = false;
+
 		while (!cpp3ds::Service::isEnabled(cpp3ds::Httpc) && m_timer.getElapsedTime() < cpp3ds::seconds(30.f) && !exitRequired)
 		{
 			setStatus(_("Waiting for internet connection... %.0fs", 30.f - m_timer.getElapsedTime().asSeconds()));
 			cpp3ds::sleep(cpp3ds::milliseconds(200));
+
+			if (!isMessagesPrinted && m_timer.getElapsedTime() >= cpp3ds::seconds(1.f)) {
+				Notification::spawn(_("Press the A button to enable WiFi"));
+				isMessagesPrinted = true;
+			}
 		}
 		if (!cpp3ds::Service::isEnabled(cpp3ds::Httpc))
 		{
