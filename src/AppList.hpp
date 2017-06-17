@@ -56,6 +56,8 @@ public:
 
 	void setIndexDelta(int indexDelta);
 
+	int calculateGameCount();
+
 protected:
 	AppList(std::string jsonFilename);
 	virtual void draw(cpp3ds::RenderTarget& target, cpp3ds::RenderStates states) const;

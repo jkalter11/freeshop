@@ -37,6 +37,7 @@ cpp3ds::Color Theme::loadingIcon = cpp3ds::Color(110, 110, 110, 255);
 cpp3ds::Color Theme::loadingText = cpp3ds::Color::Black;
 cpp3ds::Color Theme::freText = cpp3ds::Color(255, 255, 255, 0);
 cpp3ds::Color Theme::versionText = cpp3ds::Color(0, 0, 0, 100);
+cpp3ds::Color Theme::percentageText = cpp3ds::Color::Black;
 
 //Theme informations
 std::string Theme::themeName = "Classic";
@@ -67,6 +68,7 @@ void Theme::loadDefaults()
 	ADD_DEFAULT("loadingText", "353535");
 	ADD_DEFAULT("freText", "420420");
 	ADD_DEFAULT("versionText", "546978");
+	ADD_DEFAULT("percentageText", "115599");
 
 	ADD_DEFAULT("themeName", "My custom theme");
 	ADD_DEFAULT("themeDesc", "Theme made by someone.");

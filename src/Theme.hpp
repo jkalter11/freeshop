@@ -45,6 +45,7 @@ public:
 	static cpp3ds::Color loadingText;
 	static cpp3ds::Color freText;
 	static cpp3ds::Color versionText;
+	static cpp3ds::Color percentageText;
 
 	//Theme informations
 	static std::string themeName;

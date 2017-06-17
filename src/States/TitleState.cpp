@@ -144,6 +144,8 @@ void TitleState::renderTopScreen(cpp3ds::Window& window)
 void TitleState::renderBottomScreen(cpp3ds::Window& window)
 {
 	window.draw(m_textVersion);
+
+	window.draw(LoadInformations::getInstance());
 }
 
 bool TitleState::update(float delta)

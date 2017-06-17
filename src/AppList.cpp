@@ -14,6 +14,7 @@
 #include "AssetManager.hpp"
 #include "Theme.hpp"
 #include "States/BrowseState.hpp"
+#include "LoadInformations.hpp"
 
 namespace FreeShop {
 
@@ -55,6 +56,9 @@ void AppList::refresh()
 	cpp3ds::Clock clock;
 	cpp3ds::FileInputStream file;
 
+	int gameCount = calculateGameCount();
+	int actualGame = 0;
+
 	if (file.open(m_jsonFilename))
 	{
 		// Read file to string
@@ -87,6 +91,12 @@ void AppList::refresh()
 
 				m_appItems.emplace_back(std::move(appItem));
 				m_guiAppItems.emplace_back(std::move(guiAppItem));
+
+				// Increment the game count
+				actualGame++;
+
+				// Update percentage on the loading screen
+				LoadInformations::getInstance().updateLoadingPercentage(actualGame * 100 / gameCount);
 			}
 		}
 	}
@@ -121,7 +131,7 @@ bool AppList::processEvent(const cpp3ds::Event &event)
 		} else
 			m_processedFirstKey = true;
 	}
-	
+
 	else if (event.type == cpp3ds::Event::KeyReleased)
 	{
 		if (event.key.code & (cpp3ds::Keyboard::Up | cpp3ds::Keyboard::Down | cpp3ds::Keyboard::Left | cpp3ds::Keyboard::Right | cpp3ds::Keyboard::L | cpp3ds::Keyboard::R))
@@ -582,5 +592,47 @@ void AppList::setIndexDelta(int indexDelta)
 	m_indexDelta = indexDelta;
 }
 
+int AppList::calculateGameCount()
+{
+	// Stripped down refresh()
+#ifdef EMULATION
+	bool isNew3DS = true;
+#else
+	bool isNew3DS = false;
+	APT_CheckNew3DS(&isNew3DS);
+#endif
+	cpp3ds::Clock clock;
+	cpp3ds::FileInputStream file;
+	int gameCount = 0;
+
+	if (file.open(m_jsonFilename))
+	{
+		// Read file to string
+		int size = file.getSize();
+		std::string json;
+		json.resize(size);
+		file.read(&json[0], size);
+
+		// Parse json string
+		rapidjson::Document doc;
+		doc.Parse(json.c_str());
+		int i = 0;
+		for (rapidjson::Value::ConstMemberIterator iter = doc.MemberBegin(); iter != doc.MemberEnd(); ++iter)
+		{
+			std::string id = iter->name.GetString();
+			cpp3ds::Uint64 titleId = strtoull(id.c_str(), 0, 16);
+
+			if (!isNew3DS && ((titleId >> 24) & 0xF) == 0xF)
+				continue;
+
+			if (TitleKeys::get(titleId))
+			{
+				gameCount++;
+			}
+		}
+	}
+
+	return gameCount;
+}
 
 } // namespace FreeShop

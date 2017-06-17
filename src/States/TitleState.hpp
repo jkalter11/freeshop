@@ -6,6 +6,7 @@
 #include <cpp3ds/Graphics/Sprite.hpp>
 #include <cpp3ds/Graphics/Text.hpp>
 #include <TweenEngine/TweenManager.h>
+#include "../LoadInformations.hpp"
 
 namespace FreeShop {
 
@@ -27,6 +28,8 @@ private:
 	util3ds::TweenText m_textFree;
 	util3ds::TweenSprite m_spriteEshop;
 	util3ds::TweenSprite m_spriteBag;
+
+	LoadInformations m_loadInfos;
 
 	TweenEngine::TweenManager m_manager;
 };
