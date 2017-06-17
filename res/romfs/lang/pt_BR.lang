@@ -36,6 +36,12 @@ Carregando gerenciador de temas...
 Loading services...
 Carregando serviços...
 
+Press the A button to enable WiFi
+Pressione o botão A para ativar o WiFi
+
+The freeShop wasn't closed correctly the last time.\nDelete the %s folder\nand/or reinstall freeShop if the problem persists.
+A freeShop não foi fechada corretamente na última vez.\nExclua a pasta %s\ne/ou reinstale a freeShop se o problema persistir.
+
 # src/States/BrowseState.cpp
 ############################
 No title keys found.\nMake sure you have keys in\n%s\n\nManually copy keys to the directory\nor check settings to enter a URL\nfor downloading title keys.
@@ -49,6 +55,19 @@ Instalação em fila: %s
 
 Already installed: %s
 Já instalado: %s
+
+This song file type isn't supported.
+Este tipo de arquivo de música não é suportado.
+
+Already in downloading: \n%s
+Atualmente em download: \n%s
+
+Type a game name...
+Digite um nome de jogo...
+
+Type a game Title ID...
+Digite uma ID de Título de jogo...
+
 
 # src/States/DialogState.cpp
 ############################
@@ -96,6 +115,9 @@ Você está excluindo este jogo,\nincluindo todos os dados de progresso:\n\n%s
 
 Deleted: %s
 Excluiu: %s
+
+Select a game to start
+Selecione um jogo para começar
 
 # src/Download.cpp
 ##################
@@ -185,6 +207,15 @@ Não foi possível instalar a semente: \n%s
 Sleep installation failed: \n%s
 A instalação em modo de descanso falhou: \n%s
 
+%s has been installed
+%s foi instalado
+
+The game %s (%s) has been installed on \n%s
+O jogo %s (%s) foi instalado em \n%s
+
+Processing for sleep download: \n%s
+Processando para o download em modo de descanso: \n%s
+
 # src/AppItem.cpp
 #################
 Already queued for sleep installation: \n%s
@@ -195,6 +226,12 @@ Preparando para a instalação em modo de descanso: \n%s
 
 Ready for sleep installation: \n%s
 Pronto para a instalação em modo de descanso: \n%s
+
+Sleep download canceled: \n%s
+Download em modo de descanso cancelado: \n%s
+
+A system update is required to download in sleep mode.
+Uma atualização do sistema é necessária para baixar em modo de descanso.
 
 # src/InstalledItem.cpp
 #######################
@@ -281,6 +318,16 @@ A solicitação expirou.\nTente novamente.
 
 Invalid URL.
 URL inválido.
+
+# src/TopInformations.cpp
+#########################
+Battery power is running low
+A bateria está baixa
+
+# src/BotInformations.cpp
+#########################
+%i sleep download pending\nClose the software with the Select button and close\nthe lid of your console.
+%i download(s) em modo de descanso pendente(s)\nFeche o software com o botão Select e feche\na tampa do seu console.
 
 # src/GUI/Settings.cpp
 ######################
@@ -446,7 +493,7 @@ URL(s) remotos de chaves de títulos
 You need to restart freeShop for\n%s to be loaded.\n\nWould you like to do this now?
 Você precisa reiniciar a freeShop para\n%s ser carregado.\n\nGostaria de fazer isso agora?
 
-Keyboard :
+Keyboard:
 Teclado:
 
 Keyboard changed to: %s
@@ -481,3 +528,54 @@ Tocar faixa selecionada
 
 News
 Notícias
+
+Notifiers
+Notificadores
+
+Show the number of game you have
+Exibir o número de jogos que você tem
+
+Blink the LED on freeShop startup
+Piscar o LED na inicialização da freeShop
+
+Blink the LED when a download finished
+Piscar o LED quando um download terminar
+
+Blink the LED when a download failed
+Piscar o LED quando um download falhar
+
+Send a notification when a download finished
+Enviar uma notificação quando um download terminar
+
+Disable the LED when the notification is sent
+Desativar o LED quando a notificação for enviada
+
+Inactivity
+Inatividade
+
+Enable top screen sleep after inactivity
+Ativar descanso da tela superior após inatividade
+
+Enable bottom screen sleep after inactivity
+Ativar descanso da tela inferior após inatividade
+
+Dim the LEDs after inactivity
+Escurecer os LEDs após inatividade
+
+Allow sounds on inactivity mode
+Permitir sons no modo de inatividade
+
+Go into inactivity mode after %.0fs
+Entrar no modo de inatividade após %.0fs
+
+Turn off the music if the volume slider is too low
+Desligar a música se o deslizador de volume estiver muito baixo
+
+Update eShop music
+Atualizar música da eShop
+
+You need to restart freeShop\nto update the eShop music\n\nWould you like to do this now?
+Você precisa reiniciar a freeShop\npara atualizar a música da eShop\n\nVocê gostaria de fazer isso agora?
+
+Allow music on inactivity mode
+Permitir música no modo de inatividade
