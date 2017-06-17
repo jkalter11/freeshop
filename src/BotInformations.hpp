@@ -4,6 +4,7 @@
 #include <cpp3ds/Graphics/Drawable.hpp>
 #include <cpp3ds/Graphics/Text.hpp>
 #include <cpp3ds/Window/Event.hpp>
+#include <cpp3ds/System/Clock.hpp>
 #include "TweenObjects.hpp"
 #include "TitleKeys.hpp"
 #include <TweenEngine/Tween.h>
@@ -33,6 +34,8 @@ private:
 	gui3ds::NinePatch m_backgroundSD;
 	util3ds::TweenRectangleShape m_progressBarNAND;
 	util3ds::TweenRectangleShape m_progressBarSD;
+
+	cpp3ds::Clock m_updateClock;
 
 	TweenEngine::TweenManager m_tweenManager;
 

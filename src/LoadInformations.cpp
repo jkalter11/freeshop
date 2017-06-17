@@ -64,6 +64,11 @@ void LoadInformations::update(float delta)
 
 void LoadInformations::updateLoadingPercentage(int newPercentage)
 {
+	// If the new percentage is the same than the actual percentage, no need to recalculate the text
+	if (newPercentage == m_loadingPercentage)
+		return;
+
+	// Check that percentage is between 0 and 100
 	if (newPercentage <= 0)
 		m_loadingPercentage = 0;
 	else if (newPercentage >= 100)
@@ -71,6 +76,7 @@ void LoadInformations::updateLoadingPercentage(int newPercentage)
 	else
 		m_loadingPercentage = newPercentage;
 
+	// Set the text to the percentage and center it
 	m_textLoadingPercentage.setString(_("%i%%", m_loadingPercentage));
 	cpp3ds::FloatRect rect = m_textLoadingPercentage.getLocalBounds();
 	m_textLoadingPercentage.setOrigin(rect.width / 2.f, rect.height / 2.f);

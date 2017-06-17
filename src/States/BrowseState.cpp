@@ -378,6 +378,10 @@ bool BrowseState::update(float delta)
 	{
 		m_keyboard.update(delta);
 	}
+	else if (m_mode == Info)
+	{
+		m_botInfos.update(delta);
+	}
 
 	if (m_activeDownloadCount != DownloadQueue::getInstance().getActiveCount())
 	{
@@ -390,7 +394,6 @@ bool BrowseState::update(float delta)
 
 	m_iconSet.update(delta);
 	m_topInfos.update(delta);
-	m_botInfos.update(delta);
 	AppList::getInstance().update(delta);
 	m_tweenManager.update(delta);
 
