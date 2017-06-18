@@ -119,9 +119,13 @@ TitleState::TitleState(StateStack& stack, Context& context, StateCallback callba
 #ifndef EMULATION
 					if (Config::get(Config::LEDStartup).GetBool()) {
 						cpp3ds::sleep(cpp3ds::milliseconds(100));
-						if (R_SUCCEEDED(MCU::getInstance().mcuInit())) {
+
+						Result res;
+						if (R_SUCCEEDED(res = MCU::getInstance().mcuInit())) {
 							MCU::getInstance().ledBlinkOnce(0x19A4FF);
 							MCU::getInstance().mcuExit();
+						} else {
+							Notification::spawn(_("Unable to start MCU: \n0x%08lX (%d)", res, R_DESCRIPTION(res)));
 						}
 					}
 #endif

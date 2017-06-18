@@ -110,7 +110,6 @@ void InstalledItem::setUpdateStatus(cpp3ds::Uint64 titleId, bool installed)
 		if (update.second)
 			m_updateInstallCount++;
 
-	std::cout << "update" << std::endl;
 	updateGameTitle();
 }
 

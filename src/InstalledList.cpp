@@ -40,7 +40,7 @@ void InstalledList::refresh()
 #ifdef EMULATION
 	// some hardcoded title IDs for testing
 	installedTitleIds.emplace_back(0x00040000000edf00); // [US] Super Smash Bros.
-	//installedTitleIds.emplace_back(0x0004000e000edf00); // [US] Super Smash Bros. [UPDATE]
+	installedTitleIds.emplace_back(0x0004000e000edf00); // [US] Super Smash Bros. [UPDATE]
 	installedTitleIds.emplace_back(0x0004008c000edf00); // [US] Super Smash Bros. [DLC]
 	installedTitleIds.emplace_back(0x00040002000edf01); // [US] Super Smash Bros. [DEMO]
 	installedTitleIds.emplace_back(0x0004001000021800); // [US] StreetPass Mii Plaza
