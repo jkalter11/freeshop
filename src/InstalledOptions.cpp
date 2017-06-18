@@ -110,7 +110,7 @@ void InstalledOptions::processTouchEvent(const cpp3ds::Event &event)
 		cpp3ds::Uint64 titleId = m_installedItem->getTitleId();
 		if (m_titleType != TitleKeys::SystemApplet && m_titleType != TitleKeys::SystemApplication)
 		{
-			
+
 			g_browseState->requestStackPush(States::Dialog, false, [=](void *data) mutable {
 				auto event = reinterpret_cast<DialogState::Event *>(data);
 				if (event->type == DialogState::GetText) {
@@ -274,6 +274,8 @@ void InstalledOptions::update()
 
 	m_textIconUpdates.setString(m_updatesInstalled ? L"\uf1f8" : L"\uf019");
 	m_textIconDLC.setString(m_dlcInstalled ? L"\uf1f8" : L"\uf019");
+
+	m_installedItem->updateGameTitle();
 }
 
 

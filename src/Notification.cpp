@@ -98,7 +98,7 @@ void Notification::sendNews(cpp3ds::String title, cpp3ds::String message)
 
 	copy(title.begin(), title.end(), utfTitle);
   utfTitle[title.getSize()] = 0;
-	
+
 	copy(message.begin(), message.end(), utfMessage);
   utfMessage[message.getSize()] = 0;
 

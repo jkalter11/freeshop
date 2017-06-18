@@ -480,7 +480,7 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 					Config::set(Config::Skiddo, true);
 					m_settingsGUI->addSkiddoLanguage();
 				} else {
-#ifndef NDEBUG
+#ifdef RELEASE
 					Notification::spawn(_("freeShop " FREESHOP_VERSION " / " __DATE__ " " __TIME__));
 #endif
 				}

@@ -165,6 +165,12 @@ void InstalledList::refresh()
 			it = m_installedItems.erase(it);
 	}
 
+	// For too long title name, shorten them
+	for (auto& installedItem : m_installedItems)
+	{
+		installedItem->updateGameTitle();
+	}
+
 	// Sort alphabetically
 	std::sort(m_installedItems.begin(), m_installedItems.end(), [=](const std::unique_ptr<InstalledItem>& a, const std::unique_ptr<InstalledItem>& b)
 	{

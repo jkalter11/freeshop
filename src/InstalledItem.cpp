@@ -80,8 +80,6 @@ InstalledItem::InstalledItem(cpp3ds::Uint64 titleId)
 	m_textWarningDLC.setOutlineColor(cpp3ds::Color(255, 255, 0, 255));
 
 	setHeight(16.f);
-
-	updateGameTitle();
 }
 
 void InstalledItem::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) const
@@ -109,8 +107,6 @@ void InstalledItem::setUpdateStatus(cpp3ds::Uint64 titleId, bool installed)
 	for (auto& update : m_updates)
 		if (update.second)
 			m_updateInstallCount++;
-
-	updateGameTitle();
 }
 
 void InstalledItem::setDLCStatus(cpp3ds::Uint64 titleId, bool installed)
@@ -120,8 +116,6 @@ void InstalledItem::setDLCStatus(cpp3ds::Uint64 titleId, bool installed)
 	for (auto& dlc : m_dlc)
 		if (dlc.second)
 			m_dlcInstallCount++;
-
-	updateGameTitle();
 }
 
 std::shared_ptr<AppItem> InstalledItem::getAppItem() const
@@ -177,11 +171,23 @@ float InstalledItem::getHeight() const
 
 void InstalledItem::updateGameTitle()
 {
+	int numberOfDLC = 0;
+	int totalDLC = TitleKeys::getRelated(m_appItem->getTitleId(), TitleKeys::DLC).size();
+	for (auto &dlc : getDLC())
+		if (dlc.second)
+			numberOfDLC++;
+
+	int numberOfUpdates = 0;
+	int totalUpdates = TitleKeys::getRelated(m_appItem->getTitleId(), TitleKeys::Update).size();
+	for (auto &update : getUpdates())
+		if (update.second)
+			numberOfUpdates++;
+
 	int maxSize = 310;
-	if (m_dlc.size() - m_dlcInstallCount > 0)
-		maxSize = m_textWarningDLC.getPosition().x;
-	else if (m_updates.size() - m_updateInstallCount > 0)
-		maxSize = m_textWarningUpdate.getPosition().x;
+	if ((totalDLC - numberOfDLC) > 0)
+		maxSize = m_textWarningDLC.getPosition().x - 5;
+	else if ((totalUpdates - numberOfUpdates) > 0)
+		maxSize = m_textWarningUpdate.getPosition().x - 5;
 
 	// Shorten the app name if it's out of the screen
 	if (m_textTitle.getLocalBounds().width + m_textSize.getLocalBounds().width > maxSize) {
