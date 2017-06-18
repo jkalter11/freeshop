@@ -300,7 +300,7 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 						struct tm * timeinfo;
 						timeinfo = localtime(&t);
 						char timeTextFmt[20];
-						strftime(timeTextFmt, 20, "%Ex %EX", timeinfo);
+						strftime(timeTextFmt, 20, "%d/%m/%Y %H:%M:%S", timeinfo);
 
 						//Get the formatted game size
 						std::string gameSize;
