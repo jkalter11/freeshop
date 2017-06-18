@@ -34,6 +34,8 @@ public:
 
 	void processEvent(const cpp3ds::Event& event);
 
+	void updateGameTitle();
+
 protected:
 	virtual void draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) const;
 	virtual void setValues(int tweenType, float *newValues);

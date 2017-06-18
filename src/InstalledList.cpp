@@ -40,7 +40,8 @@ void InstalledList::refresh()
 #ifdef EMULATION
 	// some hardcoded title IDs for testing
 	installedTitleIds.emplace_back(0x00040000000edf00); // [US] Super Smash Bros.
-	installedTitleIds.emplace_back(0x0004000e000edf00); // [US] Super Smash Bros. [UPDATE]
+	//installedTitleIds.emplace_back(0x0004000e000edf00); // [US] Super Smash Bros. [UPDATE]
+	installedTitleIds.emplace_back(0x0004008c000edf00); // [US] Super Smash Bros. [DLC]
 	installedTitleIds.emplace_back(0x00040002000edf01); // [US] Super Smash Bros. [DEMO]
 	installedTitleIds.emplace_back(0x0004001000021800); // [US] StreetPass Mii Plaza
 	installedTitleIds.emplace_back(0x0004000000030800); // [US] Mario Kart 7
@@ -48,6 +49,7 @@ void InstalledList::refresh()
 	installedTitleIds.emplace_back(0x0004008000008f00); // [US] Home Menu
 	installedTitleIds.emplace_back(0x0004000000162000); // [EU] Project X Zone 2
 	installedTitleIds.emplace_back(0x000400000017a400); // [EU] Fire Emblem Fates
+	installedTitleIds.emplace_back(0x000480044b513945); // [US] The Legend of Zelda™: Four Swords Anniversary Edition
 #else
 	u32 titleCount;
 	AM_GetTitleCount(MEDIATYPE_SD, &titleCount);

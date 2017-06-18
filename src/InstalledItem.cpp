@@ -80,6 +80,8 @@ InstalledItem::InstalledItem(cpp3ds::Uint64 titleId)
 	m_textWarningDLC.setOutlineColor(cpp3ds::Color(255, 255, 0, 255));
 
 	setHeight(16.f);
+
+	updateGameTitle();
 }
 
 void InstalledItem::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) const
@@ -107,6 +109,9 @@ void InstalledItem::setUpdateStatus(cpp3ds::Uint64 titleId, bool installed)
 	for (auto& update : m_updates)
 		if (update.second)
 			m_updateInstallCount++;
+
+	std::cout << "update" << std::endl;
+	updateGameTitle();
 }
 
 void InstalledItem::setDLCStatus(cpp3ds::Uint64 titleId, bool installed)
@@ -116,6 +121,8 @@ void InstalledItem::setDLCStatus(cpp3ds::Uint64 titleId, bool installed)
 	for (auto& dlc : m_dlc)
 		if (dlc.second)
 			m_dlcInstallCount++;
+
+	updateGameTitle();
 }
 
 std::shared_ptr<AppItem> InstalledItem::getAppItem() const
@@ -169,5 +176,35 @@ float InstalledItem::getHeight() const
 	return m_height;
 }
 
+void InstalledItem::updateGameTitle()
+{
+	int maxSize = 310;
+	if (m_dlc.size() - m_dlcInstallCount > 0)
+		maxSize = m_textWarningDLC.getPosition().x;
+	else if (m_updates.size() - m_updateInstallCount > 0)
+		maxSize = m_textWarningUpdate.getPosition().x;
+
+	// Shorten the app name if it's out of the screen
+	if (m_textTitle.getLocalBounds().width + m_textSize.getLocalBounds().width > maxSize) {
+		cpp3ds::Text tmpText;
+		tmpText.setCharacterSize(11);
+		tmpText.useSystemFont();
+		auto s = m_textTitle.getString().toUtf8();
+
+		for (int i = 0; i <= s.size(); ++i) {
+			tmpText.setString(cpp3ds::String::fromUtf8(s.begin(), s.begin() + i));
+
+			if (tmpText.getLocalBounds().width + m_textSize.getLocalBounds().width > maxSize) {
+				cpp3ds::String titleTxt = tmpText.getString();
+				titleTxt.erase(titleTxt.getSize() - 3, 3);
+				titleTxt.insert(titleTxt.getSize(), "...");
+
+				m_textTitle.setString(titleTxt);
+				m_textSize.setPosition(m_textTitle.getLocalBounds().width + 4, m_background.getPadding().top);
+				break;
+			}
+		}
+	}
+}
 
 } // namespace FreeShop

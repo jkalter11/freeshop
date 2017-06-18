@@ -824,10 +824,25 @@ void DownloadQueue::addSleepDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint6
 	//The code that register the sleep download
 	NIMS_MakeTitleConfig(&tc, titleId, res, 0, mediaType);
 
-	if (R_SUCCEEDED(res = NIMS_RegisterTask(&tc, stdAppTitle.c_str(), "freeShop download")))
+	if (R_SUCCEEDED(res = NIMS_RegisterTask(&tc, stdAppTitle.c_str(), "freeShop download"))) {
 		Notification::spawn(_("Ready for sleep installation: \n%s", stdAppTitle.c_str()));
-	else
+
+		if (Config::get(Config::LEDDownloadFinished).GetBool()) {
+			if (R_SUCCEEDED(MCU::getInstance().mcuInit())) {
+				MCU::getInstance().ledBlinkOnce(0x8EEBA0);
+				MCU::getInstance().mcuExit();
+			}
+		}
+	} else {
 		Notification::spawn(_("Sleep installation failed: \n%s", stdAppTitle.c_str()));
+
+		if (Config::get(Config::LEDDownloadError).GetBool()) {
+			if (R_SUCCEEDED(MCU::getInstance().mcuInit())) {
+				MCU::getInstance().ledBlinkThrice(0x0D09A1);
+				MCU::getInstance().mcuExit();
+			}
+		}
+	}
 
 	/*The clear and simple explanation of this (LOOOONNNGGGGGGG) condition:
 	If the "Play sound after downoad queue finishes" option IS enabled AND the freeShop is NOT on it's sleeping state, the sound can be played
