@@ -490,8 +490,13 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 		switch (event.key.code)
 		{
 			case cpp3ds::Keyboard::Start:
-				requestStackClear();
-				return true;
+#ifndef EMULATION
+				// If the user launched the freeShop with the 3dsx version, don't allow it to close via Start to prevent crash
+				if (!envIsHomebrew()) {
+					requestStackClear();
+					return true;
+				}
+#endif
 			case cpp3ds::Keyboard::A:
 			{
 				// Don't load if game info is already loaded or nothing is selected

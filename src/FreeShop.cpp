@@ -11,7 +11,9 @@
 #include "Util.hpp"
 #include "States/SleepState.hpp"
 #include "States/QrScannerState.hpp"
-
+#ifndef EMULATION
+#include <3ds.h>
+#endif
 
 using namespace cpp3ds;
 using namespace TweenEngine;
@@ -107,6 +109,16 @@ FreeShop::~FreeShop()
 
 void FreeShop::update(float delta)
 {
+#ifndef EMULATION
+	// If the user launched the freeShop with the 3dsx version, don't allow it to change or turn off the console to prevent crash
+	if (envIsHomebrew()) {
+		if (g_requestShutdown)
+			g_requestShutdown = false;
+
+		if (g_requestJump != 0)
+			g_requestJump = 0;
+	}
+#endif
 	// Need to update before checking if empty
 	m_stateStack->update(delta);
 	if (m_stateStack->isEmpty() || g_requestJump != 0 || g_requestShutdown)
