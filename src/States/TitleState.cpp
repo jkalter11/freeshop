@@ -125,7 +125,8 @@ TitleState::TitleState(StateStack& stack, Context& context, StateCallback callba
 							MCU::getInstance().ledBlinkOnce(0x19A4FF);
 							MCU::getInstance().mcuExit();
 						} else {
-							Notification::spawn(_("Unable to start MCU: \n0x%08lX (%d)", res, R_DESCRIPTION(res)));
+							if (!envIsHomebrew())
+								Notification::spawn(_("Unable to start MCU: \n0x%08lX (%d)", res, R_DESCRIPTION(res)));
 						}
 					}
 #endif

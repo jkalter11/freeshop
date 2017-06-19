@@ -316,7 +316,7 @@ void AppInfo::loadApp(std::shared_ptr<AppItem> appItem)
 
 				m_textDownload.setFillColor(cpp3ds::Color::White);
 				m_textSleepDownload.setFillColor(cpp3ds::Color::White);
-				
+
 				m_scrollbar.setSize(cpp3ds::Vector2u(2, 102));
 				m_scrollbar.setScrollAreaSize(cpp3ds::Vector2u(320, 102));
 				m_scrollbar.setDragRect(cpp3ds::IntRect(0, 30, 320, 210));
@@ -460,7 +460,7 @@ bool AppInfo::processEvent(const cpp3ds::Event &event)
 {
 	if (!m_appItem)
 		return true;
-		
+
 	m_scrollbar.processEvent(event);
 
 	if (m_currentScreenshot)

@@ -110,13 +110,53 @@ FreeShop::~FreeShop()
 void FreeShop::update(float delta)
 {
 #ifndef EMULATION
-	// If the user launched the freeShop with the 3dsx version, don't allow it to change or turn off the console to prevent crash
-	if (envIsHomebrew()) {
-		if (g_requestShutdown)
-			g_requestShutdown = false;
+	// 3DSX version need to do this here...
+	if ((g_requestJump != 0 || g_requestShutdown) && envIsHomebrew()) {
+		if (g_requestShutdown) {
+			//Init the services and turn off the console
+			ptmSysmInit();
+			PTMSYSM_ShutdownAsync(0);
+			ptmSysmExit();
+		} else if (g_requestJump != 0) {
+			//Var initialization
+			Result res = 0;
+			u8 hmac[0x20];
+			memset(hmac, 0, sizeof(hmac));
 
-		if (g_requestJump != 0)
-			g_requestJump = 0;
+			//Check on which media launch the title
+			FS_MediaType mediaType = ((g_requestJump >> 32) == TitleKeys::DSiWare) ? MEDIATYPE_NAND : MEDIATYPE_SD;
+
+			FS_CardType type;
+			bool cardInserted;
+			cardInserted = (R_SUCCEEDED(FSUSER_CardSlotIsInserted(&cardInserted)) && cardInserted && R_SUCCEEDED(FSUSER_GetCardType(&type)) && type == CARD_CTR);
+			if (cardInserted)
+			{
+				// Retry a bunch of times. When the card is newly inserted,
+				// it sometimes takes a short while before title can be read.
+				int retryCount = 100;
+				u64 cardTitleId;
+				while (retryCount-- > 0)
+					if (R_SUCCEEDED(AM_GetTitleList(nullptr, MEDIATYPE_GAME_CARD, 1, &cardTitleId)))
+					{
+						try
+						{
+							if (cardTitleId == g_requestJump)
+								mediaType = MEDIATYPE_GAME_CARD;
+						}
+						catch (int e)
+						{
+							//
+						}
+						break;
+					}
+					else
+						cpp3ds::sleep(cpp3ds::milliseconds(5));
+			}
+
+			//Do the application jump
+			if (R_SUCCEEDED(res = APT_PrepareToDoApplicationJump(0, g_requestJump, mediaType)))
+				res = APT_DoApplicationJump(0, 0, hmac);
+		}
 	}
 #endif
 	// Need to update before checking if empty
