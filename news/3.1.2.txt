@@ -49,3 +49,6 @@ The colorful update.
   selected by default on freeShop boot
 • Bugfix: The system app DLC & Updates
   are now installable without problems
+• Bugfix: If you quit the app while
+  the Game list is loading, it should
+  not crash anymore.

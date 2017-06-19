@@ -57,7 +57,9 @@ BrowseState::BrowseState(StateStack& stack, Context& context, StateCallback call
 
 BrowseState::~BrowseState()
 {
-	m_settingsGUI->saveToConfig();
+	if (m_settingsGUI)
+		m_settingsGUI->saveToConfig();
+
 	Config::saveToFile();
 
 	if (m_settingsGUI)
