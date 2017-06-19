@@ -218,11 +218,11 @@ void BotInformations::update(float delta)
 				pendingTitleCountTotal++;
 
 		if (pendingTitleCountTotal > 0)
-			m_textSleepDownloads.setString(_("%i sleep download pending\nClose the software with the Select button and close\nthe lid of your console.", pendingTitleCountTotal));
+			m_textSleepDownloads.setString(_("%i sleep download pending\nClose the software with the Start button and close\nthe lid of your console.", pendingTitleCountTotal));
 		else
 			m_textSleepDownloads.setString(_(""));
 #else
-		m_textSleepDownloads.setString(_("%i sleep download pending\nClose the software with the Select button and close\nthe lid of your console.", rand() % 11));
+		m_textSleepDownloads.setString(_("%i sleep download pending\nClose the software with the Start button and close\nthe lid of your console.", rand() % 11));
 #endif
 	}
 

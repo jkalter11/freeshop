@@ -23,7 +23,7 @@ set(APP_PRODUCT_CODE ${PROJECT_NAME})
 set(BANNER ${PROJECT_SOURCE_DIR}/res/app/banner.bnr)
 set(BANNER_IMAGE ${PROJECT_SOURCE_DIR}/res/app/banner.png)
 set(BANNER_SOUND ${PROJECT_SOURCE_DIR}/res/app/banner.wav)
-set(ICON_FLAGS --flags visible,ratingrequired,recordusage,savedata --cero 153 --esrb 153 --usk 153 --pegigen 153 --pegiptr 153 --pegibbfc 153 --cob 153 --grb 153 --cgsrr 153)
+set(ICON_FLAGS --flags visible,ratingrequired,recordusage --cero 153 --esrb 153 --usk 153 --pegigen 153 --pegiptr 153 --pegibbfc 153 --cob 153 --grb 153 --cgsrr 153)
 set(CIA_CONFIG ${PROJECT_SOURCE_DIR}/res/app/cia.rsf)
 
 # Include cpp3ds cmake module

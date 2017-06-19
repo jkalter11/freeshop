@@ -284,8 +284,7 @@ Die Batterie ist fast leer.
 
 # src/BotInformations.cpp
 #########################
-%i sleep download pending\nClose the software with the Select button and close\nthe lid of your console.
-%i 
+
 
 # src/GUI/Settings.cpp
 ######################

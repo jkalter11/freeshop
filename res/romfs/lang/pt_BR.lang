@@ -326,8 +326,8 @@ A bateria está baixa
 
 # src/BotInformations.cpp
 #########################
-%i sleep download pending\nClose the software with the Select button and close\nthe lid of your console.
-%i download(s) em modo de descanso pendente(s)\nFeche o software com o botão Select e feche\na tampa do seu console.
+%i sleep download pending\nClose the software with the Start button and close\nthe lid of your console.
+%i download(s) em modo de descanso pendente(s)\nFeche o software com o botão Start e feche\na tampa do seu console.
 
 # src/GUI/Settings.cpp
 ######################

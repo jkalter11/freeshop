@@ -489,7 +489,7 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 
 		switch (event.key.code)
 		{
-			case cpp3ds::Keyboard::Select:
+			case cpp3ds::Keyboard::Start:
 				requestStackClear();
 				return true;
 			case cpp3ds::Keyboard::A:

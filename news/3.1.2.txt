@@ -41,6 +41,10 @@ The colorful update.
   level is low.
 • Added percentage on loading screen
   for the "Loading game list" part
+• The app can now be closed via the
+  Start button (no longer the Select)
+  to let users open Rosalina while they
+  are in the app.
 • Bugfix: The Informations icon is now
   selected by default on freeShop boot
 • Bugfix: The system app DLC & Updates
