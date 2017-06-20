@@ -111,8 +111,14 @@ void FreeShop::update(float delta)
 {
 #ifndef EMULATION
 	// 3DSX version need to do this here...
-	if ((g_requestJump != 0 || g_requestShutdown) && envIsHomebrew()) {
-		if (g_requestShutdown) {
+	if (g_requestJump != 0 || g_requestShutdown) {
+		DownloadQueue::getInstance().suspend();
+		DownloadQueue::getInstance().save();
+
+		Config::set(Config::CleanExit, true);
+		Config::saveToFile();
+
+		if (g_requestShutdown && envIsHomebrew()) {
 			//Init the services and turn off the console
 			ptmSysmInit();
 			PTMSYSM_ShutdownAsync(0);
