@@ -9,6 +9,7 @@
 #include "TitleKeys.hpp"
 #include <TweenEngine/Tween.h>
 #include <TweenEngine/TweenManager.h>
+#include <cpp3ds/System/Thread.hpp>
 
 namespace FreeShop {
 
@@ -42,6 +43,9 @@ private:
 	//Booleans used for transitions
 	bool m_isProgressSDTransitioning;
 	bool m_isProgressNANDTransitioning;
+
+	cpp3ds::Thread m_threadRefresh;
+	void refresh();
 
 };
 
