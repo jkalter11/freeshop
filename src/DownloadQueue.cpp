@@ -286,7 +286,10 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 		{
 			case Download::Suspended:
 				download->setProgressMessage(_("Suspended"));
-				return;
+				if (download->getLastResponse().getStatus() == cpp3ds::Http::Response::NotFound)
+					download->m_status = Download::Failed;
+				else
+					return;
 			case Download::Finished:
 				if (installer->commit())
 				{
@@ -349,6 +352,7 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 					case 0xC8A08035: download->setProgressMessage(_("Not enough space on NAND")); break;
 					case 0xC86044D2: download->setProgressMessage(_("Not enough space on SD")); break;
 					case 0xD8E0806A: download->setProgressMessage(_("Wrong title key")); break;
+					case 0xD8A08004: download->setProgressMessage(_("Incomplete installation")); break;
 					default:
 						download->setProgressMessage(installer->getErrorString());
 				}

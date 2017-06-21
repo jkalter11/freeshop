@@ -49,7 +49,7 @@ void InstalledList::refresh()
 	installedTitleIds.emplace_back(0x0004008000008f00); // [US] Home Menu
 	installedTitleIds.emplace_back(0x0004000000162000); // [EU] Project X Zone 2
 	installedTitleIds.emplace_back(0x000400000017a400); // [EU] Fire Emblem Fates
-	installedTitleIds.emplace_back(0x000480044b513945); // [US] The Legend of Zelda™: Four Swords Anniversary Edition
+	installedTitleIds.emplace_back(0x00040000001b7800); // [US] Pic-a-Pix Color
 #else
 	u32 titleCount;
 	AM_GetTitleCount(MEDIATYPE_SD, &titleCount);

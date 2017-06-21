@@ -57,8 +57,7 @@ BrowseState::BrowseState(StateStack& stack, Context& context, StateCallback call
 
 BrowseState::~BrowseState()
 {
-	if (m_settingsGUI)
-		m_settingsGUI->saveToConfig();
+	settingsSaveToConfig();
 
 	Config::saveToFile();
 
@@ -816,6 +815,12 @@ bool BrowseState::getTIDKeyboard()
 std::string BrowseState::getCtrSdPath()
 {
 	return m_ctrSdPath;
+}
+
+void BrowseState::settingsSaveToConfig()
+{
+	if (m_settingsGUI)
+		m_settingsGUI->saveToConfig();
 }
 
 } // namespace FreeShop

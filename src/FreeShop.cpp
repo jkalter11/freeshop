@@ -11,6 +11,7 @@
 #include "Util.hpp"
 #include "States/SleepState.hpp"
 #include "States/QrScannerState.hpp"
+#include "GUI/Settings.hpp"
 #ifndef EMULATION
 #include <3ds.h>
 #endif
@@ -207,6 +208,8 @@ void FreeShop::prepareToCloseApp()
 {
 	DownloadQueue::getInstance().suspend();
 	DownloadQueue::getInstance().save();
+
+	g_browseState->settingsSaveToConfig();
 
 	Config::set(Config::CleanExit, true);
 	Config::saveToFile();

@@ -55,6 +55,8 @@ public:
 
 	std::string getCtrSdPath();
 
+	void settingsSaveToConfig();
+
 private:
 	enum Mode {
 		Info = 0,
