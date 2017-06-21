@@ -112,11 +112,7 @@ void FreeShop::update(float delta)
 #ifndef EMULATION
 	// 3DSX version need to do this here...
 	if (g_requestJump != 0 || g_requestShutdown) {
-		DownloadQueue::getInstance().suspend();
-		DownloadQueue::getInstance().save();
-
-		Config::set(Config::CleanExit, true);
-		Config::saveToFile();
+		prepareToCloseApp();
 
 		if (g_requestShutdown && envIsHomebrew()) {
 			//Init the services and turn off the console
@@ -167,8 +163,11 @@ void FreeShop::update(float delta)
 #endif
 	// Need to update before checking if empty
 	m_stateStack->update(delta);
-	if (m_stateStack->isEmpty() || g_requestJump != 0 || g_requestShutdown)
+	if (m_stateStack->isEmpty() || g_requestJump != 0 || g_requestShutdown) {
+		prepareToCloseApp();
+
 		exit();
+	}
 
 	Notification::update(delta);
 
@@ -202,6 +201,15 @@ void FreeShop::renderBottomScreen(Window& window)
 {
 	window.clear(Color::White);
 	m_stateStack->renderBottomScreen(window);
+}
+
+void FreeShop::prepareToCloseApp()
+{
+	DownloadQueue::getInstance().suspend();
+	DownloadQueue::getInstance().save();
+
+	Config::set(Config::CleanExit, true);
+	Config::saveToFile();
 }
 
 } // namespace FreeShop

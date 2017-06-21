@@ -75,11 +75,7 @@ int main(int argc, char** argv)
 	srand(time(NULL));
 	auto game = new FreeShop::FreeShop();
 	game->run();
-	FreeShop::DownloadQueue::getInstance().suspend();
-	FreeShop::DownloadQueue::getInstance().save();
-
-	FreeShop::Config::set(FreeShop::Config::CleanExit, true);
-	FreeShop::Config::saveToFile();
+	FreeShop::FreeShop::prepareToCloseApp();
 #ifndef EMULATION
 	nimsExit();
 	amExit();

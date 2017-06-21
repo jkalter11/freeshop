@@ -21,6 +21,8 @@ public:
 	void renderTopScreen(cpp3ds::Window& window);
 	void renderBottomScreen(cpp3ds::Window& window);
 
+	static void prepareToCloseApp();
+
 private:
 	StateStack *m_stateStack;
 	cpp3ds::Text textFPS;

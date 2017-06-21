@@ -495,6 +495,8 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 #ifndef EMULATION
 				// If the user launched the freeShop with the 3dsx version, don't allow it to close via Start to prevent crash
 				if (!envIsHomebrew()) {
+					FreeShop::prepareToCloseApp();
+
 					requestStackClear();
 					return true;
 				}
