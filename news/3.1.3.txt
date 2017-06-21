@@ -5,3 +5,5 @@
 • Bugfix: Unreleased DLC now fails the
   download instead of suspend it, so the
   download queue can continue.
+• Bugfix: RGB LED is now supported in
+  3DSX version.

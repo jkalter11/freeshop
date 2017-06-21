@@ -18,6 +18,7 @@
 
 #ifdef _3DS
 #include "../KeyboardApplet.hpp"
+#include <3ds.h>
 #endif
 
 using namespace Gwen::Controls;
@@ -200,6 +201,9 @@ void Settings::saveToConfig()
 
 	// Other
 	Config::set(Config::TitleID, m_checkboxTitleID->Checkbox()->IsChecked());
+#ifndef EMULATION
+	if (!envIsHomebrew())
+#endif
 	Config::set(Config::ShowBattery, m_checkboxBatteryPercent->Checkbox()->IsChecked());
 	Config::set(Config::ShowGameCounter, m_checkboxGameCounter->Checkbox()->IsChecked());
 }
@@ -289,6 +293,9 @@ void Settings::loadConfig()
 
 	// Other
 	m_checkboxTitleID->Checkbox()->SetChecked(Config::get(Config::TitleID).GetBool());
+#ifndef EMULATION
+	if (!envIsHomebrew())
+#endif
 	m_checkboxBatteryPercent->Checkbox()->SetChecked(Config::get(Config::ShowBattery).GetBool());
 	m_checkboxGameCounter->Checkbox()->SetChecked(Config::get(Config::ShowGameCounter).GetBool());
 }
@@ -977,12 +984,18 @@ void Settings::fillOtherPage(Gwen::Controls::Base *page)
 	m_checkboxTitleID->SetBounds(0, 0, 320, 20);
 	m_checkboxTitleID->Label()->SetText(_("Show Title ID in game description screen").toAnsiString());
 
+#ifndef EMULATION
+	if (!envIsHomebrew()) {
+#endif
 	m_checkboxBatteryPercent = new CheckBoxWithLabel(page);
-	m_checkboxBatteryPercent->SetBounds(0, 20, 320, 20);
+	m_checkboxBatteryPercent->SetBounds(0, 40, 320, 20);
 	m_checkboxBatteryPercent->Label()->SetText(_("Show battery percentage and clock").toAnsiString());
+#ifndef EMULATION
+	}
+#endif
 
 	m_checkboxGameCounter = new CheckBoxWithLabel(page);
-	m_checkboxGameCounter->SetBounds(0, 40, 320, 20);
+	m_checkboxGameCounter->SetBounds(0, 20, 320, 20);
 	m_checkboxGameCounter->Label()->SetText(_("Show the number of game you have").toAnsiString());
 
 	m_buttonResetEshopMusic = new Button(page);

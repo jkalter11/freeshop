@@ -240,7 +240,11 @@ void TopInformations::updateIcons(std::string timeTextFmt)
 		m_isTransitioning = true;
 
 		//Switch mode
+#ifndef EMULATION
+		if (m_textClockMode == 1 && Config::get(Config::ShowBattery).GetBool() && m_canTransition && !envIsHomebrew()) {
+#else
 		if (m_textClockMode == 1 && Config::get(Config::ShowBattery).GetBool() && m_canTransition) {
+#endif
 			//Battery percentage mode
 			m_textClockMode = 2;
 
