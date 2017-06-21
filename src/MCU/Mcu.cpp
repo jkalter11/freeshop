@@ -48,12 +48,42 @@ Result MCU::mcuReadRegister(u8 reg, void* data, u32 size)
     return ipc[1];
 }
 
-void MCU::ledApply()
+Result MCU::ptmSysmInit()
 {
-  mcuWriteRegister(0x2D, &m_ledPattern, sizeof(m_ledPattern));
+  return srvGetServiceHandle(&m_ptmSysmHandle, "ptm:sysm");
 }
 
-void MCU::ledBlinkOnce(u32 col)
+Result MCU::ptmSysmExit()
+{
+  return svcCloseHandle(m_ptmSysmHandle);
+}
+
+Result MCU::ptmSysmSetInfoLEDPattern(RGBLedPattern pattern)
+{
+    u32* ipc = getThreadCommandBuffer();
+    ipc[0] = 0x8010640;
+    memcpy(&ipc[1], &pattern, 0x64);
+    Result ret = svcSendSyncRequest(m_ptmSysmHandle);
+    if(ret < 0) return ret;
+    return ipc[1];
+}
+
+Result MCU::ledApply()
+{
+  Result res;
+
+  if (R_SUCCEEDED(res = mcuInit())) {
+    mcuWriteRegister(0x2D, &m_ledPattern, sizeof(m_ledPattern));
+    mcuExit();
+  } else if (R_SUCCEEDED(res = ptmSysmInit())) {
+    ptmSysmSetInfoLEDPattern(m_ledPattern);
+    ptmSysmExit();
+  }
+
+  return res;
+}
+
+bool MCU::ledBlinkOnce(u32 col)
 {
   memset(&m_ledPattern.r[ 0], 0, 32);
   memset(&m_ledPattern.g[ 0], 0, 32);
@@ -65,10 +95,10 @@ void MCU::ledBlinkOnce(u32 col)
 
   m_ledPattern.ani = 0xFF2040;
 
-  ledApply();
+  return R_SUCCEEDED(ledApply());
 }
 
-void MCU::ledBlinkThrice(u32 col)
+bool MCU::ledBlinkThrice(u32 col)
 {
   memset(&m_ledPattern.r[ 0], 0, 32);
   memset(&m_ledPattern.g[ 0], 0, 32);
@@ -92,10 +122,10 @@ void MCU::ledBlinkThrice(u32 col)
 
   m_ledPattern.ani = 0xFF1020;
 
-  ledApply();
+  return R_SUCCEEDED(ledApply());
 }
 
-void MCU::ledStay(u32 col)
+bool MCU::ledStay(u32 col)
 {
   memset(&m_ledPattern.r[0], (col >>  0) & 0xFF, 32);
   memset(&m_ledPattern.g[0], (col >>  8) & 0xFF, 32);
@@ -103,10 +133,10 @@ void MCU::ledStay(u32 col)
 
   m_ledPattern.ani = 0xFF0201;
 
-  ledApply();
+  return R_SUCCEEDED(ledApply());
 }
 
-void MCU::ledReset()
+bool MCU::ledReset()
 {
   memset(&m_ledPattern.r[0], 0, 32);
   memset(&m_ledPattern.g[0], 0, 32);
@@ -114,7 +144,7 @@ void MCU::ledReset()
 
   m_ledPattern.ani = 0xFF0000;
 
-  ledApply();
+  return R_SUCCEEDED(ledApply());
 }
 
 void MCU::dimLeds(u8 brightness)

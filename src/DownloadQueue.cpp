@@ -316,26 +316,17 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 
 						//No blink functionnality
 						bool canBlink = true;
-						if (Config::get(Config::NEWSNoLED).GetBool() || Config::get(Config::LEDDownloadFinished).GetBool()) {
-							if (R_SUCCEEDED(MCU::getInstance().mcuInit())) {
-								canBlink = false;
-							}
-						}
+						if (Config::get(Config::NEWSNoLED).GetBool() || Config::get(Config::LEDDownloadFinished).GetBool())
+							canBlink = false;
 
 						Notification::sendNews(_("%s has been installed", app->getTitle().toAnsiString().c_str()), _("The game %s (%s) has been installed on \n%s", app->getTitle().toAnsiString().c_str(), gameSize, timeTextFmt));
 
-						if (!canBlink) {
+						if (!canBlink)
 							MCU::getInstance().ledReset();
-							MCU::getInstance().mcuExit();
-						}
 					}
 
-					if (Config::get(Config::LEDDownloadFinished).GetBool()) {
-						if (R_SUCCEEDED(MCU::getInstance().mcuInit())) {
-							MCU::getInstance().ledBlinkOnce(0xFFA419);
-							MCU::getInstance().mcuExit();
-						}
-					}
+					if (Config::get(Config::LEDDownloadFinished).GetBool())
+						MCU::getInstance().ledBlinkOnce(0xFFA419);
 #endif
 					break;
 				}
@@ -831,21 +822,13 @@ void DownloadQueue::addSleepDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint6
 	if (R_SUCCEEDED(res = NIMS_RegisterTask(&tc, stdAppTitle.c_str(), "freeShop download"))) {
 		Notification::spawn(_("Ready for sleep installation: \n%s", stdAppTitle.c_str()));
 
-		if (Config::get(Config::LEDDownloadFinished).GetBool()) {
-			if (R_SUCCEEDED(MCU::getInstance().mcuInit())) {
-				MCU::getInstance().ledBlinkOnce(0x8EEBA0);
-				MCU::getInstance().mcuExit();
-			}
-		}
+		if (Config::get(Config::LEDDownloadFinished).GetBool())
+			MCU::getInstance().ledBlinkOnce(0x8EEBA0);
 	} else {
 		Notification::spawn(_("Sleep installation failed: \n%s", stdAppTitle.c_str()));
 
-		if (Config::get(Config::LEDDownloadError).GetBool()) {
-			if (R_SUCCEEDED(MCU::getInstance().mcuInit())) {
-				MCU::getInstance().ledBlinkThrice(0x0D09A1);
-				MCU::getInstance().mcuExit();
-			}
-		}
+		if (Config::get(Config::LEDDownloadError).GetBool())
+			MCU::getInstance().ledBlinkThrice(0x0D09A1);
 	}
 
 	/*The clear and simple explanation of this (LOOOONNNGGGGGGG) condition:

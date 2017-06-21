@@ -22,22 +22,27 @@ public:
   Result mcuInit();
   Result mcuExit();
 
-  void ledBlinkOnce(u32 col);
-  void ledBlinkThrice(u32 col);
-  void ledStay(u32 col);
+  Result ptmSysmInit();
+  Result ptmSysmExit();
 
-  void ledReset();
+  bool ledBlinkOnce(u32 col);
+  bool ledBlinkThrice(u32 col);
+  bool ledStay(u32 col);
+  bool ledReset();
 
   void dimLeds(u8 brightness);
 
-  Result mcuReadRegister(u8 reg, void* data, u32 size);
-
 private:
   Handle m_mcuHandle;
-  RGBLedPattern m_ledPattern;
+  Handle m_ptmSysmHandle;
+
+  Result mcuReadRegister(u8 reg, void* data, u32 size);
   Result mcuWriteRegister(u8 reg, void* data, u32 size);
 
-  void ledApply();
+  Result ptmSysmSetInfoLEDPattern(RGBLedPattern pattern);
+
+  RGBLedPattern m_ledPattern;
+  Result ledApply();
 
 };
 

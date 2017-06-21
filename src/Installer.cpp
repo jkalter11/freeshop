@@ -352,18 +352,10 @@ cpp3ds::Uint64 Installer::getTitleId() const
 bool Installer::applyErrorLedPattern()
 {
 #ifndef EMULATION
-	if (Config::get(Config::LEDDownloadError).GetBool()) {
-		if (R_SUCCEEDED(MCU::getInstance().mcuInit())) {
-			MCU::getInstance().ledBlinkThrice(0x0D09A1);
-			MCU::getInstance().mcuExit();
-
-			return true;
-		} else {
-			return false;
-		}
-	} else {
+	if (Config::get(Config::LEDDownloadError).GetBool())
+		return MCU::getInstance().ledBlinkThrice(0x0D09A1);
+	else
 		return false;
-	}
 #endif
 }
 
