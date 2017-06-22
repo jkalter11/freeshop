@@ -1,7 +1,8 @@
 • Further improvements to overall system
   stability and other minor adjustments.
 • The game list can now be filtered by
-  game features
+  game features and publishers
+• Empty filters are now hidden
 • Bugfix: Start button wasn't closing the
   app properly.
 • Bugfix: Unreleased DLC now fails the

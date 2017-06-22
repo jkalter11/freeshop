@@ -54,6 +54,7 @@ public:
 	void setFilterPlatforms(const std::vector<int> &genres);
 	void setFilterLanguages(int languages);
 	void setFilterRegions(int regions);
+	void setFilterPublishers(const std::vector<int> &publishers);
 
 	void setIndexDelta(int indexDelta);
 
@@ -81,6 +82,7 @@ private:
 	std::vector<int> m_filterGenres;
 	std::vector<int> m_filterPlatforms;
 	int m_filterRegions;
+	std::vector<int> m_filterPublishers;
 	int m_filterLanguages;
 	std::vector<int> m_filterFeatures;
 

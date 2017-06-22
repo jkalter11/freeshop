@@ -75,6 +75,8 @@ Settings::Settings(Gwen::Skin::TexturedBase *skin,  State *state)
 	fillFilterFeature(scrollBox);
 	scrollBox = addFilterPage("Platform");
 	fillFilterPlatforms(scrollBox);
+	scrollBox = addFilterPage("Publisher");
+	fillFilterPublisher(scrollBox);
 
 	// Sorting
 	page = m_tabControl->AddPage(_("Sort").toAnsiString())->GetPage();
@@ -217,6 +219,8 @@ void Settings::loadConfig()
 	loadFilter(Config::FilterGenre, m_filterGenreCheckboxes);
 	loadFilter(Config::FilterLanguage, m_filterLanguageCheckboxes);
 	loadFilter(Config::FilterPlatform, m_filterPlatformCheckboxes);
+	loadFilter(Config::FilterPublisher, m_filterPublisherCheckboxes);
+	loadFilter(Config::FilterFeatures, m_filterFeatureCheckboxes);
 
 	// Update
 	m_checkboxAutoUpdate->Checkbox()->SetChecked(Config::get(Config::AutoUpdate).GetBool());
@@ -493,6 +497,73 @@ void Settings::fillFilterPlatforms(Gwen::Controls::Base *parent)
 	}
 }
 
+void Settings::fillFilterPublisher(Gwen::Controls::Base *parent)
+{
+	// Use English instead of Chinese when fetching platform data (doesn't exist in Chinese)
+	std::string countryCode = m_countryCode;
+	if (countryCode == "HK" || countryCode == "TW")
+		countryCode = "GB";
+
+	std::string jsonFilename = _(FREESHOP_DIR "/cache/publishers.%s.json", m_countryCode.c_str());
+	if (!pathExists(jsonFilename.c_str()))
+	{
+		Download download(_("https://samurai.ctr.shop.nintendo.net/samurai/ws/%s/publishers/?shop_id=1", countryCode.c_str()), jsonFilename);
+		download.setField("Accept", "application/json");
+		download.run();
+	}
+
+	rapidjson::Document doc;
+	std::string json;
+	cpp3ds::FileInputStream file;
+	if (file.open(jsonFilename))
+	{
+		json.resize(file.getSize());
+		file.read(&json[0], json.size());
+		doc.Parse(json.c_str());
+		if (doc.HasParseError())
+		{
+			unlink(cpp3ds::FileSystem::getFilePath(jsonFilename).c_str());
+			return;
+		}
+
+		CheckBoxWithLabel* checkbox;
+		Label *labelCount;
+		rapidjson::Value &list = doc["publishers"]["publisher"];
+		std::vector<std::pair<int, std::string>> publishers;
+		for (int i = 0; i < list.Size(); ++i)
+		{
+			int publisherId = list[i]["id"].GetInt();
+			std::string publisherName = list[i]["name"].GetString();
+			publishers.push_back(std::make_pair(publisherId, publisherName));
+		}
+
+		// No need to do alphabetical sort, the list is already sorted, and we want our Nintendo at top ;p
+
+		for (int i = 0; i < publishers.size(); ++i)
+		{
+			int publisherId = publishers[i].first;
+			std::string &publisherName = publishers[i].second;
+			int gameCount = 0;
+			for (auto &app : AppList::getInstance().getList())
+				if (publisherId == app->getAppItem()->getPublisher())
+					gameCount++;
+
+			labelCount = new Label(parent);
+			labelCount->SetText(_("%d", gameCount).toAnsiString());
+			labelCount->SetBounds(0, 2 + i * 18, 31, 18);
+			labelCount->SetAlignment(Gwen::Pos::Right);
+
+			checkbox = new CheckBoxWithLabel(parent);
+			checkbox->SetPos(35, i * 18);
+			checkbox->Label()->SetText(publisherName);
+			checkbox->Checkbox()->SetValue(_("%d", publisherId).toAnsiString());
+			checkbox->Checkbox()->onCheckChanged.Add(this, &Settings::filterCheckboxChanged);
+
+			m_filterPublisherCheckboxes.push_back(checkbox);
+		}
+	}
+}
+
 void Settings::fillFilterFeature(Gwen::Controls::Base *parent)
 {
 	// Use English instead of Chinese when fetching genre data (Chinese lacks most genres)
@@ -566,12 +637,12 @@ void Settings::fillFilterFeature(Gwen::Controls::Base *parent)
 
 			for (int i = 0; i < features.size(); ++i)
 			{
-				int genreId = features[i].first;
-				std::string &genreName = features[i].second;
+				int featureId = features[i].first;
+				std::string &featureName = features[i].second;
 				int gameCount = 0;
 				for (auto &app : AppList::getInstance().getList())
 					for (auto &id : app->getAppItem()->getFeatures())
-						if (id == genreId)
+						if (id == featureId)
 							gameCount++;
 
 				labelCount = new Label(parent);
@@ -581,8 +652,8 @@ void Settings::fillFilterFeature(Gwen::Controls::Base *parent)
 
 				checkbox = new CheckBoxWithLabel(parent);
 				checkbox->SetPos(35, i * 18);
-				checkbox->Label()->SetText(genreName);
-				checkbox->Checkbox()->SetValue(_("%d", genreId).toAnsiString());
+				checkbox->Label()->SetText(featureName);
+				checkbox->Checkbox()->SetValue(_("%d", featureId).toAnsiString());
 				checkbox->Checkbox()->onCheckChanged.Add(this, &Settings::filterCheckboxChanged);
 
 				m_filterFeatureCheckboxes.push_back(checkbox);
@@ -678,6 +749,8 @@ void Settings::filterSaveClicked(Gwen::Controls::Base *base)
 	saveFilter(Config::FilterGenre, m_filterGenreCheckboxes);
 	saveFilter(Config::FilterLanguage, m_filterLanguageCheckboxes);
 	saveFilter(Config::FilterPlatform, m_filterPlatformCheckboxes);
+	saveFilter(Config::FilterPublisher, m_filterPublisherCheckboxes);
+	saveFilter(Config::FilterFeatures, m_filterFeatureCheckboxes);
 
 	m_buttonFilterSaveClear->SetDisabled(false);
 	Config::saveToFile();
@@ -690,6 +763,9 @@ void Settings::filterClearClicked(Gwen::Controls::Base *base)
 	Config::set(Config::FilterGenre, rapidjson::kArrayType);
 	Config::set(Config::FilterLanguage, rapidjson::kArrayType);
 	Config::set(Config::FilterPlatform, rapidjson::kArrayType);
+	Config::set(Config::FilterPublisher, rapidjson::kArrayType);
+	Config::set(Config::FilterFeatures, rapidjson::kArrayType);
+
 	m_buttonFilterSaveClear->SetDisabled(true);
 	Config::saveToFile();
 	Notification::spawn(_("Cleared saved filter settings"));
@@ -716,6 +792,8 @@ void Settings::selectAll(Gwen::Controls::Base *control)
 		CHECKBOXES_SET(m_filterPlatformCheckboxes, true)
 	else if (filterName == "Feature")
 		CHECKBOXES_SET(m_filterFeatureCheckboxes, true)
+	else if (filterName == "Publisher")
+		CHECKBOXES_SET(m_filterPublisherCheckboxes, true)
 }
 
 void Settings::selectNone(Gwen::Controls::Base *control)
@@ -730,6 +808,8 @@ void Settings::selectNone(Gwen::Controls::Base *control)
 		CHECKBOXES_SET(m_filterPlatformCheckboxes, false)
 	else if (filterName == "Feature")
 		CHECKBOXES_SET(m_filterFeatureCheckboxes, false)
+	else if (filterName == "Publisher")
+		CHECKBOXES_SET(m_filterPublisherCheckboxes, false)
 }
 
 void Settings::filterCheckboxChanged(Gwen::Controls::Base *control)
@@ -767,7 +847,7 @@ void Settings::filterCheckboxChanged(Gwen::Controls::Base *control)
 			}
 		AppList::getInstance().setFilterPlatforms(platforms);
 	}
-	if (filterName == "Feature")
+	else if (filterName == "Feature")
 	{
 		std::vector<int> features;
 		for (auto &checkbox : m_filterFeatureCheckboxes)
@@ -777,6 +857,17 @@ void Settings::filterCheckboxChanged(Gwen::Controls::Base *control)
 				features.push_back(genreId);
 			}
 		AppList::getInstance().setFilterFeatures(features);
+	}
+	else if (filterName == "Publisher")
+	{
+		std::vector<int> publishers;
+		for (auto &checkbox : m_filterPublisherCheckboxes)
+			if (checkbox->Checkbox()->IsChecked())
+			{
+				int publisherId = atoi(checkbox->Checkbox()->GetValue().c_str());
+				publishers.push_back(publisherId);
+			}
+		AppList::getInstance().setFilterPublishers(publishers);
 	}
 }
 
@@ -810,7 +901,7 @@ Gwen::Controls::ScrollControl *Settings::addFilterPage(const std::string &name)
 	button->SetText(_("Select All").toAnsiString());
 	button->onPress.Add(this, &Settings::selectAll);
 	button = new Button(group);
-	button->Dock(Gwen::Pos::Left);
+	button->Dock(Gwen::Pos::Right);
 	button->SetText(_("Select None").toAnsiString());
 	button->onPress.Add(this, &Settings::selectNone);
 	// Scrollbox to put under the two buttons

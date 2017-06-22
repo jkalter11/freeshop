@@ -23,6 +23,8 @@ public:
 		FilterGenre,
 		FilterLanguage,
 		FilterPlatform,
+		FilterPublisher,
+		FilterFeatures,
 		// Sort
 
 		// Update

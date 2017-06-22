@@ -18,6 +18,8 @@ namespace {
 		"filter_genre",
 		"filter_language",
 		"filter_platform",
+		"filter_publisher",
+		"filter_features",
 		// Sort
 		// Update
 		"auto-update",
@@ -129,6 +131,8 @@ void Config::loadDefaults()
 	ADD_DEFAULT(FilterGenre, rapidjson::kArrayType);
 	ADD_DEFAULT(FilterLanguage, rapidjson::kArrayType);
 	ADD_DEFAULT(FilterPlatform, rapidjson::kArrayType);
+	ADD_DEFAULT(FilterPublisher, rapidjson::kArrayType);
+	ADD_DEFAULT(FilterFeatures, rapidjson::kArrayType);
 
 	// Update
 	ADD_DEFAULT(AutoUpdate, true);

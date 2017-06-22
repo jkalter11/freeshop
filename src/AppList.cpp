@@ -307,6 +307,21 @@ matchedFeature:;
 			}
 	}
 
+	// Publisher filter
+	if (!m_filterPublishers.empty())
+	{
+		for (const auto& appItemGUI : m_guiAppItems)
+			if (appItemGUI->isVisible())
+			{
+				int appPublisher = appItemGUI->getAppItem()->getPublisher();
+				for (const auto& filterPublisher : m_filterPublishers)
+					if (appPublisher == filterPublisher)
+						goto matchedPublisher;
+				appItemGUI->setFilteredOut(true);
+matchedPublisher:;
+			}
+	}
+
 	sort();
 	setPosition(0.f, 0.f);
 }
@@ -605,6 +620,12 @@ void AppList::setFilterLanguages(int languages)
 void AppList::setFilterFeatures(const std::vector<int> &features)
 {
 	m_filterFeatures = features;
+	filter();
+}
+
+void AppList::setFilterPublishers(const std::vector<int> &publishers)
+{
+	m_filterPublishers = publishers;
 	filter();
 }
 
