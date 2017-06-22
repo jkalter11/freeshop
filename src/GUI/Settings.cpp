@@ -408,18 +408,20 @@ void Settings::fillFilterGenres(Gwen::Controls::Base *parent)
 					if (id == genreId)
 						gameCount++;
 
-			labelCount = new Label(parent);
-			labelCount->SetText(_("%d", gameCount).toAnsiString());
-			labelCount->SetBounds(0, 2 + i * 18, 31, 18);
-			labelCount->SetAlignment(Gwen::Pos::Right);
+			if (gameCount > 0) {
+				labelCount = new Label(parent);
+				labelCount->SetText(_("%d", gameCount).toAnsiString());
+				labelCount->SetBounds(0, 2 + m_filterGenreCheckboxes.size() * 18, 31, 18);
+				labelCount->SetAlignment(Gwen::Pos::Right);
 
-			checkbox = new CheckBoxWithLabel(parent);
-			checkbox->SetPos(35, i * 18);
-			checkbox->Label()->SetText(genreName);
-			checkbox->Checkbox()->SetValue(_("%d", genreId).toAnsiString());
-			checkbox->Checkbox()->onCheckChanged.Add(this, &Settings::filterCheckboxChanged);
+				checkbox = new CheckBoxWithLabel(parent);
+				checkbox->SetPos(35, m_filterGenreCheckboxes.size() * 18);
+				checkbox->Label()->SetText(genreName);
+				checkbox->Checkbox()->SetValue(_("%d", genreId).toAnsiString());
+				checkbox->Checkbox()->onCheckChanged.Add(this, &Settings::filterCheckboxChanged);
 
-			m_filterGenreCheckboxes.push_back(checkbox);
+				m_filterGenreCheckboxes.push_back(checkbox);
+			}
 		}
 	}
 }
@@ -481,18 +483,20 @@ void Settings::fillFilterPlatforms(Gwen::Controls::Base *parent)
 				if (platformId == app->getAppItem()->getPlatform())
 					gameCount++;
 
-			labelCount = new Label(parent);
-			labelCount->SetText(_("%d", gameCount).toAnsiString());
-			labelCount->SetBounds(0, 2 + i * 18, 31, 18);
-			labelCount->SetAlignment(Gwen::Pos::Right);
+			if (gameCount > 0) {
+				labelCount = new Label(parent);
+				labelCount->SetText(_("%d", gameCount).toAnsiString());
+				labelCount->SetBounds(0, 2 + m_filterPlatformCheckboxes.size() * 18, 31, 18);
+				labelCount->SetAlignment(Gwen::Pos::Right);
 
-			checkbox = new CheckBoxWithLabel(parent);
-			checkbox->SetPos(35, i * 18);
-			checkbox->Label()->SetText(platformName);
-			checkbox->Checkbox()->SetValue(_("%d", platformId).toAnsiString());
-			checkbox->Checkbox()->onCheckChanged.Add(this, &Settings::filterCheckboxChanged);
+				checkbox = new CheckBoxWithLabel(parent);
+				checkbox->SetPos(35, m_filterPlatformCheckboxes.size() * 18);
+				checkbox->Label()->SetText(platformName);
+				checkbox->Checkbox()->SetValue(_("%d", platformId).toAnsiString());
+				checkbox->Checkbox()->onCheckChanged.Add(this, &Settings::filterCheckboxChanged);
 
-			m_filterPlatformCheckboxes.push_back(checkbox);
+				m_filterPlatformCheckboxes.push_back(checkbox);
+			}
 		}
 	}
 }
@@ -548,18 +552,20 @@ void Settings::fillFilterPublisher(Gwen::Controls::Base *parent)
 				if (publisherId == app->getAppItem()->getPublisher())
 					gameCount++;
 
-			labelCount = new Label(parent);
-			labelCount->SetText(_("%d", gameCount).toAnsiString());
-			labelCount->SetBounds(0, 2 + i * 18, 31, 18);
-			labelCount->SetAlignment(Gwen::Pos::Right);
+			if (gameCount > 0) {
+				labelCount = new Label(parent);
+				labelCount->SetText(_("%d", gameCount).toAnsiString());
+				labelCount->SetBounds(0, 2 + m_filterPublisherCheckboxes.size() * 18, 31, 18);
+				labelCount->SetAlignment(Gwen::Pos::Right);
 
-			checkbox = new CheckBoxWithLabel(parent);
-			checkbox->SetPos(35, i * 18);
-			checkbox->Label()->SetText(publisherName);
-			checkbox->Checkbox()->SetValue(_("%d", publisherId).toAnsiString());
-			checkbox->Checkbox()->onCheckChanged.Add(this, &Settings::filterCheckboxChanged);
+				checkbox = new CheckBoxWithLabel(parent);
+				checkbox->SetPos(35, m_filterPublisherCheckboxes.size() * 18);
+				checkbox->Label()->SetText(publisherName);
+				checkbox->Checkbox()->SetValue(_("%d", publisherId).toAnsiString());
+				checkbox->Checkbox()->onCheckChanged.Add(this, &Settings::filterCheckboxChanged);
 
-			m_filterPublisherCheckboxes.push_back(checkbox);
+				m_filterPublisherCheckboxes.push_back(checkbox);
+			}
 		}
 	}
 }
@@ -645,18 +651,20 @@ void Settings::fillFilterFeature(Gwen::Controls::Base *parent)
 						if (id == featureId)
 							gameCount++;
 
-				labelCount = new Label(parent);
-				labelCount->SetText(_("%d", gameCount).toAnsiString());
-				labelCount->SetBounds(0, 2 + i * 18, 31, 18);
-				labelCount->SetAlignment(Gwen::Pos::Right);
+				if (gameCount > 0) {
+					labelCount = new Label(parent);
+					labelCount->SetText(_("%d", gameCount).toAnsiString());
+					labelCount->SetBounds(0, 2 + m_filterFeatureCheckboxes.size() * 18, 31, 18);
+					labelCount->SetAlignment(Gwen::Pos::Right);
 
-				checkbox = new CheckBoxWithLabel(parent);
-				checkbox->SetPos(35, i * 18);
-				checkbox->Label()->SetText(featureName);
-				checkbox->Checkbox()->SetValue(_("%d", featureId).toAnsiString());
-				checkbox->Checkbox()->onCheckChanged.Add(this, &Settings::filterCheckboxChanged);
+					checkbox = new CheckBoxWithLabel(parent);
+					checkbox->SetPos(35, m_filterFeatureCheckboxes.size() * 18);
+					checkbox->Label()->SetText(featureName);
+					checkbox->Checkbox()->SetValue(_("%d", featureId).toAnsiString());
+					checkbox->Checkbox()->onCheckChanged.Add(this, &Settings::filterCheckboxChanged);
 
-				m_filterFeatureCheckboxes.push_back(checkbox);
+					m_filterFeatureCheckboxes.push_back(checkbox);
+				}
 			}
 		}
 	}
@@ -727,18 +735,20 @@ void Settings::fillFilterLanguages(Gwen::Controls::Base *parent)
 			if (app->getAppItem()->getLanguages() & lang)
 				gameCount++;
 
-		labelCount = new Label(parent);
-		labelCount->SetText(_("%d", gameCount).toAnsiString());
-		labelCount->SetBounds(0, 2 + i * 18, 31, 18);
-		labelCount->SetAlignment(Gwen::Pos::Right);
+		if (gameCount > 0) {
+			labelCount = new Label(parent);
+			labelCount->SetText(_("%d", gameCount).toAnsiString());
+			labelCount->SetBounds(0, 2 + m_filterLanguageCheckboxes.size() * 18, 31, 18);
+			labelCount->SetAlignment(Gwen::Pos::Right);
 
-		checkbox = new CheckBoxWithLabel(parent);
-		checkbox->SetPos(35, i * 18);
-		checkbox->Label()->SetText(langString.toAnsiString());
-		checkbox->Checkbox()->SetValue(_("%d", lang).toAnsiString());
-		checkbox->Checkbox()->onCheckChanged.Add(this, &Settings::filterCheckboxChanged);
+			checkbox = new CheckBoxWithLabel(parent);
+			checkbox->SetPos(35, m_filterLanguageCheckboxes.size() * 18);
+			checkbox->Label()->SetText(langString.toAnsiString());
+			checkbox->Checkbox()->SetValue(_("%d", lang).toAnsiString());
+			checkbox->Checkbox()->onCheckChanged.Add(this, &Settings::filterCheckboxChanged);
 
-		m_filterLanguageCheckboxes.push_back(checkbox);
+			m_filterLanguageCheckboxes.push_back(checkbox);
+		}
 	}
 }
 
