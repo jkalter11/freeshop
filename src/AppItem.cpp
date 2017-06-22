@@ -314,6 +314,11 @@ const std::vector<int> &AppItem::getGenres() const
 	return m_genres;
 }
 
+const std::vector<int> &AppItem::getFeatures() const
+{
+	return m_features;
+}
+
 int AppItem::getPlatform() const
 {
 	return m_platform;
@@ -367,7 +372,7 @@ void AppItem::queueForSleepInstallThread()
 
 	Notification::spawn(_("Preparing for sleep installation: \n%s", m_title.toAnsiString().c_str()));
 	DownloadQueue::getInstance().addSleepDownload(shared_from_this(), m_titleId, m_title);
-	
+
 	if (m_sleepInstallRelated) {
 		for (auto &id : m_updates)
 			DownloadQueue::getInstance().addSleepDownload(shared_from_this(), id, m_title);
@@ -384,7 +389,7 @@ void AppItem::removeSleepInstall(bool removeRelated)
 #ifndef EMULATION
 	m_removeSleepRelated = removeRelated;
 	askUserToRemove(m_titleId, m_title);
-	
+
 	if (m_removeSleepRelated) {
 		for (auto &id : m_updates)
 			askUserToRemove(id, _("[Update] %s", m_title.toAnsiString().c_str()));

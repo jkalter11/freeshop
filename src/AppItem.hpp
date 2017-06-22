@@ -71,6 +71,7 @@ public:
 	const std::vector<int> &getGenres() const;
 	int getPlatform() const;
 	int getPublisher() const;
+	const std::vector<int> &getFeatures() const;
 
 	float getVoteScore() const;
 	int getVoteCount() const;
@@ -80,7 +81,7 @@ public:
 	void queueForInstall();
 	void queueForSleepInstall(bool installRelated = true);
 	void queueForSleepInstallThread();
-	
+
 	void removeSleepInstall(bool removeRelated = true);
 	void askUserToRemove(cpp3ds::Uint64 titleID, cpp3ds::String titleName);
 

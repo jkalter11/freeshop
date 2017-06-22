@@ -292,6 +292,21 @@ matchedPlatform:;
 			}
 	}
 
+	// Features filter
+	if (!m_filterFeatures.empty())
+	{
+		for (const auto& appItemGUI : m_guiAppItems)
+			if (appItemGUI->isVisible())
+			{
+				for (const auto& appFeature : appItemGUI->getAppItem()->getFeatures())
+					for (const auto& filterFeature : m_filterFeatures)
+						if (appFeature == filterFeature)
+							goto matchedFeature;
+				appItemGUI->setFilteredOut(true);
+matchedFeature:;
+			}
+	}
+
 	sort();
 	setPosition(0.f, 0.f);
 }
@@ -584,6 +599,12 @@ void AppList::setFilterRegions(int regions)
 void AppList::setFilterLanguages(int languages)
 {
 	m_filterLanguages = languages;
+	filter();
+}
+
+void AppList::setFilterFeatures(const std::vector<int> &features)
+{
+	m_filterFeatures = features;
 	filter();
 }
 

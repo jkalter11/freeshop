@@ -50,6 +50,7 @@ namespace FreeShop
 			void fillFilterGenres(Gwen::Controls::Base *parent);
 			void fillFilterPlatforms(Gwen::Controls::Base *parent);
 			void fillFilterLanguages(Gwen::Controls::Base *parent);
+			void fillFilterFeature(Gwen::Controls::Base *parent);
 
 			void fillSortPage(Gwen::Controls::Base *page);
 			void fillUpdatePage(Gwen::Controls::Base *page);
@@ -115,6 +116,7 @@ namespace FreeShop
 			std::vector<Gwen::Controls::CheckBoxWithLabel*> m_filterPlatformCheckboxes;
 			std::vector<Gwen::Controls::CheckBoxWithLabel*> m_filterRegionCheckboxes;
 			std::vector<Gwen::Controls::CheckBoxWithLabel*> m_filterLanguageCheckboxes;
+			std::vector<Gwen::Controls::CheckBoxWithLabel*> m_filterFeatureCheckboxes;
 			Gwen::Controls::Button *m_buttonFilterSave;
 			Gwen::Controls::Button *m_buttonFilterSaveClear;
 

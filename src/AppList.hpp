@@ -50,6 +50,7 @@ public:
 	bool processEvent(const cpp3ds::Event& event);
 
 	void setFilterGenres(const std::vector<int> &genres);
+	void setFilterFeatures(const std::vector<int> &features);
 	void setFilterPlatforms(const std::vector<int> &genres);
 	void setFilterLanguages(int languages);
 	void setFilterRegions(int regions);
@@ -81,6 +82,7 @@ private:
 	std::vector<int> m_filterPlatforms;
 	int m_filterRegions;
 	int m_filterLanguages;
+	std::vector<int> m_filterFeatures;
 
 	std::string m_jsonFilename;
 	int m_selectedIndex;

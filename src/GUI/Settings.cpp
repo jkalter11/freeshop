@@ -71,7 +71,8 @@ Settings::Settings(Gwen::Skin::TexturedBase *skin,  State *state)
 	fillFilterGenres(scrollBox);
 	scrollBox = addFilterPage("Language");
 	fillFilterLanguages(scrollBox);
-//	scrollBox = addFilterPage("Feature");
+	scrollBox = addFilterPage("Feature");
+	fillFilterFeature(scrollBox);
 	scrollBox = addFilterPage("Platform");
 	fillFilterPlatforms(scrollBox);
 
@@ -492,6 +493,105 @@ void Settings::fillFilterPlatforms(Gwen::Controls::Base *parent)
 	}
 }
 
+void Settings::fillFilterFeature(Gwen::Controls::Base *parent)
+{
+	// Use English instead of Chinese when fetching genre data (Chinese lacks most genres)
+	std::string countryCode = m_countryCode;
+	if (countryCode == "HK" || countryCode == "TW")
+		countryCode = "GB";
+
+	const char *url = "https://api.github.com/repos/Arc13/feature-cache-releases/releases/latest";
+	const char *latestJsonFilename = FREESHOP_DIR "/tmp/latest.json";
+	Download featureLatest(url, latestJsonFilename);
+	featureLatest.run();
+
+	cpp3ds::FileInputStream jsonFile;
+	if (jsonFile.open(latestJsonFilename))
+	{
+		std::string jsonLatest;
+		rapidjson::Document docLatest;
+		int size = jsonFile.getSize();
+		jsonLatest.resize(size);
+		jsonFile.read(&jsonLatest[0], size);
+		docLatest.Parse(jsonLatest.c_str());
+
+		// Get the latest file
+		std::string tag = docLatest["tag_name"].GetString();
+
+		std::string jsonFilename = cpp3ds::FileSystem::getFilePath(_(FREESHOP_DIR "/cache/features.%s.json", countryCode.c_str()));
+		if (!pathExists(jsonFilename.c_str()))
+		{
+			Download download(_("https://github.com/Arc13/feature-cache-releases/releases/download/%s/features.%s.json", tag.c_str(), countryCode.c_str()), jsonFilename);
+			download.run();
+
+			// If the download returned 404, the language is not (yet) available, retry with the default file
+			if (download.getLastResponse().getStatus() == cpp3ds::Http::Response::NotFound) {
+				remove(jsonFilename.c_str());
+				countryCode = "GB";
+
+				jsonFilename = _(FREESHOP_DIR "/cache/features.%s.json", countryCode.c_str());
+				Download downloadRetry(_("https://github.com/Arc13/feature-cache-releases/releases/download/%s/features.%s.json", tag.c_str(), countryCode.c_str()), jsonFilename);
+				downloadRetry.run();
+			}
+		}
+
+		rapidjson::Document doc;
+		std::string json;
+		cpp3ds::FileInputStream file;
+		if (file.open(jsonFilename))
+		{
+			json.resize(file.getSize());
+			file.read(&json[0], json.size());
+			doc.Parse(json.c_str());
+			if (doc.HasParseError())
+			{
+				unlink(cpp3ds::FileSystem::getFilePath(jsonFilename).c_str());
+				return;
+			}
+
+			CheckBoxWithLabel* checkbox;
+			Label *labelCount;
+			rapidjson::Value &list = doc;
+			std::vector<std::pair<int, std::string>> features;
+			for (rapidjson::Value::ConstMemberIterator itr = doc.MemberBegin(); itr != doc.MemberEnd(); ++itr) {
+				int featureId = std::stoi(itr->name.GetString());
+				std::string featureName = itr->value.GetString();
+				features.push_back(std::make_pair(featureId, featureName));
+			}
+
+			// Alphabetical sort
+			std::sort(features.begin(), features.end(), [=](std::pair<int, std::string>& a, std::pair<int, std::string>& b) {
+				return a.second < b.second;
+			});
+
+			for (int i = 0; i < features.size(); ++i)
+			{
+				int genreId = features[i].first;
+				std::string &genreName = features[i].second;
+				int gameCount = 0;
+				for (auto &app : AppList::getInstance().getList())
+					for (auto &id : app->getAppItem()->getFeatures())
+						if (id == genreId)
+							gameCount++;
+
+				labelCount = new Label(parent);
+				labelCount->SetText(_("%d", gameCount).toAnsiString());
+				labelCount->SetBounds(0, 2 + i * 18, 31, 18);
+				labelCount->SetAlignment(Gwen::Pos::Right);
+
+				checkbox = new CheckBoxWithLabel(parent);
+				checkbox->SetPos(35, i * 18);
+				checkbox->Label()->SetText(genreName);
+				checkbox->Checkbox()->SetValue(_("%d", genreId).toAnsiString());
+				checkbox->Checkbox()->onCheckChanged.Add(this, &Settings::filterCheckboxChanged);
+
+				m_filterFeatureCheckboxes.push_back(checkbox);
+			}
+		}
+	}
+}
+
+
 void Settings::fillFilterRegions(Gwen::Controls::Base *parent)
 {
 	for (int i = 0; i < 7; ++i)
@@ -614,6 +714,8 @@ void Settings::selectAll(Gwen::Controls::Base *control)
 		CHECKBOXES_SET(m_filterLanguageCheckboxes, true)
 	else if (filterName == "Platform")
 		CHECKBOXES_SET(m_filterPlatformCheckboxes, true)
+	else if (filterName == "Feature")
+		CHECKBOXES_SET(m_filterFeatureCheckboxes, true)
 }
 
 void Settings::selectNone(Gwen::Controls::Base *control)
@@ -626,6 +728,8 @@ void Settings::selectNone(Gwen::Controls::Base *control)
 		CHECKBOXES_SET(m_filterLanguageCheckboxes, false)
 	else if (filterName == "Platform")
 		CHECKBOXES_SET(m_filterPlatformCheckboxes, false)
+	else if (filterName == "Feature")
+		CHECKBOXES_SET(m_filterFeatureCheckboxes, false)
 }
 
 void Settings::filterCheckboxChanged(Gwen::Controls::Base *control)
@@ -662,6 +766,17 @@ void Settings::filterCheckboxChanged(Gwen::Controls::Base *control)
 				platforms.push_back(platformId);
 			}
 		AppList::getInstance().setFilterPlatforms(platforms);
+	}
+	if (filterName == "Feature")
+	{
+		std::vector<int> features;
+		for (auto &checkbox : m_filterFeatureCheckboxes)
+			if (checkbox->Checkbox()->IsChecked())
+			{
+				int genreId = atoi(checkbox->Checkbox()->GetValue().c_str());
+				features.push_back(genreId);
+			}
+		AppList::getInstance().setFilterFeatures(features);
 	}
 }
 
