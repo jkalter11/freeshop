@@ -37,14 +37,16 @@ DialogState::DialogState(StateStack &stack, Context &context, StateCallback call
 	m_message.setScale(cpp3ds::Vector2f(m_message.getScale().x * 7/6, m_message.getScale().y * 7/6));
 
 	m_buttonOkBackground.setSize(cpp3ds::Vector2f(126.f, 29.f));
-	m_buttonOkBackground.setOutlineColor(cpp3ds::Color(158, 158, 158, 128));
+	m_buttonOkBackground.setOutlineColor(cpp3ds::Color(158, 158, 158, 0));
 	m_buttonOkBackground.setOutlineThickness(1.f);
 	m_buttonOkBackground.setPosition(157.f, 182.f);
+	m_buttonOkBackground.setFillColor(cpp3ds::Color(255, 255, 255, 0));
 
 	m_buttonCancelBackground.setSize(cpp3ds::Vector2f(126.f, 29.f));
-	m_buttonCancelBackground.setOutlineColor(cpp3ds::Color(158, 158, 158, 128));
+	m_buttonCancelBackground.setOutlineColor(cpp3ds::Color(158, 158, 158, 0));
 	m_buttonCancelBackground.setOutlineThickness(1.f);
 	m_buttonCancelBackground.setPosition(32.f, 182.f);
+	m_buttonCancelBackground.setFillColor(cpp3ds::Color(255, 255, 255, 0));
 
 	m_buttonOkText.setString(_("\uE000 Ok"));
 	m_buttonOkText.setCharacterSize(14);
@@ -77,6 +79,7 @@ DialogState::DialogState(StateStack &stack, Context &context, StateCallback call
 
 #define TWEEN_IN(obj, posX, posY, newSizeX, newSizeY) \
 	TweenEngine::Tween::to(obj, obj.FILL_COLOR_ALPHA, 0.2f).target(255.f).start(m_tweenManager); \
+	TweenEngine::Tween::to(obj, obj.OUTLINE_COLOR_ALPHA, 0.2f).target(128.f).start(m_tweenManager); \
 	TweenEngine::Tween::to(obj, obj.POSITION_XY, 0.2f).target(posX, posY).start(m_tweenManager); \
 	TweenEngine::Tween::to(obj, obj.SIZE, 0.2f).target(newSizeX, newSizeY).start(m_tweenManager);
 
