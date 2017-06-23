@@ -951,7 +951,7 @@ void Settings::fillSortPage(Gwen::Controls::Base *page)
 
 	m_buttonFilterSaveClearSort = new Button(page);
 	m_buttonFilterSaveClearSort->SetFont(L"fonts/fontawesome.ttf", 18, false);
-	m_buttonFilterSaveClearSort->SetText("\uf014"); // Trash can icon
+	m_buttonFilterSaveClearSort->SetText("\uf00d"); // Cross icon
 	m_buttonFilterSaveClearSort->SetBounds(26, 140, 22, 22);
 	m_buttonFilterSaveClearSort->SetPadding(Gwen::Padding(0, 0, 0, 3));
 	m_buttonFilterSaveClearSort->onPress.Add(this, &Settings::sortClearClicked);
