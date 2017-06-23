@@ -10,6 +10,7 @@
 #include "../Download.hpp"
 #include "../Util.hpp"
 #include "../AppList.hpp"
+#include "../InstalledList.hpp"
 #include "../TitleKeys.hpp"
 #include "../Notification.hpp"
 #include "../States/DialogState.hpp"
@@ -922,22 +923,137 @@ Gwen::Controls::ScrollControl *Settings::addFilterPage(const std::string &name)
 	return scrollBox;
 }
 
+Gwen::Controls::ScrollControl *Settings::addSortPage(const std::string &name)
+{
+	// Add tab page
+	Base *sortPage = m_sortTabControl->AddPage(_(name).toAnsiString())->GetPage();
+	sortPage->SetName(name);
+	// Scrollbox to put under the two buttons
+	ScrollControl *scrollBox = new ScrollControl(sortPage);
+	scrollBox->Dock(Gwen::Pos::Fill);
+	scrollBox->SetScroll(false, true);
+	// Return scrollbox to be filled with controls (probably checkboxes)
+	return scrollBox;
+}
+
 void Settings::fillSortPage(Gwen::Controls::Base *page)
 {
-	m_radioSortType = new RadioButtonController(page);
-	m_radioSortType->SetBounds(10, 0, 180, 120);
-	m_radioSortType->AddOption(_("Release Date").toWideString(), "Release Date")->Select();
-	m_radioSortType->AddOption(_("Name").toWideString(), "Name");
-	m_radioSortType->AddOption(_("Size").toWideString(), "Size");
-	m_radioSortType->AddOption(_("Vote Score").toWideString(), "Vote Score");
-	m_radioSortType->AddOption(_("Vote Count").toWideString(), "Vote Count");
-	m_radioSortType->onSelectionChange.Add(this, &Settings::updateSorting);
+	m_sortTabControl = new TabControl(page);
+	m_sortTabControl->Dock(Gwen::Pos::Fill);
+	m_sortTabControl->SetTabStripPosition(Gwen::Pos::Left);
 
-	m_radioSortDirection = new RadioButtonController(page);
-	m_radioSortDirection->SetBounds(190, 5, 150, 120);
-	m_radioSortDirection->AddOption(_("Ascending").toWideString(), "Ascending");
-	m_radioSortDirection->AddOption(_("Descending").toWideString(), "Descending")->Select();
+	m_buttonFilterSaveSort = new Button(page);
+	m_buttonFilterSaveSort->SetFont(L"fonts/fontawesome.ttf", 18, false);
+	m_buttonFilterSaveSort->SetText("\uf0c7"); // Save floppy icon
+	m_buttonFilterSaveSort->SetBounds(0, 140, 22, 22);
+	m_buttonFilterSaveSort->SetPadding(Gwen::Padding(0, 0, 0, 3));
+	m_buttonFilterSaveSort->onPress.Add(this, &Settings::sortSaveClicked);
+
+	m_buttonFilterSaveClearSort = new Button(page);
+	m_buttonFilterSaveClearSort->SetFont(L"fonts/fontawesome.ttf", 18, false);
+	m_buttonFilterSaveClearSort->SetText("\uf014"); // Trash can icon
+	m_buttonFilterSaveClearSort->SetBounds(26, 140, 22, 22);
+	m_buttonFilterSaveClearSort->SetPadding(Gwen::Padding(0, 0, 0, 3));
+	m_buttonFilterSaveClearSort->onPress.Add(this, &Settings::sortClearClicked);
+
+	ScrollControl *scrollBox;
+	scrollBox = addSortPage("Game List");
+	fillSortGameList(scrollBox);
+	scrollBox = addSortPage("Installed");
+	fillSortInstalledList(scrollBox);
+}
+
+void Settings::fillSortGameList(Gwen::Controls::Base *parent)
+{
+	m_radioSortType = new RadioButtonController(parent);
+	m_radioSortType->SetBounds(10, 60, 180, 120);
+	m_sortGameListRadioButtons.push_back(m_radioSortType->AddOption(_("Release Date").toWideString(), "Release Date"));
+	m_sortGameListRadioButtons.push_back(m_radioSortType->AddOption(_("Name").toWideString(), "Name"));
+	m_sortGameListRadioButtons.push_back(m_radioSortType->AddOption(_("Size").toWideString(), "Size"));
+	m_sortGameListRadioButtons.push_back(m_radioSortType->AddOption(_("Vote Score").toWideString(), "Vote Score"));
+	m_sortGameListRadioButtons.push_back(m_radioSortType->AddOption(_("Vote Count").toWideString(), "Vote Count"));
+
+	m_radioSortDirection = new RadioButtonController(parent);
+	m_radioSortDirection->SetBounds(10, 0, 150, 40);
+	m_sortGameListRadioButtonsDirection.push_back(m_radioSortDirection->AddOption(_("Ascending").toWideString(), "Ascending"));
+	m_sortGameListRadioButtonsDirection.push_back(m_radioSortDirection->AddOption(_("Descending").toWideString(), "Descending"));
+
+	loadSort(Config::SortGameList, m_sortGameListRadioButtons);
+	loadSort(Config::SortGameListDirection, m_sortGameListRadioButtonsDirection);
+
+	m_radioSortType->onSelectionChange.Add(this, &Settings::updateSorting);
 	m_radioSortDirection->onSelectionChange.Add(this, &Settings::updateSorting);
+}
+
+void Settings::fillSortInstalledList(Gwen::Controls::Base *parent)
+{
+	m_radioSortTypeInstalled = new RadioButtonController(parent);
+	m_radioSortTypeInstalled->SetBounds(10, 60, 180, 120);
+	m_sortInstalledListRadioButtons.push_back(m_radioSortTypeInstalled->AddOption(_("Release Date").toWideString(), "Release Date"));
+	m_sortInstalledListRadioButtons.push_back(m_radioSortTypeInstalled->AddOption(_("Name").toWideString(), "Name"));
+	m_sortInstalledListRadioButtons.push_back(m_radioSortTypeInstalled->AddOption(_("Size").toWideString(), "Size"));
+	m_sortInstalledListRadioButtons.push_back(m_radioSortTypeInstalled->AddOption(_("Vote Score").toWideString(), "Vote Score"));
+	m_sortInstalledListRadioButtons.push_back(m_radioSortTypeInstalled->AddOption(_("Vote Count").toWideString(), "Vote Count"));
+
+	m_radioSortDirectionInstalled = new RadioButtonController(parent);
+	m_radioSortDirectionInstalled->SetBounds(10, 0, 150, 40);
+	m_sortInstalledListRadioButtonsDirection.push_back(m_radioSortDirectionInstalled->AddOption(_("Ascending").toWideString(), "Ascending"));
+	m_sortInstalledListRadioButtonsDirection.push_back(m_radioSortDirectionInstalled->AddOption(_("Descending").toWideString(), "Descending"));
+
+	loadSort(Config::SortInstalledList, m_sortInstalledListRadioButtons);
+	loadSort(Config::SortInstalledListDirection, m_sortInstalledListRadioButtonsDirection);
+
+	m_radioSortTypeInstalled->onSelectionChange.Add(this, &Settings::updateSorting);
+	m_radioSortDirectionInstalled->onSelectionChange.Add(this, &Settings::updateSorting);
+}
+
+void Settings::sortSaveClicked(Gwen::Controls::Base *base)
+{
+	// Region
+	saveSort(Config::SortGameList, m_sortGameListRadioButtons);
+	saveSort(Config::SortGameListDirection, m_sortGameListRadioButtonsDirection);
+	saveSort(Config::SortInstalledList, m_sortInstalledListRadioButtons);
+	saveSort(Config::SortInstalledListDirection, m_sortInstalledListRadioButtonsDirection);
+
+	Config::saveToFile();
+	Notification::spawn(_("Sorting settings saved"));
+}
+
+void Settings::sortClearClicked(Gwen::Controls::Base *base)
+{
+	Config::set(Config::SortGameList, 0);
+	Config::set(Config::SortGameListDirection, 1);
+	Config::set(Config::SortInstalledList, 1);
+	Config::set(Config::SortInstalledListDirection, 0);
+
+	loadSort(Config::SortGameList, m_sortGameListRadioButtons);
+	loadSort(Config::SortGameListDirection, m_sortGameListRadioButtonsDirection);
+	loadSort(Config::SortInstalledList, m_sortInstalledListRadioButtons);
+	loadSort(Config::SortInstalledListDirection, m_sortInstalledListRadioButtonsDirection);
+
+	Config::saveToFile();
+	Notification::spawn(_("Sorting settings resetted"));
+}
+
+void Settings::saveSort(Config::Key key, std::vector<Gwen::Controls::LabeledRadioButton*> &radioArray)
+{
+	int i = 0;
+
+	for (auto &radio : radioArray) {
+		if (radio->GetRadioButton()->IsChecked()) {
+			Config::set(key, i);
+			break;
+		}
+		i++;
+	}
+}
+
+void Settings::loadSort(Config::Key key, std::vector<Gwen::Controls::LabeledRadioButton*> &radioArray)
+{
+	int radioIndex = Config::get(key).GetInt();
+	radioIndex %= 5;
+
+	radioArray[radioIndex]->Select();
 }
 
 void Settings::fillUpdatePage(Gwen::Controls::Base *page)
@@ -1345,6 +1461,22 @@ void Settings::updateSorting(Gwen::Controls::Base *control)
 		sortType = AppList::ReleaseDate;
 
 	AppList::getInstance().setSortType(sortType, isAscending);
+
+	InstalledList::SortType sortTypeInstalled;
+	std::string sortTypeNameInstalled(m_radioSortTypeInstalled->GetSelectedName());
+	isAscending = (m_radioSortDirectionInstalled->GetSelectedName() == "Ascending");
+	if (sortTypeNameInstalled == "Name")
+		sortTypeInstalled = InstalledList::Name;
+	else if (sortTypeNameInstalled == "Size")
+		sortTypeInstalled = InstalledList::Size;
+	else if (sortTypeNameInstalled == "Vote Score")
+		sortTypeInstalled = InstalledList::VoteScore;
+	else if (sortTypeNameInstalled == "Vote Count")
+		sortTypeInstalled = InstalledList::VoteCount;
+	else
+		sortTypeInstalled = InstalledList::ReleaseDate;
+
+	InstalledList::getInstance().setSortType(sortTypeInstalled, isAscending);
 }
 
 void Settings::musicComboChanged(Gwen::Controls::Base *combobox)

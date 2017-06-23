@@ -13,6 +13,8 @@ InstalledList::InstalledList()
 , m_expandedItem(nullptr)
 , m_isUpdatingList(false)
 , m_gameCount(0)
+, m_sortType(Name)
+, m_sortAscending(true)
 {
 	// Make install options initially transparent for fade in
 	TweenEngine::Tween::set(m_options, InstalledOptions::ALPHA)
@@ -171,13 +173,9 @@ void InstalledList::refresh()
 		installedItem->updateGameTitle();
 	}
 
-	// Sort alphabetically
-	std::sort(m_installedItems.begin(), m_installedItems.end(), [=](const std::unique_ptr<InstalledItem>& a, const std::unique_ptr<InstalledItem>& b)
-	{
-		return a->getAppItem()->getNormalizedTitle() < b->getAppItem()->getNormalizedTitle();
-	});
+	// Sort the list
+	sort();
 
-	repositionItems();
 	m_isUpdatingList = false;
 }
 
@@ -355,6 +353,48 @@ int InstalledList::getGameCount()
 		m_gameCount = m_installedItems.size();
 
 	return m_gameCount;
+}
+
+void InstalledList::sort()
+{
+	/*std::sort(m_installedItems.begin(), m_installedItems.end(), [=](const std::unique_ptr<InstalledItem>& a, const std::unique_ptr<InstalledItem>& b)
+	{
+		return a->getAppItem()->getNormalizedTitle() < b->getAppItem()->getNormalizedTitle();
+	});*/
+
+	m_tweenManager.killAll();
+	std::sort(m_installedItems.begin(), m_installedItems.end(), [&](const std::unique_ptr<InstalledItem>& a, const std::unique_ptr<InstalledItem>& b)
+	{
+		if (m_sortAscending)
+		{
+			switch(m_sortType) {
+				case Name: return a->getAppItem()->getNormalizedTitle() < b->getAppItem()->getNormalizedTitle();
+				case Size: return a->getAppItem()->getFilesize() < b->getAppItem()->getFilesize();
+				case VoteScore: return a->getAppItem()->getVoteScore() < b->getAppItem()->getVoteScore();
+				case VoteCount: return a->getAppItem()->getVoteCount() < b->getAppItem()->getVoteCount();
+				case ReleaseDate: return a->getAppItem()->getReleaseDate() < b->getAppItem()->getReleaseDate();
+			}
+		}
+		else
+		{
+			switch(m_sortType) {
+				case Name: return a->getAppItem()->getNormalizedTitle() > b->getAppItem()->getNormalizedTitle();
+				case Size: return a->getAppItem()->getFilesize() > b->getAppItem()->getFilesize();
+				case VoteScore: return a->getAppItem()->getVoteScore() > b->getAppItem()->getVoteScore();
+				case VoteCount: return a->getAppItem()->getVoteCount() > b->getAppItem()->getVoteCount();
+				case ReleaseDate: return a->getAppItem()->getReleaseDate() > b->getAppItem()->getReleaseDate();
+			}
+		}
+	});
+
+	repositionItems();
+}
+
+void InstalledList::setSortType(InstalledList::SortType sortType, bool ascending)
+{
+	m_sortType = sortType;
+	m_sortAscending = ascending;
+	sort();
 }
 
 } // namespace FreeShop

@@ -43,6 +43,8 @@ namespace FreeShop
 		private:
 			void saveFilter(Config::Key key, std::vector<Gwen::Controls::CheckBoxWithLabel*> &checkboxArray);
 			void loadFilter(Config::Key key, std::vector<Gwen::Controls::CheckBoxWithLabel*> &checkboxArray);
+			void saveSort(Config::Key key, std::vector<Gwen::Controls::LabeledRadioButton*> &radioArray);
+			void loadSort(Config::Key key, std::vector<Gwen::Controls::LabeledRadioButton*> &radioArray);
 			void updateEnabledStates();
 
 			Gwen::Controls::ScrollControl *addFilterPage(const std::string &name);
@@ -52,6 +54,10 @@ namespace FreeShop
 			void fillFilterLanguages(Gwen::Controls::Base *parent);
 			void fillFilterFeature(Gwen::Controls::Base *parent);
 			void fillFilterPublisher(Gwen::Controls::Base *parent);
+
+			Gwen::Controls::ScrollControl *addSortPage(const std::string &name);
+			void fillSortGameList(Gwen::Controls::Base *parent);
+			void fillSortInstalledList(Gwen::Controls::Base *parent);
 
 			void fillSortPage(Gwen::Controls::Base *page);
 			void fillUpdatePage(Gwen::Controls::Base *page);
@@ -87,6 +93,8 @@ namespace FreeShop
 
 			void updateEnabledState(Gwen::Controls::Base* control);
 			void updateSorting(Gwen::Controls::Base* control);
+			void sortSaveClicked(Gwen::Controls::Base *base);
+			void sortClearClicked(Gwen::Controls::Base *base);
 
 			void musicComboChanged(Gwen::Controls::Base *combobox);
 			void musicFileChanged(Gwen::Controls::Base* base);
@@ -123,8 +131,17 @@ namespace FreeShop
 			Gwen::Controls::Button *m_buttonFilterSaveClear;
 
 			// Sort
+			Gwen::Controls::TabControl *m_sortTabControl;
 			Gwen::Controls::RadioButtonController *m_radioSortType;
 			Gwen::Controls::RadioButtonController *m_radioSortDirection;
+			Gwen::Controls::RadioButtonController *m_radioSortTypeInstalled;
+			Gwen::Controls::RadioButtonController *m_radioSortDirectionInstalled;
+			std::vector<Gwen::Controls::LabeledRadioButton*> m_sortGameListRadioButtons;
+			std::vector<Gwen::Controls::LabeledRadioButton*> m_sortInstalledListRadioButtons;
+			std::vector<Gwen::Controls::LabeledRadioButton*> m_sortGameListRadioButtonsDirection;
+			std::vector<Gwen::Controls::LabeledRadioButton*> m_sortInstalledListRadioButtonsDirection;
+			Gwen::Controls::Button *m_buttonFilterSaveSort;
+			Gwen::Controls::Button *m_buttonFilterSaveClearSort;
 
 			// Update
 			Gwen::Controls::CheckBoxWithLabel *m_checkboxAutoUpdate;

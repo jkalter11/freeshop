@@ -13,8 +13,17 @@ namespace FreeShop {
 
 class InstalledList : public cpp3ds::Drawable, public Scrollable, public util3ds::TweenTransformable<cpp3ds::Transformable>  {
 public:
+	enum SortType {
+		Name,
+		Size,
+		VoteScore,
+		VoteCount,
+		ReleaseDate,
+	};
+
 	static InstalledList &getInstance();
 	void refresh();
+	void setSortType(SortType sortType, bool ascending);
 
 	void update(float delta);
 	bool processEvent(const cpp3ds::Event& event);
@@ -33,6 +42,7 @@ protected:
 	virtual void draw(cpp3ds::RenderTarget& target, cpp3ds::RenderStates states) const;
 	void repositionItems();
 	void expandItem(InstalledItem *item);
+	void sort();
 
 private:
 	cpp3ds::Mutex m_mutexRefresh;
@@ -48,6 +58,9 @@ private:
 
 	bool m_isUpdatingList;
 	int m_gameCount;
+
+	SortType m_sortType;
+	bool m_sortAscending;
 };
 
 } // namespace FreeShop

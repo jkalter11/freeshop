@@ -1,8 +1,14 @@
 • Further improvements to overall system
   stability and other minor adjustments.
+• The installed list can now be sorted
+  and the sorting options can be saved,
+  like the filter list.
+  (Check settings)
 • The game list can now be filtered by
   game features and publishers
 • Empty filters are now hidden
+• Reworked News screen (now like the
+  dialogs)
 • Bugfix: Start button wasn't closing the
   app properly.
 • Bugfix: Unreleased DLC now fails the

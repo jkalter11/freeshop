@@ -21,6 +21,10 @@ namespace {
 		"filter_publisher",
 		"filter_features",
 		// Sort
+		"sortGL",
+		"sortGLDir",
+		"sortIL",
+		"sortILDir",
 		// Update
 		"auto-update",
 		"last_updated",
@@ -133,6 +137,12 @@ void Config::loadDefaults()
 	ADD_DEFAULT(FilterPlatform, rapidjson::kArrayType);
 	ADD_DEFAULT(FilterPublisher, rapidjson::kArrayType);
 	ADD_DEFAULT(FilterFeatures, rapidjson::kArrayType);
+
+	// Sort
+	ADD_DEFAULT(SortGameList, 0);
+	ADD_DEFAULT(SortGameListDirection, 1);
+	ADD_DEFAULT(SortInstalledList, 1);
+	ADD_DEFAULT(SortInstalledListDirection, 0);
 
 	// Update
 	ADD_DEFAULT(AutoUpdate, true);

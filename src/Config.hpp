@@ -26,7 +26,10 @@ public:
 		FilterPublisher,
 		FilterFeatures,
 		// Sort
-
+		SortGameList,
+		SortGameListDirection,
+		SortInstalledList,
+		SortInstalledListDirection,
 		// Update
 		AutoUpdate,
 		LastUpdatedTime,
