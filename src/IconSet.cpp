@@ -102,7 +102,7 @@ void IconSet::setSelectedIndex(int index)
 			TweenEngine::Tween::to(icon, util3ds::TweenText::FILL_COLOR_RGB, 0.2f)
 			.target(Theme::iconSetColor.r, Theme::iconSetColor.g, Theme::iconSetColor.b)
 			.start(m_tweenManager);
-			
+
 			TweenEngine::Tween::to(icon, util3ds::TweenText::OUTLINE_COLOR_RGB, 0.2f)
 			.target(Theme::iconSetColor.r, Theme::iconSetColor.g, Theme::iconSetColor.b)
 			.start(m_tweenManager);
@@ -113,7 +113,7 @@ void IconSet::setSelectedIndex(int index)
 			TweenEngine::Tween::to(icon, util3ds::TweenText::FILL_COLOR_RGB, 0.2f)
 			.target(100.f, 100.f, 100.f)
 			.start(m_tweenManager);
-			
+
 			TweenEngine::Tween::to(icon, util3ds::TweenText::OUTLINE_COLOR_RGB, 0.2f)
 			.target(255.f, 255.f, 255.f)
 			.start(m_tweenManager);
@@ -127,7 +127,7 @@ void IconSet::setSelectedIndex(int index)
 		TweenEngine::Tween::to(m_icons[index], util3ds::TweenText::FILL_COLOR_RGB, 0.2f)
 		.target(Theme::iconSetColorActive.r, Theme::iconSetColorActive.g, Theme::iconSetColorActive.b)
 		.start(m_tweenManager);
-		
+
 		TweenEngine::Tween::to(m_icons[index], util3ds::TweenText::OUTLINE_COLOR_RGB, 0.2f)
 		.target(Theme::iconSetColorActive.r, Theme::iconSetColorActive.g, Theme::iconSetColorActive.b)
 		.start(m_tweenManager);
@@ -138,7 +138,7 @@ void IconSet::setSelectedIndex(int index)
 		TweenEngine::Tween::to(m_icons[index], util3ds::TweenText::FILL_COLOR_RGB, 0.2f)
 		.target(0.f, 0.f, 0.f)
 		.start(m_tweenManager);
-		
+
 		TweenEngine::Tween::to(m_icons[index], util3ds::TweenText::OUTLINE_COLOR_RGB, 0.2f)
 		.target(200.f, 200.f, 200.f)
 		.start(m_tweenManager);

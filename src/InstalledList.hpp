@@ -6,6 +6,7 @@
 #include <cpp3ds/System/Mutex.hpp>
 #include "InstalledItem.hpp"
 #include "InstalledOptions.hpp"
+#include "TweenObjects.hpp"
 #include "GUI/Scrollable.hpp"
 #include "States/BrowseState.hpp"
 
@@ -24,6 +25,8 @@ public:
 	static InstalledList &getInstance();
 	void refresh();
 	void setSortType(SortType sortType, bool ascending);
+
+	void filterBySearch(std::string search);
 
 	void update(float delta);
 	bool processEvent(const cpp3ds::Event& event);
@@ -61,6 +64,9 @@ private:
 
 	SortType m_sortType;
 	bool m_sortAscending;
+
+	std::string m_currentSearch;
+
 };
 
 } // namespace FreeShop

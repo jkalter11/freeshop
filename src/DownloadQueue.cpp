@@ -828,7 +828,7 @@ void DownloadQueue::addSleepDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint6
 		Notification::spawn(_("Sleep installation failed: \n%s", stdAppTitle.c_str()));
 
 		if (Config::get(Config::LEDDownloadError).GetBool())
-			MCU::getInstance().ledBlinkThrice(0x0D09A1);
+			MCU::getInstance().ledBlinkThrice(0x1A25FF);
 	}
 
 	/*The clear and simple explanation of this (LOOOONNNGGGGGGG) condition:

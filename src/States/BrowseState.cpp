@@ -122,15 +122,32 @@ void BrowseState::initialize()
 	}
 
 
-	m_scrollbarInstalledList.setPosition(314.f, 30.f);
-	m_scrollbarInstalledList.setDragRect(cpp3ds::IntRect(0, 30, 320, 210));
+	m_scrollbarInstalledList.setPosition(314.f, 50.f);
+	m_scrollbarInstalledList.setDragRect(cpp3ds::IntRect(0, 50, 320, 190));
 	m_scrollbarInstalledList.setScrollAreaSize(cpp3ds::Vector2u(320, 210));
-	m_scrollbarInstalledList.setSize(cpp3ds::Vector2u(8, 210));
+	m_scrollbarInstalledList.setSize(cpp3ds::Vector2u(8, 190));
 	m_scrollbarInstalledList.setColor(cpp3ds::Color(150, 150, 150, 150));
+
 	m_scrollbarDownloadQueue = m_scrollbarInstalledList;
+	m_scrollbarDownloadQueue.setDragRect(cpp3ds::IntRect(0, 30, 320, 210));
+	m_scrollbarDownloadQueue.setScrollAreaSize(cpp3ds::Vector2u(320, 210));
+	m_scrollbarDownloadQueue.setSize(cpp3ds::Vector2u(8, 210));
 
 	m_scrollbarInstalledList.attachObject(&InstalledList::getInstance());
 	m_scrollbarDownloadQueue.attachObject(&DownloadQueue::getInstance());
+
+	m_textSearchInstalledList.setString(_("Search..."));
+	m_textSearchInstalledList.setPosition(160.f, 31.f);
+	m_textSearchInstalledList.setFillColor(cpp3ds::Color::Black);
+	m_textSearchInstalledList.setCharacterSize(12.f);
+	m_textSearchInstalledList.setStyle(cpp3ds::Text::Italic);
+	m_textSearchInstalledList.setOrigin(m_textSearchInstalledList.getGlobalBounds().width / 2, 0);
+
+	m_textBoxInstalledList.setOutlineColor(cpp3ds::Color(158, 158, 158, 255));
+	m_textBoxInstalledList.setOutlineThickness(1);
+	m_textBoxInstalledList.setFillColor(cpp3ds::Color(245, 245, 245));
+	m_textBoxInstalledList.setSize(cpp3ds::Vector2f(320.f, 16.f));
+	m_textBoxInstalledList.setPosition(0.f, 31.f);
 
 	setMode(Info);
 
@@ -289,6 +306,9 @@ void BrowseState::renderBottomScreen(cpp3ds::Window& window)
 	{
 		window.draw(InstalledList::getInstance());
 		window.draw(m_scrollbarInstalledList);
+
+		window.draw(m_textBoxInstalledList);
+		window.draw(m_textSearchInstalledList);
 	}
 
 	if (m_isTransitioning)
@@ -821,6 +841,16 @@ void BrowseState::settingsSaveToConfig()
 {
 	if (m_settingsGUI)
 		m_settingsGUI->saveToConfig();
+}
+
+void BrowseState::setInstalledListSearchText(std::string text)
+{
+	if (text.empty())
+		m_textSearchInstalledList.setString(_("Search..."));
+	else
+		m_textSearchInstalledList.setString(text);
+
+	m_textSearchInstalledList.setOrigin(m_textSearchInstalledList.getGlobalBounds().width / 2, 0);
 }
 
 } // namespace FreeShop

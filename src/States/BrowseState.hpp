@@ -50,6 +50,7 @@ public:
 	bool isAppInfoLoaded();
 	bool getJapKeyboard();
 	bool getTIDKeyboard();
+	void setInstalledListSearchText(std::string text);
 
 	static cpp3ds::Clock clockDownloadInactivity;
 
@@ -137,6 +138,10 @@ private:
 
 	//Nintendo 3DS SD Folder
 	std::string m_ctrSdPath;
+
+	// Installed list search box
+	util3ds::TweenText m_textSearchInstalledList;
+	util3ds::TweenRectangleShape m_textBoxInstalledList;
 };
 
 extern BrowseState *g_browseState;

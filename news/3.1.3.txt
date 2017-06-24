@@ -12,6 +12,8 @@
   dialogs)
 • Title keys can be downloaded from
   multiple URLs
+• A search bar has been added in the
+  installed list.
 • Bugfix: Start button wasn't closing the
   app properly.
 • Bugfix: Unreleased DLC now fails the

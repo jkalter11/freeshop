@@ -1,9 +1,15 @@
+#define FTS_FUZZY_MATCH_IMPLEMENTATION
+
 #include <cmath>
 #include <TweenEngine/Tween.h>
 #include <cpp3ds/System/Lock.hpp>
 #include "InstalledList.hpp"
 #include "AppList.hpp"
 #include "TitleKeys.hpp"
+#include "fts_fuzzy_match.h"
+#ifndef EMULATION
+#include "KeyboardApplet.hpp"
+#endif
 
 namespace FreeShop {
 
@@ -19,6 +25,8 @@ InstalledList::InstalledList()
 	// Make install options initially transparent for fade in
 	TweenEngine::Tween::set(m_options, InstalledOptions::ALPHA)
 			.target(0.f).start(m_tweenManager);
+
+	m_currentSearch = "";
 }
 
 InstalledList &InstalledList::getInstance()
@@ -173,6 +181,18 @@ void InstalledList::refresh()
 		installedItem->updateGameTitle();
 	}
 
+	// Remove all titles that are not searched
+	if (!m_currentSearch.empty()) {
+		for (auto it = m_installedItems.begin(); it != m_installedItems.end();)
+		{
+			int matchScore;
+			if (!fts::fuzzy_match(m_currentSearch.c_str(), (*it)->getAppItem()->getNormalizedTitle().c_str(), matchScore))
+				it = m_installedItems.erase(it);
+			else
+				it++;
+		}
+	}
+
 	// Sort the list
 	sort();
 
@@ -182,7 +202,7 @@ void InstalledList::refresh()
 void InstalledList::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) const
 {
 	states.transform *= getTransform();
-	states.scissor = cpp3ds::UintRect(0, 30, 320, 210);
+	states.scissor = cpp3ds::UintRect(0, 50, 320, 190);
 
 	for (auto& item : m_installedItems)
 	{
@@ -215,6 +235,19 @@ bool InstalledList::processEvent(const cpp3ds::Event &event)
 	{
 		if (event.touch.y < 30)
 			return false;
+
+			if (cpp3ds::UintRect(0, 31, 320, 47).contains(event.touch.x, event.touch.y)) {
+#ifndef EMULATION
+				KeyboardApplet kb(KeyboardApplet::Text);
+				swkbdSetHintText(kb, _("Type a game name...").toAnsiString().c_str());
+
+				cpp3ds::String input = kb.getInput();
+				filterBySearch(input);
+#else
+				filterBySearch("Smash");
+#endif
+				return false;
+			}
 
 		for (auto &item : m_installedItems)
 		{
@@ -250,7 +283,7 @@ float InstalledList::getScroll()
 
 void InstalledList::repositionItems()
 {
-	float posY = 30.f + m_scrollPos;
+	float posY = 50.f + m_scrollPos;
 	for (auto& item : m_installedItems)
 	{
 		if (item.get() == m_expandedItem)
@@ -357,11 +390,6 @@ int InstalledList::getGameCount()
 
 void InstalledList::sort()
 {
-	/*std::sort(m_installedItems.begin(), m_installedItems.end(), [=](const std::unique_ptr<InstalledItem>& a, const std::unique_ptr<InstalledItem>& b)
-	{
-		return a->getAppItem()->getNormalizedTitle() < b->getAppItem()->getNormalizedTitle();
-	});*/
-
 	m_tweenManager.killAll();
 	std::sort(m_installedItems.begin(), m_installedItems.end(), [&](const std::unique_ptr<InstalledItem>& a, const std::unique_ptr<InstalledItem>& b)
 	{
@@ -395,6 +423,17 @@ void InstalledList::setSortType(InstalledList::SortType sortType, bool ascending
 	m_sortType = sortType;
 	m_sortAscending = ascending;
 	sort();
+}
+
+void InstalledList::filterBySearch(std::string search)
+{
+	if (search != m_currentSearch) {
+		m_currentSearch = search;
+
+		g_browseState->setInstalledListSearchText(m_currentSearch);
+
+		refresh();
+	}
 }
 
 } // namespace FreeShop

@@ -353,7 +353,7 @@ bool Installer::applyErrorLedPattern()
 {
 #ifndef EMULATION
 	if (Config::get(Config::LEDDownloadError).GetBool())
-		return MCU::getInstance().ledBlinkThrice(0x0D09A1);
+		return MCU::getInstance().ledBlinkThrice(0x1A25FF);
 	else
 		return false;
 #endif
