@@ -70,6 +70,7 @@ AppInfo::AppInfo()
 
 	m_separator.setFillColor(cpp3ds::Color(158, 158, 158, 255));
 	m_separator.setSize(cpp3ds::Vector2f(1.f, 74.f));
+	m_separator.setPosition(184.f, 166.f);
 
 	m_textScreenshotsEmpty.setCharacterSize(12);
 	if (Theme::isTextThemed)
@@ -349,8 +350,6 @@ void AppInfo::loadApp(std::shared_ptr<AppItem> appItem)
 				m_textTitle.setString(appItem->getTitle());
 				addInfoToDescription();
 
-				m_separator.setPosition(184.f, 166.f);
-
 				// Shorten the app name if it's out of the screen
 				int maxSize = 290;
 				if (m_textTitle.getLocalBounds().width > maxSize) {
@@ -375,11 +374,11 @@ void AppInfo::loadApp(std::shared_ptr<AppItem> appItem)
 				m_textDownload.setFillColor(cpp3ds::Color::White);
 				m_textSleepDownload.setFillColor(cpp3ds::Color::White);
 
-				m_scrollbar.setSize(cpp3ds::Vector2u(2, 110));
-				m_scrollbar.setScrollAreaSize(cpp3ds::Vector2u(320, 110));
-				m_scrollbar.setDragRect(cpp3ds::IntRect(0, 30, 320, 210));
+				m_scrollbar.setSize(cpp3ds::Vector2u(2, 109));
+				m_scrollbar.setScrollAreaSize(cpp3ds::Vector2u(320, 109));
+				m_scrollbar.setDragRect(cpp3ds::IntRect(0, 20, 320, 146));
 				m_scrollbar.setColor(cpp3ds::Color(0, 0, 0, 128));
-				m_scrollbar.setPosition(312.f, 52.f);
+				m_scrollbar.setPosition(312.f, 56.f);
 				m_scrollbar.setAutoHide(false);
 				m_scrollbar.attachObject(this);
 				m_scrollbar.setScroll(0.f);
@@ -807,7 +806,7 @@ void AppInfo::addInfoToDescription()
 			else
 			m_textDescriptionDrawn << cpp3ds::Color(100, 100, 100, 255);
 
-		m_textDescriptionDrawn << m_appItem->getPublisherByName() << "\n\n";
+		m_textDescriptionDrawn << m_appItem->getPublisherByName();
 	}
 
 	// Get genre(s) from appItem
