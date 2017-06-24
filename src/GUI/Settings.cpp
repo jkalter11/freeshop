@@ -156,6 +156,7 @@ void Settings::saveToConfig()
 {
 	Config::set(Config::AutoUpdate, m_checkboxAutoUpdate->Checkbox()->IsChecked());
 	Config::set(Config::DownloadTitleKeys, m_checkboxDownloadKeys->Checkbox()->IsChecked());
+	Config::set(Config::DownloadFromMultipleURLs, m_checkboxDownloadMultipleKeys->Checkbox()->IsChecked());
 
 	rapidjson::Value list(rapidjson::kArrayType);
 	if (m_comboBoxUrls->GetSelectedItem())
@@ -226,6 +227,7 @@ void Settings::loadConfig()
 	// Update
 	m_checkboxAutoUpdate->Checkbox()->SetChecked(Config::get(Config::AutoUpdate).GetBool());
 	m_checkboxDownloadKeys->Checkbox()->SetChecked(Config::get(Config::DownloadTitleKeys).GetBool());
+	m_checkboxDownloadMultipleKeys->Checkbox()->SetChecked(Config::get(Config::DownloadFromMultipleURLs).GetBool());
 
 	char strTime[100];
 	time_t lastUpdatedTime = Config::get(Config::LastUpdatedTime).GetInt();
@@ -1060,41 +1062,45 @@ void Settings::fillUpdatePage(Gwen::Controls::Base *page)
 {
 	Gwen::Padding iconPadding(0, 0, 0, 4);
 	auto base = new Base(page);
-	base->SetBounds(0, 0, 320, 40);
+	base->SetBounds(0, 0, 320, 60);
 
 	m_checkboxDownloadKeys = new CheckBoxWithLabel(base);
 	m_checkboxDownloadKeys->SetBounds(0, 0, 300, 20);
 	m_checkboxDownloadKeys->Label()->SetText(_("Auto-update title keys from URL").toAnsiString());
 	m_checkboxDownloadKeys->Checkbox()->onCheckChanged.Add(this, &Settings::updateEnabledState);
 
+	m_checkboxDownloadMultipleKeys = new CheckBoxWithLabel(base);
+	m_checkboxDownloadMultipleKeys->SetBounds(0, 20, 300, 20);
+	m_checkboxDownloadMultipleKeys->Label()->SetText(_("Download title keys from multiple URLs").toAnsiString());
+
 	m_buttonUrlQr = new Button(base);
 	m_buttonUrlQr->SetFont(L"fonts/fontawesome.ttf", 18, false);
 	m_buttonUrlQr->SetText("\uf029"); // QR icon
 	m_buttonUrlQr->SetPadding(iconPadding);
-	m_buttonUrlQr->SetBounds(0, 20, 20, 20);
+	m_buttonUrlQr->SetBounds(0, 40, 20, 20);
 	m_buttonUrlQr->onPress.Add(this, &Settings::updateQrClicked);
 
 	m_buttonUrlKeyboard = new Button(base);
 	m_buttonUrlKeyboard->SetFont(L"fonts/fontawesome.ttf", 20, false);
 	m_buttonUrlKeyboard->SetText("\uf11c"); // Keyboard icon
 	m_buttonUrlKeyboard->SetPadding(Gwen::Padding(0, 0, 0, 6));
-	m_buttonUrlKeyboard->SetBounds(21, 20, 26, 20);
+	m_buttonUrlKeyboard->SetBounds(21, 40, 26, 20);
 	m_buttonUrlKeyboard->onPress.Add(this, &Settings::updateKeyboardClicked);
 
 	m_buttonUrlDelete = new Button(base);
 	m_buttonUrlDelete->SetFont(L"fonts/fontawesome.ttf", 18, false);
 	m_buttonUrlDelete->SetText("\uf014"); // Trash can icon
 	m_buttonUrlDelete->SetPadding(iconPadding);
-	m_buttonUrlDelete->SetBounds(288, 20, 20, 20);
+	m_buttonUrlDelete->SetBounds(288, 40, 20, 20);
 	m_buttonUrlDelete->onPress.Add(this, &Settings::updateUrlDeleteClicked);
 
 	m_comboBoxUrls = new ComboBox(base);
-	m_comboBoxUrls->SetBounds(50, 20, 235, 20);
+	m_comboBoxUrls->SetBounds(50, 40, 235, 20);
 	m_comboBoxUrls->onSelection.Add(this, &Settings::updateUrlSelected);
 
 
 	base = new Base(page);
-	base->SetBounds(0, 48, 320, 80);
+	base->SetBounds(0, 68, 320, 80);
 
 	m_checkboxAutoUpdate = new CheckBoxWithLabel(base);
 	m_checkboxAutoUpdate->SetBounds(0, 0, 300, 20);

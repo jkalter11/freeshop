@@ -150,6 +150,7 @@ namespace FreeShop
 			Gwen::Controls::Button *m_buttonUrlQr, *m_buttonUrlKeyboard, *m_buttonUrlDelete;
 			Gwen::Controls::Button *m_buttonUpdate;
 			Gwen::Controls::Label *m_labelLastUpdated;
+			Gwen::Controls::CheckBoxWithLabel *m_checkboxDownloadMultipleKeys;
 
 			// Download
 			Gwen::Controls::Label *m_labelTimeout;

@@ -581,20 +581,28 @@ bool SyncState::updateTitleKeys()
 	if (!Config::get(Config::DownloadTitleKeys).GetBool() || urls.Empty())
 		return false;
 
-	setStatus(_("Downloading title keys..."));
+	for (int i = 0; i < urls.Size(); ++i) {
+		if (urls.Size() > 1 && Config::get(Config::DownloadFromMultipleURLs).GetBool())
+			setStatus(_("Downloading title keys...") + _(" %i/%i", i + 1, urls.Size()));
+		else
+			setStatus(_("Downloading title keys..."));
 
-	const char *url = urls[0].GetString();
-	std::string tmpFilename = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/tmp/keys.bin");
-	std::string keysFilename = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/keys/download.bin");
-	Download download(url, tmpFilename);
-	download.run();
+		const char *url = urls[i].GetString();
+		std::string tmpFilename = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/tmp/keys.bin");
+		std::string keysFilename = cpp3ds::FileSystem::getFilePath(_(FREESHOP_DIR "/keys/download.%i.bin", i));
+		Download download(url, tmpFilename);
+		download.run();
 
-	if (!TitleKeys::isValidFile(tmpFilename))
-		return false;
+		if (!TitleKeys::isValidFile(tmpFilename))
+			return false;
 
-	if (pathExists(keysFilename.c_str()))
-		unlink(keysFilename.c_str());
-	rename(tmpFilename.c_str(), keysFilename.c_str());
+		if (pathExists(keysFilename.c_str()))
+			unlink(keysFilename.c_str());
+		rename(tmpFilename.c_str(), keysFilename.c_str());
+
+		if (!Config::get(Config::DownloadFromMultipleURLs).GetBool())
+			break;
+	}
 
 	return true;
 }

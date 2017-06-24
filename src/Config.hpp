@@ -35,6 +35,7 @@ public:
 		LastUpdatedTime,
 		DownloadTitleKeys,
 		KeyURLs,
+		DownloadFromMultipleURLs,
 		// Download
 		DownloadTimeout,
 		DownloadBufferSize,

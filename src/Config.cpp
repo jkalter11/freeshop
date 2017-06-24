@@ -30,6 +30,7 @@ namespace {
 		"last_updated",
 		"download_title_keys",
 		"key_urls",
+		"download_multiple_url",
 		// Download
 		"download_timeout",
 		"download_buffer_size",
@@ -149,6 +150,7 @@ void Config::loadDefaults()
 	ADD_DEFAULT(LastUpdatedTime, 0);
 	ADD_DEFAULT(DownloadTitleKeys, false);
 	ADD_DEFAULT(KeyURLs, rapidjson::kArrayType);
+	ADD_DEFAULT(DownloadFromMultipleURLs, true);
 
 	// Download
 	ADD_DEFAULT(DownloadTimeout, 6.f);
