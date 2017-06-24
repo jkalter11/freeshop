@@ -36,21 +36,21 @@ AppInfo::AppInfo()
 	m_textDownload.setFont(AssetManager<cpp3ds::Font>::get("fonts/fontawesome.ttf"));
 	m_textDownload.setString("\uf019");
 	m_textDownload.setCharacterSize(30);
-	m_textDownload.setPosition(67.f, 93.f);
+	m_textDownload.setPosition(280.f, 195.f);
 	m_textSleepDownload = m_textDownload;
 	m_textSleepDownload.setFillColor(cpp3ds::Color::White);
 	m_textSleepDownload.setString("\uf186");
-	m_textSleepDownload.setPosition(5.f, 91.f);
+	m_textSleepDownload.setPosition(223.f, 193.f);
 	m_textDelete = m_textDownload;
 	m_textDelete.setString("\uf1f8");
-	m_textDelete.setPosition(70.f, 90.f);
+	m_textDelete.setPosition(285.f, 195.f);
 	m_textExecute = m_textDownload;
 	m_textExecute.setString("\uf01d");
-	m_textExecute.setPosition(5.f, 90.f);
+	m_textExecute.setPosition(225.f, 195.f);
 	m_arrowLeft.setFont(AssetManager<cpp3ds::Font>::get("fonts/fontawesome.ttf"));
 	m_arrowLeft.setCharacterSize(24);
-	m_arrowLeft.setFillColor(cpp3ds::Color(255,255,255,150));
-	m_arrowLeft.setOutlineColor(cpp3ds::Color(0,0,0,100));
+	m_arrowLeft.setFillColor(cpp3ds::Color(255, 255, 255, 150));
+	m_arrowLeft.setOutlineColor(cpp3ds::Color(0, 0, 0, 100));
 	m_arrowLeft.setOutlineThickness(1.f);
 	m_arrowLeft.setPosition(4.f, 100.f);
 	m_arrowLeft.setString("\uf053");
@@ -62,7 +62,9 @@ AppInfo::AppInfo()
 	m_close.setPosition(285.f, 4.f);
 	m_close.setString("\uf00d");
 
-	m_screenshotsBackground.setFillColor(cpp3ds::Color(190, 190, 190, 255));
+	m_screenshotsBackground.setOutlineColor(cpp3ds::Color(158, 158, 158, 255));
+	m_screenshotsBackground.setOutlineThickness(1);
+	m_screenshotsBackground.setFillColor(cpp3ds::Color(245, 245, 245));
 	m_screenshotsBackground.setSize(cpp3ds::Vector2f(320.f, 74.f));
 	m_screenshotsBackground.setPosition(0.f, 166.f);
 
@@ -74,8 +76,7 @@ AppInfo::AppInfo()
 	m_textScreenshotsEmpty.useSystemFont();
 	m_textScreenshotsEmpty.setString(_("No Screenshots"));
 	cpp3ds::FloatRect textRect = m_textScreenshotsEmpty.getLocalBounds();
-	m_textScreenshotsEmpty.setOrigin(textRect.left + textRect.width / 2.f, textRect.top + textRect.height / 2.f);
-	m_textScreenshotsEmpty.setPosition(160.f, 202.f);
+	m_textScreenshotsEmpty.setPosition(2.f, 202.f);
 
 	m_textNothingSelected.setString(_("Select a game to start"));
 	m_textNothingSelected.setCharacterSize(16);
@@ -94,16 +95,25 @@ AppInfo::AppInfo()
 		m_textTitle.setFillColor(Theme::primaryTextColor);
 	else
 		m_textTitle.setFillColor(cpp3ds::Color::Black);
-	m_textTitle.setStyle(cpp3ds::Text::Bold);
-	m_textTitle.setPosition(207.f, 28.f);
+	m_textTitle.setPosition(28.f, 27.f);
 	m_textTitle.useSystemFont();
 
 	m_textDescription.setCharacterSize(12);
+	m_textDescriptionDrawn.setCharacterSize(12);
 	if (Theme::isTextThemed)
-		m_textDescription.setFillColor(Theme::secondaryTextColor);
+		m_textDescriptionDrawn << Theme::secondaryTextColor;
 	else
-		m_textDescription.setFillColor(cpp3ds::Color(100, 100, 100, 255));
+		m_textDescriptionDrawn << cpp3ds::Color(100, 100, 100, 255);
 	m_textDescription.useSystemFont();
+	m_textDescriptionDrawn.useSystemFont();
+
+	m_textLittleDescription.setCharacterSize(10);
+	if (Theme::isTextThemed)
+		m_textLittleDescription.setFillColor(Theme::secondaryTextColor);
+	else
+		m_textLittleDescription.setFillColor(cpp3ds::Color(100, 100, 100, 255));
+	m_textLittleDescription.useSystemFont();
+	m_textLittleDescription.setPosition(28.f, 44.f);
 
 	m_textTitleId.setCharacterSize(11);
 	if (Theme::isTextThemed)
@@ -118,12 +128,12 @@ AppInfo::AppInfo()
 	else
 		m_textDemo.setFillColor(cpp3ds::Color(100, 100, 100));
 	m_textDemo.setCharacterSize(10);
-	m_textDemo.setPosition(25.f, 140.f);
+	m_textDemo.setPosition(243.f, 170.f);
 	m_textDemo.useSystemFont();
 	m_textIconDemo.setFont(AssetManager<cpp3ds::Font>::get("fonts/fontawesome.ttf"));
 	m_textIconDemo.setFillColor(cpp3ds::Color(50, 100, 50));
 	m_textIconDemo.setCharacterSize(18);
-	m_textIconDemo.setPosition(5.f, 135.f);
+	m_textIconDemo.setPosition(221.f, 166.f);
 
 	if (fopen(FREESHOP_DIR "/theme/images/fade.png", "rb"))
 		m_fadeTextRect.setTexture(&AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/fade.png"));
@@ -136,7 +146,7 @@ AppInfo::AppInfo()
 	m_fadeTextRect.setPosition(102.f, 46.f);
 
 	m_icon.setPosition(2.f, 30.f);
-	m_icon.setScale(2.f, 2.f);
+	m_icon.setScale(.5f, .5f);
 
 	m_fadeRect.setPosition(0.f, 30.f);
 	m_fadeRect.setSize(cpp3ds::Vector2f(320.f, 210.f));
@@ -172,15 +182,12 @@ void AppInfo::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) co
 
 		target.draw(m_icon, states);
 		target.draw(m_textTitle, states);
+		target.draw(m_textLittleDescription, states);
 
-		if (Config::get(Config::TitleID).GetBool())
-			target.draw(m_textTitleId, states);
-
-		states.scissor = cpp3ds::UintRect(0, 46, 320, 120);
-		target.draw(m_textDescription, states);
+		states.scissor = cpp3ds::UintRect(0, 55, 320, 111);
+		target.draw(m_textDescriptionDrawn, states);
 		target.draw(m_scrollbar);
 		states.scissor = cpp3ds::UintRect();
-		target.draw(m_fadeTextRect, states);
 
 		if (m_appItem->isInstalled())
 		{
@@ -282,8 +289,31 @@ void AppInfo::loadApp(std::shared_ptr<AppItem> appItem)
 		updateInfo();
 
 		m_textTitle.setString("");
-		m_textDescription.setString("");
+		m_textLittleDescription.setString("");
+		m_textDescriptionDrawn.clear();
 		m_textTitleId.setString(appItem->getTitleIdStr());
+
+		// Transform the game's release date to human readable time
+		time_t t = m_appItem->getReleaseDate();
+		struct tm * timeinfo;
+		timeinfo = localtime(&t);
+
+		char timeTextFmt[12];
+		strftime(timeTextFmt, 12, "%d/%m/%Y", timeinfo);
+
+		// Transform the game's size to human readable size
+		cpp3ds::String tempSizeHolder;
+		if (m_appItem->getFilesize() > 1024 * 1024 * 1024)
+			tempSizeHolder = _("%.1f GB", static_cast<float>(m_appItem->getFilesize()) / 1024.f / 1024.f / 1024.f);
+		else if (m_appItem->getFilesize() > 1024 * 1024)
+			tempSizeHolder = _("%.1f MB", static_cast<float>(m_appItem->getFilesize()) / 1024.f / 1024.f);
+		else
+			tempSizeHolder = _("%d KB", m_appItem->getFilesize() / 1024);
+
+		if (!Config::get(Config::TitleID).GetBool())
+			m_textLittleDescription.setString(_("%s - %s", tempSizeHolder.toAnsiString().c_str(), timeTextFmt));
+		else
+			m_textLittleDescription.setString(_("%s - %s - %s", tempSizeHolder.toAnsiString().c_str(), timeTextFmt, m_appItem->getTitleIdStr().c_str()));
 
 		cpp3ds::IntRect textureRect;
 		m_icon.setTexture(*appItem->getIcon(textureRect), true);
@@ -309,16 +339,38 @@ void AppInfo::loadApp(std::shared_ptr<AppItem> appItem)
 
 				if (doc["title"].HasMember("description"))
 					setDescription(doc["title"]["description"]);
-				m_textDescription.setPosition(102.f, 49.f);
+				m_textDescription.setPosition(2.f, 55.f);
+				m_textDescriptionDrawn.setPosition(2.f, 55.f);
 
 				m_textTitle.setString(appItem->getTitle());
-				m_textTitle.setOrigin(std::min(m_textTitle.getLocalBounds().width, 205.f) / 2.f, 0.f);
+				addInfoToDescription();
+
+				// Shorten the app name if it's out of the screen
+				int maxSize = 290;
+				if (m_textTitle.getLocalBounds().width > maxSize) {
+					cpp3ds::Text tmpText = m_textTitle;
+					tmpText.setString("");
+					auto s = m_textTitle.getString().toUtf8();
+
+					for (int i = 0; i <= s.size(); ++i) {
+						tmpText.setString(cpp3ds::String::fromUtf8(s.begin(), s.begin() + i));
+
+						if (tmpText.getLocalBounds().width > maxSize) {
+							cpp3ds::String titleTxt = tmpText.getString();
+							titleTxt.erase(titleTxt.getSize() - 3, 3);
+							titleTxt.insert(titleTxt.getSize(), "...");
+
+							m_textTitle.setString(titleTxt);
+							break;
+						}
+					}
+				}
 
 				m_textDownload.setFillColor(cpp3ds::Color::White);
 				m_textSleepDownload.setFillColor(cpp3ds::Color::White);
 
-				m_scrollbar.setSize(cpp3ds::Vector2u(2, 102));
-				m_scrollbar.setScrollAreaSize(cpp3ds::Vector2u(320, 102));
+				m_scrollbar.setSize(cpp3ds::Vector2u(2, 110));
+				m_scrollbar.setScrollAreaSize(cpp3ds::Vector2u(320, 110));
 				m_scrollbar.setDragRect(cpp3ds::IntRect(0, 30, 320, 210));
 				m_scrollbar.setColor(cpp3ds::Color(0, 0, 0, 128));
 				m_scrollbar.setPosition(312.f, 52.f);
@@ -327,7 +379,7 @@ void AppInfo::loadApp(std::shared_ptr<AppItem> appItem)
 				m_scrollbar.setScroll(0.f);
 				m_scrollbar.markDirty();
 
-				m_scrollSize = cpp3ds::Vector2f(320.f, m_textDescription.getLocalBounds().top + m_textDescription.getLocalBounds().height + 5.f);
+				m_scrollSize = cpp3ds::Vector2f(320.f, m_textDescriptionDrawn.getLocalBounds().top + m_textDescriptionDrawn.getLocalBounds().height + 5.f);
 			}
 		}
 	}
@@ -651,33 +703,14 @@ void AppInfo::setDescription(const rapidjson::Value &jsonDescription)
 	description.replace("<BR>", "\n");
 	description.replace("<br/>", "\n");
 
-	// Calculate word-wrapping for description
-	int startPos = 0;
-	int lastSpace = 0;
-	auto s = description.toUtf8();
-	cpp3ds::Text tmpText = m_textDescription;
-	for (int i = 0; i < s.size(); ++i)
-	{
-		if (s[i] == ' ')
-			lastSpace = i;
-		tmpText.setString(cpp3ds::String::fromUtf8(s.begin() + startPos, s.begin() + i));
-		if (tmpText.getLocalBounds().width > 206)
-		{
-			if (lastSpace != 0)
-			{
-				s[lastSpace] = '\n';
-				i = startPos = lastSpace + 1;
-				lastSpace = 0;
-			}
-			else
-			{
-				s.insert(s.begin() + i, '\n');
-				startPos = ++i;
-			}
-		}
-	}
+	cpp3ds::String wrappedDesc = calculateWordWrapping(description);
 
-	m_textDescription.setString(cpp3ds::String::fromUtf8(s.begin(), s.end()));
+	if (Theme::isTextThemed)
+		m_textDescriptionDrawn << Theme::secondaryTextColor;
+	else
+		m_textDescriptionDrawn << cpp3ds::Color(100, 100, 100, 255);
+	m_textDescription.setString(wrappedDesc);
+	m_textDescriptionDrawn << wrappedDesc;
 }
 
 void AppInfo::setScreenshots(const rapidjson::Value &jsonScreenshots)
@@ -689,7 +722,7 @@ void AppInfo::setScreenshots(const rapidjson::Value &jsonScreenshots)
 			addScreenshot(i, jsonScreenshots[i]["image_url"][1]);
 		}
 
-	float startX = std::round((320.f - 61.f * m_screenshotTops.size()) / 2.f);
+	float startX = std::round((320.f - 61.f * m_screenshotTops.size()) / 5.f);
 	for (int i = 0; i < m_screenshotTops.size(); ++i)
 	{
 		m_screenshotTops[i]->setPosition(startX + i * 61.f, 167.f);
@@ -743,7 +776,7 @@ void AppInfo::updateInfo()
 void AppInfo::setScroll(float position)
 {
 	m_scrollPos = position;
-	m_textDescription.setPosition(102.f, std::round(position + 49.f));
+	m_textDescriptionDrawn.setPosition(2.f, std::round(position + 55.f));
 }
 
 float AppInfo::getScroll()
@@ -754,6 +787,142 @@ float AppInfo::getScroll()
 const cpp3ds::Vector2f &AppInfo::getScrollSize()
 {
 	return m_scrollSize;
+}
+
+void AppInfo::addInfoToDescription()
+{
+	// Get publisher from appItem and put it in description
+	if (!m_appItem->getPublisherByName().empty()) {
+		m_textDescriptionDrawn << "\n\n";
+		m_textDescriptionDrawn << cpp3ds::Color::Black;
+		m_textDescriptionDrawn << _("Publisher").toAnsiString() << "\n";
+		if (Theme::isTextThemed)
+			m_textDescriptionDrawn << Theme::secondaryTextColor;
+			else
+			m_textDescriptionDrawn << cpp3ds::Color(100, 100, 100, 255);
+
+		m_textDescriptionDrawn << m_appItem->getPublisherByName() << "\n\n";
+	}
+
+	// Get genre(s) from appItem
+	std::vector<std::string> vectorAppGenres = m_appItem->getGenresByName();
+	cpp3ds::String tempGenresStorage;
+
+	// Put genres in the string
+	for (int i = 0; i < vectorAppGenres.size(); ++i)
+		tempGenresStorage.insert(tempGenresStorage.getSize(), _("%s, ", vectorAppGenres[i]));
+
+	// Remove the last comma
+	if (tempGenresStorage.getSize() > 2)
+		tempGenresStorage.erase(tempGenresStorage.getSize() - 2, 2);
+
+	// Put genre(s) in description
+	if (tempGenresStorage.getSize() > 0) {
+		m_textDescriptionDrawn << cpp3ds::Color::Black;
+		m_textDescriptionDrawn << _("Genre").toAnsiString() << "\n";
+		if (Theme::isTextThemed)
+			m_textDescriptionDrawn << Theme::secondaryTextColor;
+		else
+			m_textDescriptionDrawn << cpp3ds::Color(100, 100, 100, 255);
+
+		m_textDescriptionDrawn << calculateWordWrapping(tempGenresStorage);
+	}
+
+	// Get language(s) from appItem
+	int titleLanguages = m_appItem->getLanguages();
+	cpp3ds::String tempLanguageStorage;
+
+	// Convert language(s) from int to string
+	for (int i = 0; i < 9; ++i) {
+		if (titleLanguages & 1 << i) {
+			switch (1 << i) {
+				case AppItem::Japanese: tempLanguageStorage.insert(tempLanguageStorage.getSize(), _("English")); break;
+				case AppItem::English: tempLanguageStorage.insert(tempLanguageStorage.getSize(), _("Japanese")); break;
+				case AppItem::Spanish: tempLanguageStorage.insert(tempLanguageStorage.getSize(), _("Spanish")); break;
+				case AppItem::French: tempLanguageStorage.insert(tempLanguageStorage.getSize(), _("French")); break;
+				case AppItem::German: tempLanguageStorage.insert(tempLanguageStorage.getSize(), _("German")); break;
+				case AppItem::Italian: tempLanguageStorage.insert(tempLanguageStorage.getSize(), _("Italian")); break;
+				case AppItem::Dutch: tempLanguageStorage.insert(tempLanguageStorage.getSize(), _("Dutch")); break;
+				case AppItem::Portuguese: tempLanguageStorage.insert(tempLanguageStorage.getSize(), _("Portuguese")); break;
+				case AppItem::Russian: tempLanguageStorage.insert(tempLanguageStorage.getSize(), _("Russian")); break;
+			}
+
+			tempLanguageStorage.insert(tempLanguageStorage.getSize(), _(", "));
+		}
+	}
+
+	// Remove the last comma
+	if (tempLanguageStorage.getSize() > 2)
+		tempLanguageStorage.erase(tempLanguageStorage.getSize() - 2, 2);
+
+	// Put language(s) in description
+	if (tempLanguageStorage.getSize() > 0) {
+		m_textDescriptionDrawn << "\n\n";
+		m_textDescriptionDrawn << cpp3ds::Color::Black;
+		m_textDescriptionDrawn << _("Language").toAnsiString() << "\n";
+		if (Theme::isTextThemed)
+			m_textDescriptionDrawn << Theme::secondaryTextColor;
+		else
+			m_textDescriptionDrawn << cpp3ds::Color(100, 100, 100, 255);
+
+		m_textDescriptionDrawn << calculateWordWrapping(tempLanguageStorage);
+	}
+
+	// Get feature(s) from appItem
+	std::vector<std::string> vectorAppFeatures = m_appItem->getFeaturesByName();
+	cpp3ds::String tempFeaturesStorage;
+
+	// Put feature(s) in the string
+	for (int i = 0; i < vectorAppFeatures.size(); ++i)
+		tempFeaturesStorage.insert(tempFeaturesStorage.getSize(), _("%s, ", vectorAppFeatures[i]));
+
+	// Remove the last comma
+	if (tempFeaturesStorage.getSize() > 2)
+		tempFeaturesStorage.erase(tempFeaturesStorage.getSize() - 2, 2);
+
+	// Put feature(s) in description
+	if (tempFeaturesStorage.getSize() > 0) {
+		m_textDescriptionDrawn << "\n\n";
+		m_textDescriptionDrawn << cpp3ds::Color::Black;
+		m_textDescriptionDrawn << _("Feature").toAnsiString() << "\n";
+		if (Theme::isTextThemed)
+			m_textDescriptionDrawn << Theme::secondaryTextColor;
+		else
+			m_textDescriptionDrawn << cpp3ds::Color(100, 100, 100, 255);
+
+		m_textDescriptionDrawn << calculateWordWrapping(tempFeaturesStorage);
+	}
+}
+
+cpp3ds::String AppInfo::calculateWordWrapping(cpp3ds::String sentence)
+{
+	// Calculate word-wrapping
+	int startPos = 0;
+	int lastSpace = 0;
+	auto s = sentence.toUtf8();
+	cpp3ds::Text tmpText = m_textDescription;
+	for (int i = 0; i < s.size(); ++i)
+	{
+		if (s[i] == ' ')
+			lastSpace = i;
+		tmpText.setString(cpp3ds::String::fromUtf8(s.begin() + startPos, s.begin() + i));
+		if (tmpText.getLocalBounds().width > 300)
+		{
+			if (lastSpace != 0)
+			{
+				s[lastSpace] = '\n';
+				i = startPos = lastSpace + 1;
+				lastSpace = 0;
+			}
+			else
+			{
+				s.insert(s.begin() + i, '\n');
+				startPos = ++i;
+			}
+		}
+	}
+
+	return cpp3ds::String::fromUtf8(s.begin(), s.end());
 }
 
 } // namespace FreeShop

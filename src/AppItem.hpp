@@ -69,9 +69,12 @@ public:
 	int getIconIndex() const;
 
 	const std::vector<int> &getGenres() const;
+	std::vector<std::string> getGenresByName() const;
 	int getPlatform() const;
 	int getPublisher() const;
+	std::string getPublisherByName() const;
 	const std::vector<int> &getFeatures() const;
+	std::vector<std::string> getFeaturesByName() const;
 
 	float getVoteScore() const;
 	int getVoteCount() const;

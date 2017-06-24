@@ -8,6 +8,7 @@
 #include <cpp3ds/Window/Event.hpp>
 #include "TweenObjects.hpp"
 #include "AppItem.hpp"
+#include "RichText.hpp"
 #include <cpp3ds/Window/Window.hpp>
 #include "States/State.hpp"
 #include "TweenObjects.hpp"
@@ -34,7 +35,7 @@ public:
 	const std::shared_ptr<AppItem> getAppItem() const;
 
 	void setCurrentScreenshot(int screenshotIndex);
-	
+
 	virtual void setScroll(float position);
 	virtual float getScroll();
 	virtual const cpp3ds::Vector2f &getScrollSize();
@@ -51,10 +52,14 @@ private:
 	void setDescription(const rapidjson::Value &jsonDescription);
 	void setScreenshots(const rapidjson::Value &jsonScreenshots);
 	void addScreenshot(int index, const rapidjson::Value &jsonScreenshot);
+	void addInfoToDescription();
+	cpp3ds::String calculateWordWrapping(cpp3ds::String sentence);
 
 	cpp3ds::Sprite m_icon;
-	cpp3ds::Text m_textTitle;
+	util3ds::TweenText m_textTitle;
+	util3ds::RichText m_textDescriptionDrawn;
 	util3ds::TweenText m_textDescription;
+	util3ds::TweenText m_textLittleDescription;
 	cpp3ds::Text m_textTitleId;
 	float m_descriptionVelocity;
 	cpp3ds::RectangleShape m_fadeTextRect;
@@ -90,7 +95,7 @@ private:
 	std::shared_ptr<AppItem> m_appItem;
 
 	TweenEngine::TweenManager m_tweenManager;
-	
+
 	ScrollBar m_scrollbar;
 	cpp3ds::Vector2f m_scrollSize;
 	float m_scrollPos;
