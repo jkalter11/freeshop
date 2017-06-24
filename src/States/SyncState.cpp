@@ -485,7 +485,7 @@ bool SyncState::loadServices()
 
 		//NIMS service init for sleep download
 		static u8 nimBuf[0x20000];
-		if (R_FAILED(res = nimsInit(nimBuf, 0x2000)))
+		if (R_FAILED(res = nimsInit(nimBuf, 0x20000)))
 			Notification::spawn(_("Unable to start NIMS: \n0x%08lX (%d)", res, R_DESCRIPTION(res)));
 
 		//PTMU service init for battery indicator

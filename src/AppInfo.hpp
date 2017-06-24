@@ -87,6 +87,7 @@ private:
 	util3ds::TweenText m_close;
 
 	cpp3ds::RectangleShape m_screenshotsBackground;
+	cpp3ds::RectangleShape m_separator;
 	cpp3ds::Text m_textScreenshotsEmpty;
 
 	util3ds::TweenText m_textNothingSelected;

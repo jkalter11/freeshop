@@ -36,17 +36,17 @@ AppInfo::AppInfo()
 	m_textDownload.setFont(AssetManager<cpp3ds::Font>::get("fonts/fontawesome.ttf"));
 	m_textDownload.setString("\uf019");
 	m_textDownload.setCharacterSize(30);
-	m_textDownload.setPosition(280.f, 195.f);
+	m_textDownload.setPosition(285.f, 200.f);
 	m_textSleepDownload = m_textDownload;
 	m_textSleepDownload.setFillColor(cpp3ds::Color::White);
 	m_textSleepDownload.setString("\uf186");
-	m_textSleepDownload.setPosition(223.f, 193.f);
+	m_textSleepDownload.setPosition(192.f, 198.f);
 	m_textDelete = m_textDownload;
 	m_textDelete.setString("\uf1f8");
-	m_textDelete.setPosition(285.f, 195.f);
+	m_textDelete.setPosition(285.f, 200.f);
 	m_textExecute = m_textDownload;
 	m_textExecute.setString("\uf01d");
-	m_textExecute.setPosition(225.f, 195.f);
+	m_textExecute.setPosition(192.f, 200.f);
 	m_arrowLeft.setFont(AssetManager<cpp3ds::Font>::get("fonts/fontawesome.ttf"));
 	m_arrowLeft.setCharacterSize(24);
 	m_arrowLeft.setFillColor(cpp3ds::Color(255, 255, 255, 150));
@@ -67,6 +67,9 @@ AppInfo::AppInfo()
 	m_screenshotsBackground.setFillColor(cpp3ds::Color(245, 245, 245));
 	m_screenshotsBackground.setSize(cpp3ds::Vector2f(320.f, 74.f));
 	m_screenshotsBackground.setPosition(0.f, 166.f);
+
+	m_separator.setFillColor(cpp3ds::Color(158, 158, 158, 255));
+	m_separator.setSize(cpp3ds::Vector2f(1.f, 74.f));
 
 	m_textScreenshotsEmpty.setCharacterSize(12);
 	if (Theme::isTextThemed)
@@ -128,12 +131,12 @@ AppInfo::AppInfo()
 	else
 		m_textDemo.setFillColor(cpp3ds::Color(100, 100, 100));
 	m_textDemo.setCharacterSize(10);
-	m_textDemo.setPosition(243.f, 170.f);
+	m_textDemo.setPosition(214.f, 171.f);
 	m_textDemo.useSystemFont();
 	m_textIconDemo.setFont(AssetManager<cpp3ds::Font>::get("fonts/fontawesome.ttf"));
 	m_textIconDemo.setFillColor(cpp3ds::Color(50, 100, 50));
 	m_textIconDemo.setCharacterSize(18);
-	m_textIconDemo.setPosition(221.f, 166.f);
+	m_textIconDemo.setPosition(192.f, 166.f);
 
 	if (fopen(FREESHOP_DIR "/theme/images/fade.png", "rb"))
 		m_fadeTextRect.setTexture(&AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/fade.png"));
@@ -177,6 +180,7 @@ void AppInfo::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) co
 	if (m_appItem)
 	{
 		target.draw(m_screenshotsBackground, states);
+		target.draw(m_separator, states);
 		if (m_screenshotTops.empty())
 			target.draw(m_textScreenshotsEmpty, states);
 
@@ -344,6 +348,8 @@ void AppInfo::loadApp(std::shared_ptr<AppItem> appItem)
 
 				m_textTitle.setString(appItem->getTitle());
 				addInfoToDescription();
+
+				m_separator.setPosition(184.f, 166.f);
 
 				// Shorten the app name if it's out of the screen
 				int maxSize = 290;
@@ -722,7 +728,7 @@ void AppInfo::setScreenshots(const rapidjson::Value &jsonScreenshots)
 			addScreenshot(i, jsonScreenshots[i]["image_url"][1]);
 		}
 
-	float startX = std::round((320.f - 61.f * m_screenshotTops.size()) / 5.f);
+	float startX = 1.f;
 	for (int i = 0; i < m_screenshotTops.size(); ++i)
 	{
 		m_screenshotTops[i]->setPosition(startX + i * 61.f, 167.f);
@@ -818,6 +824,7 @@ void AppInfo::addInfoToDescription()
 
 	// Put genre(s) in description
 	if (tempGenresStorage.getSize() > 0) {
+		m_textDescriptionDrawn << "\n\n";
 		m_textDescriptionDrawn << cpp3ds::Color::Black;
 		m_textDescriptionDrawn << _("Genre").toAnsiString() << "\n";
 		if (Theme::isTextThemed)
