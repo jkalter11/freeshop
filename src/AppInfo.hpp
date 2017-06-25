@@ -53,7 +53,7 @@ private:
 	void setScreenshots(const rapidjson::Value &jsonScreenshots);
 	void addScreenshot(int index, const rapidjson::Value &jsonScreenshot);
 	void addEmptyScreenshot(int index, bool isUpper);
-	void addInfoToDescription();
+	void addInfoToDescription(const rapidjson::Value &jsonTitle);
 	cpp3ds::String calculateWordWrapping(cpp3ds::String sentence);
 
 	cpp3ds::Sprite m_icon;

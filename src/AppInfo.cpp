@@ -124,7 +124,7 @@ AppInfo::AppInfo()
 		m_textTitleId.setFillColor(Theme::secondaryTextColor);
 	else
 		m_textTitleId.setFillColor(cpp3ds::Color(80, 80, 80, 255));
-	m_textTitleId.setPosition(2.f, 127.f);
+	m_textTitleId.setPosition(192.f, 185.f);
 
 	m_textDemo.setString(_("Demo"));
 	if (Theme::isTextThemed)
@@ -188,6 +188,9 @@ void AppInfo::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) co
 		target.draw(m_icon, states);
 		target.draw(m_textTitle, states);
 		target.draw(m_textLittleDescription, states);
+
+		if (Config::get(Config::TitleID).GetBool())
+			target.draw(m_textTitleId, states);
 
 		states.scissor = cpp3ds::UintRect(0, 55, 320, 111);
 		target.draw(m_textDescriptionDrawn, states);
@@ -326,11 +329,6 @@ void AppInfo::loadApp(std::shared_ptr<AppItem> appItem)
 		else
 			tempSizeHolder = _("%d KB", m_appItem->getFilesize() / 1024);
 
-		if (!Config::get(Config::TitleID).GetBool())
-			m_textLittleDescription.setString(_("%s - %s", tempSizeHolder.toAnsiString().c_str(), timeTextFmt));
-		else
-			m_textLittleDescription.setString(_("%s - %s - %s", tempSizeHolder.toAnsiString().c_str(), timeTextFmt, m_appItem->getTitleIdStr().c_str()));
-
 		cpp3ds::IntRect textureRect;
 		m_icon.setTexture(*appItem->getIcon(textureRect), true);
 		m_icon.setTextureRect(textureRect);
@@ -359,7 +357,21 @@ void AppInfo::loadApp(std::shared_ptr<AppItem> appItem)
 				m_textDescriptionDrawn.setPosition(2.f, 55.f);
 
 				m_textTitle.setString(appItem->getTitle());
-				addInfoToDescription();
+
+				if (doc["title"].HasMember("copyright")) {
+					m_textDescriptionDrawn << "\n\n";
+					m_textDescriptionDrawn << calculateWordWrapping(doc["title"]["copyright"]["text"].GetString());
+				}
+
+				if (Config::get(Config::ShowGameDescription).GetBool())
+					addInfoToDescription(doc["title"]);
+
+				// Set little description text
+				cpp3ds::String textLittleDescription;
+				if (doc["title"].HasMember("new") && doc["title"]["new"].GetBool())
+					textLittleDescription.insert(textLittleDescription.getSize(), _("NEW - "));
+				textLittleDescription.insert(textLittleDescription.getSize(), _("%s - %s", tempSizeHolder.toAnsiString().c_str(), timeTextFmt));
+				m_textLittleDescription.setString(_("%s", textLittleDescription.toAnsiString().c_str()));
 
 				// Shorten the app name if it's out of the screen
 				int maxSize = 290;
@@ -837,10 +849,10 @@ const cpp3ds::Vector2f &AppInfo::getScrollSize()
 	return m_scrollSize;
 }
 
-void AppInfo::addInfoToDescription()
+void AppInfo::addInfoToDescription(const rapidjson::Value &jsonTitle)
 {
-	// Get publisher from appItem and put it in description
-	if (!m_appItem->getPublisherByName().empty()) {
+	// Get publisher from game's data and put it in description
+	if (jsonTitle.HasMember("publisher")) {
 		m_textDescriptionDrawn << "\n\n";
 		if (Theme::isTextThemed)
   		m_textDescriptionDrawn << Theme::primaryTextColor;
@@ -852,14 +864,48 @@ void AppInfo::addInfoToDescription()
 			else
 			m_textDescriptionDrawn << cpp3ds::Color(100, 100, 100, 255);
 
-		m_textDescriptionDrawn << m_appItem->getPublisherByName();
+		m_textDescriptionDrawn << jsonTitle["publisher"]["name"].GetString();
 	}
 
-	// Get genre(s) from appItem
-	std::vector<std::string> vectorAppGenres = m_appItem->getGenresByName();
+	// Get number of player(s) from game's data and put it in description
+	if (jsonTitle.HasMember("number_of_players")) {
+		m_textDescriptionDrawn << "\n\n";
+		if (Theme::isTextThemed)
+  		m_textDescriptionDrawn << Theme::primaryTextColor;
+		else
+  		m_textDescriptionDrawn << cpp3ds::Color::Black;
+		m_textDescriptionDrawn << _("Players").toAnsiString() << "\n";
+		if (Theme::isTextThemed)
+			m_textDescriptionDrawn << Theme::secondaryTextColor;
+			else
+			m_textDescriptionDrawn << cpp3ds::Color(100, 100, 100, 255);
+
+		cpp3ds::String nbOfPlayers = jsonTitle["number_of_players"].GetString();
+		nbOfPlayers.replace("\n", " ");
+		nbOfPlayers.replace("<br>", "\n");
+		nbOfPlayers.replace("<BR>", "\n");
+		nbOfPlayers.replace("<br/>", "\n");
+
+		m_textDescriptionDrawn << nbOfPlayers;
+	}
+
+	// Init var for genre(s)
+	std::vector<std::string> vectorAppGenres;
 	cpp3ds::String tempGenresStorage;
 
-	// Put genres in the string
+	// Get genre(s) from game's data
+	if (jsonTitle.HasMember("genres")) {
+		for (int i = 0; i < jsonTitle["genres"]["genre"].Size(); ++i) {
+			vectorAppGenres.push_back(jsonTitle["genres"]["genre"][i]["name"].GetString());
+		}
+	}
+
+	// Sort alphabetically the genre(s)
+	std::sort(vectorAppGenres.begin(), vectorAppGenres.end(), [=](std::string& a, std::string& b) {
+		return a < b;
+	});
+
+	// Put genre(s) in the string
 	for (int i = 0; i < vectorAppGenres.size(); ++i)
 		tempGenresStorage.insert(tempGenresStorage.getSize(), _("%s, ", vectorAppGenres[i]));
 
@@ -883,28 +929,25 @@ void AppInfo::addInfoToDescription()
 		m_textDescriptionDrawn << calculateWordWrapping(tempGenresStorage);
 	}
 
-	// Get language(s) from appItem
-	int titleLanguages = m_appItem->getLanguages();
+	// Init var for language(s)
+	std::vector<std::string> vectorAppLanguage;
 	cpp3ds::String tempLanguageStorage;
 
-	// Convert language(s) from int to string
-	for (int i = 0; i < 9; ++i) {
-		if (titleLanguages & 1 << i) {
-			switch (1 << i) {
-				case AppItem::Japanese: tempLanguageStorage.insert(tempLanguageStorage.getSize(), _("English")); break;
-				case AppItem::English: tempLanguageStorage.insert(tempLanguageStorage.getSize(), _("Japanese")); break;
-				case AppItem::Spanish: tempLanguageStorage.insert(tempLanguageStorage.getSize(), _("Spanish")); break;
-				case AppItem::French: tempLanguageStorage.insert(tempLanguageStorage.getSize(), _("French")); break;
-				case AppItem::German: tempLanguageStorage.insert(tempLanguageStorage.getSize(), _("German")); break;
-				case AppItem::Italian: tempLanguageStorage.insert(tempLanguageStorage.getSize(), _("Italian")); break;
-				case AppItem::Dutch: tempLanguageStorage.insert(tempLanguageStorage.getSize(), _("Dutch")); break;
-				case AppItem::Portuguese: tempLanguageStorage.insert(tempLanguageStorage.getSize(), _("Portuguese")); break;
-				case AppItem::Russian: tempLanguageStorage.insert(tempLanguageStorage.getSize(), _("Russian")); break;
-			}
-
-			tempLanguageStorage.insert(tempLanguageStorage.getSize(), _(", "));
+	// Get language(s) from game's data
+	if (jsonTitle.HasMember("languages")) {
+		for (int i = 0; i < jsonTitle["languages"]["language"].Size(); ++i) {
+			vectorAppLanguage.push_back(jsonTitle["languages"]["language"][i]["name"].GetString());
 		}
 	}
+
+	// Sort alphabetically the language(s)
+	std::sort(vectorAppLanguage.begin(), vectorAppLanguage.end(), [=](std::string& a, std::string& b) {
+		return a < b;
+	});
+
+	// Put language(s) in the string
+	for (int i = 0; i < vectorAppLanguage.size(); ++i)
+		tempLanguageStorage.insert(tempLanguageStorage.getSize(), _("%s, ", vectorAppLanguage[i]));
 
 	// Remove the last comma
 	if (tempLanguageStorage.getSize() > 2)
@@ -917,7 +960,7 @@ void AppInfo::addInfoToDescription()
   		m_textDescriptionDrawn << Theme::primaryTextColor;
 		else
   		m_textDescriptionDrawn << cpp3ds::Color::Black;
-		m_textDescriptionDrawn << _("Language").toAnsiString() << "\n";
+		m_textDescriptionDrawn << _("Languages").toAnsiString() << "\n";
 		if (Theme::isTextThemed)
 			m_textDescriptionDrawn << Theme::secondaryTextColor;
 		else
@@ -926,9 +969,21 @@ void AppInfo::addInfoToDescription()
 		m_textDescriptionDrawn << calculateWordWrapping(tempLanguageStorage);
 	}
 
-	// Get feature(s) from appItem
-	std::vector<std::string> vectorAppFeatures = m_appItem->getFeaturesByName();
+	// Init var for feature(s)
+	std::vector<std::string> vectorAppFeatures;
 	cpp3ds::String tempFeaturesStorage;
+
+	// Get feature(s) from game's data
+	if (jsonTitle.HasMember("features")) {
+		for (int i = 0; i < jsonTitle["features"]["feature"].Size(); ++i) {
+			vectorAppFeatures.push_back(jsonTitle["features"]["feature"][i]["name"].GetString());
+		}
+	}
+
+	// Sort alphabetically the feature(s)
+	std::sort(vectorAppFeatures.begin(), vectorAppFeatures.end(), [=](std::string& a, std::string& b) {
+		return a < b;
+	});
 
 	// Put feature(s) in the string
 	for (int i = 0; i < vectorAppFeatures.size(); ++i)
@@ -945,7 +1000,7 @@ void AppInfo::addInfoToDescription()
   		m_textDescriptionDrawn << Theme::primaryTextColor;
 		else
   		m_textDescriptionDrawn << cpp3ds::Color::Black;
-		m_textDescriptionDrawn << _("Feature").toAnsiString() << "\n";
+		m_textDescriptionDrawn << _("Compatible Features/Accessories").toAnsiString() << "\n";
 		if (Theme::isTextThemed)
 			m_textDescriptionDrawn << Theme::secondaryTextColor;
 		else

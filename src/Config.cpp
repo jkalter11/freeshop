@@ -63,6 +63,7 @@ namespace {
 		"skiddo",
 		"show_battery_percentage",
 		"show_game_counter",
+		"show_game_description",
 		// Internals
 		"reset_eshop_music",
 		"clean_exit",
@@ -189,6 +190,7 @@ void Config::loadDefaults()
 	ADD_DEFAULT(Skiddo, false);
 	ADD_DEFAULT(ShowBattery, false);
 	ADD_DEFAULT(ShowGameCounter, true);
+	ADD_DEFAULT(ShowGameDescription, true);
 
 	// Internals
 	ADD_DEFAULT(ResetEshopMusic, false);

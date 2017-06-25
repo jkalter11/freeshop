@@ -68,6 +68,7 @@ public:
 		Skiddo,
 		ShowBattery,
 		ShowGameCounter,
+		ShowGameDescription,
 		// Internals
 		ResetEshopMusic,
 		CleanExit,

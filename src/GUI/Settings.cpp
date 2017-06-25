@@ -211,6 +211,7 @@ void Settings::saveToConfig()
 #endif
 	Config::set(Config::ShowBattery, m_checkboxBatteryPercent->Checkbox()->IsChecked());
 	Config::set(Config::ShowGameCounter, m_checkboxGameCounter->Checkbox()->IsChecked());
+	Config::set(Config::ShowGameDescription, m_checkboxGameDescription->Checkbox()->IsChecked());
 }
 
 void Settings::loadConfig()
@@ -306,6 +307,7 @@ void Settings::loadConfig()
 #endif
 	m_checkboxBatteryPercent->Checkbox()->SetChecked(Config::get(Config::ShowBattery).GetBool());
 	m_checkboxGameCounter->Checkbox()->SetChecked(Config::get(Config::ShowGameCounter).GetBool());
+	m_checkboxGameDescription->Checkbox()->SetChecked(Config::get(Config::ShowGameDescription).GetBool());
 }
 
 void Settings::saveFilter(Config::Key key, std::vector<Gwen::Controls::CheckBoxWithLabel*> &checkboxArray)
@@ -1322,19 +1324,23 @@ void Settings::fillOtherPage(Gwen::Controls::Base *page)
 	m_checkboxTitleID->SetBounds(0, 0, 320, 20);
 	m_checkboxTitleID->Label()->SetText(_("Show Title ID in game description screen").toAnsiString());
 
+	m_checkboxGameCounter = new CheckBoxWithLabel(page);
+	m_checkboxGameCounter->SetBounds(0, 20, 320, 20);
+	m_checkboxGameCounter->Label()->SetText(_("Show the number of game you have").toAnsiString());
+
+	m_checkboxGameDescription = new CheckBoxWithLabel(page);
+	m_checkboxGameDescription->SetBounds(0, 40, 320, 20);
+	m_checkboxGameDescription->Label()->SetText(_("Show game informations in game info screen").toAnsiString());
+
 #ifndef EMULATION
 	if (!envIsHomebrew()) {
 #endif
 	m_checkboxBatteryPercent = new CheckBoxWithLabel(page);
-	m_checkboxBatteryPercent->SetBounds(0, 40, 320, 20);
+	m_checkboxBatteryPercent->SetBounds(0, 60, 320, 20);
 	m_checkboxBatteryPercent->Label()->SetText(_("Show battery percentage and clock").toAnsiString());
 #ifndef EMULATION
 	}
 #endif
-
-	m_checkboxGameCounter = new CheckBoxWithLabel(page);
-	m_checkboxGameCounter->SetBounds(0, 20, 320, 20);
-	m_checkboxGameCounter->Label()->SetText(_("Show the number of game you have").toAnsiString());
 
 	m_buttonResetEshopMusic = new Button(page);
 	m_buttonResetEshopMusic->SetBounds(0, 140, 200, 20);

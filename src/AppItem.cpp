@@ -315,79 +315,9 @@ const std::vector<int> &AppItem::getGenres() const
 	return m_genres;
 }
 
-std::vector<std::string> AppItem::getGenresByName() const
-{
-  std::vector<std::string> returnedVector;
-
-  // Use English instead of Chinese when fetching platform data (doesn't exist in Chinese)
-	std::string countryCode = getCountryCode(0);
-	if (countryCode == "HK" || countryCode == "TW")
-		countryCode = "GB";
-
-	std::string jsonFilename = _(FREESHOP_DIR "/cache/genres.%s.json", countryCode.c_str());
-
-  rapidjson::Document doc;
-	std::string json;
-	cpp3ds::FileInputStream file;
-	if (file.open(jsonFilename))
-	{
-		json.resize(file.getSize());
-		file.read(&json[0], json.size());
-		doc.Parse(json.c_str());
-		if (doc.HasParseError())
-		{
-			unlink(cpp3ds::FileSystem::getFilePath(jsonFilename).c_str());
-			return returnedVector;
-		}
-
-		rapidjson::Value &list = doc["genres"]["genre"];
-    for (int i = 0; i < list.Size(); ++i)
-      for (int j = 0; j < m_genres.size(); ++j)
-        if (m_genres[j] == list[i]["id"].GetInt()) {
-          returnedVector.push_back(list[i]["name"].GetString());
-          break;
-        }
-	}
-
-  return returnedVector;
-}
-
 const std::vector<int> &AppItem::getFeatures() const
 {
 	return m_features;
-}
-
-std::vector<std::string> AppItem::getFeaturesByName() const
-{
-  std::vector<std::string> returnedVector;
-
-  // Use English instead of Chinese when fetching genre data (Chinese lacks most genres)
-	std::string countryCode = getCountryCode(0);
-	if (countryCode == "HK" || countryCode == "TW")
-		countryCode = "GB";
-
-	std::string jsonFilename = cpp3ds::FileSystem::getFilePath(_(FREESHOP_DIR "/cache/features.%s.json", countryCode.c_str()));
-
-  rapidjson::Document doc;
-	std::string json;
-	cpp3ds::FileInputStream file;
-	if (file.open(jsonFilename))
-	{
-		json.resize(file.getSize());
-		file.read(&json[0], json.size());
-		doc.Parse(json.c_str());
-		if (doc.HasParseError())
-		{
-			unlink(cpp3ds::FileSystem::getFilePath(jsonFilename).c_str());
-			return returnedVector;
-		}
-
-    rapidjson::Value &list = doc;
-    for (int i = 0; i < m_features.size(); ++i)
-      returnedVector.push_back(doc[std::to_string(m_features[i]).c_str()].GetString());
-	}
-
-  return returnedVector;
 }
 
 int AppItem::getPlatform() const
@@ -398,38 +328,6 @@ int AppItem::getPlatform() const
 int AppItem::getPublisher() const
 {
 	return m_publisher;
-}
-
-std::string AppItem::getPublisherByName() const
-{
-  // Use English instead of Chinese when fetching platform data (doesn't exist in Chinese)
-	std::string countryCode = getCountryCode(0);
-	if (countryCode == "HK" || countryCode == "TW")
-		countryCode = "GB";
-
-	std::string jsonFilename = _(FREESHOP_DIR "/cache/publishers.%s.json", countryCode.c_str());
-
-  rapidjson::Document doc;
-	std::string json;
-	cpp3ds::FileInputStream file;
-	if (file.open(jsonFilename))
-	{
-		json.resize(file.getSize());
-		file.read(&json[0], json.size());
-		doc.Parse(json.c_str());
-		if (doc.HasParseError())
-		{
-			unlink(cpp3ds::FileSystem::getFilePath(jsonFilename).c_str());
-			return "";
-		}
-
-		rapidjson::Value &list = doc["publishers"]["publisher"];
-    for (int i = 0; i < list.Size(); ++i)
-		  if (list[i]["id"].GetInt() == m_publisher)
-        return list[i]["name"].GetString();
-	}
-
-  return "";
 }
 
 int AppItem::getIconIndex() const
