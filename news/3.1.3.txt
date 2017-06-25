@@ -23,3 +23,6 @@
   download queue can continue.
 • Bugfix: RGB LED is now supported in
   3DSX version.
+• Bugfix: Games with top/bottom
+  screenshot was crashing freeShop
+  (like MH4U)

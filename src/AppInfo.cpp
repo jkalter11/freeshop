@@ -211,10 +211,21 @@ void AppInfo::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) co
 			target.draw(m_textIconDemo, states);
 		}
 
-		for (auto& screenshot : m_screenshotTops)
-			target.draw(*screenshot, states);
-		for (auto& screenshot : m_screenshotBottoms)
-			target.draw(*screenshot, states);
+		int i = 1;
+		for (auto& screenshot : m_screenshotTops) {
+			if (m_currentScreenshot != i)
+				target.draw(*screenshot, states);
+
+			i++;
+		}
+
+		i = 1;
+		for (auto& screenshot : m_screenshotBottoms) {
+			if (m_currentScreenshot != i)
+				target.draw(*screenshot, states);
+
+			i++;
+		}
 
 		target.draw(m_fadeRect, states);
 	}
@@ -723,8 +734,14 @@ void AppInfo::setScreenshots(const rapidjson::Value &jsonScreenshots)
 	if (jsonScreenshots.IsArray())
 		for (int i = 0; i < jsonScreenshots.Size(); ++i)
 		{
-			addScreenshot(i, jsonScreenshots[i]["image_url"][0]);
-			addScreenshot(i, jsonScreenshots[i]["image_url"][1]);
+			if (jsonScreenshots[i]["image_url"].Size() == 2) {
+				addScreenshot(i, jsonScreenshots[i]["image_url"][0]);
+				addScreenshot(i, jsonScreenshots[i]["image_url"][1]);
+			} else {
+				addScreenshot(i, jsonScreenshots[i]["image_url"][0]);
+
+				addEmptyScreenshot(i, jsonScreenshots[i]["image_url"][0]["type"] == "lower");
+			}
 		}
 
 	float startX = 1.f;
@@ -752,6 +769,32 @@ void AppInfo::addScreenshot(int index, const rapidjson::Value &jsonScreenshot)
 	std::unique_ptr<cpp3ds::Sprite> sprite(new cpp3ds::Sprite());
 
 	texture->loadFromFile(filename);
+	texture->setSmooth(true);
+	sprite->setTexture(*texture, true);
+	sprite->setScale(0.15f, 0.15f);
+	sprite->setPosition(400.f, 0.f); // Keep offscreen
+
+	if (isUpper) {
+		m_screenshotTops.emplace_back(std::move(sprite));
+		m_screenshotTopTextures.emplace_back(std::move(texture));
+	} else {
+		m_screenshotBottoms.emplace_back(std::move(sprite));
+		m_screenshotBottomTextures.emplace_back(std::move(texture));
+	}
+}
+
+void AppInfo::addEmptyScreenshot(int index, bool isUpper)
+{
+	std::unique_ptr<cpp3ds::Texture> texture(new cpp3ds::Texture());
+	std::unique_ptr<cpp3ds::Sprite> sprite(new cpp3ds::Sprite());
+
+	cpp3ds::Image img;
+	if (isUpper)
+		img.create(400.f, 240.f, cpp3ds::Color(0, 0, 0, 128));
+	else
+		img.create(320.f, 240.f, cpp3ds::Color(0, 0, 0, 128));
+
+	texture->loadFromImage(img);
 	texture->setSmooth(true);
 	sprite->setTexture(*texture, true);
 	sprite->setScale(0.15f, 0.15f);
