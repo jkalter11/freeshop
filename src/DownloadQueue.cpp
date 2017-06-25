@@ -732,6 +732,37 @@ void DownloadQueue::addSleepDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint6
 	//A sleep installation is processed
 	m_isSleepInstalling = true;
 
+	//Get title type
+	cpp3ds::Uint32 type = titleId >> 32;
+
+	// Check if enough space to install the title
+	FS_ArchiveResource resource = {0};
+	Result ret;
+
+	if (type == TitleKeys::DSiWare)
+		ret = FSUSER_GetArchiveResource(&resource, SYSTEM_MEDIATYPE_TWL_NAND);
+	else
+		ret = FSUSER_GetArchiveResource(&resource, SYSTEM_MEDIATYPE_SD);
+
+	if(R_SUCCEEDED(ret)) {
+		u64 size = (u64) resource.freeClusters * (u64) resource.clusterSize;
+
+		std::cout << "freespace: " << size << std::endl;
+		std::cout << "gamesize: " << app->getFilesize() << std::endl;
+
+		if (app->getFilesize() > size) {
+			if (Config::get(Config::LEDDownloadError).GetBool())
+				MCU::getInstance().ledBlinkThrice(0x1A25FF);
+
+			if (type == TitleKeys::DSiWare)
+				Notification::spawn(_("Not enough space on NAND to install: \n%s", app->getTitle().toAnsiString().c_str()));
+			else
+				Notification::spawn(_("Not enough space on SD card to install: \n%s", app->getTitle().toAnsiString().c_str()));
+
+			return;
+		}
+	}
+
 	if (titleId == 0)
 	{
 		if (app->isInstalled()) { // Don't allow reinstalling without deleting
@@ -743,9 +774,6 @@ void DownloadQueue::addSleepDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint6
 
 	bool isRegistered;
 	NIMS_IsTaskRegistered(titleId, &isRegistered);
-
-	//Get title type
-	cpp3ds::Uint32 type = titleId >> 32;
 
 	//Get title name
 	cpp3ds::String appTitle;

@@ -14,6 +14,8 @@
   multiple URLs
 • A search bar has been added in the
   installed list.
+• Check if free space is enough on
+  SD/NAND for sleep downloads.
 • Bugfix: Start button wasn't closing the
   app properly.
 • Bugfix: Unreleased DLC now fails the
