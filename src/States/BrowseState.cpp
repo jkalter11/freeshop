@@ -138,7 +138,10 @@ void BrowseState::initialize()
 
 	m_textSearchInstalledList.setString(_("Search..."));
 	m_textSearchInstalledList.setPosition(160.f, 31.f);
-	m_textSearchInstalledList.setFillColor(cpp3ds::Color::Black);
+	if (Theme::isTextThemed)
+		m_textSearchInstalledList.setFillColor(Theme::primaryTextColor);
+	else
+		m_textSearchInstalledList.setFillColor(cpp3ds::Color::Black);
 	m_textSearchInstalledList.setCharacterSize(12.f);
 	m_textSearchInstalledList.setStyle(cpp3ds::Text::Italic);
 	m_textSearchInstalledList.setOrigin(m_textSearchInstalledList.getGlobalBounds().width / 2, 0);

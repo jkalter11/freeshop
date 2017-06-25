@@ -799,7 +799,10 @@ void AppInfo::addInfoToDescription()
 	// Get publisher from appItem and put it in description
 	if (!m_appItem->getPublisherByName().empty()) {
 		m_textDescriptionDrawn << "\n\n";
-		m_textDescriptionDrawn << cpp3ds::Color::Black;
+		if (Theme::isTextThemed)
+  		m_textDescriptionDrawn << Theme::primaryTextColor;
+		else
+  		m_textDescriptionDrawn << cpp3ds::Color::Black;
 		m_textDescriptionDrawn << _("Publisher").toAnsiString() << "\n";
 		if (Theme::isTextThemed)
 			m_textDescriptionDrawn << Theme::secondaryTextColor;
@@ -824,7 +827,10 @@ void AppInfo::addInfoToDescription()
 	// Put genre(s) in description
 	if (tempGenresStorage.getSize() > 0) {
 		m_textDescriptionDrawn << "\n\n";
-		m_textDescriptionDrawn << cpp3ds::Color::Black;
+		if (Theme::isTextThemed)
+  		m_textDescriptionDrawn << Theme::primaryTextColor;
+		else
+  		m_textDescriptionDrawn << cpp3ds::Color::Black;
 		m_textDescriptionDrawn << _("Genre").toAnsiString() << "\n";
 		if (Theme::isTextThemed)
 			m_textDescriptionDrawn << Theme::secondaryTextColor;
@@ -864,7 +870,10 @@ void AppInfo::addInfoToDescription()
 	// Put language(s) in description
 	if (tempLanguageStorage.getSize() > 0) {
 		m_textDescriptionDrawn << "\n\n";
-		m_textDescriptionDrawn << cpp3ds::Color::Black;
+		if (Theme::isTextThemed)
+  		m_textDescriptionDrawn << Theme::primaryTextColor;
+		else
+  		m_textDescriptionDrawn << cpp3ds::Color::Black;
 		m_textDescriptionDrawn << _("Language").toAnsiString() << "\n";
 		if (Theme::isTextThemed)
 			m_textDescriptionDrawn << Theme::secondaryTextColor;
@@ -889,7 +898,10 @@ void AppInfo::addInfoToDescription()
 	// Put feature(s) in description
 	if (tempFeaturesStorage.getSize() > 0) {
 		m_textDescriptionDrawn << "\n\n";
-		m_textDescriptionDrawn << cpp3ds::Color::Black;
+		if (Theme::isTextThemed)
+  		m_textDescriptionDrawn << Theme::primaryTextColor;
+		else
+  		m_textDescriptionDrawn << cpp3ds::Color::Black;
 		m_textDescriptionDrawn << _("Feature").toAnsiString() << "\n";
 		if (Theme::isTextThemed)
 			m_textDescriptionDrawn << Theme::secondaryTextColor;

@@ -747,9 +747,6 @@ void DownloadQueue::addSleepDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint6
 	if(R_SUCCEEDED(ret)) {
 		u64 size = (u64) resource.freeClusters * (u64) resource.clusterSize;
 
-		std::cout << "freespace: " << size << std::endl;
-		std::cout << "gamesize: " << app->getFilesize() << std::endl;
-
 		if (app->getFilesize() > size) {
 			if (Config::get(Config::LEDDownloadError).GetBool())
 				MCU::getInstance().ledBlinkThrice(0x1A25FF);
