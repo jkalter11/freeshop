@@ -16,6 +16,8 @@
   installed list.
 • Check if free space is enough on
   SD/NAND for sleep downloads.
+• Message if storage is almost full
+  in storage bars.
 • Bugfix: Start button wasn't closing the
   app properly.
 • Bugfix: Unreleased DLC now fails the

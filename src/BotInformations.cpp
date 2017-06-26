@@ -24,7 +24,6 @@ BotInformations::BotInformations()
 		m_textSD.setFillColor(cpp3ds::Color::Black);
 	m_textSD.setCharacterSize(10);
 	m_textSD.setPosition(2.f, 31.f);
-	m_textSD.useSystemFont();
 
 	m_textSDStorage.setString(_(""));
 	if (Theme::isTextThemed)
@@ -33,7 +32,6 @@ BotInformations::BotInformations()
 		m_textSDStorage.setFillColor(cpp3ds::Color(130, 130, 130, 255));
 	m_textSDStorage.setCharacterSize(10);
 	m_textSDStorage.setPosition(2.f, 43.f);
-	m_textSDStorage.useSystemFont();
 
 	m_textNAND.setString(_("TWL NAND"));
 	if (Theme::isTextThemed)
@@ -42,7 +40,6 @@ BotInformations::BotInformations()
 		m_textNAND.setFillColor(cpp3ds::Color::Black);
 	m_textNAND.setCharacterSize(10);
 	m_textNAND.setPosition(2.f, 59.f);
-	m_textNAND.useSystemFont();
 
 	m_textNANDStorage.setString(_(""));
 	if (Theme::isTextThemed)
@@ -51,7 +48,6 @@ BotInformations::BotInformations()
 		m_textNANDStorage.setFillColor(cpp3ds::Color(130, 130, 130, 255));
 	m_textNANDStorage.setCharacterSize(10);
 	m_textNANDStorage.setPosition(2.f, 71.f);
-	m_textNANDStorage.useSystemFont();
 
 	//Progress bars
 	m_progressBarNAND.setFillColor(cpp3ds::Color(0, 0, 0, 50));
@@ -163,6 +159,14 @@ void BotInformations::refresh()
 				m_textSDStorage.setString(_("%.1f/%.1f MB", static_cast<float>(size) / 1024.f / 1024.f, static_cast<float>(totalSize) / 1024.f / 1024.f));
 			else
 				m_textSDStorage.setString(_("%d/%d KB", size / 1024, totalSize / 1024));
+
+			if ((usedSize * 320) / totalSize >= 304) {
+				m_textSD.setString(_("SD - Storage almost full"));
+				m_textSD.setStyle(cpp3ds::Text::Italic);
+			} else {
+				m_textSD.setString(_("SD"));
+				m_textSD.setStyle(cpp3ds::Text::Regular);
+			}
 		} else {
 			m_textSDStorage.setString("No SD Card detected");
 	}
@@ -190,8 +194,16 @@ void BotInformations::refresh()
 			m_textNANDStorage.setString(_("%.1f/%.1f MB", static_cast<float>(size) / 1024.f / 1024.f, static_cast<float>(totalSize) / 1024.f / 1024.f));
 		else
 			m_textNANDStorage.setString(_("%d/%d KB", size / 1024, totalSize / 1024));
+
+		if ((usedSize * 320) / totalSize >= 304) {
+			m_textNAND.setString(_("TWL NAND - Storage almost full"));
+			m_textNAND.setStyle(cpp3ds::Text::Italic);
 		} else {
-			m_textNANDStorage.setString("No TWL NAND detected... Wait what ?!");
+			m_textNAND.setString(_("TWL NAND"));
+			m_textNAND.setStyle(cpp3ds::Text::Regular);
+		}
+	} else {
+		m_textNANDStorage.setString("No TWL NAND detected... Wait what ?!");
 	}
 	#else
 	m_textSDStorage.setString("16/32 GB");
