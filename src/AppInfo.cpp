@@ -76,11 +76,11 @@ AppInfo::AppInfo()
 	if (Theme::isTextThemed)
 		m_textScreenshotsEmpty.setFillColor(Theme::secondaryTextColor);
 	else
-		m_textScreenshotsEmpty.setFillColor(cpp3ds::Color(255, 255, 255, 220));
+		m_textScreenshotsEmpty.setFillColor(cpp3ds::Color(100, 100, 100, 255));
 	m_textScreenshotsEmpty.useSystemFont();
 	m_textScreenshotsEmpty.setString(_("No Screenshots"));
 	cpp3ds::FloatRect textRect = m_textScreenshotsEmpty.getLocalBounds();
-	m_textScreenshotsEmpty.setPosition(2.f, 202.f);
+	m_textScreenshotsEmpty.setPosition(2.f, 168.f);
 
 	m_textNothingSelected.setString(_("Select a game to start"));
 	m_textNothingSelected.setCharacterSize(16);
@@ -359,8 +359,13 @@ void AppInfo::loadApp(std::shared_ptr<AppItem> appItem)
 				m_textTitle.setString(appItem->getTitle());
 
 				if (doc["title"].HasMember("copyright")) {
+					cpp3ds::String copyright = doc["title"]["copyright"]["text"].GetString();
+					copyright.replace("<br>", "");
+					copyright.replace("<BR>", "");
+					copyright.replace("<br/>", "");
+
 					m_textDescriptionDrawn << "\n\n";
-					m_textDescriptionDrawn << calculateWordWrapping(doc["title"]["copyright"]["text"].GetString());
+					m_textDescriptionDrawn << calculateWordWrapping(copyright);
 				}
 
 				if (Config::get(Config::ShowGameDescription).GetBool())
@@ -442,6 +447,11 @@ void AppInfo::setCurrentScreenshot(int screenshotIndex)
 		m_screenshotTopBottom.setTexture(*screenshotTop->getTexture(), true);
 		m_screenshotBottom.setTexture(*screenshotBottom->getTexture(), true);
 
+		// Calculate scale for screenshots that are not 400x240 (top screen) / 320x240 (bottom screen)
+		float scaleTopX = 400.f / m_screenshotTopBottom.getTexture()->getSize().x;
+		float scaleBotX = 320.f / m_screenshotBottom.getTexture()->getSize().x;
+		float scaleY = 240.f / m_screenshotTopBottom.getTexture()->getSize().y;
+
 		// If another screenshot not already showing
 		if (m_currentScreenshot == 0)
 		{
@@ -457,7 +467,7 @@ void AppInfo::setCurrentScreenshot(int screenshotIndex)
 			m_screenshotBottom.setScale(screenshotBottom->getScale());
 
 			TweenEngine::Tween::to(m_screenshotTopBottom, util3ds::TweenSprite::SCALE_XY, 0.5f)
-					.target(0.18f, 0.18f)
+					.target(0.18f * scaleTopX / 1.f, 0.18f * scaleY / 1.f)
 					.ease(TweenEngine::TweenEquations::easeOutQuart)
 					.start(m_tweenManager);
 			TweenEngine::Tween::to(m_screenshotTopBottom, util3ds::TweenSprite::POSITION_XY, 0.5f)
@@ -465,7 +475,7 @@ void AppInfo::setCurrentScreenshot(int screenshotIndex)
 					.ease(TweenEngine::TweenEquations::easeOutQuart)
 					.start(m_tweenManager);
 			TweenEngine::Tween::to(m_screenshotBottom, util3ds::TweenSprite::SCALE_XY, 0.5f)
-					.target(0.18f, 0.18f)
+					.target(0.18f * scaleBotX / 1.f, 0.18f * scaleY / 1.f)
 					.ease(TweenEngine::TweenEquations::easeOutQuart)
 					.start(m_tweenManager);
 			TweenEngine::Tween::to(m_screenshotBottom, util3ds::TweenSprite::POSITION_XY, 0.5f)
@@ -474,7 +484,7 @@ void AppInfo::setCurrentScreenshot(int screenshotIndex)
 					.start(m_tweenManager);
 
 			TweenEngine::Tween::to(m_screenshotTopTop, util3ds::TweenSprite::SCALE_XY, 0.7f)
-					.target(1.f, 1.f)
+					.target(1.f * scaleTopX / 1.f, 1.f * scaleY / 1.f)
 					.delay(0.5f)
 					.start(m_tweenManager);
 			TweenEngine::Tween::to(m_screenshotTopTop, util3ds::TweenSprite::POSITION_XY, 0.7f)
@@ -482,7 +492,7 @@ void AppInfo::setCurrentScreenshot(int screenshotIndex)
 					.delay(0.5f)
 					.start(m_tweenManager);
 			TweenEngine::Tween::to(m_screenshotTopBottom, util3ds::TweenSprite::SCALE_XY, 0.7f)
-					.target(1.f, 1.f)
+					.target(1.f * scaleTopX / 1.f, 1.f * scaleY / 1.f)
 					.delay(0.5f)
 					.start(m_tweenManager);
 			TweenEngine::Tween::to(m_screenshotTopBottom, util3ds::TweenSprite::POSITION_XY, 0.7f)
@@ -490,7 +500,7 @@ void AppInfo::setCurrentScreenshot(int screenshotIndex)
 					.delay(0.5f)
 					.start(m_tweenManager);
 			TweenEngine::Tween::to(m_screenshotBottom, util3ds::TweenSprite::SCALE_XY, 0.7f)
-					.target(1.f, 1.f)
+					.target(1.f * scaleBotX / 1.f, 1.f * scaleY / 1.f)
 					.delay(0.5f)
 					.start(m_tweenManager);
 			TweenEngine::Tween::to(m_screenshotBottom, util3ds::TweenSprite::POSITION_XY, 0.7f)
@@ -509,20 +519,25 @@ void AppInfo::setCurrentScreenshot(int screenshotIndex)
 		SCREENSHOT_BUTTON_FADEOUT(m_arrowLeft);
 		SCREENSHOT_BUTTON_FADEOUT(m_arrowRight);
 
+		// Calculate scale for screenshots that are not 400x240 (top screen) / 320x240 (bottom screen)
+		float scaleTopX = 400.f / m_screenshotTopBottom.getTexture()->getSize().x;
+		float scaleBotX = 320.f / m_screenshotBottom.getTexture()->getSize().x;
+		float scaleY = 240.f / m_screenshotTopBottom.getTexture()->getSize().y;
+
 		TweenEngine::Tween::to(m_screenshotTopTop, util3ds::TweenSprite::SCALE_XY, 0.7f)
-				.target(0.15f, 0.15f)
+				.target(0.15f * scaleTopX / 1.f, 0.15f * scaleY / 1.f)
 				.start(m_tweenManager);
 		TweenEngine::Tween::to(m_screenshotTopTop, util3ds::TweenSprite::POSITION_XY, 0.7f)
 				.target(screenshotTop->getPosition().x, screenshotTop->getPosition().y + 270.f)
 				.start(m_tweenManager);
 		TweenEngine::Tween::to(m_screenshotTopBottom, util3ds::TweenSprite::SCALE_XY, 0.7f)
-				.target(0.15f, 0.15f)
+				.target(0.15f * scaleTopX / 1.f, 0.15f * scaleY / 1.f)
 				.start(m_tweenManager);
 		TweenEngine::Tween::to(m_screenshotTopBottom, util3ds::TweenSprite::POSITION_XY, 0.7f)
 				.target(screenshotTop->getPosition().x, screenshotTop->getPosition().y)
 				.start(m_tweenManager);
 		TweenEngine::Tween::to(m_screenshotBottom, util3ds::TweenSprite::SCALE_XY, 0.7f)
-				.target(0.15f, 0.15f)
+				.target(0.15f * scaleBotX / 1.f, 0.15f * scaleY / 1.f)
 				.start(m_tweenManager);
 		TweenEngine::Tween::to(m_screenshotBottom, util3ds::TweenSprite::POSITION_XY, 0.7f)
 				.target(screenshotBottom->getPosition().x, screenshotBottom->getPosition().y)
@@ -756,7 +771,7 @@ void AppInfo::setScreenshots(const rapidjson::Value &jsonScreenshots)
 			}
 		}
 
-	float startX = 1.f;
+	float startX = std::round((184.f - 61.f * m_screenshotTops.size()) / 2.f);
 	for (int i = 0; i < m_screenshotTops.size(); ++i)
 	{
 		m_screenshotTops[i]->setPosition(startX + i * 61.f, 167.f);
@@ -783,8 +798,14 @@ void AppInfo::addScreenshot(int index, const rapidjson::Value &jsonScreenshot)
 	texture->loadFromFile(filename);
 	texture->setSmooth(true);
 	sprite->setTexture(*texture, true);
-	sprite->setScale(0.15f, 0.15f);
+	//sprite->setScale(0.15f, 0.15f);
 	sprite->setPosition(400.f, 0.f); // Keep offscreen
+
+	// Calculate scale for screenshots that are not 400x240 (top screen) / 320x240 (bottom screen)
+	float scaleX = isUpper ? 400.f / texture->getSize().x : 320.f / texture->getSize().x;
+	float scaleY = 240.f / texture->getSize().y;
+
+	sprite->setScale(0.15f * scaleX / 1.f, 0.15f * scaleY / 1.f);
 
 	if (isUpper) {
 		m_screenshotTops.emplace_back(std::move(sprite));

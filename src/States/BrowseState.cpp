@@ -76,8 +76,6 @@ void BrowseState::initialize()
 	InstalledList::getInstance().refresh();
 
 	//Var init
-	m_topBG = false;
-	m_botBG = false;
 	m_ctrSdPath = "";
 	m_keyHistory = {};
 	m_musicFileName = "";
@@ -187,19 +185,6 @@ void BrowseState::initialize()
 	m_settingsGUI = new GUI::Settings(m_gwenSkin, this);
 #endif
 
-
-	if (pathExists(FREESHOP_DIR "/theme/images/topBG.png", true)) {
-		m_rectTopBG.setTexture(&AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/topBG.png"));
-		m_rectTopBG.setPosition(0.f, 0.f);
-		m_topBG = true;
-	}
-
-	if (pathExists(FREESHOP_DIR "/theme/images/botBG.png", true)) {
-		m_rectBotBG.setTexture(&AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/botBG.png"));
-		m_rectBotBG.setPosition(0.f, 0.f);
-		m_botBG = true;
-	}
-
 #ifndef EMULATION
 	//Get the /Nintendo 3DS/<id0>/<id1> path
 	fsInit();
@@ -236,9 +221,6 @@ void BrowseState::renderTopScreen(cpp3ds::Window& window)
 	if (!g_syncComplete || !g_browserLoaded)
 		return;
 
-	if (m_topBG == true)
-		window.draw(m_rectTopBG);
-
 	if (AppList::getInstance().getList().size() == 0) {
 		window.draw(m_textListEmpty);
 	} else {
@@ -271,9 +253,6 @@ void BrowseState::renderBottomScreen(cpp3ds::Window& window)
 	}
 	if (!g_syncComplete || !g_browserLoaded)
 		return;
-
-	if (m_botBG == true)
-		window.draw(m_rectBotBG);
 
 	window.draw(m_topInfos);
 

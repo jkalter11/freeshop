@@ -28,3 +28,8 @@
 • Bugfix: Games with top/bottom
   screenshot was crashing freeShop
   (like MH4U)
+• Bugfix: Games with small screenshots
+  wasn't taking the full screen when
+  selected. (see Paper Plane EUR,
+  these screenshots are rescaled, so
+  it's very pixeled when in full screen)

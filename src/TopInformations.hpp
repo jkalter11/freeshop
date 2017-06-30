@@ -54,6 +54,7 @@ private:
 	void updateIcons(std::string timeTextFmt);
 
 	bool m_lowBatteryNotified;
+	bool m_noInternetNotified;
 
 #ifndef EMULATION
 	Result PTMU_GetAdapterState(u8 *out);

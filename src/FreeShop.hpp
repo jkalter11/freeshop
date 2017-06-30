@@ -5,7 +5,8 @@
 #include <cpp3ds/Graphics.hpp>
 #include <cpp3ds/Network.hpp>
 #include "States/StateStack.hpp"
-
+#include "GUI/NinePatch.hpp"
+#include "AssetManager.hpp"
 
 namespace FreeShop {
 
@@ -31,7 +32,11 @@ private:
 	std::vector<char*> m_data;
 	cpp3ds::String m_text;
 
-	void PTM_ShutdownAsync();
+	// Backgrounds
+	bool m_topBG;
+	bool m_botBG;
+	gui3ds::NinePatch m_rectTopBG;
+	gui3ds::NinePatch m_rectBotBG;
 };
 
 }

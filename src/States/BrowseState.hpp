@@ -96,13 +96,6 @@ private:
 	ScrollBar m_scrollbarInstalledList;
 	ScrollBar m_scrollbarDownloadQueue;
 
-	// Backgrounds
-	bool m_topBG;
-	bool m_botBG;
-
-	gui3ds::NinePatch m_rectTopBG;
-	gui3ds::NinePatch m_rectBotBG;
-
 	// Sounds
 	cpp3ds::Sound  m_soundClick;
 	cpp3ds::Sound  m_soundLoading;

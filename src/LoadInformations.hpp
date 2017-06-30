@@ -22,9 +22,6 @@ public:
 	void updateLoadingPercentage(int newPercentage);
 	void reset();
 
-	bool m_isTopBGThemeAllowed;
-	bool m_isBotBGThemeAllowed;
-
 protected:
 	virtual void draw(cpp3ds::RenderTarget& target, cpp3ds::RenderStates states) const;
 

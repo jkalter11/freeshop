@@ -12,8 +12,6 @@ namespace FreeShop {
 
 LoadInformations::LoadInformations()
 : m_loadingPercentage(0)
-, m_isTopBGThemeAllowed(false)
-, m_isBotBGThemeAllowed(false)
 {
 	std::string path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/texts.json");
 	if (pathExists(path.c_str(), false)) {
@@ -91,9 +89,6 @@ LoadInformations &LoadInformations::getInstance()
 void LoadInformations::reset()
 {
 	updateLoadingPercentage(0);
-
-	m_isBotBGThemeAllowed = false;
-	m_isTopBGThemeAllowed = false;
 }
 
 } // namespace FreeShop

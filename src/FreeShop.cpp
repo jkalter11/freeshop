@@ -101,6 +101,19 @@ FreeShop::FreeShop()
 	std::string testLangFilename(FREESHOP_DIR "/override.lang");
 	if (pathExists(testLangFilename.c_str()))
 		cpp3ds::I18n::loadLanguageFile(testLangFilename);
+
+	// Used to theme the loading background
+	if (pathExists(FREESHOP_DIR "/theme/images/topBG.png", true)) {
+		m_rectTopBG.setTexture(&AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/topBG.png"));
+		m_rectTopBG.setPosition(0.f, 0.f);
+		m_topBG = true;
+	}
+
+	if (pathExists(FREESHOP_DIR "/theme/images/botBG.png", true)) {
+		m_rectBotBG.setTexture(&AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/botBG.png"));
+		m_rectBotBG.setPosition(0.f, 0.f);
+		m_botBG = true;
+	}
 }
 
 FreeShop::~FreeShop()
@@ -189,6 +202,10 @@ void FreeShop::processEvent(Event& event)
 void FreeShop::renderTopScreen(Window& window)
 {
 	window.clear(Color::White);
+
+	if (m_topBG)
+		window.draw(m_rectTopBG);
+
 	m_stateStack->renderTopScreen(window);
 	for (auto& notification : Notification::notifications)
 		window.draw(*notification);
@@ -201,6 +218,10 @@ void FreeShop::renderTopScreen(Window& window)
 void FreeShop::renderBottomScreen(Window& window)
 {
 	window.clear(Color::White);
+
+	if (m_botBG)
+		window.draw(m_rectBotBG);
+
 	m_stateStack->renderBottomScreen(window);
 }
 
@@ -209,7 +230,8 @@ void FreeShop::prepareToCloseApp()
 	DownloadQueue::getInstance().suspend();
 	DownloadQueue::getInstance().save();
 
-	g_browseState->settingsSaveToConfig();
+	if (g_browseState)
+		g_browseState->settingsSaveToConfig();
 
 	Config::set(Config::CleanExit, true);
 	Config::saveToFile();

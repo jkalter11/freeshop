@@ -23,6 +23,7 @@ TopInformations::TopInformations()
 , m_isTransitioning(false)
 , m_canTransition(false)
 , m_lowBatteryNotified(false)
+, m_noInternetNotified(false)
 {
 	//Start the clock
 	m_switchClock.restart();
@@ -201,10 +202,18 @@ void TopInformations::updateIcons(std::string timeTextFmt)
 	uint32_t wifiStatus = 0;
 	std::string signalPath;
 
-	if (R_SUCCEEDED(ACU_GetWifiStatus(&wifiStatus)) && wifiStatus)
-       		signalPath = "wifi" + std::to_string(osGetWifiStrength()) + ".png";
-	else
-       		signalPath = "wifi_disconnected.png";
+	if (R_SUCCEEDED(ACU_GetWifiStatus(&wifiStatus)) && wifiStatus) {
+  	signalPath = "wifi" + std::to_string(osGetWifiStrength()) + ".png";
+
+		m_noInternetNotified = false;
+	} else {
+    signalPath = "wifi_disconnected.png";
+
+		if (!m_noInternetNotified) {
+			m_noInternetNotified = true;
+			Notification::spawn(_("The console is disconnected from the internet"));
+		}
+	}
 
 	std::string themedSignalPath = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/images/" + signalPath);
 

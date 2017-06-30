@@ -124,10 +124,6 @@ SyncState::SyncState(StateStack& stack, Context& context, StateCallback callback
 	g_syncComplete = false;
 	g_browserLoaded = false;
 
-	// Allow TopBG & BotBG to be themed for the startup
-	LoadInformations::getInstance().m_isBotBGThemeAllowed = true;
-	LoadInformations::getInstance().m_isTopBGThemeAllowed = true;
-
 	std::string path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/sounds/startup.ogg");
 	if (pathExists(path.c_str(), false))
 		Theme::isSoundStartupThemed = true;
@@ -213,6 +209,35 @@ bool SyncState::processEvent(const cpp3ds::Event& event)
 				break;
 #endif
 			}
+			case cpp3ds::Keyboard::B: {
+#ifndef EMULATION
+				if (!cpp3ds::Service::isEnabled(cpp3ds::Httpc)) {
+					u8 region;
+					u64 settingsID;
+
+					Result res = 0;
+					u8 hmac[0x20];
+					memset(hmac, 0, sizeof(hmac));
+
+					if (R_SUCCEEDED(CFGU_SecureInfoGetRegion(&region))) {
+						switch (region) {
+							case CFG_REGION_JPN: settingsID = 0x0004001000020000; break;
+							case CFG_REGION_USA: settingsID = 0x0004001000021000; break;
+							case CFG_REGION_EUR: settingsID = 0x0004001000022000; break;
+							case CFG_REGION_AUS: settingsID = 0x0004001000022000; break;
+							case CFG_REGION_CHN: settingsID = 0x0004001000026000; break;
+							case CFG_REGION_KOR: settingsID = 0x0004001000027000; break;
+							case CFG_REGION_TWN: settingsID = 0x0004001000028000; break;
+							default: break;
+						}
+					}
+
+					if (R_SUCCEEDED(res = APT_PrepareToDoApplicationJump(0, settingsID, MEDIATYPE_NAND)))
+						res = APT_DoApplicationJump(0, 0, hmac);
+				}
+				break;
+#endif
+			}
 		}
 	}
 
@@ -235,6 +260,7 @@ void SyncState::sync()
 
 			if (!isMessagesPrinted && m_timer.getElapsedTime() >= cpp3ds::seconds(1.f)) {
 				Notification::spawn(_("Press the A button to enable WiFi"));
+				Notification::spawn(_("Press the B button to open System Settings"));
 				isMessagesPrinted = true;
 			}
 		}

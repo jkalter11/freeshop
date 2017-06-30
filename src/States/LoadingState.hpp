@@ -28,13 +28,6 @@ private:
 	cpp3ds::Text m_icon;
 	cpp3ds::Clock m_rotateClock;
 
-	// Backgrounds
-	bool m_topBG;
-	bool m_botBG;
-
-	gui3ds::NinePatch m_rectTopBG;
-	gui3ds::NinePatch m_rectBotBG;
-
 	LoadInformations m_loadInfos;
 };
 
