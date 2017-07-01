@@ -56,6 +56,9 @@ private:
 	void addInfoToDescription(const rapidjson::Value &jsonTitle);
 	cpp3ds::String calculateWordWrapping(cpp3ds::String sentence);
 
+	void setBanner(const rapidjson::Value &jsonBanner);
+	void closeBanner();
+
 	cpp3ds::Sprite m_icon;
 	util3ds::TweenText m_textTitle;
 	util3ds::RichText m_textDescriptionDrawn;
@@ -93,6 +96,11 @@ private:
 
 	util3ds::TweenText m_textNothingSelected;
 	cpp3ds::RectangleShape m_fadeRect;
+
+	bool m_isBannerLoaded;
+	cpp3ds::Texture m_gameBannerTexture;
+	util3ds::TweenSprite m_gameBanner;
+	util3ds::TweenRectangleShape m_overlay;
 
 	std::shared_ptr<AppItem> m_appItem;
 

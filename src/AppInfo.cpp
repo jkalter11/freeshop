@@ -29,6 +29,7 @@ AppInfo::AppInfo()
 , m_currentScreenshot(0)
 , m_descriptionVelocity(0.f)
 , m_isDemoInstalled(false)
+, m_isBannerLoaded(false)
 {
 	m_textDownload.setFillColor(cpp3ds::Color::White);
 	m_textDownload.setOutlineColor(cpp3ds::Color(0, 0, 0, 200));
@@ -155,6 +156,9 @@ AppInfo::AppInfo()
 	m_fadeRect.setPosition(0.f, 30.f);
 	m_fadeRect.setSize(cpp3ds::Vector2f(320.f, 210.f));
 	m_fadeRect.setFillColor(cpp3ds::Color::White);
+
+	m_overlay.setSize(cpp3ds::Vector2f(400.f, 240.f));
+	m_overlay.setFillColor(cpp3ds::Color::Transparent);
 }
 
 AppInfo::~AppInfo()
@@ -172,6 +176,11 @@ void AppInfo::drawTop(cpp3ds::Window &window)
 {
 	if (m_currentScreenshot)
 		window.draw(m_screenshotTopTop);
+
+	if (m_isBannerLoaded) {
+		window.draw(m_overlay);
+		window.draw(m_gameBanner);
+	}
 }
 
 void AppInfo::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) const
@@ -348,6 +357,9 @@ void AppInfo::loadApp(std::shared_ptr<AppItem> appItem)
 			doc.Parse(json.c_str());
 			if (!doc.HasParseError())
 			{
+				if (doc["title"].HasMember("banner_url"))
+					setBanner(doc["title"]["banner_url"]);
+
 				if (doc["title"].HasMember("screenshots"))
 					setScreenshots(doc["title"]["screenshots"]["screenshot"]);
 
@@ -413,6 +425,8 @@ void AppInfo::loadApp(std::shared_ptr<AppItem> appItem)
 				m_scrollbar.markDirty();
 
 				m_scrollSize = cpp3ds::Vector2f(320.f, m_textDescriptionDrawn.getLocalBounds().top + m_textDescriptionDrawn.getLocalBounds().height + 5.f);
+
+				closeBanner();
 			}
 		}
 	}
@@ -1060,6 +1074,53 @@ cpp3ds::String AppInfo::calculateWordWrapping(cpp3ds::String sentence)
 	}
 
 	return cpp3ds::String::fromUtf8(s.begin(), s.end());
+}
+
+void AppInfo::setBanner(const rapidjson::Value &jsonBanner)
+{
+	m_isBannerLoaded = true;
+
+	std::string bannerURL = jsonBanner.GetString();
+	std::string bannerPath = _(FREESHOP_DIR "/tmp/%s/banner.jpg", m_appItem->getTitleIdStr().c_str());
+
+	Download download(bannerURL, bannerPath);
+	download.setField("Accept", "application/json");
+	download.run();
+
+	m_gameBannerTexture.loadFromFile(bannerPath);
+	m_gameBanner.setPosition(200.f, 120.f);
+	m_gameBanner.setOrigin(m_gameBannerTexture.getSize().x / 2, m_gameBannerTexture.getSize().y / 2);
+	m_gameBanner.setColor(cpp3ds::Color(255, 255, 255, 0));
+	m_gameBanner.setScale(1.5f, 1.5f);
+	m_gameBanner.setTexture(m_gameBannerTexture, true);
+
+	TweenEngine::Tween::to(m_gameBanner, util3ds::TweenSprite::COLOR_ALPHA, 0.2f)
+		.target(255.f)
+		.start(m_tweenManager);
+	TweenEngine::Tween::to(m_gameBanner, util3ds::TweenSprite::SCALE_XY, 0.2f)
+		.target(1.f, 1.f)
+		.start(m_tweenManager);
+
+	TweenEngine::Tween::to(m_overlay, util3ds::TweenRectangleShape::FILL_COLOR_ALPHA, 0.2f)
+		.target(200.f)
+		.start(m_tweenManager);
+}
+
+void AppInfo::closeBanner()
+{
+	TweenEngine::Tween::to(m_gameBanner, util3ds::TweenSprite::COLOR_ALPHA, 0.2f)
+		.target(0.f)
+		.setCallback(TweenEngine::TweenCallback::COMPLETE, [&](TweenEngine::BaseTween* source) {
+			m_isBannerLoaded = false;
+		})
+		.start(m_tweenManager);
+	TweenEngine::Tween::to(m_gameBanner, util3ds::TweenSprite::SCALE_XY, 0.2f)
+		.target(.8f, .8f)
+		.start(m_tweenManager);
+
+	TweenEngine::Tween::to(m_overlay, util3ds::TweenRectangleShape::FILL_COLOR_ALPHA, 0.2f)
+		.target(0.f)
+		.start(m_tweenManager);
 }
 
 } // namespace FreeShop
