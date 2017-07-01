@@ -101,6 +101,7 @@ private:
 	cpp3ds::Texture m_gameBannerTexture;
 	util3ds::TweenSprite m_gameBanner;
 	util3ds::TweenRectangleShape m_overlay;
+	util3ds::TweenSprite m_topIcon;
 
 	std::shared_ptr<AppItem> m_appItem;
 

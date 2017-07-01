@@ -159,6 +159,8 @@ AppInfo::AppInfo()
 
 	m_overlay.setSize(cpp3ds::Vector2f(400.f, 240.f));
 	m_overlay.setFillColor(cpp3ds::Color::Transparent);
+
+	m_topIcon.setPosition(5.f, 36.f);
 }
 
 AppInfo::~AppInfo()
@@ -180,6 +182,7 @@ void AppInfo::drawTop(cpp3ds::Window &window)
 	if (m_isBannerLoaded) {
 		window.draw(m_overlay);
 		window.draw(m_gameBanner);
+		window.draw(m_topIcon);
 	}
 }
 
@@ -1094,6 +1097,13 @@ void AppInfo::setBanner(const rapidjson::Value &jsonBanner)
 	m_gameBanner.setScale(1.5f, 1.5f);
 	m_gameBanner.setTexture(m_gameBannerTexture, true);
 
+	cpp3ds::IntRect textureRect;
+	m_topIcon.setColor(cpp3ds::Color(255, 255, 255, 0));
+	m_topIcon.setTexture(*m_appItem->getIcon(textureRect), true);
+	m_topIcon.setTextureRect(textureRect);
+	m_topIcon.setScale(.5f, .5f);
+	m_topIcon.setOrigin(0.f, m_topIcon.getGlobalBounds().height / 2);
+
 	TweenEngine::Tween::to(m_gameBanner, util3ds::TweenSprite::COLOR_ALPHA, 0.2f)
 		.target(255.f)
 		.start(m_tweenManager);
@@ -1103,6 +1113,11 @@ void AppInfo::setBanner(const rapidjson::Value &jsonBanner)
 
 	TweenEngine::Tween::to(m_overlay, util3ds::TweenRectangleShape::FILL_COLOR_ALPHA, 0.2f)
 		.target(200.f)
+		.start(m_tweenManager);
+
+	TweenEngine::Tween::to(m_topIcon, util3ds::TweenSprite::COLOR_ALPHA, 0.2f)
+		.target(255.f)
+		.delay(0.2f)
 		.start(m_tweenManager);
 }
 
@@ -1119,6 +1134,10 @@ void AppInfo::closeBanner()
 		.start(m_tweenManager);
 
 	TweenEngine::Tween::to(m_overlay, util3ds::TweenRectangleShape::FILL_COLOR_ALPHA, 0.2f)
+		.target(0.f)
+		.start(m_tweenManager);
+
+	TweenEngine::Tween::to(m_topIcon, util3ds::TweenSprite::COLOR_ALPHA, 0.2f)
 		.target(0.f)
 		.start(m_tweenManager);
 }
