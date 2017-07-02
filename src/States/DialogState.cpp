@@ -24,8 +24,8 @@ DialogState::DialogState(StateStack &stack, Context &context, StateCallback call
 		m_background.setTexture(&texture);
 	}
 
-	m_background.setSize(cpp3ds::Vector2f(320.f, 240.f));
-	m_background.setPosition(0.f, 0.f);
+	m_background.setSize(cpp3ds::Vector2f(280.f, 200.f));
+	m_background.setPosition(20.f, 20.f);
 	m_background.setColor(cpp3ds::Color(255, 255, 255, 128));
 
 	m_message.setCharacterSize(14);
@@ -33,19 +33,16 @@ DialogState::DialogState(StateStack &stack, Context &context, StateCallback call
 	m_message.useSystemFont();
 	m_message.setPosition(160.f, 100.f);
 
-	cpp3ds::Vector2f originalMessageScale = m_message.getScale();
-	m_message.setScale(cpp3ds::Vector2f(m_message.getScale().x * 7/6, m_message.getScale().y * 7/6));
-
-	m_buttonOkBackground.setSize(cpp3ds::Vector2f(126.f, 29.f));
+	m_buttonOkBackground.setSize(cpp3ds::Vector2f(110.f, 25.f));
 	m_buttonOkBackground.setOutlineColor(cpp3ds::Color(158, 158, 158, 0));
 	m_buttonOkBackground.setOutlineThickness(1.f);
-	m_buttonOkBackground.setPosition(157.f, 182.f);
+	m_buttonOkBackground.setPosition(165.f, 180.f);
 	m_buttonOkBackground.setFillColor(cpp3ds::Color(255, 255, 255, 0));
 
-	m_buttonCancelBackground.setSize(cpp3ds::Vector2f(126.f, 29.f));
+	m_buttonCancelBackground.setSize(cpp3ds::Vector2f(110.f, 25.f));
 	m_buttonCancelBackground.setOutlineColor(cpp3ds::Color(158, 158, 158, 0));
 	m_buttonCancelBackground.setOutlineThickness(1.f);
-	m_buttonCancelBackground.setPosition(32.f, 182.f);
+	m_buttonCancelBackground.setPosition(40.f, 180.f);
 	m_buttonCancelBackground.setFillColor(cpp3ds::Color(255, 255, 255, 0));
 
 	m_buttonOkText.setString(_("\uE000 Ok"));
@@ -55,17 +52,14 @@ DialogState::DialogState(StateStack &stack, Context &context, StateCallback call
 	m_buttonOkText.setPosition(m_buttonOkBackground.getPosition().x + m_buttonOkBackground.getGlobalBounds().width / 2, m_buttonOkBackground.getPosition().y + m_buttonOkBackground.getGlobalBounds().height / 2);
 	m_buttonOkText.setOrigin(m_buttonOkText.getGlobalBounds().width / 2, m_buttonOkText.getGlobalBounds().height / 1.3f);
 
-	cpp3ds::Vector2f originalButtonOkTextScale = m_buttonOkText.getScale();
-	m_buttonOkText.setScale(cpp3ds::Vector2f(m_buttonOkText.getScale().x * 7/6, m_buttonOkText.getScale().y * 7/6));
-
 	m_buttonCancelText = m_buttonOkText;
 	m_buttonCancelText.setString(_("\uE001 Cancel"));
 	m_buttonCancelText.setCharacterSize(12);
 	m_buttonCancelText.setPosition(m_buttonCancelBackground.getPosition().x + m_buttonCancelBackground.getGlobalBounds().width / 2, m_buttonCancelBackground.getPosition().y + m_buttonCancelBackground.getGlobalBounds().height / 2);
 	m_buttonCancelText.setOrigin(m_buttonCancelText.getGlobalBounds().width / 2, m_buttonCancelText.getGlobalBounds().height / 1.5f);
 
-	cpp3ds::Vector2f originalButtonCancelTextScale = m_buttonCancelText.getScale();
-	m_buttonCancelText.setScale(cpp3ds::Vector2f(m_buttonCancelText.getScale().x * 7/6, m_buttonCancelText.getScale().y * 7/6));
+	m_bottomView.setCenter(cpp3ds::Vector2f(160.f, 120.f));
+	m_bottomView.setSize(cpp3ds::Vector2f(320.f * 0.5f, 240.f * 0.5f));
 
 	cpp3ds::String tmp;
 	Event event = {GetText, &tmp};
@@ -77,26 +71,18 @@ DialogState::DialogState(StateStack &stack, Context &context, StateCallback call
 	m_message.setOrigin(std::round(m_message.getLocalBounds().width / 2),
 						std::round(m_message.getLocalBounds().height / 2));
 
-#define TWEEN_IN(obj, posX, posY, newSizeX, newSizeY) \
+#define TWEEN_IN(obj) \
 	TweenEngine::Tween::to(obj, obj.FILL_COLOR_ALPHA, 0.2f).target(255.f).start(m_tweenManager); \
-	TweenEngine::Tween::to(obj, obj.OUTLINE_COLOR_ALPHA, 0.2f).target(128.f).start(m_tweenManager); \
-	TweenEngine::Tween::to(obj, obj.POSITION_XY, 0.2f).target(posX, posY).start(m_tweenManager); \
-	TweenEngine::Tween::to(obj, obj.SIZE, 0.2f).target(newSizeX, newSizeY).start(m_tweenManager);
-
-#define TWEEN_IN_TEXT(obj, posX, posY, newScaleX, newScaleY) \
-	TweenEngine::Tween::to(obj, obj.FILL_COLOR_ALPHA, 0.2f).target(255.f).start(m_tweenManager); \
-	TweenEngine::Tween::to(obj, obj.POSITION_XY, 0.2f).target(posX, posY).start(m_tweenManager); \
-	TweenEngine::Tween::to(obj, obj.SCALE_XY, 0.2f).target(newScaleX, newScaleY).start(m_tweenManager);
+	TweenEngine::Tween::to(obj, obj.OUTLINE_COLOR_ALPHA, 0.2f).target(128.f).start(m_tweenManager);
 
 	TweenEngine::Tween::to(m_overlay, m_overlay.FILL_COLOR_ALPHA, 0.2f).target(150.f).start(m_tweenManager);
 	TweenEngine::Tween::to(m_background, m_background.COLOR_ALPHA, 0.2f).target(255.f).start(m_tweenManager);
-	TweenEngine::Tween::to(m_background, m_background.POSITION_XY, 0.2f).target(20.f, 20.f).start(m_tweenManager);
-	TweenEngine::Tween::to(m_background, m_background.SIZE, 0.2f).target(280.f, 200.f).start(m_tweenManager);
-	TWEEN_IN_TEXT(m_message, 160.f, 100.f, originalMessageScale.x, originalMessageScale.y);
-	TWEEN_IN(m_buttonOkBackground, 165.f, 180.f, 110.f, 25.f);
-	TWEEN_IN(m_buttonCancelBackground, 40.f, 180.f, 110.f, 25.f);
-	TWEEN_IN_TEXT(m_buttonOkText, m_buttonOkBackground.getPosition().x + m_buttonOkBackground.getGlobalBounds().width / 2, m_buttonOkBackground.getPosition().y + m_buttonOkBackground.getGlobalBounds().height / 2, originalButtonOkTextScale.x, originalButtonOkTextScale.y);
-	TWEEN_IN_TEXT(m_buttonCancelText, m_buttonCancelBackground.getPosition().x + m_buttonCancelBackground.getGlobalBounds().width / 2, m_buttonCancelBackground.getPosition().y + m_buttonCancelBackground.getGlobalBounds().height / 2, originalButtonCancelTextScale.x, originalButtonCancelTextScale.y);
+	TweenEngine::Tween::to(m_buttonOkBackground, m_buttonOkBackground.OUTLINE_COLOR_ALPHA, 0.2f).target(128.f).start(m_tweenManager);
+	TweenEngine::Tween::to(m_buttonCancelBackground, m_buttonCancelBackground.OUTLINE_COLOR_ALPHA, 0.2f).target(128.f).start(m_tweenManager);
+	TWEEN_IN(m_message);
+	TWEEN_IN(m_buttonOkText);
+	TWEEN_IN(m_buttonCancelText);
+	TweenEngine::Tween::to(m_bottomView, m_bottomView.SIZE_XY, 0.2f).target(320.f, 240.f).start(m_tweenManager);
 }
 
 void DialogState::renderTopScreen(cpp3ds::Window &window)
@@ -107,12 +93,17 @@ void DialogState::renderTopScreen(cpp3ds::Window &window)
 void DialogState::renderBottomScreen(cpp3ds::Window &window)
 {
 	window.draw(m_overlay);
+
+	window.setView(m_bottomView);
+
 	window.draw(m_background);
 	window.draw(m_message);
 	window.draw(m_buttonOkBackground);
 	window.draw(m_buttonOkText);
 	window.draw(m_buttonCancelBackground);
 	window.draw(m_buttonCancelText);
+
+	window.setView(window.getDefaultView());
 }
 
 bool DialogState::update(float delta)
@@ -146,16 +137,9 @@ bool DialogState::processEvent(const cpp3ds::Event &event)
 			triggerResponse = true;
 	}
 
-#define TWEEN_OUT(obj, posX, posY, newSizeX, newSizeY) \
-	TweenEngine::Tween::to(obj, obj.FILL_COLOR_ALPHA, 0.1f).target(0.f).start(m_tweenManager); \
-	TweenEngine::Tween::to(obj, obj.OUTLINE_COLOR_ALPHA, 0.2f).target(0.f).start(m_tweenManager); \
-	TweenEngine::Tween::to(obj, obj.POSITION_XY, 0.2f).target(posX, posY).start(m_tweenManager); \
-	TweenEngine::Tween::to(obj, obj.SIZE, 0.2f).target(newSizeX, newSizeY).start(m_tweenManager);
-
-#define TWEEN_OUT_TEXT(obj, posX, posY, newScaleX, newScaleY) \
+#define TWEEN_OUT(obj) \
 	TweenEngine::Tween::to(obj, obj.FILL_COLOR_ALPHA, 0.2f).target(0.f).start(m_tweenManager); \
-	TweenEngine::Tween::to(obj, obj.POSITION_XY, 0.2f).target(posX, posY).start(m_tweenManager); \
-	TweenEngine::Tween::to(obj, obj.SCALE_XY, 0.2f).target(newScaleX, newScaleY).start(m_tweenManager);
+	TweenEngine::Tween::to(obj, obj.OUTLINE_COLOR_ALPHA, 0.2f).target(0.f).start(m_tweenManager);
 
 	if (triggerResponse)
 	{
@@ -176,13 +160,12 @@ bool DialogState::processEvent(const cpp3ds::Event &event)
 			m_tweenManager.killAll();
 
 			TweenEngine::Tween::to(m_background, m_background.COLOR_ALPHA, 0.2f).target(0.f).start(m_tweenManager);
-			TweenEngine::Tween::to(m_background, m_background.POSITION_XY, 0.2f).target(40.f, 40.f).start(m_tweenManager);
-			TweenEngine::Tween::to(m_background, m_background.SIZE, 0.2f).target(240.f, 160.f).start(m_tweenManager);
-			TWEEN_OUT_TEXT(m_message, 160.f, 100.f, m_message.getScale().x * 6/7, m_message.getScale().y * 6/7);
-			TWEEN_OUT(m_buttonOkBackground, 181.f, 176.f, 78.f, 17.f);
-			TWEEN_OUT(m_buttonCancelBackground, 56.f, 176.f, 78.f, 17.f);
-			TWEEN_OUT_TEXT(m_buttonOkText, m_buttonOkBackground.getPosition().x + m_buttonOkBackground.getGlobalBounds().width / 2, m_buttonOkBackground.getPosition().y + m_buttonOkBackground.getGlobalBounds().height / 2, m_buttonOkText.getScale().x * 6/7, m_buttonOkText.getScale().y * 6/7);
-			TWEEN_OUT_TEXT(m_buttonCancelText, m_buttonCancelBackground.getPosition().x + m_buttonCancelBackground.getGlobalBounds().width / 2, m_buttonCancelBackground.getPosition().y + m_buttonCancelBackground.getGlobalBounds().height / 2, m_buttonCancelText.getScale().x * 6/7, m_buttonCancelText.getScale().y * 6/7);
+			TWEEN_OUT(m_message);
+			TWEEN_OUT(m_buttonOkBackground);
+			TWEEN_OUT(m_buttonCancelBackground);
+			TWEEN_OUT(m_buttonOkText);
+			TWEEN_OUT(m_buttonCancelText);
+			TweenEngine::Tween::to(m_bottomView, m_bottomView.SIZE_XY, 0.2f).target(320.f * 2.f, 240.f * 2.f).start(m_tweenManager);
 			TweenEngine::Tween::to(m_overlay, m_overlay.FILL_COLOR_ALPHA, 0.3f).target(0.f)
 				.setCallback(TweenEngine::TweenCallback::COMPLETE, [this](TweenEngine::BaseTween* source) {
 					requestStackPop();

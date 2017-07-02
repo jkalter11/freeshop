@@ -37,6 +37,8 @@ private:
 	util3ds::TweenText m_buttonOkText;
 	cpp3ds::Font m_font;
 
+	util3ds::TweenableView m_bottomView;
+
 	ScrollBar m_scrollbar;
 	cpp3ds::Vector2f m_scrollSize;
 	float m_scrollPos;

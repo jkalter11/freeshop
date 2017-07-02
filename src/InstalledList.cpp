@@ -236,7 +236,7 @@ bool InstalledList::processEvent(const cpp3ds::Event &event)
 		if (event.touch.y < 30)
 			return false;
 
-			if (cpp3ds::UintRect(0, 31, 320, 47).contains(event.touch.x, event.touch.y)) {
+			if (cpp3ds::UintRect(0, 31, 320, 16).contains(event.touch.x, event.touch.y)) {
 #ifndef EMULATION
 				KeyboardApplet kb(KeyboardApplet::Text);
 				swkbdSetHintText(kb, _("Type a game name...").toAnsiString().c_str());

@@ -37,6 +37,8 @@ private:
 	util3ds::TweenRectangleShape m_buttonCancelBackground;
 	util3ds::TweenText m_buttonOkText;
 	util3ds::TweenText m_buttonCancelText;
+
+	util3ds::TweenableView m_bottomView;
 };
 
 } // namespace FreeShop

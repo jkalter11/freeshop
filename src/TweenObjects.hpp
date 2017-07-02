@@ -420,6 +420,52 @@ protected:
 	}
 };
 
+template <class T>
+class TweenView: public T, public TweenEngine::Tweenable
+{
+public:
+	static const int SIZE_X    = 1;
+	static const int SIZE_Y    = 2;
+	static const int SIZE_XY   = 3;
+	static const int CENTER_X  = 4;
+	static const int CENTER_Y  = 5;
+	static const int CENTER_XY = 6;
+
+protected:
+	virtual int getValues(int tweenType, float *returnValues)
+	{
+		switch (tweenType) {
+			case SIZE_X: returnValues[0] = T::getSize().x; return 1;
+			case SIZE_Y: returnValues[0] = T::getSize().y; return 1;
+			case SIZE_XY:
+				returnValues[0] = T::getSize().x;
+				returnValues[1] = T::getSize().y;
+				return 2;
+			case CENTER_X: returnValues[0] = T::getCenter().x; return 1;
+			case CENTER_Y: returnValues[0] = T::getCenter().y; return 1;
+			case CENTER_XY:
+				returnValues[0] = T::getCenter().x;
+				returnValues[1] = T::getCenter().y;
+				return 2;
+			default: return -1;
+		}
+	}
+
+	virtual void setValues(int tweenType, float *newValues)
+	{
+		switch (tweenType) {
+			case SIZE_X: T::setSize(newValues[0], T::getSize().y); break;
+			case SIZE_Y: T::setSize(T::getSize().x, newValues[0]); break;
+			case SIZE_XY: T::setSize(newValues[0], newValues[1]); break;
+			case CENTER_X: T::setCenter(newValues[0], T::getCenter().y); break;
+			case CENTER_Y: T::setCenter(T::getCenter().x, newValues[0]); break;
+			case CENTER_XY: T::setCenter(newValues[0], newValues[1]); break;
+			default:
+				break;
+		}
+	}
+};
+
 typedef TweenColorTransformableResizable<gui3ds::NinePatch> TweenNinePatch;
 
 typedef TweenColorTransformable<cpp3ds::Sprite> TweenSprite;
@@ -428,6 +474,8 @@ typedef TweenShapeText<cpp3ds::Text> TweenText;
 typedef TweenShapeResizable<cpp3ds::RectangleShape> TweenRectangleShape;
 typedef TweenShape<cpp3ds::CircleShape> TweenCircleShape;
 typedef TweenShape<cpp3ds::ConvexShape> TweenConvexShape;
+
+typedef TweenView<cpp3ds::View> TweenableView;
 
 } // namespace util3ds
 

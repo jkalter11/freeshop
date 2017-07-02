@@ -28,16 +28,13 @@ NewsState::NewsState(StateStack &stack, Context &context, StateCallback callback
 		m_background.setTexture(&texture);
 	}
 
-	m_background.setSize(cpp3ds::Vector2f(320.f, 240.f));
-	m_background.setPosition(0.f, 0.f);
+	m_background.setSize(cpp3ds::Vector2f(280.f, 200.f));
+	m_background.setPosition(20.f, 20.f);
 	m_background.setColor(cpp3ds::Color(255, 255, 255, 128));
 
 	m_message.setCharacterSize(12);
 	m_message.setFillColor(cpp3ds::Color::Transparent);
-	m_message.setPosition(15.f, 40.f);
-
-	cpp3ds::Vector2f originalMessageScale = m_message.getScale();
-	m_message.setScale(cpp3ds::Vector2f(m_message.getScale().x * 7/6, m_message.getScale().y * 7/6));
+	m_message.setPosition(35.f, 60.f);
 
 	m_font.loadFromFile("fonts/grandhotel.ttf");
 
@@ -47,12 +44,12 @@ NewsState::NewsState(StateStack &stack, Context &context, StateCallback callback
 	m_title.setFillColor(cpp3ds::Color(100, 100, 100, 0));
 	m_title.setOutlineColor(cpp3ds::Color(255, 255, 255, 0));
 	m_title.setOutlineThickness(3.f);
-	m_title.setPosition(15.f, -0.f);
+	m_title.setPosition(15.f, 0.f);
 
-	m_buttonOkBackground.setSize(cpp3ds::Vector2f(126.f, 29.f));
+	m_buttonOkBackground.setSize(cpp3ds::Vector2f(110.f, 25.f));
 	m_buttonOkBackground.setOutlineColor(cpp3ds::Color(158, 158, 158, 0));
 	m_buttonOkBackground.setOutlineThickness(1.f);
-	m_buttonOkBackground.setPosition(185.f, 205.f);
+	m_buttonOkBackground.setPosition(175.f, 185.f);
 	m_buttonOkBackground.setFillColor(cpp3ds::Color(255, 255, 255, 0));
 
 	m_buttonOkText.setString(_("\uE000 Ok"));
@@ -62,8 +59,8 @@ NewsState::NewsState(StateStack &stack, Context &context, StateCallback callback
 	m_buttonOkText.setPosition(m_buttonOkBackground.getPosition().x + m_buttonOkBackground.getGlobalBounds().width / 2, m_buttonOkBackground.getPosition().y + m_buttonOkBackground.getGlobalBounds().height / 2);
 	m_buttonOkText.setOrigin(m_buttonOkText.getGlobalBounds().width / 2, m_buttonOkText.getGlobalBounds().height / 1.7f);
 
-	cpp3ds::Vector2f originalButtonOkTextScale = m_buttonOkText.getScale();
-	m_buttonOkText.setScale(cpp3ds::Vector2f(m_buttonOkText.getScale().x * 7/6, m_buttonOkText.getScale().y * 7/6));
+	m_bottomView.setCenter(cpp3ds::Vector2f(160.f, 120.f));
+	m_bottomView.setSize(cpp3ds::Vector2f(320.f * 0.5f, 240.f * 0.5f));
 
 	cpp3ds::FileInputStream file;
 	if (file.open(FREESHOP_DIR "/news/" FREESHOP_VERSION ".txt"))
@@ -84,35 +81,20 @@ NewsState::NewsState(StateStack &stack, Context &context, StateCallback callback
 
 	m_scrollSize = cpp3ds::Vector2f(320.f, m_message.getLocalBounds().top + m_message.getLocalBounds().height);
 
-#define TWEEN_IN(obj, posY) \
-	TweenEngine::Tween::to(obj, obj.FILL_COLOR_ALPHA, 0.6f).target(255.f).delay(0.5f).start(m_tweenManager); \
-	TweenEngine::Tween::to(obj, obj.OUTLINE_COLOR_ALPHA, 0.6f).target(255.f).delay(0.5f).start(m_tweenManager); \
-	TweenEngine::Tween::to(obj, obj.POSITION_Y, 0.6f).target(posY).delay(0.5f).start(m_tweenManager);
+#define TWEEN_IN(obj) \
+	TweenEngine::Tween::to(obj, obj.FILL_COLOR_ALPHA, 0.3f).target(255.f).start(m_tweenManager); \
+	TweenEngine::Tween::to(obj, obj.OUTLINE_COLOR_ALPHA, 0.3f).target(255.f).start(m_tweenManager);
 
-#define TWEEN_IN_TEXT(obj, posX, posY, newScaleX, newScaleY) \
-	TweenEngine::Tween::to(obj, obj.FILL_COLOR_ALPHA, 0.2f).target(255.f).start(m_tweenManager); \
-	TweenEngine::Tween::to(obj, obj.POSITION_XY, 0.2f).target(posX, posY).start(m_tweenManager); \
-	TweenEngine::Tween::to(obj, obj.SCALE_XY, 0.2f).target(newScaleX, newScaleY).start(m_tweenManager);
-
-#define TWEEN_IN_NEW(obj, posX, posY, newSizeX, newSizeY) \
-	TweenEngine::Tween::to(obj, obj.FILL_COLOR_ALPHA, 0.2f).target(255.f).start(m_tweenManager); \
-	TweenEngine::Tween::to(obj, obj.OUTLINE_COLOR_ALPHA, 0.2f).target(128.f).start(m_tweenManager); \
-	TweenEngine::Tween::to(obj, obj.POSITION_XY, 0.2f).target(posX, posY).start(m_tweenManager); \
-	TweenEngine::Tween::to(obj, obj.SIZE, 0.2f).target(newSizeX, newSizeY).start(m_tweenManager);
-
-	TweenEngine::Tween::to(m_overlay, m_overlay.FILL_COLOR_ALPHA, 0.2f).target(150.f).start(m_tweenManager);
-	TweenEngine::Tween::to(m_background, m_background.COLOR_ALPHA, 0.2f).target(255.f).start(m_tweenManager);
-	TweenEngine::Tween::to(m_background, m_background.POSITION_XY, 0.2f).target(20.f, 20.f).start(m_tweenManager);
-	TweenEngine::Tween::to(m_background, m_background.SIZE, 0.2f).target(280.f, 200.f).start(m_tweenManager)
-		.setCallback(TweenEngine::TweenCallback::COMPLETE, [this](TweenEngine::BaseTween* source) {
-			m_finishedFadeIn = true;
-		}).start(m_tweenManager);
-	TWEEN_IN(m_title, 5.f);
-	TWEEN_IN_TEXT(m_message, 35.f, 60.f, originalMessageScale.x, originalMessageScale.y);
-	TWEEN_IN_NEW(m_buttonOkBackground, 175.f, 185.f, 110.f, 25.f);
-	// posX (230.f) = posX of m_buttonOkBackground (175.f) + (width of m_buttonOkBackground (185.f) / 2.f)
-	// posY (198.f) = posY of m_buttonOkBackground (185.f) + (height of m_buttonOkBackground (25.f) / 2.f)
-	TWEEN_IN_TEXT(m_buttonOkText, 230.f, 198.f, originalButtonOkTextScale.x, originalButtonOkTextScale.y);
+	TweenEngine::Tween::to(m_overlay, m_overlay.FILL_COLOR_ALPHA, 0.3f).target(150.f).start(m_tweenManager);
+	TweenEngine::Tween::to(m_background, m_background.COLOR_ALPHA, 0.3f).target(255.f).setCallback(TweenEngine::TweenCallback::COMPLETE, [this](TweenEngine::BaseTween* source) {
+		m_finishedFadeIn = true;
+	}).start(m_tweenManager);
+	TWEEN_IN(m_title);
+	TweenEngine::Tween::to(m_title, m_title.POSITION_Y, 0.3f).target(5.f).start(m_tweenManager);
+	TWEEN_IN(m_message);
+	TWEEN_IN(m_buttonOkBackground);
+	TWEEN_IN(m_buttonOkText);
+	TweenEngine::Tween::to(m_bottomView, m_bottomView.SIZE_XY, 0.3f).target(320.f, 240.f).start(m_tweenManager);
 }
 
 void NewsState::renderTopScreen(cpp3ds::Window &window)
@@ -122,8 +104,11 @@ void NewsState::renderTopScreen(cpp3ds::Window &window)
 
 void NewsState::renderBottomScreen(cpp3ds::Window &window)
 {
-	cpp3ds::UintRect scissor(0, 30 + m_background.getPosition().y, 320, 130);
+	cpp3ds::UintRect scissor(0, 30 + m_background.getPosition().y, 320, (240.f / m_bottomView.getSize().y) * 130.f);
 	window.draw(m_overlay);
+
+	window.setView(m_bottomView);
+
 	window.draw(m_background);
 	window.draw(m_message, scissor);
 	window.draw(m_title);
@@ -131,6 +116,8 @@ void NewsState::renderBottomScreen(cpp3ds::Window &window)
 	window.draw(m_buttonOkText);
 	if (m_finishedFadeIn && !m_isClosing)
 		window.draw(m_scrollbar);
+
+	window.setView(window.getDefaultView());
 }
 
 bool NewsState::update(float delta)
@@ -171,19 +158,8 @@ bool NewsState::processEvent(const cpp3ds::Event &event)
 	}
 
 #define TWEEN_OUT(obj) \
-	TweenEngine::Tween::to(obj, obj.FILL_COLOR_ALPHA, 0.1f).target(0.f).start(m_tweenManager); \
-	TweenEngine::Tween::to(obj, obj.OUTLINE_COLOR_ALPHA, 0.1f).target(0.f).start(m_tweenManager);
-
-#define TWEEN_OUT_NEW(obj, posX, posY, newSizeX, newSizeY) \
-	TweenEngine::Tween::to(obj, obj.FILL_COLOR_ALPHA, 0.1f).target(0.f).start(m_tweenManager); \
-	TweenEngine::Tween::to(obj, obj.OUTLINE_COLOR_ALPHA, 0.2f).target(0.f).start(m_tweenManager); \
-	TweenEngine::Tween::to(obj, obj.POSITION_XY, 0.2f).target(posX, posY).start(m_tweenManager); \
-	TweenEngine::Tween::to(obj, obj.SIZE, 0.2f).target(newSizeX, newSizeY).start(m_tweenManager);
-
-#define TWEEN_OUT_TEXT(obj, posX, posY, newScaleX, newScaleY) \
-	TweenEngine::Tween::to(obj, obj.FILL_COLOR_ALPHA, 0.2f).target(0.f).start(m_tweenManager); \
-	TweenEngine::Tween::to(obj, obj.POSITION_XY, 0.2f).target(posX, posY).start(m_tweenManager); \
-	TweenEngine::Tween::to(obj, obj.SCALE_XY, 0.2f).target(newScaleX, newScaleY).start(m_tweenManager);
+	TweenEngine::Tween::to(obj, obj.FILL_COLOR_ALPHA, 0.3f).target(0.f).start(m_tweenManager); \
+	TweenEngine::Tween::to(obj, obj.OUTLINE_COLOR_ALPHA, 0.3f).target(0.f).start(m_tweenManager);
 
 	if (close)
 	{
@@ -194,18 +170,17 @@ bool NewsState::processEvent(const cpp3ds::Event &event)
 		m_isClosing = true;
 		m_tweenManager.killAll();
 
-		TweenEngine::Tween::to(m_background, m_background.COLOR_ALPHA, 0.2f).target(0.f).start(m_tweenManager);
-		TweenEngine::Tween::to(m_background, m_background.POSITION_XY, 0.2f).target(40.f, 40.f).start(m_tweenManager);
-		TweenEngine::Tween::to(m_background, m_background.SIZE, 0.2f).target(240.f, 160.f).start(m_tweenManager);
+		TweenEngine::Tween::to(m_background, m_background.COLOR_ALPHA, 0.3f).target(0.f).start(m_tweenManager);
 		TWEEN_OUT(m_title);
-		TWEEN_OUT_TEXT(m_message, 55.f, 80.f, m_message.getScale().x * 6/7, m_message.getScale().y * 6/7);
-		TWEEN_OUT_NEW(m_buttonOkBackground, 175.f, 175.f, 94.f, 21.f);
-		TWEEN_OUT_TEXT(m_buttonOkText, 222.f, 186.f, m_buttonOkText.getScale().x * 6/7, m_buttonOkText.getScale().y * 6/7);
+		TWEEN_OUT(m_message);
+		TWEEN_OUT(m_buttonOkBackground);
+		TWEEN_OUT(m_buttonOkText);
+		TweenEngine::Tween::to(m_bottomView, m_bottomView.SIZE_XY, 0.3f).target(320.f * 2.f, 240.f * 2.f).start(m_tweenManager);
 		TweenEngine::Tween::to(m_overlay, m_overlay.FILL_COLOR_ALPHA, 0.3f).target(0.f)
 			.setCallback(TweenEngine::TweenCallback::COMPLETE, [this](TweenEngine::BaseTween* source) {
 				requestStackPop();
 			})
-			.delay(0.2f).start(m_tweenManager);
+			.delay(0.3f).start(m_tweenManager);
 	}
 	return false;
 }
