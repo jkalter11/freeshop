@@ -5,13 +5,16 @@
 #include <TweenEngine/TweenManager.h>
 #include "State.hpp"
 #include "../TweenObjects.hpp"
+#include "../GUI/Scrollable.hpp"
+#include "../GUI/ScrollBar.hpp"
 
 namespace FreeShop {
 
-class DialogState: public State {
+class DialogState: public State, public Scrollable {
 public:
 	enum EventType {
 		GetText,
+		GetTitle,
 		Response,
 	};
 	struct Event {
@@ -26,11 +29,16 @@ public:
 	virtual bool update(float delta);
 	virtual bool processEvent(const cpp3ds::Event& event);
 
+	virtual void setScroll(float position);
+	virtual float getScroll();
+	virtual const cpp3ds::Vector2f &getScrollSize();
+
 private:
 	bool m_isClosing;
 	util3ds::TweenRectangleShape m_overlay;
 	util3ds::TweenNinePatch m_background;
 	util3ds::TweenText m_message;
+	util3ds::TweenText m_title;
 	TweenEngine::TweenManager m_tweenManager;
 
 	util3ds::TweenRectangleShape m_buttonOkBackground;
@@ -39,6 +47,10 @@ private:
 	util3ds::TweenText m_buttonCancelText;
 
 	util3ds::TweenableView m_bottomView;
+
+	ScrollBar m_scrollbar;
+	cpp3ds::Vector2f m_scrollSize;
+	float m_scrollPos;
 };
 
 } // namespace FreeShop

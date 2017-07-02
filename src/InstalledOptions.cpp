@@ -115,8 +115,13 @@ void InstalledOptions::processTouchEvent(const cpp3ds::Event &event)
 				auto event = reinterpret_cast<DialogState::Event *>(data);
 				if (event->type == DialogState::GetText) {
 					auto str = reinterpret_cast<cpp3ds::String *>(event->data);
-					*str = _("You are deleting this game,\nincluding all save data:\n\n%s",
+					*str = _("You are deleting this game, including all save data:\n\n%s",
 							 appTitle.toAnsiString().c_str());
+					return true;
+				}
+				else if (event->type == DialogState::GetTitle) {
+					auto str = reinterpret_cast<cpp3ds::String *>(event->data);
+					*str = _("Uninstall a game");
 					return true;
 				}
 				else if (event->type == DialogState::Response) {
@@ -144,7 +149,12 @@ void InstalledOptions::processTouchEvent(const cpp3ds::Event &event)
 				if (event->type == DialogState::GetText)
 				{
 					auto str = reinterpret_cast<cpp3ds::String*>(event->data);
-					*str = _("You are deleting updates for\nthis title:\n\n%s", appTitle.toAnsiString().c_str());
+					*str = _("You are deleting updates for this title:\n\n%s", appTitle.toAnsiString().c_str());
+					return true;
+				}
+				else if (event->type == DialogState::GetTitle) {
+					auto str = reinterpret_cast<cpp3ds::String *>(event->data);
+					*str = _("Uninstall an update");
 					return true;
 				}
 				else if (event->type == DialogState::Response)
@@ -191,7 +201,12 @@ void InstalledOptions::processTouchEvent(const cpp3ds::Event &event)
 				if (event->type == DialogState::GetText)
 				{
 					auto str = reinterpret_cast<cpp3ds::String*>(event->data);
-					*str = _("You are deleting DLC for\nthis title:\n\n%s", appTitle.toAnsiString().c_str());
+					*str = _("You are deleting DLC for this title:\n\n%s", appTitle.toAnsiString().c_str());
+					return true;
+				}
+				else if (event->type == DialogState::GetTitle) {
+					auto str = reinterpret_cast<cpp3ds::String *>(event->data);
+					*str = _("Uninstall a DLC");
 					return true;
 				}
 				else if (event->type == DialogState::Response)

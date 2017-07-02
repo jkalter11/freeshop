@@ -52,7 +52,7 @@ Zaten yüklenmiş: %s
  Cancel
  İptal
 
-Are you sure you want\nto continue?
+Are you sure you want to continue?
 Devam etmek istediğinizden emin misin?
 
 # src/States/NewsState.cpp
@@ -76,7 +76,7 @@ Hiçbir başlık seçilmedi
 Demo
 Demo
 
-You are deleting the demo for\nthis title:\n\n%s
+You are deleting the demo for this title:\n\n%s
 Demoyu\nbu başlık için siliyorsunuz :\n\n%s
 
 Deleted demo: %s
@@ -85,7 +85,7 @@ Demo silindi: %s
 Queued demo: %s
 Sıraya girmiş demo: %s
 
-You are deleting this game,\nincluding all save data:\n\n%s
+You are deleting this game, including all save data:\n\n%s
 Bu oyunu siliyorsunuz,\nbütün kayıt verisiyle:\n\n%s
 
 Deleted: %s
@@ -108,7 +108,7 @@ Tekrar deneniyor... %d
 Queued
 Sıraya girdi
 
-%s\n\nAre you sure you want to cancel\nthis installation and lose all progress?
+%s\n\nAre you sure you want to cancel this installation and lose all progress?
 %s\n\nBu yüklemeyi iptal edip bütün ilerlemeyi\nkaydetmek istediğinizden emin misiniz?
 
 Canceling...
@@ -175,7 +175,7 @@ Güncellemeler
 DLC
 DLC
 
-You are deleting updates for\nthis title:\n\n%s
+You are deleting updates for this title:\n\n%s
 Bu\noyun için güncellemeleri siliyorsunuz:\n\n%s
 
 Deleted update: %s
@@ -184,7 +184,7 @@ Silinmiş güncelleme: %s
 Queued update: %s
 Sıraya girmiş güncelleme: %s
 
-You are deleting DLC for\nthis title:\n\n%s
+You are deleting DLC for this title:\n\n%s
 Bu\noyun için DLC'leri siliyorsunuz:\n\n%s
 
 Deleted DLC: %s
@@ -406,5 +406,5 @@ Hareketsizlikte uyku modunu etkinleştir
 Remote title key URL(s)
 Başlık anahtarı URL'sini/lerini kontrol et
 
-You need to restart freeShop for\n%s to be loaded.\n\nWould you like to do this now?
+You need to restart freeShop for %s to be loaded.\n\nWould you like to do this now?
 %s'in\nbaşlaması için freeShop'un yeniden başlatılması gerekli.\n\nBunu şimdi yapmak istediğinizden emin misiniz?

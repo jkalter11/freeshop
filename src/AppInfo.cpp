@@ -630,7 +630,12 @@ bool AppInfo::processEvent(const cpp3ds::Event &event)
 						if (event->type == DialogState::GetText)
 						{
 							auto str = reinterpret_cast<cpp3ds::String*>(event->data);
-							*str = _("You are deleting the demo for\nthis title:\n\n%s", appTitle.toAnsiString().c_str());
+							*str = _("You are deleting the demo for this title:\n\n%s", appTitle.toAnsiString().c_str());
+							return true;
+						}
+						else if (event->type == DialogState::GetTitle) {
+							auto str = reinterpret_cast<cpp3ds::String *>(event->data);
+							*str = _("Delete a demo");
 							return true;
 						}
 						else if (event->type == DialogState::Response)
@@ -673,7 +678,12 @@ bool AppInfo::processEvent(const cpp3ds::Event &event)
 					if (event->type == DialogState::GetText)
 					{
 						auto str = reinterpret_cast<cpp3ds::String*>(event->data);
-						*str = _("You are deleting this game,\nincluding all save data:\n\n%s", appTitle.toAnsiString().c_str());
+						*str = _("You are deleting this game, including all save data:\n\n%s", appTitle.toAnsiString().c_str());
+						return true;
+					}
+					else if (event->type == DialogState::GetTitle) {
+						auto str = reinterpret_cast<cpp3ds::String *>(event->data);
+						*str = _("Uninstall a game");
 						return true;
 					}
 					else if (event->type == DialogState::Response)

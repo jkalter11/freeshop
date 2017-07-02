@@ -18,6 +18,8 @@
   SD/NAND for sleep downloads.
 • Message if storage is almost full
   in storage bars.
+• Modified dialogs, and cleaned
+  animations.
 • Bugfix: Start button wasn't closing the
   app properly.
 • Bugfix: Unreleased DLC now fails the

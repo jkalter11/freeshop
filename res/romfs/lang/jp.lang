@@ -52,7 +52,7 @@ Already installed: %s
  Cancel
  キャンセル
 
-Are you sure you want\nto continue?
+Are you sure you want to continue?
 作業を続けますか？
 
 # src/States/NewsState.cpp
@@ -76,7 +76,7 @@ No game selected
 Demo
 体験版
 
-You are deleting the demo for\nthis title:\n\n%s
+You are deleting the demo for this title:\n\n%s
 このゲームの体験版を削除します。
 
 Deleted demo: %s
@@ -85,7 +85,7 @@ Deleted demo: %s
 Queued demo: %s
 体験版がDLリストに追加されました: %s
 
-You are deleting this game,\nincluding all save data:\n\n%s
+You are deleting this game, including all save data:\n\n%s
 このゲームとセーブデータを削除します
 
 Deleted: %s
@@ -108,7 +108,7 @@ Retrying... %d
 Queued
 順番を待っています
 
-%s\n\nAre you sure you want to cancel\nthis installation and lose all progress?
+%s\n\nAre you sure you want to cancel this installation and lose all progress?
 %s\n\nインストールを中止すると\n作業中のファイルが失われますが宜しいですか
 
 Canceling...
@@ -172,7 +172,7 @@ Updates
 DLC
 ダウンロードコンテンツ
 
-You are deleting updates for\nthis title:\n\n%s
+You are deleting updates for this title:\n\n%s
 このゲームの更新データを削除します:\n\n%s
 
 Deleted update: %s
@@ -181,7 +181,7 @@ Deleted update: %s
 Queued update: %s
 更新データがDLリストに追加されました: %s
 
-You are deleting DLC for\nthis title:\n\n%s
+You are deleting DLC for this title:\n\n%s
 このゲームのダウンロードコンテンツを削除します:\n\n%s
 
 Deleted DLC: %s
@@ -403,5 +403,5 @@ Enable screen sleep after inactivity
 Remote title key URL(s)
 設定されているURL
 
-You need to restart freeShop for\n%s to be loaded.\n\nWould you like to do this now?
+You need to restart freeShop for %s to be loaded.\n\nWould you like to do this now?
 再起動が必要です %s.\n\n再起動しますか

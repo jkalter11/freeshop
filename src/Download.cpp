@@ -368,7 +368,12 @@ void Download::processEvent(const cpp3ds::Event &event)
 					if (event->type == DialogState::GetText)
 					{
 						auto str = reinterpret_cast<cpp3ds::String*>(event->data);
-						*str = _("%s\n\nAre you sure you want to cancel\nthis installation and lose all progress?", m_appItem->getTitle().toAnsiString().c_str());
+						*str = _("%s\n\nAre you sure you want to cancel this installation and lose all progress?", m_appItem->getTitle().toAnsiString().c_str());
+						return true;
+					}
+					else if (event->type == DialogState::GetTitle) {
+						auto str = reinterpret_cast<cpp3ds::String *>(event->data);
+						*str = _("Cancel a download");
 						return true;
 					}
 					else if (event->type == DialogState::Response)

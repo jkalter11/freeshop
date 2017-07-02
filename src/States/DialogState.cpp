@@ -1,6 +1,7 @@
 #include <cpp3ds/System/I18n.hpp>
 #include <TweenEngine/Tween.h>
 #include <cmath>
+#include <algorithm>
 #include "DialogState.hpp"
 #include "../AssetManager.hpp"
 #include "../Theme.hpp"
@@ -28,10 +29,15 @@ DialogState::DialogState(StateStack &stack, Context &context, StateCallback call
 	m_background.setPosition(20.f, 20.f);
 	m_background.setColor(cpp3ds::Color(255, 255, 255, 128));
 
-	m_message.setCharacterSize(14);
-	m_message.setFillColor(cpp3ds::Color::Transparent);
+	m_message.setCharacterSize(12);
+	m_message.setFillColor(cpp3ds::Color(66, 66, 66, 0));
 	m_message.useSystemFont();
-	m_message.setPosition(160.f, 100.f);
+	m_message.setPosition(25.f, 60.f);
+
+	m_title.setPosition(160.f, 40.f);
+	m_title.setFillColor(cpp3ds::Color::Transparent);
+	m_title.setCharacterSize(16);
+	m_title.useSystemFont();
 
 	m_buttonOkBackground.setSize(cpp3ds::Vector2f(110.f, 25.f));
 	m_buttonOkBackground.setOutlineColor(cpp3ds::Color(158, 158, 158, 0));
@@ -50,7 +56,7 @@ DialogState::DialogState(StateStack &stack, Context &context, StateCallback call
 	m_buttonOkText.setFillColor(cpp3ds::Color(3, 169, 244, 0));
 	m_buttonOkText.useSystemFont();
 	m_buttonOkText.setPosition(m_buttonOkBackground.getPosition().x + m_buttonOkBackground.getGlobalBounds().width / 2, m_buttonOkBackground.getPosition().y + m_buttonOkBackground.getGlobalBounds().height / 2);
-	m_buttonOkText.setOrigin(m_buttonOkText.getGlobalBounds().width / 2, m_buttonOkText.getGlobalBounds().height / 1.3f);
+	m_buttonOkText.setOrigin(m_buttonOkText.getGlobalBounds().width / 2, m_buttonOkText.getGlobalBounds().height / 1.6f);
 
 	m_buttonCancelText = m_buttonOkText;
 	m_buttonCancelText.setString(_("\uE001 Cancel"));
@@ -59,7 +65,7 @@ DialogState::DialogState(StateStack &stack, Context &context, StateCallback call
 	m_buttonCancelText.setOrigin(m_buttonCancelText.getGlobalBounds().width / 2, m_buttonCancelText.getGlobalBounds().height / 1.5f);
 
 	m_bottomView.setCenter(cpp3ds::Vector2f(160.f, 120.f));
-	m_bottomView.setSize(cpp3ds::Vector2f(320.f * 0.5f, 240.f * 0.5f));
+	m_bottomView.setSize(cpp3ds::Vector2f(320.f * 0.9f, 240.f * 0.9f));
 
 	cpp3ds::String tmp;
 	Event event = {GetText, &tmp};
@@ -67,9 +73,52 @@ DialogState::DialogState(StateStack &stack, Context &context, StateCallback call
 		auto message = reinterpret_cast<cpp3ds::String*>(event.data);
 		m_message.setString(*message);
 	} else
-		m_message.setString(_("Are you sure you want\nto continue?"));
-	m_message.setOrigin(std::round(m_message.getLocalBounds().width / 2),
-						std::round(m_message.getLocalBounds().height / 2));
+		m_message.setString(_("Are you sure you want to continue?"));
+
+	// Calculate word-wrapping
+	int startPos = 0;
+	int lastSpace = 0;
+	auto s = m_message.getString().toUtf8();
+	cpp3ds::Text tmpText = m_message;
+	for (int i = 0; i < s.size(); ++i)
+	{
+		if (s[i] == ' ')
+			lastSpace = i;
+		tmpText.setString(cpp3ds::String::fromUtf8(s.begin() + startPos, s.begin() + i));
+		if (tmpText.getLocalBounds().width > 260)
+		{
+			if (lastSpace != 0)
+			{
+				s[lastSpace] = '\n';
+				i = startPos = lastSpace + 1;
+				lastSpace = 0;
+			}
+			else
+			{
+				s.insert(s.begin() + i, '\n');
+				startPos = ++i;
+			}
+		}
+	}
+	m_message.setString(cpp3ds::String::fromUtf8(s.begin(), s.end()));
+
+	event = {GetTitle, &tmp};
+	if (runCallback(&event)) {
+		auto message = reinterpret_cast<cpp3ds::String*>(event.data);
+		m_title.setString(*message);
+	} else
+		m_title.setString(_("Dialog"));
+	m_title.setOrigin(std::round(m_title.getLocalBounds().width / 2), std::round(m_title.getLocalBounds().height / 2));
+
+	m_scrollbar.setSize(cpp3ds::Vector2u(2, 196));
+	m_scrollbar.setScrollAreaSize(cpp3ds::Vector2u(320, 109));
+	m_scrollbar.setDragRect(cpp3ds::IntRect(0, 0, 320, 240));
+	m_scrollbar.setColor(cpp3ds::Color(0, 0, 0, 40));
+	m_scrollbar.setPosition(292.f, 22.f);
+	m_scrollbar.setAutoHide(false);
+	m_scrollbar.attachObject(this);
+
+	m_scrollSize = cpp3ds::Vector2f(320.f, m_message.getLocalBounds().top + m_message.getLocalBounds().height);
 
 #define TWEEN_IN(obj) \
 	TweenEngine::Tween::to(obj, obj.FILL_COLOR_ALPHA, 0.2f).target(255.f).start(m_tweenManager); \
@@ -82,6 +131,7 @@ DialogState::DialogState(StateStack &stack, Context &context, StateCallback call
 	TWEEN_IN(m_message);
 	TWEEN_IN(m_buttonOkText);
 	TWEEN_IN(m_buttonCancelText);
+	TWEEN_IN(m_title);
 	TweenEngine::Tween::to(m_bottomView, m_bottomView.SIZE_XY, 0.2f).target(320.f, 240.f).start(m_tweenManager);
 }
 
@@ -92,16 +142,19 @@ void DialogState::renderTopScreen(cpp3ds::Window &window)
 
 void DialogState::renderBottomScreen(cpp3ds::Window &window)
 {
+	cpp3ds::UintRect scissor(0, 40 + m_background.getPosition().y, 320, (240.f / m_bottomView.getSize().y) * 119.f);
 	window.draw(m_overlay);
 
 	window.setView(m_bottomView);
 
 	window.draw(m_background);
-	window.draw(m_message);
+	window.draw(m_message, scissor);
 	window.draw(m_buttonOkBackground);
 	window.draw(m_buttonOkText);
 	window.draw(m_buttonCancelBackground);
 	window.draw(m_buttonCancelText);
+	window.draw(m_title);
+	window.draw(m_scrollbar);
 
 	window.setView(window.getDefaultView());
 }
@@ -109,6 +162,7 @@ void DialogState::renderBottomScreen(cpp3ds::Window &window)
 bool DialogState::update(float delta)
 {
 	m_tweenManager.update(delta);
+	m_scrollbar.update(delta);
 	return false;
 }
 
@@ -118,6 +172,8 @@ bool DialogState::processEvent(const cpp3ds::Event &event)
 	SleepState::clock.restart();
 	if (m_isClosing)
 		return false;
+
+	m_scrollbar.processEvent(event);
 
 	bool triggerResponse = false;
 	bool accepted = false;
@@ -165,7 +221,8 @@ bool DialogState::processEvent(const cpp3ds::Event &event)
 			TWEEN_OUT(m_buttonCancelBackground);
 			TWEEN_OUT(m_buttonOkText);
 			TWEEN_OUT(m_buttonCancelText);
-			TweenEngine::Tween::to(m_bottomView, m_bottomView.SIZE_XY, 0.2f).target(320.f * 2.f, 240.f * 2.f).start(m_tweenManager);
+			TWEEN_OUT(m_title);
+			TweenEngine::Tween::to(m_bottomView, m_bottomView.SIZE_XY, 0.2f).target(320.f * 1.2f, 240.f * 1.2f).start(m_tweenManager);
 			TweenEngine::Tween::to(m_overlay, m_overlay.FILL_COLOR_ALPHA, 0.3f).target(0.f)
 				.setCallback(TweenEngine::TweenCallback::COMPLETE, [this](TweenEngine::BaseTween* source) {
 					requestStackPop();
@@ -176,5 +233,20 @@ bool DialogState::processEvent(const cpp3ds::Event &event)
 	return false;
 }
 
+void DialogState::setScroll(float position)
+{
+	m_scrollPos = position;
+	m_message.setPosition(25.f, std::round(60.f + position));
+}
+
+float DialogState::getScroll()
+{
+	return m_scrollPos;
+}
+
+const cpp3ds::Vector2f &DialogState::getScrollSize()
+{
+	return m_scrollSize;
+}
 
 } // namespace FreeShop

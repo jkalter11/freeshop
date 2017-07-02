@@ -52,7 +52,7 @@ Already installed: %s
  Cancel
  Отмена
 
-Are you sure you want\nto continue?
+Are you sure you want to continue?
 Вы уверены, что\nхотите продолжить?
 
 # src/States/NewsState.cpp
@@ -76,7 +76,7 @@ No game selected
 Demo
 Демо
 
-You are deleting the demo for\nthis title:\n\n%s
+You are deleting the demo for this title:\n\n%s
 Вы удаляете демо-версию\nэтого приложения:\n\n%s
 
 Deleted demo: %s
@@ -85,7 +85,7 @@ Deleted demo: %s
 Queued demo: %s
 Демо в очереди: %s
 
-You are deleting this game,\nincluding all save data:\n\n%s
+You are deleting this game, including all save data:\n\n%s
 Вы удаляете эту игру,\nвместе с её сохранениями:\n\n%s
 
 Deleted: %s
@@ -108,7 +108,7 @@ Retrying... %d
 Queued
 Добавлено в очередь
 
-%s\n\nAre you sure you want to cancel\nthis installation and lose all progress?
+%s\n\nAre you sure you want to cancel this installation and lose all progress?
 %s\n\nВы уверены, что хотите прервать\nустановку и потерять\nвесь прогресс?
 
 Canceling...
@@ -172,7 +172,7 @@ Updates
 DLC
 DLC
 
-You are deleting updates for\nthis title:\n\n%s
+You are deleting updates for this title:\n\n%s
 Вы собираетесь удалить\nобновления для этого приложения:\n\n%s
 
 Deleted update: %s
@@ -181,7 +181,7 @@ Deleted update: %s
 Queued update: %s
 Обновление в очереди: %s
 
-You are deleting DLC for\nthis title:\n\n%s
+You are deleting DLC for this title:\n\n%s
 Вы собираетесь удалить DLC\nдля этого приложения:\n\n%s
 
 Deleted DLC: %s
@@ -403,5 +403,5 @@ Enable screen sleep after inactivity
 Remote title key URL(s)
 URL(ы) для загрузки ключей приложений
 
-You need to restart freeShop for\n%s to be loaded.\n\nWould you like to do this now?
+You need to restart freeShop for %s to be loaded.\n\nWould you like to do this now?
 Необходимо перезапустить freeShop,\nчтобы загрузить %s.\n\nПерезапустить сейчас?

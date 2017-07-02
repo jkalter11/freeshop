@@ -408,9 +408,14 @@ void AppItem::askUserToRemove(cpp3ds::Uint64 titleID, cpp3ds::String titleName)
 		if (event->type == DialogState::GetText)
 		{
 			auto str = reinterpret_cast<cpp3ds::String*>(event->data);
-			*str = _("%s\n\nAre you sure you want to cancel\nthis installation and lose all progress?", titleName.toAnsiString().c_str());
+			*str = _("%s\n\nAre you sure you want to cancel this installation and lose all progress?", titleName.toAnsiString().c_str());
 			return true;
 		}
+    else if (event->type == DialogState::GetTitle) {
+      auto str = reinterpret_cast<cpp3ds::String *>(event->data);
+      *str = _("Cancel a download");
+      return true;
+    }
 		else if (event->type == DialogState::Response)
 		{
 			bool *accepted = reinterpret_cast<bool*>(event->data);

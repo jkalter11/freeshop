@@ -1556,7 +1556,12 @@ void Settings::languageChange(Gwen::Controls::Base *base)
 			if (event->type == DialogState::GetText)
 			{
 				auto str = reinterpret_cast<cpp3ds::String*>(event->data);
-				*str = _("You need to restart freeShop for\n%s to be loaded.\n\nWould you like to do this now?", m_listboxLanguages->GetSelectedRow()->GetText(0).c_str());
+				*str = _("You need to restart freeShop for %s to be loaded.\n\nWould you like to do this now?", m_listboxLanguages->GetSelectedRow()->GetText(0).c_str());
+				return true;
+			}
+			else if (event->type == DialogState::GetTitle) {
+				auto str = reinterpret_cast<cpp3ds::String *>(event->data);
+				*str = _("Restart freeShop");
 				return true;
 			}
 			else if (event->type == DialogState::Response)
@@ -1683,7 +1688,12 @@ void Settings::resetEshopMusicClicked(Gwen::Controls::Base *button)
 		if (event->type == DialogState::GetText)
 		{
 			auto str = reinterpret_cast<cpp3ds::String*>(event->data);
-			*str = _("You need to restart freeShop\nto update the eShop music\n\nWould you like to do this now?");
+			*str = _("You need to restart freeShop to update the eShop music\n\nWould you like to do this now?");
+			return true;
+		}
+		else if (event->type == DialogState::GetTitle) {
+			auto str = reinterpret_cast<cpp3ds::String *>(event->data);
+			*str = _("Restart freeShop");
 			return true;
 		}
 		else if (event->type == DialogState::Response)

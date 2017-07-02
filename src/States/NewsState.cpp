@@ -60,7 +60,7 @@ NewsState::NewsState(StateStack &stack, Context &context, StateCallback callback
 	m_buttonOkText.setOrigin(m_buttonOkText.getGlobalBounds().width / 2, m_buttonOkText.getGlobalBounds().height / 1.7f);
 
 	m_bottomView.setCenter(cpp3ds::Vector2f(160.f, 120.f));
-	m_bottomView.setSize(cpp3ds::Vector2f(320.f * 0.5f, 240.f * 0.5f));
+	m_bottomView.setSize(cpp3ds::Vector2f(320.f * 0.9f, 240.f * 0.9f));
 
 	cpp3ds::FileInputStream file;
 	if (file.open(FREESHOP_DIR "/news/" FREESHOP_VERSION ".txt"))
@@ -175,7 +175,7 @@ bool NewsState::processEvent(const cpp3ds::Event &event)
 		TWEEN_OUT(m_message);
 		TWEEN_OUT(m_buttonOkBackground);
 		TWEEN_OUT(m_buttonOkText);
-		TweenEngine::Tween::to(m_bottomView, m_bottomView.SIZE_XY, 0.3f).target(320.f * 2.f, 240.f * 2.f).start(m_tweenManager);
+		TweenEngine::Tween::to(m_bottomView, m_bottomView.SIZE_XY, 0.3f).target(320.f * 1.2f, 240.f * 1.2f).start(m_tweenManager);
 		TweenEngine::Tween::to(m_overlay, m_overlay.FILL_COLOR_ALPHA, 0.3f).target(0.f)
 			.setCallback(TweenEngine::TweenCallback::COMPLETE, [this](TweenEngine::BaseTween* source) {
 				requestStackPop();

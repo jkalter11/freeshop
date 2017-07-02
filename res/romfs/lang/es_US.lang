@@ -73,7 +73,7 @@ Escriba el ID del título del juego...
  Cancel
  Cancelar
 
-Are you sure you want\nto continue?
+Are you sure you want to continue?
 ¿Está seguro de que quiere continuar?
 
 # src/States/NewsState.cpp
@@ -97,7 +97,7 @@ Selecciona un juego para iniciar
 Demo
 Demo
 
-You are deleting the demo for\nthis title:\n\n%s
+You are deleting the demo for this title:\n\n%s
 Está borrando la demo de\neste título:\n\n%s
 
 Deleted demo: %s
@@ -106,7 +106,7 @@ Demo borrada: %s
 Queued demo: %s
 Demo en fila: %s
 
-You are deleting this game,\nincluding all save data:\n\n%s
+You are deleting this game, including all save data:\n\n%s
 Está borrando este juego,\nincluyendo todos sus datos guardados:\n\n%s
 
 Deleted: %s
@@ -129,7 +129,7 @@ Intentando de nuevo... %d
 Queued
 En fila
 
-%s\n\nAre you sure you want to cancel\nthis installation and lose all progress?
+%s\n\nAre you sure you want to cancel this installation and lose all progress?
 %s\n\n¿Está seguro de que quiere\ncancelar esta instalación y\nperder todo el progreso?
 
 Canceling...
@@ -239,7 +239,7 @@ Actualizaciones
 DLC
 DLC
 
-You are deleting updates for\nthis title:\n\n%s
+You are deleting updates for this title:\n\n%s
 Está borrando las actualizaciones para\neste título:\n\n%s
 
 Deleted update: %s
@@ -248,7 +248,7 @@ Actualización borrada: %s
 Queued update: %s
 Actualización en fila: %s
 
-You are deleting DLC for\nthis title:\n\n%s
+You are deleting DLC for this title:\n\n%s
 Está borrando el DLC para\neste título:\n\n%s
 
 Deleted DLC: %s
@@ -480,7 +480,7 @@ Activar modo de suspensión después de inactividad
 Remote title key URL(s)
 URL(s) remotos de llaves de título
 
-You need to restart freeShop for\n%s to be loaded.\n\nWould you like to do this now?
+You need to restart freeShop for %s to be loaded.\n\nWould you like to do this now?
 Necesita reiniciar freeShop para que\nsea cargado %s.\n\n¿Desea reiniciar ahora?
 
 Music
@@ -567,7 +567,7 @@ Apagar música si el deslizador de volumen está muy bajo
 Update eShop music
 Actualizar música de eShop
 
-You need to restart freeShop\nto update the eShop music\n\nWould you like to do this now?
+You need to restart freeShop to update the eShop music\n\nWould you like to do this now?
 Necesita reiniciar freeShop para\nactualizar la música de eShop\n\n¿Desea hacer ésto ahora?
 
 Allow music on inactivity mode

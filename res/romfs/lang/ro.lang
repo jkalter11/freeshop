@@ -52,7 +52,7 @@ Deja instalata: %s
  Cancel
  Anulare
 
-Are you sure you want\nto continue?
+Are you sure you want to continue?
 Esti sigur ca vrei sa continui?
 
 # src/States/NewsState.cpp
@@ -76,7 +76,7 @@ Nici un joc selectat
 Demo
 Demo
 
-You are deleting the demo for\nthis title:\n\n%s
+You are deleting the demo for this title:\n\n%s
 Stergi demo-ul pentru\nacest titlu:\n\n%s
 
 Deleted demo: %s
@@ -85,7 +85,7 @@ Demo-ul a fost sters: %s
 Queued demo: %s
 Demo-ul a fost adaugat la lista: %s
 
-You are deleting this game,\nincluding all save data:\n\n%s
+You are deleting this game, including all save data:\n\n%s
 Acest joc va fi sters,\nincluzand toate salvarile:\n\n%s
 
 Deleted: %s
@@ -108,7 +108,7 @@ Re-incercand... %d
 Queued
 Adaugat la lista
 
-%s\n\nAre you sure you want to cancel\nthis installation and lose all progress?
+%s\n\nAre you sure you want to cancel this installation and lose all progress?
 %s\n\nEsti sigur ca vrei sa anulezi\naceasta instalare si\nsa pierzi tot progresul?
 
 Canceling...
@@ -175,7 +175,7 @@ Actualizari
 DLC
 DLC
 
-You are deleting updates for\nthis title:\n\n%s
+You are deleting updates for this title:\n\n%s
 Vei sterge update-urile pentru\nacest titlu:\n\n%s
 
 Deleted update: %s
@@ -184,7 +184,7 @@ Update-ul a fost sters: %s
 Queued update: %s
 Update-ul a fost adaugat la lista: %s
 
-You are deleting DLC for\nthis title:\n\n%s
+You are deleting DLC for this title:\n\n%s
 Vei sterge DLC pentru\nacest titlu:\n\n%s
 
 Deleted DLC: %s
@@ -406,5 +406,5 @@ Porneste ecranul dupa inactivitate
 Remote title key URL(s)
 URL pentru title key-uri
 
-You need to restart freeShop for\n%s to be loaded.\n\nWould you like to do this now?
+You need to restart freeShop for %s to be loaded.\n\nWould you like to do this now?
 Va trebui sa repornesti freeShop pentru ca\nsa fie incarcat %s.\n\nDoresti sa faci asta acum?

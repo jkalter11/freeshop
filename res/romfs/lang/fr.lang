@@ -76,8 +76,8 @@ Ce type de fichier son n'est pas supporté.
  Cancel
  Annuler
 
-Are you sure you want\nto continue?
-Êtes-vous sûr(e)\nde vouloir continuer ?
+Are you sure you want to continue?
+Êtes-vous sûr(e) de vouloir continuer ?
 
 # src/States/NewsState.cpp
 ##########################
@@ -100,8 +100,8 @@ Sélectionnez un jeu pour commencer
 Demo
 Démo
 
-You are deleting the demo for\nthis title:\n\n%s
-Voulez-vous vraiment effacer\nla démo de :\n\n%s
+You are deleting the demo for this title:\n\n%s
+Voulez-vous vraiment effacer la démo de :\n\n%s
 
 Deleted demo: %s
 Démo effacée : %s
@@ -109,8 +109,8 @@ Démo effacée : %s
 Queued demo: %s
 Démo en attente: %s
 
-You are deleting this game,\nincluding all save data:\n\n%s
-Vous allez effacer ce jeu,\net toutes ses données\nde sauvegarde :\n\n%s
+You are deleting this game, including all save data:\n\n%s
+Vous allez effacer ce jeu, et toutes ses données de sauvegarde :\n\n%s
 
 Deleted: %s
 Effacé : %s
@@ -132,8 +132,8 @@ Nouvelle tentative... %d
 Queued
 En attente
 
-%s\n\nAre you sure you want to cancel\nthis installation and lose all progress?
-%s\n\nVoulez-vous vraiment annuler\nl'installation et perdre\ntoute la progression ?
+%s\n\nAre you sure you want to cancel this installation and lose all progress?
+%s\n\nVoulez-vous vraiment annuler l'installation et perdre toute la progression ?
 
 Canceling...
 Annulation...
@@ -245,8 +245,8 @@ Mises à jour
 DLC
 DLC
 
-You are deleting updates for\nthis title:\n\n%s
-Vous allez effacer les\nmises à jour de ce titre :\n\n%s
+You are deleting updates for this title:\n\n%s
+Vous allez effacer les mises à jour de ce titre :\n\n%s
 
 Deleted update: %s
 Effacement de la mise à jour : %s
@@ -254,8 +254,8 @@ Effacement de la mise à jour : %s
 Queued update: %s
 Mise à jour en attente : %s
 
-You are deleting DLC for\nthis title:\n\n%s
-Vous allez effacer le DLC\nde ce titre:\n\n%s
+You are deleting DLC for this title:\n\n%s
+Vous allez effacer le DLC de ce titre:\n\n%s
 
 Deleted DLC: %s
 Effacement du DLC : %s
@@ -500,8 +500,8 @@ Voir news (%s)
 Remote title key URL(s)
 URL(s) des title keys
 
-You need to restart freeShop for\n%s to be loaded.\n\nWould you like to do this now?
-Vous devez redémarrer freeShop\npour le lancer en %s.\n\nRedémarrer maintenant ?
+You need to restart freeShop for %s to be loaded.\n\nWould you like to do this now?
+Vous devez redémarrer freeShop pour le lancer en %s.\n\nRedémarrer maintenant ?
 
 Keyboard:
 Clavier :
@@ -572,8 +572,8 @@ Eteindre la musique si le volume est trop bas
 Update eShop music
 Mettre à jour la musique de l'eShop
 
-You need to restart freeShop\nto update the eShop music\n\nWould you like to do this now?
-Vous devez redémarrer freeShop\npour mettre à jour la musique\nde l'eShop.\n\nRedémarrer maintenant ?
+You need to restart freeShop to update the eShop music\n\nWould you like to do this now?
+Vous devez redémarrer freeShop pour mettre à jour la musique de l'eShop.\n\nRedémarrer maintenant ?
 
 Allow music on inactivity mode
 Autoriser la musique en mode inactif

@@ -52,7 +52,7 @@ Skiddo Skiddo : %s
  Cancel
  Skiddo
 
-Are you sure you want\nto continue?
+Are you sure you want to continue?
 Skiddo Skiddo Skiddo Skiddo\nSkiddo? 
 
 # src/States/NewsState.cpp
@@ -76,7 +76,7 @@ Skiddo Skiddo Skiddo
 Demo
 Skiddo
 
-You are deleting the demo for\nthis title:\n\n%s
+You are deleting the demo for this title:\n\n%s
 Skiddo Skiddo Skiddo Skiddo Skiddo Skiddo\nSkiddo Skiddo:\n\n%s
 
 Deleted demo: %s
@@ -85,7 +85,7 @@ Skiddo Skiddo: %s
 Queued demo: %s
 Skiddo Skiddo: %s
 
-You are deleting this game,\nincluding all save data:\n\n%s
+You are deleting this game, including all save data:\n\n%s
 Skiddo Skiddo Skiddo Skiddo Skiddo,\nSkiddo Skiddo Skiddo Skiddo:\n\n%s
 
 Deleted: %s
@@ -108,7 +108,7 @@ Skiddo... %d
 Queued
 Skiddo 
 
-%s\n\nAre you sure you want to cancel\nthis installation and lose all progress?
+%s\n\nAre you sure you want to cancel this installation and lose all progress?
 %s\n\nSkiddo Skiddo Skiddo Skiddo\nSkiddo Skiddo Skiddo\nSkiddo Skiddo Skiddo\nSkiddo Skiddo Skiddo?
 
 Canceling...
@@ -172,7 +172,7 @@ Skiddo
 DLC
 Skiddo
 
-You are deleting updates for\nthis title:\n\n%s
+You are deleting updates for this title:\n\n%s
 Skiddo Skiddo Skiddo Skiddo Skiddo \nSkiddo Skiddo:\n\n%s
 
 Deleted update: %s
@@ -181,7 +181,7 @@ Skiddo Skiddo: %s
 Queued update: %s
 Skiddo Skiddo: %s
 
-You are deleting DLC for\nthis title:\n\n%s
+You are deleting DLC for this title:\n\n%s
 Skiddo Skiddo Skiddo Skiddo Skiddo\nSkiddo:\n\n%s
 
 Deleted DLC: %s
@@ -403,5 +403,5 @@ Skiddo Skiddo Skiddo Skiddo Skiddo
 Remote title key URL(s)
 Skiddo Skiddo Skiddo Skiddo(s)
 
-You need to restart freeShop for\n%s to be loaded.\n\nWould you like to do this now?
+You need to restart freeShop for %s to be loaded.\n\nWould you like to do this now?
 Skiddo Skiddo Skiddo Skiddo SkiddoShop Skiddo\n%s Skiddo Skiddo Skiddo .\n\nSkiddo Skiddo Skiddo Skiddo Skiddo Skiddo Skiddo?

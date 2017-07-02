@@ -52,7 +52,7 @@ Already installed: %s
  Cancel
  취소
 
-Are you sure you want\nto continue?
+Are you sure you want to continue?
 계속하시겠습니까?
 
 # src/States/NewsState.cpp
@@ -76,7 +76,7 @@ No game selected
 Demo
 데모
 
-You are deleting the demo for\nthis title:\n\n%s
+You are deleting the demo for this title:\n\n%s
 이 타이틀의 데모를\n지우게 됩니다:\n\n%s
 
 Deleted demo: %s
@@ -85,7 +85,7 @@ Deleted demo: %s
 Queued demo: %s
 대기중인 데모: %s
 
-You are deleting this game,\nincluding all save data:\n\n%s
+You are deleting this game, including all save data:\n\n%s
 모든 세이브 데이터와 함께\n이 게임을 지우게 됩니다:\n\n%s
 
 Deleted: %s
@@ -108,7 +108,7 @@ Retrying... %d
 Queued
 대기중
 
-%s\n\nAre you sure you want to cancel\nthis installation and lose all progress?
+%s\n\nAre you sure you want to cancel this installation and lose all progress?
 %s\n\n설치하던 것을 취소하고\n진행하던 것을 지우시겠습니까?\n
 
 Canceling...
@@ -175,7 +175,7 @@ Updates
 DLC
 DLC
 
-You are deleting updates for\nthis title:\n\n%s
+You are deleting updates for this title:\n\n%s
 이 타이틀의 업데이트를 지우려고 합니다:\n\n%s
 
 Deleted update: %s
@@ -184,7 +184,7 @@ Deleted update: %s
 Queued update: %s
 대기중인 업데이트: %s
 
-You are deleting DLC for\nthis title:\n\n%s
+You are deleting DLC for this title:\n\n%s
 이 타이틀의 DLC를\지우려고 합니다:\n\n%s
 
 Deleted DLC: %s
@@ -406,5 +406,5 @@ Enable screen sleep after inactivity
 Remote title key URL(s)
 원격 title key URL(들)
 
-You need to restart freeShop for\n%s to be loaded.\n\nWould you like to do this now?
+You need to restart freeShop for %s to be loaded.\n\nWould you like to do this now?
 freeShop을 재시작하여\n%s(을)를 로딩합니다.\n\n지금 다시시작 하시겠습니까?

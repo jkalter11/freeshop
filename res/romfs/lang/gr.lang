@@ -52,7 +52,7 @@ Already installed: %s
  Cancel
  Ακύρωση
 
-Are you sure you want\nto continue?
+Are you sure you want to continue?
 Είστε σίγουρος ότι θέλετε να συνεχίσετε;
 
 # src/States/NewsState.cpp
@@ -76,7 +76,7 @@ No game selected
 Demo
 Demo
 
-You are deleting the demo for\nthis title:\n\n%s
+You are deleting the demo for this title:\n\n%s
 Θα διαγράψετε το demo\nγια αυτό το title:\n\n%s
 
 Deleted demo: %s
@@ -85,7 +85,7 @@ Deleted demo: %s
 Queued demo: %s
 Demo σε σειρά: %s
 
-You are deleting this game,\nincluding all save data:\n\n%s
+You are deleting this game, including all save data:\n\n%s
 Θα διαγράψετε αυτό το παιχνίδι,\nμαζί με όλα τα δεδομένα αποθήκευσης:\n\n%s
 
 Deleted: %s
@@ -108,7 +108,7 @@ Retrying... %d
 Queued
 Σε σειρά
 
-%s\n\nAre you sure you want to cancel\nthis installation and lose all progress?
+%s\n\nAre you sure you want to cancel this installation and lose all progress?
 %s\n\nΕίστε σίγουρος ότι θέλετε να ακυρώσετε\nτην εγκατάσταση και να χάσετε\nόλη την πρόοδο;
 
 Canceling...
@@ -175,7 +175,7 @@ Updates
 DLC
 DLC
 
-You are deleting updates for\nthis title:\n\n%s
+You are deleting updates for this title:\n\n%s
 Θα διαγράψετε τις ενημερώσεις\nγια αυτό το title:\n\n%s
 
 Deleted update: %s
@@ -184,7 +184,7 @@ Deleted update: %s
 Queued update: %s
 Ενημερώσεις σε σειρά: %s
 
-You are deleting DLC for\nthis title:\n\n%s
+You are deleting DLC for this title:\n\n%s
 Θα διαγράψετε DLC\nγια αυτό το title:\n\n%s
 
 Deleted DLC: %s
@@ -406,5 +406,5 @@ Enable screen sleep after inactivity
 Remote title key URL(s)
 URL(s) απομακρυσμένων title keys
 
-You need to restart freeShop for\n%s to be loaded.\n\nWould you like to do this now?
+You need to restart freeShop for %s to be loaded.\n\nWould you like to do this now?
 Πρέπει να επανεκκινήσετε το freeShop\nγια να φορτωθεί το %s.\n\nΘέλετε να το κάνετε τώρα;

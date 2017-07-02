@@ -52,7 +52,7 @@ Already installed: %s
  Cancel
  取消
 
-Are you sure you want\nto continue?
+Are you sure you want to continue?
 你确定要继续吗?
 
 # src/States/NewsState.cpp
@@ -76,7 +76,7 @@ No game selected
 Demo
 试玩版
 
-You are deleting the demo for\nthis title:\n\n%s
+You are deleting the demo for this title:\n\n%s
 你正在删除\n这个游戏的试玩版:\n\n%s
 
 Deleted demo: %s
@@ -85,7 +85,7 @@ Deleted demo: %s
 Queued demo: %s
 等待安装试玩版: %s
 
-You are deleting this game,\nincluding all save data:\n\n%s
+You are deleting this game, including all save data:\n\n%s
 你正在删除这个游戏,\n包括其所有的存档:\n\n%s
 
 Deleted: %s
@@ -108,7 +108,7 @@ Retrying... %d
 Queued
 已排队
 
-%s\n\nAre you sure you want to cancel\nthis installation and lose all progress?
+%s\n\nAre you sure you want to cancel this installation and lose all progress?
 %s\n\n你确定要取消\n这次安装并且\n失去全部进度吗?
 
 Canceling...
@@ -172,7 +172,7 @@ Updates
 DLC
 DLC
 
-You are deleting updates for\nthis title:\n\n%s
+You are deleting updates for this title:\n\n%s
 你正在删除\n这个游戏的升级文件:\n\n%s
 
 Deleted update: %s
@@ -181,7 +181,7 @@ Deleted update: %s
 Queued update: %s
 等待安装的升级文件: %s
 
-You are deleting DLC for\nthis title:\n\n%s
+You are deleting DLC for this title:\n\n%s
 你正在删除\n这个游戏的DLC:\n\n%s
 
 Deleted DLC: %s
@@ -403,5 +403,5 @@ Enable screen sleep after inactivity
 Remote title key URL(s)
 远程title key的URL地址 
 
-You need to restart freeShop for\n%s to be loaded.\n\nWould you like to do this now?
+You need to restart freeShop for %s to be loaded.\n\nWould you like to do this now?
 你现在需要重启freeshop\n来重新加载 %s.\n\n你想要立刻这样做吗?

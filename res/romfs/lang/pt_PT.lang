@@ -52,7 +52,7 @@ Já instalado: %s
  Cancel
  Cancelar
 
-Are you sure you want\nto continue?
+Are you sure you want to continue?
 Tem certeza que quer continuar?
 
 # src/States/NewsState.cpp
@@ -76,7 +76,7 @@ Nenhum jogo selecionado
 Demo
 Demo
 
-You are deleting the demo for\nthis title:\n\n%s
+You are deleting the demo for this title:\n\n%s
 Você está excluindo a demo\ndeste título:\n\n%s
 
 Deleted demo: %s
@@ -85,7 +85,7 @@ Demo excluída: %s
 Queued demo: %s
 Demo em fila: %s
 
-You are deleting this game,\nincluding all save data:\n\n%s
+You are deleting this game, including all save data:\n\n%s
 Você está excluindo este jogo,\nincluindo todos os dados de gravação:\n\n%s
 
 Deleted: %s
@@ -108,7 +108,7 @@ Tentando novamente... %d
 Queued
 Em fila
 
-%s\n\nAre you sure you want to cancel\nthis installation and lose all progress?
+%s\n\nAre you sure you want to cancel this installation and lose all progress?
 %s\n\nTem certeza de que deseja\ncancelar esta instalação e\nperder todo o progresso?
 
 Canceling...
@@ -175,7 +175,7 @@ Atualizações
 DLC
 DLC
 
-You are deleting updates for\nthis title:\n\n%s
+You are deleting updates for this title:\n\n%s
 Você está excluindo atualizações para\neste título:\n\n%s
 
 Deleted update: %s
@@ -184,7 +184,7 @@ Atualização excluída: %s
 Queued update: %s
 Atualização em fila: %s
 
-You are deleting DLC for\nthis title:\n\n%s
+You are deleting DLC for this title:\n\n%s
 Você está excluindo DLC para\neste título:\n\n%s
 
 Deleted DLC: %s
@@ -406,5 +406,5 @@ Ativar ecrã de descanso após inatividade
 Remote title key URL(s)
 URL(s) remotos de chaves de títulos
 
-You need to restart freeShop for\n%s to be loaded.\n\nWould you like to do this now?
+You need to restart freeShop for %s to be loaded.\n\nWould you like to do this now?
 Você precisa reiniciar o freeShop para\ncarregar %s.\n\nDeseja fazer isso agora?
