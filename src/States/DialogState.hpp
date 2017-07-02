@@ -35,6 +35,7 @@ public:
 
 private:
 	bool m_isClosing;
+	bool m_finishedFadeIn;
 	util3ds::TweenRectangleShape m_overlay;
 	util3ds::TweenNinePatch m_background;
 	util3ds::TweenText m_message;
@@ -47,6 +48,9 @@ private:
 	util3ds::TweenText m_buttonCancelText;
 
 	util3ds::TweenableView m_bottomView;
+
+	bool m_isOkButtonTouched;
+	bool m_isCancelButtonTouched;
 
 	ScrollBar m_scrollbar;
 	cpp3ds::Vector2f m_scrollSize;

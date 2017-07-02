@@ -13,6 +13,9 @@ namespace FreeShop {
 DialogState::DialogState(StateStack &stack, Context &context, StateCallback callback)
 : State(stack, context, callback)
 , m_isClosing(false)
+, m_finishedFadeIn(false)
+, m_isOkButtonTouched(false)
+, m_isCancelButtonTouched(false)
 {
 	m_overlay.setSize(cpp3ds::Vector2f(400.f, 240.f));
 	m_overlay.setFillColor(cpp3ds::Color(0, 0, 0, 0));
@@ -43,13 +46,13 @@ DialogState::DialogState(StateStack &stack, Context &context, StateCallback call
 	m_buttonOkBackground.setOutlineColor(cpp3ds::Color(158, 158, 158, 0));
 	m_buttonOkBackground.setOutlineThickness(1.f);
 	m_buttonOkBackground.setPosition(165.f, 180.f);
-	m_buttonOkBackground.setFillColor(cpp3ds::Color(255, 255, 255, 0));
+	m_buttonOkBackground.setFillColor(cpp3ds::Color(m_buttonOkBackground.getOutlineColor().r - 20, m_buttonOkBackground.getOutlineColor().g - 20, m_buttonOkBackground.getOutlineColor().b - 20, 0));
 
 	m_buttonCancelBackground.setSize(cpp3ds::Vector2f(110.f, 25.f));
 	m_buttonCancelBackground.setOutlineColor(cpp3ds::Color(158, 158, 158, 0));
 	m_buttonCancelBackground.setOutlineThickness(1.f);
 	m_buttonCancelBackground.setPosition(40.f, 180.f);
-	m_buttonCancelBackground.setFillColor(cpp3ds::Color(255, 255, 255, 0));
+	m_buttonCancelBackground.setFillColor(cpp3ds::Color(m_buttonCancelBackground.getOutlineColor().r - 20, m_buttonCancelBackground.getOutlineColor().g - 20, m_buttonCancelBackground.getOutlineColor().b - 20, 0));
 
 	m_buttonOkText.setString(_("\uE000 Ok"));
 	m_buttonOkText.setCharacterSize(14);
@@ -110,11 +113,11 @@ DialogState::DialogState(StateStack &stack, Context &context, StateCallback call
 		m_title.setString(_("Dialog"));
 	m_title.setOrigin(std::round(m_title.getLocalBounds().width / 2), std::round(m_title.getLocalBounds().height / 2));
 
-	m_scrollbar.setSize(cpp3ds::Vector2u(2, 196));
+	m_scrollbar.setSize(cpp3ds::Vector2u(2, 158));
 	m_scrollbar.setScrollAreaSize(cpp3ds::Vector2u(320, 109));
 	m_scrollbar.setDragRect(cpp3ds::IntRect(0, 0, 320, 240));
 	m_scrollbar.setColor(cpp3ds::Color(0, 0, 0, 40));
-	m_scrollbar.setPosition(292.f, 22.f);
+	m_scrollbar.setPosition(292.f, 60.f);
 	m_scrollbar.setAutoHide(false);
 	m_scrollbar.attachObject(this);
 
@@ -125,7 +128,9 @@ DialogState::DialogState(StateStack &stack, Context &context, StateCallback call
 	TweenEngine::Tween::to(obj, obj.OUTLINE_COLOR_ALPHA, 0.2f).target(128.f).start(m_tweenManager);
 
 	TweenEngine::Tween::to(m_overlay, m_overlay.FILL_COLOR_ALPHA, 0.2f).target(150.f).start(m_tweenManager);
-	TweenEngine::Tween::to(m_background, m_background.COLOR_ALPHA, 0.2f).target(255.f).start(m_tweenManager);
+	TweenEngine::Tween::to(m_background, m_background.COLOR_ALPHA, 0.2f).target(255.f).setCallback(TweenEngine::TweenCallback::COMPLETE, [this](TweenEngine::BaseTween* source) {
+		m_finishedFadeIn = true;
+	}).start(m_tweenManager);
 	TweenEngine::Tween::to(m_buttonOkBackground, m_buttonOkBackground.OUTLINE_COLOR_ALPHA, 0.2f).target(128.f).start(m_tweenManager);
 	TweenEngine::Tween::to(m_buttonCancelBackground, m_buttonCancelBackground.OUTLINE_COLOR_ALPHA, 0.2f).target(128.f).start(m_tweenManager);
 	TWEEN_IN(m_message);
@@ -154,7 +159,9 @@ void DialogState::renderBottomScreen(cpp3ds::Window &window)
 	window.draw(m_buttonCancelBackground);
 	window.draw(m_buttonCancelText);
 	window.draw(m_title);
-	window.draw(m_scrollbar);
+
+	if (m_finishedFadeIn && !m_isClosing)
+		window.draw(m_scrollbar);
 
 	window.setView(window.getDefaultView());
 }
@@ -178,14 +185,36 @@ bool DialogState::processEvent(const cpp3ds::Event &event)
 	bool triggerResponse = false;
 	bool accepted = false;
 
-	if (event.type == cpp3ds::Event::TouchBegan)
+	if (event.type == cpp3ds::Event::TouchEnded)
 	{
-		if (m_buttonOkBackground.getGlobalBounds().contains(event.touch.x, event.touch.y))
+		if (m_buttonOkBackground.getGlobalBounds().contains(event.touch.x, event.touch.y) && m_isOkButtonTouched)
 			triggerResponse = accepted = true;
-		else if (m_buttonCancelBackground.getGlobalBounds().contains(event.touch.x, event.touch.y))
+		else if (m_buttonCancelBackground.getGlobalBounds().contains(event.touch.x, event.touch.y) && m_isCancelButtonTouched)
 			triggerResponse = true;
 	}
-	else if (event.type == cpp3ds::Event::KeyPressed)
+	else if (event.type == cpp3ds::Event::TouchMoved)
+	{
+		if (!m_buttonOkBackground.getGlobalBounds().contains(event.touch.x, event.touch.y) && m_isOkButtonTouched) {
+			TweenEngine::Tween::to(m_buttonOkBackground, m_buttonOkBackground.FILL_COLOR_ALPHA, 0.2f).target(0.f).start(m_tweenManager);
+			m_isOkButtonTouched = false;
+		}
+
+		if (!m_buttonCancelBackground.getGlobalBounds().contains(event.touch.x, event.touch.y) && m_isCancelButtonTouched) {
+			TweenEngine::Tween::to(m_buttonCancelBackground, m_buttonCancelBackground.FILL_COLOR_ALPHA, 0.2f).target(0.f).start(m_tweenManager);
+			m_isCancelButtonTouched = false;
+		}
+	}
+	else if (event.type == cpp3ds::Event::TouchBegan)
+	{
+		if (m_buttonOkBackground.getGlobalBounds().contains(event.touch.x, event.touch.y)) {
+			TweenEngine::Tween::to(m_buttonOkBackground, m_buttonOkBackground.FILL_COLOR_ALPHA, 0.2f).target(255.f).start(m_tweenManager);
+			m_isOkButtonTouched = true;
+		} else if (m_buttonCancelBackground.getGlobalBounds().contains(event.touch.x, event.touch.y)) {
+			TweenEngine::Tween::to(m_buttonCancelBackground, m_buttonCancelBackground.FILL_COLOR_ALPHA, 0.2f).target(255.f).start(m_tweenManager);
+			m_isCancelButtonTouched = true;
+		}
+	}
+	else if (event.type == cpp3ds::Event::KeyReleased)
 	{
 		if (event.key.code == cpp3ds::Keyboard::A)
 			triggerResponse = accepted = true;
@@ -201,19 +230,16 @@ bool DialogState::processEvent(const cpp3ds::Event &event)
 	{
 		Event evt = {Response, &accepted};
 
-		// Highlight selected button
-		if (accepted) {
-			m_buttonOkBackground.setFillColor(m_buttonOkBackground.getOutlineColor());
-			m_buttonCancelBackground.setOutlineThickness(0);
-		} else {
-			m_buttonCancelBackground.setFillColor(m_buttonCancelBackground.getOutlineColor());
-			m_buttonOkBackground.setOutlineThickness(0);
-		}
-
 		if (runCallback(&evt))
 		{
 			m_isClosing = true;
 			m_tweenManager.killAll();
+
+			// Highlight selected button
+			if (accepted)
+				TweenEngine::Tween::to(m_buttonOkBackground, m_buttonOkBackground.FILL_COLOR_RGB, 0.1f).target(m_buttonOkBackground.getOutlineColor().r, m_buttonOkBackground.getOutlineColor().g, m_buttonOkBackground.getOutlineColor().b).start(m_tweenManager);
+			else
+				TweenEngine::Tween::to(m_buttonCancelBackground, m_buttonCancelBackground.FILL_COLOR_RGB, 0.1f).target(m_buttonCancelBackground.getOutlineColor().r, m_buttonCancelBackground.getOutlineColor().g, m_buttonCancelBackground.getOutlineColor().b).start(m_tweenManager);
 
 			TweenEngine::Tween::to(m_background, m_background.COLOR_ALPHA, 0.2f).target(0.f).start(m_tweenManager);
 			TWEEN_OUT(m_message);
