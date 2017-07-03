@@ -461,15 +461,20 @@ bool SyncState::loadThemeManagement()
 			Theme::isTextThemed = true;
 
 			//Load differents colors
-			std::string primaryTextValue = Theme::get("primaryText").GetString();
-			std::string secondaryTextValue = Theme::get("secondaryText").GetString();
-			std::string iconSetValue = Theme::get("iconSet").GetString();
-			std::string iconSetActiveValue = Theme::get("iconSetActive").GetString();
+			std::string primaryTextValue      = Theme::get("primaryText").GetString();
+			std::string secondaryTextValue    = Theme::get("secondaryText").GetString();
+			std::string iconSetValue          = Theme::get("iconSet").GetString();
+			std::string iconSetActiveValue    = Theme::get("iconSetActive").GetString();
 			std::string transitionScreenValue = Theme::get("transitionScreen").GetString();
+			std::string boxColorValue         = Theme::get("boxColor").GetString();
+			std::string boxOutlineColorValue  = Theme::get("boxOutlineColor").GetString();
+			std::string dialogBackgroundValue = Theme::get("dialogBackground").GetString();
+			std::string dialogButtonValue     = Theme::get("dialogButton").GetString();
+			std::string dialogButtonTextValue = Theme::get("dialogButtonText").GetString();
 
 			//Load the theme information
 			std::string themeNameValue = Theme::get("themeName").GetString();
-			std::string themeVerValue = Theme::get("themeVer").GetString();
+			std::string themeVerValue  = Theme::get("themeVer").GetString();
 			std::string themeDescValue = Theme::get("themeDesc").GetString();
 
 			//Set the colors
@@ -489,6 +494,21 @@ bool SyncState::loadThemeManagement()
 
 			hexToRGB(transitionScreenValue, &R, &G, &B);
 			Theme::transitionScreenColor = cpp3ds::Color(R, G, B);
+
+			hexToRGB(boxColorValue, &R, &G, &B);
+			Theme::boxColor = cpp3ds::Color(R, G, B);
+
+			hexToRGB(boxOutlineColorValue, &R, &G, &B);
+			Theme::boxOutlineColor = cpp3ds::Color(R, G, B);
+
+			hexToRGB(dialogBackgroundValue, &R, &G, &B);
+			Theme::dialogBackground = cpp3ds::Color(R, G, B);
+
+			hexToRGB(dialogButtonValue, &R, &G, &B);
+			Theme::dialogButton = cpp3ds::Color(R, G, B);
+
+			hexToRGB(dialogButtonTextValue, &R, &G, &B);
+			Theme::dialogButtonText = cpp3ds::Color(R, G, B);
 
 			//Set the theme informations
 			Theme::themeName = themeNameValue;

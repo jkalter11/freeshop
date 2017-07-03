@@ -30,7 +30,10 @@ NewsState::NewsState(StateStack &stack, Context &context, StateCallback callback
 
 	m_background.setSize(cpp3ds::Vector2f(280.f, 200.f));
 	m_background.setPosition(20.f, 20.f);
-	m_background.setColor(cpp3ds::Color(255, 255, 255, 128));
+	if (Theme::isTextThemed)
+		m_background.setColor(cpp3ds::Color(Theme::dialogBackground.r, Theme::dialogBackground.g, Theme::dialogBackground.b, 128));
+	else
+		m_background.setColor(cpp3ds::Color(255, 255, 255, 128));
 
 	m_message.setCharacterSize(12);
 	m_message.setFillColor(cpp3ds::Color::Transparent);
@@ -47,14 +50,20 @@ NewsState::NewsState(StateStack &stack, Context &context, StateCallback callback
 	m_title.setPosition(15.f, 0.f);
 
 	m_buttonOkBackground.setSize(cpp3ds::Vector2f(110.f, 25.f));
-	m_buttonOkBackground.setOutlineColor(cpp3ds::Color(158, 158, 158, 0));
+	if (Theme::isTextThemed)
+		m_buttonOkBackground.setOutlineColor(cpp3ds::Color(Theme::dialogButton.r, Theme::dialogButton.g, Theme::dialogButton.b, 0));
+	else
+		m_buttonOkBackground.setOutlineColor(cpp3ds::Color(158, 158, 158, 0));
 	m_buttonOkBackground.setOutlineThickness(1.f);
 	m_buttonOkBackground.setPosition(175.f, 185.f);
 	m_buttonOkBackground.setFillColor(cpp3ds::Color(255, 255, 255, 0));
 
 	m_buttonOkText.setString(_("\uE000 Ok"));
 	m_buttonOkText.setCharacterSize(14);
-	m_buttonOkText.setFillColor(cpp3ds::Color(3, 169, 244, 0));
+	if (Theme::isTextThemed)
+		m_buttonOkText.setFillColor(cpp3ds::Color(Theme::dialogButtonText.r, Theme::dialogButtonText.g, Theme::dialogButtonText.b, 0));
+	else
+		m_buttonOkText.setFillColor(cpp3ds::Color(3, 169, 244, 0));
 	m_buttonOkText.useSystemFont();
 	m_buttonOkText.setPosition(m_buttonOkBackground.getPosition().x + m_buttonOkBackground.getGlobalBounds().width / 2, m_buttonOkBackground.getPosition().y + m_buttonOkBackground.getGlobalBounds().height / 2);
 	m_buttonOkText.setOrigin(m_buttonOkText.getGlobalBounds().width / 2, m_buttonOkText.getGlobalBounds().height / 1.7f);
@@ -92,7 +101,7 @@ NewsState::NewsState(StateStack &stack, Context &context, StateCallback callback
 	TWEEN_IN(m_title);
 	TweenEngine::Tween::to(m_title, m_title.POSITION_Y, 0.3f).target(5.f).start(m_tweenManager);
 	TWEEN_IN(m_message);
-	TWEEN_IN(m_buttonOkBackground);
+	TweenEngine::Tween::to(m_buttonOkBackground, m_buttonOkBackground.OUTLINE_COLOR_ALPHA, 0.2f).target(128.f).start(m_tweenManager);
 	TWEEN_IN(m_buttonOkText);
 	TweenEngine::Tween::to(m_bottomView, m_bottomView.SIZE_XY, 0.3f).target(320.f, 240.f).start(m_tweenManager);
 }

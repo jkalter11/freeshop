@@ -201,10 +201,10 @@ void FreeShop::processEvent(Event& event)
 
 void FreeShop::renderTopScreen(Window& window)
 {
-	window.clear(Color::White);
-
 	if (m_topBG)
 		window.draw(m_rectTopBG);
+	else
+		window.clear(Color::White);
 
 	m_stateStack->renderTopScreen(window);
 	for (auto& notification : Notification::notifications)
@@ -217,10 +217,10 @@ void FreeShop::renderTopScreen(Window& window)
 
 void FreeShop::renderBottomScreen(Window& window)
 {
-	window.clear(Color::White);
-
 	if (m_botBG)
 		window.draw(m_rectBotBG);
+	else
+		window.clear(Color::White);
 
 	m_stateStack->renderBottomScreen(window);
 }

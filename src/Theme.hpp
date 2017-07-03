@@ -46,6 +46,11 @@ public:
 	static cpp3ds::Color freText;
 	static cpp3ds::Color versionText;
 	static cpp3ds::Color percentageText;
+	static cpp3ds::Color boxColor;
+	static cpp3ds::Color boxOutlineColor;
+	static cpp3ds::Color dialogBackground;
+	static cpp3ds::Color dialogButton;
+	static cpp3ds::Color dialogButtonText;
 
 	//Theme informations
 	static std::string themeName;

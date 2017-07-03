@@ -135,7 +135,7 @@ void BrowseState::initialize()
 	m_scrollbarDownloadQueue.attachObject(&DownloadQueue::getInstance());
 
 	m_textSearchInstalledList.setString(_("Search..."));
-	m_textSearchInstalledList.setPosition(160.f, 31.f);
+	m_textSearchInstalledList.setPosition(160.f, 32.f);
 	if (Theme::isTextThemed)
 		m_textSearchInstalledList.setFillColor(Theme::primaryTextColor);
 	else
@@ -144,11 +144,17 @@ void BrowseState::initialize()
 	m_textSearchInstalledList.setStyle(cpp3ds::Text::Italic);
 	m_textSearchInstalledList.setOrigin(m_textSearchInstalledList.getGlobalBounds().width / 2, 0);
 
-	m_textBoxInstalledList.setOutlineColor(cpp3ds::Color(158, 158, 158, 255));
+	if (Theme::isTextThemed)
+		m_textBoxInstalledList.setOutlineColor(Theme::boxOutlineColor);
+	else
+		m_textBoxInstalledList.setOutlineColor(cpp3ds::Color(158, 158, 158, 255));
 	m_textBoxInstalledList.setOutlineThickness(1);
-	m_textBoxInstalledList.setFillColor(cpp3ds::Color(245, 245, 245));
+	if (Theme::isTextThemed)
+		m_textBoxInstalledList.setFillColor(Theme::boxColor);
+	else
+		m_textBoxInstalledList.setFillColor(cpp3ds::Color(245, 245, 245));
 	m_textBoxInstalledList.setSize(cpp3ds::Vector2f(320.f, 16.f));
-	m_textBoxInstalledList.setPosition(0.f, 31.f);
+	m_textBoxInstalledList.setPosition(0.f, 32.f);
 
 	setMode(Info);
 

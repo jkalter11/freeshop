@@ -63,13 +63,22 @@ AppInfo::AppInfo()
 	m_close.setPosition(285.f, 4.f);
 	m_close.setString("\uf00d");
 
-	m_screenshotsBackground.setOutlineColor(cpp3ds::Color(158, 158, 158, 255));
+	if (Theme::isTextThemed)
+		m_screenshotsBackground.setOutlineColor(Theme::boxOutlineColor);
+	else
+		m_screenshotsBackground.setOutlineColor(cpp3ds::Color(158, 158, 158, 255));
 	m_screenshotsBackground.setOutlineThickness(1);
-	m_screenshotsBackground.setFillColor(cpp3ds::Color(245, 245, 245));
+	if (Theme::isTextThemed)
+		m_screenshotsBackground.setFillColor(Theme::boxColor);
+	else
+		m_screenshotsBackground.setFillColor(cpp3ds::Color(245, 245, 245));
 	m_screenshotsBackground.setSize(cpp3ds::Vector2f(320.f, 74.f));
 	m_screenshotsBackground.setPosition(0.f, 166.f);
 
-	m_separator.setFillColor(cpp3ds::Color(158, 158, 158, 255));
+	if (Theme::isTextThemed)
+		m_separator.setFillColor(Theme::boxOutlineColor);
+	else
+		m_separator.setFillColor(cpp3ds::Color(158, 158, 158, 255));
 	m_separator.setSize(cpp3ds::Vector2f(1.f, 74.f));
 	m_separator.setPosition(184.f, 166.f);
 

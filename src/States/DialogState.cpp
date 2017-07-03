@@ -30,7 +30,10 @@ DialogState::DialogState(StateStack &stack, Context &context, StateCallback call
 
 	m_background.setSize(cpp3ds::Vector2f(280.f, 200.f));
 	m_background.setPosition(20.f, 20.f);
-	m_background.setColor(cpp3ds::Color(255, 255, 255, 128));
+	if (Theme::isTextThemed)
+		m_background.setColor(cpp3ds::Color(Theme::dialogBackground.r, Theme::dialogBackground.g, Theme::dialogBackground.b, 128));
+	else
+		m_background.setColor(cpp3ds::Color(255, 255, 255, 128));
 
 	m_message.setCharacterSize(12);
 	m_message.setFillColor(cpp3ds::Color(66, 66, 66, 0));
@@ -43,13 +46,19 @@ DialogState::DialogState(StateStack &stack, Context &context, StateCallback call
 	m_title.useSystemFont();
 
 	m_buttonOkBackground.setSize(cpp3ds::Vector2f(110.f, 25.f));
-	m_buttonOkBackground.setOutlineColor(cpp3ds::Color(158, 158, 158, 0));
+	if (Theme::isTextThemed)
+		m_buttonOkBackground.setOutlineColor(cpp3ds::Color(Theme::dialogButton.r, Theme::dialogButton.g, Theme::dialogButton.b, 0));
+	else
+		m_buttonOkBackground.setOutlineColor(cpp3ds::Color(158, 158, 158, 0));
 	m_buttonOkBackground.setOutlineThickness(1.f);
 	m_buttonOkBackground.setPosition(165.f, 180.f);
 	m_buttonOkBackground.setFillColor(cpp3ds::Color(m_buttonOkBackground.getOutlineColor().r - 20, m_buttonOkBackground.getOutlineColor().g - 20, m_buttonOkBackground.getOutlineColor().b - 20, 0));
 
 	m_buttonCancelBackground.setSize(cpp3ds::Vector2f(110.f, 25.f));
-	m_buttonCancelBackground.setOutlineColor(cpp3ds::Color(158, 158, 158, 0));
+	if (Theme::isTextThemed)
+		m_buttonCancelBackground.setOutlineColor(cpp3ds::Color(Theme::dialogButton.r, Theme::dialogButton.g, Theme::dialogButton.b, 0));
+	else
+		m_buttonCancelBackground.setOutlineColor(cpp3ds::Color(158, 158, 158, 0));
 	m_buttonCancelBackground.setOutlineThickness(1.f);
 	m_buttonCancelBackground.setPosition(40.f, 180.f);
 	m_buttonCancelBackground.setFillColor(cpp3ds::Color(m_buttonCancelBackground.getOutlineColor().r - 20, m_buttonCancelBackground.getOutlineColor().g - 20, m_buttonCancelBackground.getOutlineColor().b - 20, 0));
@@ -57,6 +66,10 @@ DialogState::DialogState(StateStack &stack, Context &context, StateCallback call
 	m_buttonOkText.setString(_("\uE000 Ok"));
 	m_buttonOkText.setCharacterSize(14);
 	m_buttonOkText.setFillColor(cpp3ds::Color(3, 169, 244, 0));
+	if (Theme::isTextThemed)
+		m_buttonOkText.setFillColor(cpp3ds::Color(Theme::dialogButtonText.r, Theme::dialogButtonText.g, Theme::dialogButtonText.b, 0));
+	else
+		m_buttonOkText.setFillColor(cpp3ds::Color(3, 169, 244, 0));
 	m_buttonOkText.useSystemFont();
 	m_buttonOkText.setPosition(m_buttonOkBackground.getPosition().x + m_buttonOkBackground.getGlobalBounds().width / 2, m_buttonOkBackground.getPosition().y + m_buttonOkBackground.getGlobalBounds().height / 2);
 	m_buttonOkText.setOrigin(m_buttonOkText.getGlobalBounds().width / 2, m_buttonOkText.getGlobalBounds().height / 1.6f);

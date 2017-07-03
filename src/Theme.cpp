@@ -38,6 +38,11 @@ cpp3ds::Color Theme::loadingText = cpp3ds::Color::Black;
 cpp3ds::Color Theme::freText = cpp3ds::Color(255, 255, 255, 0);
 cpp3ds::Color Theme::versionText = cpp3ds::Color(0, 0, 0, 100);
 cpp3ds::Color Theme::percentageText = cpp3ds::Color::Black;
+cpp3ds::Color Theme::boxColor = cpp3ds::Color(245, 245, 245);
+cpp3ds::Color Theme::boxOutlineColor = cpp3ds::Color(158, 158, 158, 255);
+cpp3ds::Color Theme::dialogBackground = cpp3ds::Color(255, 255, 255, 128);
+cpp3ds::Color Theme::dialogButton = cpp3ds::Color(158, 158, 158, 0);
+cpp3ds::Color Theme::dialogButtonText = cpp3ds::Color(3, 169, 244, 0);
 
 //Theme informations
 std::string Theme::themeName = "Classic";
@@ -69,6 +74,11 @@ void Theme::loadDefaults()
 	ADD_DEFAULT("freText", "420420");
 	ADD_DEFAULT("versionText", "546978");
 	ADD_DEFAULT("percentageText", "115599");
+	ADD_DEFAULT("boxColor", "00FF7F");
+	ADD_DEFAULT("boxOutlineColor", "008899");
+	ADD_DEFAULT("dialogBackground", "CE2F06");
+	ADD_DEFAULT("dialogButton", "FDE243");
+	ADD_DEFAULT("dialogButtonText", "320F3C");
 
 	ADD_DEFAULT("themeName", "My custom theme");
 	ADD_DEFAULT("themeDesc", "Theme made by someone.");
