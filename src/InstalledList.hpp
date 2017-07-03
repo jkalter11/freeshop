@@ -36,7 +36,7 @@ public:
 	virtual const cpp3ds::Vector2f &getScrollSize();
 
 	static bool isInstalled(cpp3ds::Uint64 titleId);
-	std::vector<std::unique_ptr<InstalledItem>> &getList() { return m_installedItems; }
+	std::vector<std::shared_ptr<InstalledItem>> &getList() { return m_installedItems; }
 
 	int getGameCount();
 
@@ -51,7 +51,8 @@ private:
 	cpp3ds::Mutex m_mutexRefresh;
 	bool m_cardInserted;
 	std::vector<cpp3ds::Uint64> m_installedTitleIds;
-	std::vector<std::unique_ptr<InstalledItem>> m_installedItems;
+	std::vector<std::shared_ptr<InstalledItem>> m_installedItems;
+	std::vector<std::shared_ptr<InstalledItem>> m_installedItemsFiltered;
 	TweenEngine::TweenManager m_tweenManager;
 	float m_scrollPos;
 	cpp3ds::Vector2f m_size;

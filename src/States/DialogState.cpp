@@ -111,6 +111,27 @@ DialogState::DialogState(StateStack &stack, Context &context, StateCallback call
 		m_title.setString(*message);
 	} else
 		m_title.setString(_("Dialog"));
+
+	// Shorten the dialog title if it's out of the screen
+	int maxSize = 270;
+	if (m_title.getLocalBounds().width > maxSize) {
+		cpp3ds::Text tmpText = m_title;
+		tmpText.setString("");
+		auto s = m_title.getString().toUtf8();
+
+			for (int i = 0; i <= s.size(); ++i) {
+			tmpText.setString(cpp3ds::String::fromUtf8(s.begin(), s.begin() + i));
+
+			if (tmpText.getLocalBounds().width > maxSize) {
+				cpp3ds::String titleTxt = tmpText.getString();
+				titleTxt.erase(titleTxt.getSize() - 3, 3);
+				titleTxt.insert(titleTxt.getSize(), "...");
+
+				m_title.setString(titleTxt);
+				break;
+			}
+		}
+	}
 	m_title.setOrigin(std::round(m_title.getLocalBounds().width / 2), std::round(m_title.getLocalBounds().height / 2));
 
 	m_scrollbar.setSize(cpp3ds::Vector2u(2, 158));

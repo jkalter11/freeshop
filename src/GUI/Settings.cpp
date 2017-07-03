@@ -52,7 +52,6 @@ Settings::Settings(Gwen::Skin::TexturedBase *skin,  State *state)
 	m_filterTabControl = new TabControl(page);
 	m_filterTabControl->Dock(Gwen::Pos::Fill);
 	m_filterTabControl->SetTabStripPosition(Gwen::Pos::Left);
-	Base *filterPage = m_filterTabControl->AddPage(_("Regions").toAnsiString())->GetPage();
 	m_buttonFilterSave = new Button(page);
 	m_buttonFilterSave->SetFont(L"fonts/fontawesome.ttf", 18, false);
 	m_buttonFilterSave->SetText("\uf0c7"); // Save floppy icon
@@ -66,8 +65,9 @@ Settings::Settings(Gwen::Skin::TexturedBase *skin,  State *state)
 	m_buttonFilterSaveClear->SetPadding(Gwen::Padding(0, 0, 0, 3));
 	m_buttonFilterSaveClear->onPress.Add(this, &Settings::filterClearClicked);
 
-	fillFilterRegions(filterPage);
 	ScrollControl *scrollBox;
+	scrollBox = addFilterPage("Regions");
+	fillFilterRegions(scrollBox);
 	scrollBox = addFilterPage("Genre");
 	fillFilterGenres(scrollBox);
 	scrollBox = addFilterPage("Language");
@@ -200,6 +200,9 @@ void Settings::saveToConfig()
 	// Inactivity
 	Config::set(Config::SleepMode, m_checkboxSleep->Checkbox()->IsChecked());
 	Config::set(Config::SleepModeBottom, m_checkboxSleepBottom->Checkbox()->IsChecked());
+#ifndef EMULATION
+	if (!envIsHomebrew())
+#endif
 	Config::set(Config::DimLEDs, m_checkboxDimLEDs->Checkbox()->IsChecked());
 	Config::set(Config::SoundOnInactivity, m_checkboxInactivitySoundAllowed->Checkbox()->IsChecked());
 	Config::set(Config::MusicOnInactivity, m_checkboxInactivityMusicAllowed->Checkbox()->IsChecked());
@@ -294,6 +297,9 @@ void Settings::loadConfig()
 	// Inactivity
 	m_checkboxSleep->Checkbox()->SetChecked(Config::get(Config::SleepMode).GetBool());
 	m_checkboxSleepBottom->Checkbox()->SetChecked(Config::get(Config::SleepModeBottom).GetBool());
+#ifndef EMULATION
+	if (!envIsHomebrew())
+#endif
 	m_checkboxDimLEDs->Checkbox()->SetChecked(Config::get(Config::DimLEDs).GetBool());
 	m_checkboxInactivitySoundAllowed->Checkbox()->SetChecked(Config::get(Config::SoundOnInactivity).GetBool());
 	m_checkboxInactivityMusicAllowed->Checkbox()->SetChecked(Config::get(Config::MusicOnInactivity).GetBool());
@@ -799,7 +805,9 @@ void Settings::selectAll(Gwen::Controls::Base *control)
 {
 	std::string filterName = control->GetParent()->GetParent()->GetName();
 	m_ignoreCheckboxChange = true;
-	if (filterName == "Genre")
+	if (filterName == "Regions")
+		CHECKBOXES_SET(m_filterRegionCheckboxes, true)
+	else if (filterName == "Genre")
 		CHECKBOXES_SET(m_filterGenreCheckboxes, true)
 	else if (filterName == "Language")
 		CHECKBOXES_SET(m_filterLanguageCheckboxes, true)
@@ -815,7 +823,9 @@ void Settings::selectNone(Gwen::Controls::Base *control)
 {
 	std::string filterName = control->GetParent()->GetParent()->GetName();
 	m_ignoreCheckboxChange = true;
-	if (filterName == "Genre")
+	if (filterName == "Regions")
+		CHECKBOXES_SET(m_filterRegionCheckboxes, false)
+	else if (filterName == "Genre")
 		CHECKBOXES_SET(m_filterGenreCheckboxes, false)
 	else if (filterName == "Language")
 		CHECKBOXES_SET(m_filterLanguageCheckboxes, false)
@@ -1650,9 +1660,15 @@ void Settings::fillInactivityPage(Gwen::Controls::Base *page)
 	m_checkboxSleepBottom->SetBounds(0, 20, 320, 20);
 	m_checkboxSleepBottom->Label()->SetText(_("Enable bottom screen sleep after inactivity").toAnsiString());
 
+#ifndef EMULATION
+	if (!envIsHomebrew()) {
+#endif
 	m_checkboxDimLEDs = new CheckBoxWithLabel(page);
 	m_checkboxDimLEDs->SetBounds(0, 50, 320, 20);
 	m_checkboxDimLEDs->Label()->SetText(_("Dim the LEDs after inactivity").toAnsiString());
+#ifndef EMULATION
+	}
+#endif
 
 	m_checkboxInactivitySoundAllowed = new CheckBoxWithLabel(page);
 	m_checkboxInactivitySoundAllowed->SetBounds(0, 80, 320, 20);

@@ -245,7 +245,7 @@ void AppList::filter()
 {
 	if (m_selectedIndex >= 0)
 		m_guiAppItems[m_selectedIndex]->deselect();
-	
+
 	// Region filter
 	// Also resets the filter state when no region filter is set.
 	if (m_filterRegions)

@@ -83,7 +83,7 @@ void InstalledList::refresh()
 			{
 				try
 				{
-					std::unique_ptr<InstalledItem> item(new InstalledItem(cardTitleId));
+					std::shared_ptr<InstalledItem> item(new InstalledItem(cardTitleId));
 					m_installedItems.emplace_back(std::move(item));
 				}
 				catch (int e)
@@ -113,7 +113,7 @@ void InstalledList::refresh()
 		if (titleType == TitleKeys::Game || titleType == TitleKeys::DSiWare || titleType == TitleKeys::SystemApplication || titleType == TitleKeys::SystemApplet)
 			try
 			{
-				std::unique_ptr<InstalledItem> item(new InstalledItem(titleId));
+				std::shared_ptr<InstalledItem> item(new InstalledItem(titleId));
 				m_installedItems.emplace_back(std::move(item));
 			}
 			catch (int e)
@@ -181,13 +181,16 @@ void InstalledList::refresh()
 		installedItem->updateGameTitle();
 	}
 
+	// Copy the content of the installed list into the shown installed list
+	m_installedItemsFiltered = m_installedItems;
+
 	// Remove all titles that are not searched
 	if (!m_currentSearch.empty()) {
-		for (auto it = m_installedItems.begin(); it != m_installedItems.end();)
+		for (auto it = m_installedItemsFiltered.begin(); it != m_installedItemsFiltered.end();)
 		{
 			int matchScore;
 			if (!fts::fuzzy_match(m_currentSearch.c_str(), (*it)->getAppItem()->getNormalizedTitle().c_str(), matchScore))
-				it = m_installedItems.erase(it);
+				it = m_installedItemsFiltered.erase(it);
 			else
 				it++;
 		}
@@ -204,7 +207,7 @@ void InstalledList::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates stat
 	states.transform *= getTransform();
 	states.scissor = cpp3ds::UintRect(0, 50, 320, 190);
 
-	for (auto& item : m_installedItems)
+	for (auto& item : m_installedItemsFiltered)
 	{
 		float posY = item->getPosition().y;
 		if (posY > -10.f && posY < 240.f)
@@ -249,7 +252,7 @@ bool InstalledList::processEvent(const cpp3ds::Event &event)
 				return false;
 			}
 
-		for (auto &item : m_installedItems)
+		for (auto &item : m_installedItemsFiltered)
 		{
 			float posY = getPosition().y + item->getPosition().y;
 			if (event.touch.y > posY && event.touch.y < posY + item->getHeight())
@@ -284,7 +287,7 @@ float InstalledList::getScroll()
 void InstalledList::repositionItems()
 {
 	float posY = 50.f + m_scrollPos;
-	for (auto& item : m_installedItems)
+	for (auto& item : m_installedItemsFiltered)
 	{
 		if (item.get() == m_expandedItem)
 			m_options.setPosition(0.f, posY + 20.f);
@@ -345,7 +348,7 @@ void InstalledList::expandItem(InstalledItem *item)
 	// Move animation for items in between expanded items
 	bool foundItem = false;
 	bool foundExpanded = false;
-	for (auto &itemToMove : m_installedItems)
+	for (auto &itemToMove : m_installedItemsFiltered)
 	{
 		if (foundItem && !foundExpanded)
 		{
@@ -391,7 +394,7 @@ int InstalledList::getGameCount()
 void InstalledList::sort()
 {
 	m_tweenManager.killAll();
-	std::sort(m_installedItems.begin(), m_installedItems.end(), [&](const std::unique_ptr<InstalledItem>& a, const std::unique_ptr<InstalledItem>& b)
+	std::sort(m_installedItemsFiltered.begin(), m_installedItemsFiltered.end(), [&](const std::shared_ptr<InstalledItem>& a, const std::shared_ptr<InstalledItem>& b)
 	{
 		if (m_sortAscending)
 		{
@@ -432,7 +435,22 @@ void InstalledList::filterBySearch(std::string search)
 
 		g_browseState->setInstalledListSearchText(m_currentSearch);
 
-		refresh();
+		// Copy the content of the installed list into the shown installed list
+		m_installedItemsFiltered = m_installedItems;
+
+		// Remove all titles that are not searched
+		if (!m_currentSearch.empty()) {
+			for (auto it = m_installedItemsFiltered.begin(); it != m_installedItemsFiltered.end();)
+			{
+				int matchScore;
+				if (!fts::fuzzy_match(m_currentSearch.c_str(), (*it)->getAppItem()->getNormalizedTitle().c_str(), matchScore))
+					it = m_installedItemsFiltered.erase(it);
+				else
+					it++;
+			}
+		}
+
+		sort();
 	}
 }
 
