@@ -158,6 +158,9 @@ void BrowseState::initialize()
 
 	setMode(Info);
 
+	m_bottomView.setCenter(cpp3ds::Vector2f(160.f, 120.f));
+	m_bottomView.setSize(cpp3ds::Vector2f(320.f, 240.f));
+
 #ifdef _3DS
 	while (!m_gwenRenderer)
 		cpp3ds::sleep(cpp3ds::milliseconds(10));
@@ -261,20 +264,6 @@ void BrowseState::renderBottomScreen(cpp3ds::Window& window)
 		return;
 
 	window.draw(m_topInfos);
-
-	if (m_mode == Search)
-	{
-		window.draw(m_keyboard);
-		for (auto& textMatch : m_textMatches)
-			window.draw(textMatch);
-	}
-	if (m_mode == Info)
-		window.draw(m_botInfos);
-	if (m_mode == Settings)
-	{
-		m_settingsGUI->render();
-	}
-
 	window.draw(m_iconSet);
 
 	if (m_activeDownloadCount > 0)
@@ -282,6 +271,8 @@ void BrowseState::renderBottomScreen(cpp3ds::Window& window)
 
 	if (InstalledList::getInstance().getGameCount() > 0 && Config::get(Config::ShowGameCounter).GetBool())
 		window.draw(m_textInstalledCount);
+
+	window.setView(m_bottomView);
 
 	if (m_mode == App)
 		window.draw(m_appInfo);
@@ -298,6 +289,20 @@ void BrowseState::renderBottomScreen(cpp3ds::Window& window)
 		window.draw(m_textBoxInstalledList);
 		window.draw(m_textSearchInstalledList);
 	}
+	if (m_mode == Search)
+	{
+		window.draw(m_keyboard);
+		for (auto& textMatch : m_textMatches)
+			window.draw(textMatch);
+	}
+	if (m_mode == Info)
+		window.draw(m_botInfos);
+	if (m_mode == Settings)
+	{
+		m_settingsGUI->render();
+	}
+
+	window.setView(window.getDefaultView());
 
 	if (m_isTransitioning)
 		window.draw(m_whiteScreen);
@@ -720,6 +725,62 @@ void BrowseState::setMode(BrowseState::Mode mode)
 		})
 		.delay(0.4f)
 		.start(m_tweenManager);
+
+	if (mode > m_mode) {
+		TweenEngine::Tween::to(m_bottomView, m_bottomView.CENTER_XY, 0.4f)
+			.target(180.f, 120.f)
+			.setCallback(TweenEngine::TweenCallback::COMPLETE, [=](TweenEngine::BaseTween* source) {
+				m_bottomView.setCenter(cpp3ds::Vector2f(140.f, 120.f));
+			})
+			.start(m_tweenManager);
+
+		if (mode == Settings || m_mode == Settings) {
+			TweenEngine::Tween::to(*m_settingsGUI, m_settingsGUI->POSITION_XY, 0.4f)
+				.target(-20.f, 0.f)
+				.setCallback(TweenEngine::TweenCallback::COMPLETE, [=](TweenEngine::BaseTween* source) {
+					m_settingsGUI->setPosition(cpp3ds::Vector2f(20.f, 0.f));
+				})
+				.start(m_tweenManager);
+
+			TweenEngine::Tween::to(*m_settingsGUI, m_settingsGUI->POSITION_XY, 0.4f)
+				.target(0.f, 0.f)
+				.delay(0.4f)
+				.start(m_tweenManager);
+		}
+	} else {
+		TweenEngine::Tween::to(m_bottomView, m_bottomView.CENTER_XY, 0.4f)
+			.target(140.f, 120.f)
+			.setCallback(TweenEngine::TweenCallback::COMPLETE, [=](TweenEngine::BaseTween* source) {
+				m_bottomView.setCenter(cpp3ds::Vector2f(180.f, 120.f));
+			})
+			.start(m_tweenManager);
+
+		if (mode == Settings || m_mode == Settings) {
+			TweenEngine::Tween::to(*m_settingsGUI, m_settingsGUI->POSITION_XY, 0.4f)
+				.target(20.f, 0.f)
+				.setCallback(TweenEngine::TweenCallback::COMPLETE, [=](TweenEngine::BaseTween* source) {
+					m_settingsGUI->setPosition(cpp3ds::Vector2f(-20.f, 0.f));
+				})
+				.start(m_tweenManager);
+
+			TweenEngine::Tween::to(*m_settingsGUI, m_settingsGUI->POSITION_XY, 0.4f)
+				.target(0.f, 0.f)
+				.delay(0.4f)
+				.start(m_tweenManager);
+		}
+	}
+
+	TweenEngine::Tween::to(m_bottomView, m_bottomView.CENTER_XY, 0.4f)
+		.target(160.f, 120.f)
+		.delay(0.4f)
+		.start(m_tweenManager);
+
+	if (mode == Settings || m_mode == Settings) {
+		TweenEngine::Tween::to(*m_settingsGUI, m_settingsGUI->POSITION_XY, 0.4f)
+			.target(0.f, 0.f)
+			.delay(0.4f)
+			.start(m_tweenManager);
+	}
 
 	m_isTransitioning = true;
 }

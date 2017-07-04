@@ -123,6 +123,7 @@ private:
 	bool m_isTransitioning;
 	Mode m_mode;
 	util3ds::TweenRectangleShape m_whiteScreen;
+	util3ds::TweenableView m_bottomView;
 
 	// GWEN
 	Gwen::Renderer::cpp3dsRenderer *m_gwenRenderer;
