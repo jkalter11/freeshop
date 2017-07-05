@@ -102,7 +102,7 @@ Demo
 Demo
 
 You are deleting the demo for this title:\n\n%s
-Stai per cancellare la demo per\nquesto titolo:\n\n%s
+Stai per cancellare la demo per questo titolo:\n\n%s
 
 Deleted demo: %s
 Cancellata demo: %s
@@ -111,7 +111,7 @@ Queued demo: %s
 Aggiunta demo alla coda: %s
 
 You are deleting this game, including all save data:\n\n%s
-Stai per cancellare questo gioco,\nincluso ogni salvataggio:\n\n%s
+Stai per cancellare questo gioco, incluso ogni salvataggio:\n\n%s
 
 Deleted: %s
 Cancellato: %s
@@ -134,7 +134,7 @@ Queued
 In coda
 
 %s\n\nAre you sure you want to cancel this installation and lose all progress?
-%s\n\nSei sicuro di voler cancellare\nquesta installazione e\nperdere ogni progresso?
+%s\n\nSei sicuro di voler cancellare questa installazione e\nperdere ogni progresso?
 
 Canceling...
 Cancellando...
@@ -250,7 +250,7 @@ DLC
 DLC
 
 You are deleting updates for this title:\n\n%s
-Stai per cancellare gli aggiornamenti per\nquesto titolo:\n\n%s
+Stai per cancellare gli aggiornamenti per questo titolo:\n\n%s
 
 Deleted update: %s
 Aggiornamento cancellato: %s
@@ -259,7 +259,7 @@ Queued update: %s
 Aggiornamento in coda: %s
 
 You are deleting DLC for this title:\n\n%s
-Stai per cancellare i DLC per\nquesto titolo:\n\n%s
+Stai per cancellare i DLC per questo titolo:\n\n%s
 
 Deleted DLC: %s
 DLC cancellato: %s
@@ -326,8 +326,8 @@ La batteria si sta scaricando.
 
 # src/BotInformations.cpp
 #########################
-%i sleep download pending\nClose the software with the Start button and close\nthe lid of your console.
-%i Download in modalità riposo sospeso\nChiudi il software premendo il bottone Start e\nchiudi il coperchio della tua console.
+%i sleep download pending\nClose the software with the Select button and close\nthe lid of your console.
+%i Download in modalità riposo sospeso\nChiudi il software premendo il bottone Select e\nchiudi il coperchio della tua console.
 
 
 # src/GUI/Settings.cpp
@@ -507,7 +507,7 @@ Remote title key URL(s)
 URL(s) remoto delle title keys
 
 You need to restart freeShop for %s to be loaded.\n\nWould you like to do this now?
-Devi riavviare freeShop per\n caricare %s.\n\nDesideri farlo ora?
+Devi riavviare freeShop per caricare %s.\n\nDesideri farlo ora?
 
 
 Notifiers
@@ -556,7 +556,7 @@ Update eShop music
 Aggiorna la musica dell'eShop.
 
 You need to restart freeShop to update the eShop music\n\nWould you like to do this now?
-Devi riavviare freeShop\nper aggiornare la musica dell'eShop.\n\nDesideri farlo ora?
+Devi riavviare freeShop per aggiornare la musica dell'eShop.\n\nDesideri farlo ora?
 
 Allow music on inactivity mode
 Riproduci la musica in modalità di inattività

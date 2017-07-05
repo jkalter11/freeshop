@@ -12,7 +12,7 @@ Open source eShop alternative for the Nintendo 3DS. Allows you to browse and ins
 
 ### Building Instructions
 
-freeShop depends on the cpp3ds library, whose location must be defined
+freeShop depends on the [cpp3ds library](https://github.com/Naxann/cpp3ds), whose location must be defined
 in the environment variable CPP3DS. Therefore, freeShop also needs cpp3ds's
 dependencies as well.
 
