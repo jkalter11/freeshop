@@ -684,10 +684,14 @@ void Settings::fillFilterFeature(Gwen::Controls::Base *parent)
 
 void Settings::fillFilterRegions(Gwen::Controls::Base *parent)
 {
-	for (int i = 0; i < 7; ++i)
+	for (int i = 0; i < 8; ++i)
 	{
 		cpp3ds::String strRegion;
-		int region = 1 << i;
+		int region;
+		if (i < 8)
+			region = 1 << i;
+		else
+			region = 0x7FFFFFFF;
 		int count = 0;
 
 		// Get region title counts
@@ -701,7 +705,8 @@ void Settings::fillFilterRegions(Gwen::Controls::Base *parent)
 		else if (i == 3) strRegion = _("Australia");
 		else if (i == 4) strRegion = _("China");
 		else if (i == 5) strRegion = _("Korea");
-		else strRegion = _("Taiwan");
+		else if (i == 6) strRegion = _("Taiwan");
+		else strRegion = _("Region Free");
 
 		auto labelCount = new Label(parent);
 		labelCount->SetText(_("%d", count).toAnsiString());
@@ -933,6 +938,7 @@ Gwen::Controls::ScrollControl *Settings::addFilterPage(const std::string &name)
 	ScrollControl *scrollBox = new ScrollControl(filterPage);
 	scrollBox->Dock(Gwen::Pos::Fill);
 	scrollBox->SetScroll(false, true);
+	scrollBox->SetMargin(Gwen::Margin(0, 6, 0, 6));
 	// Return scrollbox to be filled with controls (probably checkboxes)
 	return scrollBox;
 }

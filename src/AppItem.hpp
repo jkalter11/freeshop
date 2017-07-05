@@ -27,6 +27,7 @@ public:
 		China     = 1 << 4,
 		Korea     = 1 << 5,
 		Taiwan    = 1 << 6,
+		Free      = 0x7FFFFFFF,
 	};
 
 	enum Language {
