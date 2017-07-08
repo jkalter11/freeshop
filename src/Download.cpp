@@ -267,6 +267,8 @@ void Download::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) c
 	states.transform *= getTransform();
 
 	target.draw(m_background, states);
+	if (m_progress > 0.f && m_progress < 1.f)
+		target.draw(m_progressBar, states);
 	target.draw(m_icon, states);
 	target.draw(m_textTitle, states);
 	target.draw(m_textProgress, states);
@@ -279,8 +281,6 @@ void Download::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) c
 		else if (m_status == Failed)
 			target.draw(m_textRestart, states);
 	}
-	if (m_progress > 0.f && m_progress < 1.f)
-		target.draw(m_progressBar, states);
 }
 
 
@@ -346,7 +346,16 @@ void Download::fillFromAppItem(std::shared_ptr<AppItem> app)
 		m_textProgress.setFillColor(cpp3ds::Color(130, 130, 130, 255));
 	m_textProgress.move(0.f, 12.f);
 
-	m_progressBar.setFillColor(cpp3ds::Color(0, 0, 0, 50));
+	cpp3ds::Color progressColor = cpp3ds::Color(0, 0, 0, 192);
+	cpp3ds::Color middleColor   = app->getIcon(textureRect)->copyToImage().getPixel(textureRect.left + 24, textureRect.top + 24);
+
+	progressColor.r = middleColor.r;
+	progressColor.g = middleColor.g;
+	progressColor.b = middleColor.b;
+
+	m_progressBar.setFillColor(progressColor);
+	m_progressBar.setOutlineColor(cpp3ds::Color(158, 158, 158, 128));
+	m_progressBar.setOutlineThickness(1.f);
 }
 
 

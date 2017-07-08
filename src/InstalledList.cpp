@@ -247,7 +247,7 @@ bool InstalledList::processEvent(const cpp3ds::Event &event)
 				cpp3ds::String input = kb.getInput();
 				filterBySearch(input);
 #else
-				filterBySearch("Smash");
+				filterBySearch("");
 #endif
 				return false;
 			}
