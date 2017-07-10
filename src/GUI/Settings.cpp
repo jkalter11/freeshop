@@ -333,6 +333,9 @@ void Settings::loadFilter(Config::Key key, std::vector<Gwen::Controls::CheckBoxW
 {
 	// Ignore the checkbox change events.
 	// Manually invoke the event once at the end.
+	if (checkboxArray.empty())
+		return;
+
 	m_ignoreCheckboxChange = true;
 	auto filterArray = Config::get(key).GetArray();
 	if (!filterArray.Empty())
@@ -699,28 +702,35 @@ void Settings::fillFilterRegions(Gwen::Controls::Base *parent)
 			if (app->getAppItem()->getRegions() & region)
 				count++;
 
-		if (i == 0) strRegion = _("Japan");
-		else if (i == 1) strRegion = _("USA");
-		else if (i == 2) strRegion = _("Europe");
-		else if (i == 3) strRegion = _("Australia");
-		else if (i == 4) strRegion = _("China");
-		else if (i == 5) strRegion = _("Korea");
-		else if (i == 6) strRegion = _("Taiwan");
-		else strRegion = _("Region Free");
+		if (count > 0) {
+			if (i == 0) strRegion = _("Japan");
+			else if (i == 1) strRegion = _("USA");
+			else if (i == 2) strRegion = _("Europe");
+			else if (i == 3) strRegion = _("Australia");
+			else if (i == 4) strRegion = _("China");
+			else if (i == 5) strRegion = _("Korea");
+			else if (i == 6) strRegion = _("Taiwan");
+			else strRegion = _("Region Free");
 
-		auto labelCount = new Label(parent);
-		labelCount->SetText(_("%d", count).toAnsiString());
-		labelCount->SetBounds(0, 2 + i * 18, 31, 18);
-		labelCount->SetAlignment(Gwen::Pos::Right);
+			auto labelCount = new Label(parent);
+			labelCount->SetText(_("%d", count).toAnsiString());
+			labelCount->SetBounds(0, 2 + i * 18, 31, 18);
+			labelCount->SetAlignment(Gwen::Pos::Right);
 
-		auto checkbox = new CheckBoxWithLabel(parent);
-		checkbox->SetPos(35, i * 18);
-		checkbox->Label()->SetText(strRegion.toAnsiString());
-		checkbox->Checkbox()->SetValue(_("%d", region).toAnsiString());
-		checkbox->Checkbox()->onCheckChanged.Add(this, &Settings::filterRegionCheckboxChanged);
+			auto checkbox = new CheckBoxWithLabel(parent);
+			checkbox->SetPos(35, i * 18);
+			checkbox->Label()->SetText(strRegion.toAnsiString());
+			checkbox->Checkbox()->SetValue(_("%d", region).toAnsiString());
+			checkbox->Checkbox()->onCheckChanged.Add(this, &Settings::filterRegionCheckboxChanged);
 
-		m_filterRegionCheckboxes.push_back(checkbox);
+			m_filterRegionCheckboxes.push_back(checkbox);
+		}
 	}
+
+	auto labelSpacer = new Label(parent);
+	labelSpacer->SetText("");
+	labelSpacer->SetBounds(0, 2 + m_filterRegionCheckboxes.size() * 18, 31, 18);
+	labelSpacer->SetAlignment(Gwen::Pos::Right);
 }
 
 void Settings::fillFilterLanguages(Gwen::Controls::Base *parent)
@@ -938,7 +948,6 @@ Gwen::Controls::ScrollControl *Settings::addFilterPage(const std::string &name)
 	ScrollControl *scrollBox = new ScrollControl(filterPage);
 	scrollBox->Dock(Gwen::Pos::Fill);
 	scrollBox->SetScroll(false, true);
-	scrollBox->SetMargin(Gwen::Margin(0, 6, 0, 6));
 	// Return scrollbox to be filled with controls (probably checkboxes)
 	return scrollBox;
 }
