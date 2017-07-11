@@ -1,3 +1,5 @@
+The WOW-Too-Many-Informations update
+
 • Further improvements to overall system
   stability and other minor adjustments.
 • Reworked game description screen.
@@ -20,6 +22,7 @@
   in storage bars.
 • Modified dialogs, and cleaned
   animations.
+• Added a 3DSX auto-updater.
 • Bugfix: Start button wasn't closing the
   app properly.
 • Bugfix: Unreleased DLC now fails the

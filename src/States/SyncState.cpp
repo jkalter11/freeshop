@@ -19,6 +19,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <stdio.h>
 #include <cpp3ds/System/Service.hpp>
 #include <archive.h>
 #include <archive_entry.h>
@@ -272,13 +273,21 @@ void SyncState::sync()
 	}
 
 	// If auto-dated, boot into launch newest freeShop
-
-	if (updateFreeShop())
-	{
-		Config::set(Config::ShowNews, true);
-		g_requestJump = 0x400000F12EE00;
-		return;
+#ifndef EMULATION
+	if (!envIsHomebrew()) {
+		if (updateFreeShop())
+		{
+			Config::set(Config::ShowNews, true);
+			g_requestJump = 0x400000F12EE00;
+			return;
+		}
+	} else {
+		if (updateFreeShop3DSX())
+		{
+			// It crashes here :/
+		}
 	}
+#endif
 
 
 	if (!pathExists(FREESHOP_DIR "/news/" FREESHOP_VERSION ".txt") || std::string(FREESHOP_VERSION) != Config::get(Config::Version).GetString())
@@ -389,6 +398,54 @@ bool SyncState::updateFreeShop()
 				setStatus(_("Failed to install update: 0x%08lX", ret));
 			return suceeded;
 #endif
+		}
+	}
+	return false;
+}
+
+bool SyncState::updateFreeShop3DSX()
+{
+	if (!Config::get(Config::AutoUpdate).GetBool() && !Config::get(Config::TriggerUpdateFlag).GetBool())
+		return false;
+
+	setStatus(_("Looking for freeShop update..."));
+	const char *url = "https://pastebin.com/raw/JS605QD2";
+	const char *latestFilename = FREESHOP_DIR "/tmp/latest.txt";
+	Download download(url, latestFilename);
+	download.run();
+
+	cpp3ds::FileInputStream latestFile;
+	if (latestFile.open(latestFilename))
+	{
+		std::string tag;
+		rapidjson::Document doc;
+		int size = latestFile.getSize();
+		tag.resize(size);
+		latestFile.read(&tag[0], size);
+		if (tag.empty())
+			return false;
+
+		Config::set(Config::LastUpdatedTime, static_cast<int>(time(nullptr)));
+		Config::saveToFile();
+
+		std::string tagWithoutPoints = ReplaceAll(tag, ".", "");
+		std::cout << "Latest version (3DSX): " << tagWithoutPoints << std::endl;
+
+		std::string actualVersionWithoutPoints = ReplaceAll(FREESHOP_VERSION, ".", "");
+		std::cout << "Actual version (3DSX): " << actualVersionWithoutPoints << std::endl;
+
+		if (std::stoi(tagWithoutPoints) > std::stoi(actualVersionWithoutPoints))
+		{
+			std::string freeShopFile = "sdmc:/3ds/freeShop/freeshop.3dsx";
+			std::string freeShopUrl = _("https://notabug.org/arc13/freeshop-versions/raw/master/%s.3dsx", tag.c_str());
+			setStatus(_("Installing freeShop %s ...", tag.c_str()));
+			Download freeShopDownload(freeShopUrl, freeShopFile);
+
+			freeShopDownload.run();
+			if (freeShopDownload.getLastResponse().getStatus() != cpp3ds::Http::Response::Ok)
+				return false;
+
+			return true;
 		}
 	}
 	return false;

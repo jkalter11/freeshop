@@ -35,6 +35,7 @@ public:
 
 private:
 	bool updateFreeShop();
+	bool updateFreeShop3DSX();
 	bool updateCache();
 	bool updateTitleKeys();
 	bool updateEshopMusic();

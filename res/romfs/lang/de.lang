@@ -95,7 +95,7 @@ Demo
 Demo
 
 You are deleting the demo for this title:\n\n%s
-Du installierst die Demo für\ndiesen Titel:\n\n%s
+Du installierst die Demo für diesen Titel:\n\n%s
 
 Deleted demo: %s
 Gelöschte Demo: %s
@@ -104,7 +104,7 @@ Queued demo: %s
 Demo in Warteschlange: %s
 
 You are deleting this game, including all save data:\n\n%s
-Du deinstallierst folgendes Spiel,\ninklusive alle Speicherdaten:\n\n%s
+Du deinstallierst folgendes Spiel, inklusive alle Speicherdaten:\n\n%s
 
 Deleted: %s
 Gelöscht: %s
@@ -127,7 +127,7 @@ Queued
 Warteschlange
 
 %s\n\nAre you sure you want to cancel this installation and lose all progress?
-%s\n\nBist du sicher, dass du die Installation\nabbrechen willst? Du verlierst den gesamten\nFortschritt.
+%s\n\nBist du sicher, dass du die Installation abbrechen willst? Du verlierst den gesamten Fortschritt.
 
 Canceling...
 Abbrechen...
@@ -208,7 +208,7 @@ DLC
 DLC
 
 You are deleting updates for this title:\n\n%s
-Du löschst die Aktualisierungen für\ndiesen Titel:\n\n%s
+Du löschst die Aktualisierungen für diesen Titel:\n\n%s
 
 Deleted update: %s
 Gelöschte Aktualisierung: %s
@@ -217,7 +217,7 @@ Queued update: %s
 Warteschlange Aktualisierung: %s
 
 You are deleting DLC for this title:\n\n%s
-Du löschst den DLC für\ndiesen Titel:\n\n%s
+Du löschst den DLC für diesen Titel:\n\n%s
 
 Deleted DLC: %s
 Gelöschte DLC: %s
@@ -448,7 +448,7 @@ Remote title key URL(s)
 Title-Key URL(s) Fernsteuerung
 
 You need to restart freeShop for %s to be loaded.\n\nWould you like to do this now?
-Du musst freeShop neu starten, um\n%s zu laden.\n\nMöchtest du jetzt neustarten?
+Du musst freeShop neu starten, um %s zu laden.\n\nMöchtest du jetzt neustarten?
 
 Notifiers
 Benachrichtigungen
@@ -496,7 +496,7 @@ Update eShop music
 Aktualisiere die eShop Musik.
 
 You need to restart freeShop to update the eShop music\n\nWould you like to do this now?
-Du musst den freeShop neustarten\num die eShop Musik zu updaten.\n\nMöchtest du dies jetzt tun?
+Du musst den freeShop neustarten um die eShop Musik zu updaten.\n\nMöchtest du dies jetzt tun?
 
 Allow music on inactivity mode
 Erlaube Musik im Inaktivitäts-Modus.
