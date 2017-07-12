@@ -40,6 +40,20 @@ LoadInformations::LoadInformations()
 	m_textLoadingPercentage.setPosition(160.f, 230.f);
 	m_textLoadingPercentage.useSystemFont();
 	m_textLoadingPercentage.setString(_("0%%"));
+
+	m_textStatus.setCharacterSize(14);
+	if (Theme::isTextThemed)
+		m_textStatus.setFillColor(Theme::loadingText);
+	else
+		m_textStatus.setFillColor(cpp3ds::Color::Black);
+	m_textStatus.setOutlineColor(cpp3ds::Color(0, 0, 0, 70));
+	m_textStatus.setOutlineThickness(2.f);
+	m_textStatus.setPosition(160.f, 155.f);
+	m_textStatus.useSystemFont();
+	TweenEngine::Tween::to(m_textStatus, util3ds::TweenText::FILL_COLOR_ALPHA, 0.3f)
+			.target(180)
+			.repeatYoyo(-1, 0)
+			.start(m_tweenManager);
 }
 
 LoadInformations::~LoadInformations()
@@ -51,8 +65,10 @@ void LoadInformations::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates s
 {
 	states.transform *= getTransform();
 
-	if (m_loadingPercentage > 0)
+	if (m_loadingPercentage > -1)
 		target.draw(m_textLoadingPercentage);
+
+	target.draw(m_textStatus);
 }
 
 void LoadInformations::update(float delta)
@@ -67,8 +83,8 @@ void LoadInformations::updateLoadingPercentage(int newPercentage)
 		return;
 
 	// Check that percentage is between 0 and 100
-	if (newPercentage <= 0)
-		m_loadingPercentage = 0;
+	if (newPercentage <= -1)
+		m_loadingPercentage = -1;
 	else if (newPercentage >= 100)
 		m_loadingPercentage = 100;
 	else
@@ -88,7 +104,15 @@ LoadInformations &LoadInformations::getInstance()
 
 void LoadInformations::reset()
 {
-	updateLoadingPercentage(0);
+	updateLoadingPercentage(-1);
+	setStatus("");
+}
+
+void LoadInformations::setStatus(const std::string &message)
+{
+	m_textStatus.setString(message);
+	cpp3ds::FloatRect rect = m_textStatus.getLocalBounds();
+	m_textStatus.setOrigin(rect.width / 2.f, rect.height / 2.f);
 }
 
 } // namespace FreeShop

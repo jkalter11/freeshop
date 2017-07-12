@@ -60,7 +60,6 @@ namespace {
 		"inactivity_seconds",
 		// Other
 		"title_id",
-		"skiddo",
 		"show_battery_percentage",
 		"show_game_counter",
 		"show_game_description",
@@ -187,7 +186,6 @@ void Config::loadDefaults()
 
 	// Other
 	ADD_DEFAULT(TitleID, false);
-	ADD_DEFAULT(Skiddo, false);
 	ADD_DEFAULT(ShowBattery, false);
 	ADD_DEFAULT(ShowGameCounter, true);
 	ADD_DEFAULT(ShowGameDescription, true);

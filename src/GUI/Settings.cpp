@@ -1318,8 +1318,6 @@ void Settings::fillLocalesPage(Gwen::Controls::Base *page)
 	}
 #endif
 
-	if (Config::get(Config::Skiddo).GetBool())
-		m_listboxLanguages->AddItem("Skiddo", "sk");
 	m_listboxLanguages->AddItem("English", "en");
 	m_listboxLanguages->AddItem("Français", "fr");
 	m_listboxLanguages->AddItem("Deutsche", "de");
@@ -1615,11 +1613,6 @@ void Settings::keyboardChange(Gwen::Controls::Base *base)
 		g_browseState->reloadKeyboard();
 		Notification::spawn(_("Keyboard changed to: %s", m_listboxKeyboards->GetSelectedRow()->GetText(0).c_str()));
 	}
-}
-
-void Settings::addSkiddoLanguage()
-{
-	m_listboxLanguages->AddItem("Skiddo", "sk");
 }
 
 void Settings::systemKeyboardChange(Gwen::Controls::Base* base)

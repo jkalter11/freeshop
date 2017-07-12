@@ -86,7 +86,7 @@ Queued demo: %s
 Demo w kolejce: %s
 
 You are deleting this game, including all save data:\n\n%s
-Usuwasz ten tytułu,\nrazem z wszystkimi danymi:\n\n%s
+Usuwasz ten tytułu, razem z wszystkimi danymi:\n\n%s
 
 Deleted: %s
 Usunięte: %s
@@ -109,7 +109,7 @@ Queued
 W kolejce
 
 %s\n\nAre you sure you want to cancel this installation and lose all progress?
-%s\n\nCzy na pewno chcesz anulować\ninstalację i stracić\nwszystkie postępy?
+%s\n\nCzy na pewno chcesz anulować instalację i stracić wszystkie postępy?
 
 Canceling...
 Anulowanie...
@@ -410,4 +410,4 @@ Remote title key URL(s)
 Zdalny URL(s) kluczòw tytułowych
 
 You need to restart freeShop for %s to be loaded.\n\nWould you like to do this now?
-Trzeba ponownie uruchomić freeShop dla \n% s był załadowany. \nCzy chcesz to zrobić teraz?
+Trzeba ponownie uruchomić freeShop dla %s był załadowany. \nCzy chcesz to zrobić teraz?

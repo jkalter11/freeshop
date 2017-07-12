@@ -77,7 +77,7 @@ Demo
 Демо
 
 You are deleting the demo for this title:\n\n%s
-Вы удаляете демо-версию\nэтого приложения:\n\n%s
+Вы удаляете демо-версию этого приложения:\n\n%s
 
 Deleted demo: %s
 Демо удалено: %s
@@ -86,7 +86,7 @@ Queued demo: %s
 Демо в очереди: %s
 
 You are deleting this game, including all save data:\n\n%s
-Вы удаляете эту игру,\nвместе с её сохранениями:\n\n%s
+Вы удаляете эту игру, вместе с её сохранениями:\n\n%s
 
 Deleted: %s
 Удалено: %s
@@ -109,7 +109,7 @@ Queued
 Добавлено в очередь
 
 %s\n\nAre you sure you want to cancel this installation and lose all progress?
-%s\n\nВы уверены, что хотите прервать\nустановку и потерять\nвесь прогресс?
+%s\n\nВы уверены, что хотите прервать установку и потерять весь прогресс?
 
 Canceling...
 Отмена...
@@ -173,7 +173,7 @@ DLC
 DLC
 
 You are deleting updates for this title:\n\n%s
-Вы собираетесь удалить\nобновления для этого приложения:\n\n%s
+Вы собираетесь удалить обновления для этого приложения:\n\n%s
 
 Deleted update: %s
 Обновление удалено: %s
@@ -182,7 +182,7 @@ Queued update: %s
 Обновление в очереди: %s
 
 You are deleting DLC for this title:\n\n%s
-Вы собираетесь удалить DLC\nдля этого приложения:\n\n%s
+Вы собираетесь удалить DLC для этого приложения:\n\n%s
 
 Deleted DLC: %s
 DLC удалено: %s
@@ -404,4 +404,4 @@ Remote title key URL(s)
 URL(ы) для загрузки ключей приложений
 
 You need to restart freeShop for %s to be loaded.\n\nWould you like to do this now?
-Необходимо перезапустить freeShop,\nчтобы загрузить %s.\n\nПерезапустить сейчас?
+Необходимо перезапустить freeShop, чтобы загрузить %s.\n\nПерезапустить сейчас?

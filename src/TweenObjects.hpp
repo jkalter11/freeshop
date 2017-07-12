@@ -202,220 +202,89 @@ protected:
 };
 
 template <class T>
-class TweenShapeResizable : public TweenTransformable<T>
+class TweenShapeResizable : public TweenShape<T>
 {
 public:
-	static const int FILL_COLOR_RGB      = 11;
-	static const int FILL_COLOR_ALPHA    = 12;
-	static const int OUTLINE_COLOR_RGB   = 13;
-	static const int OUTLINE_COLOR_ALPHA = 14;
-	static const int OUTLINE_THICKNESS   = 15;
 	static const int SIZE = 16;
 
 protected:
 	virtual int getValues(int tweenType, float *returnValues)
 	{
 		switch (tweenType) {
-			case FILL_COLOR_RGB: {
-				cpp3ds::Color color = T::getFillColor();
-				returnValues[0] = color.r;
-				returnValues[1] = color.g;
-				returnValues[2] = color.b;
-				return 3;
-			}
-			case OUTLINE_COLOR_RGB: {
-				cpp3ds::Color color = T::getOutlineColor();
-				returnValues[0] = color.r;
-				returnValues[1] = color.g;
-				returnValues[2] = color.b;
-				return 3;
-			}
-			case FILL_COLOR_ALPHA: returnValues[0] = T::getFillColor().a; return 1;
-			case OUTLINE_COLOR_ALPHA: returnValues[0] = T::getOutlineColor().a; return 1;
-			case OUTLINE_THICKNESS: returnValues[0] = T::getOutlineThickness(); return 1;
 			case SIZE: {
 				returnValues[0] = T::getSize().x;
 				returnValues[1] = T::getSize().y;
 				return 2;
 			}
 			default:
-				return TweenTransformable<T>::getValues(tweenType, returnValues);
+				return TweenShape<T>::getValues(tweenType, returnValues);
 		}
 	}
 
 	virtual void setValues(int tweenType, float *newValues)
 	{
 		switch (tweenType) {
-			case FILL_COLOR_RGB: {
-				cpp3ds::Color color;
-				color.r = std::max(std::min(newValues[0], 255.f), 0.f);
-				color.g = std::max(std::min(newValues[1], 255.f), 0.f);
-				color.b = std::max(std::min(newValues[2], 255.f), 0.f);
-				color.a = T::getFillColor().a;
-				T::setFillColor(color);
-				break;
-			}
-			case FILL_COLOR_ALPHA: {
-				cpp3ds::Color color = T::getFillColor();
-				color.a = std::max(std::min(newValues[0], 255.f), 0.f);
-				T::setFillColor(color);
-				break;
-			}
-			case OUTLINE_COLOR_RGB: {
-				cpp3ds::Color color;
-				color.r = std::max(std::min(newValues[0], 255.f), 0.f);
-				color.g = std::max(std::min(newValues[1], 255.f), 0.f);
-				color.b = std::max(std::min(newValues[2], 255.f), 0.f);
-				color.a = T::getOutlineColor().a;
-				T::setOutlineColor(color);
-				break;
-			}
-			case OUTLINE_COLOR_ALPHA: {
-				cpp3ds::Color color = T::getOutlineColor();
-				color.a = std::max(std::min(newValues[0], 255.f), 0.f);
-				T::setOutlineColor(color);
-				break;
-			}
-			case OUTLINE_THICKNESS: T::setOutlineThickness(newValues[0]); break;
 			case SIZE: T::setSize(cpp3ds::Vector2f(newValues[0], newValues[1])); break;
 			default:
-				TweenTransformable<T>::setValues(tweenType, newValues);
+				TweenShape<T>::setValues(tweenType, newValues);
 				break;
 		}
 	}
 };
 
 template <class T>
-class TweenColorTransformableResizable : public TweenTransformable<T>
+class TweenColorTransformableResizable : public TweenColorTransformable<T>
 {
 public:
-	static const int COLOR_RGB   = 11;
-	static const int COLOR_ALPHA = 12;
 	static const int SIZE = 13;
 
 protected:
 	virtual int getValues(int tweenType, float *returnValues)
 	{
 		switch (tweenType) {
-			case COLOR_RGB: {
-				cpp3ds::Color color = T::getColor();
-				returnValues[0] = color.r;
-				returnValues[1] = color.g;
-				returnValues[2] = color.b;
-				return 3;
-			}
-			case COLOR_ALPHA: returnValues[0] = T::getColor().a; return 1;
 			case SIZE: {
 				returnValues[0] = T::getSize().x;
 				returnValues[1] = T::getSize().y;
 				return 2;
 			}
 			default:
-				return TweenTransformable<T>::getValues(tweenType, returnValues);
+				return TweenColorTransformable<T>::getValues(tweenType, returnValues);
 		}
 	}
 
 	virtual void setValues(int tweenType, float *newValues)
 	{
 		switch (tweenType) {
-			case COLOR_RGB: {
-				cpp3ds::Color color;
-				color.r = std::max(std::min(newValues[0], 255.f), 0.f);
-				color.g = std::max(std::min(newValues[1], 255.f), 0.f);
-				color.b = std::max(std::min(newValues[2], 255.f), 0.f);
-				color.a = T::getColor().a;
-				T::setColor(color);
-				break;
-			}
-			case COLOR_ALPHA: {
-				cpp3ds::Color color = T::getColor();
-				color.a = std::max(std::min(newValues[0], 255.f), 0.f);
-				T::setColor(color);
-				break;
-			}
 			case SIZE: T::setSize(cpp3ds::Vector2f(newValues[0], newValues[1])); break;
 			default:
-				TweenTransformable<T>::setValues(tweenType, newValues);
+				TweenColorTransformable<T>::setValues(tweenType, newValues);
 				break;
 		}
 	}
 };
 
 template <class T>
-class TweenShapeText: public TweenTransformable<T>
+class TweenShapeText: public TweenShape<T>
 {
 public:
-	static const int FILL_COLOR_RGB      = 11;
-	static const int FILL_COLOR_ALPHA    = 12;
-	static const int OUTLINE_COLOR_RGB   = 13;
-	static const int OUTLINE_COLOR_ALPHA = 14;
-	static const int OUTLINE_THICKNESS   = 15;
 	static const int CHARACTER_SIZE      = 16;
 
 protected:
 	virtual int getValues(int tweenType, float *returnValues)
 	{
 		switch (tweenType) {
-			case FILL_COLOR_RGB: {
-				cpp3ds::Color color = T::getFillColor();
-				returnValues[0] = color.r;
-				returnValues[1] = color.g;
-				returnValues[2] = color.b;
-				return 3;
-			}
-			case OUTLINE_COLOR_RGB: {
-				cpp3ds::Color color = T::getOutlineColor();
-				returnValues[0] = color.r;
-				returnValues[1] = color.g;
-				returnValues[2] = color.b;
-				return 3;
-			}
-			case FILL_COLOR_ALPHA: returnValues[0] = T::getFillColor().a; return 1;
-			case OUTLINE_COLOR_ALPHA: returnValues[0] = T::getOutlineColor().a; return 1;
-			case OUTLINE_THICKNESS: returnValues[0] = T::getOutlineThickness(); return 1;
 			case CHARACTER_SIZE: returnValues[0] = T::getCharacterSize(); return 1;
 			default:
-				return TweenTransformable<T>::getValues(tweenType, returnValues);
+				return TweenShape<T>::getValues(tweenType, returnValues);
 		}
 	}
 
 	virtual void setValues(int tweenType, float *newValues)
 	{
 		switch (tweenType) {
-			case FILL_COLOR_RGB: {
-				cpp3ds::Color color;
-				color.r = std::max(std::min(newValues[0], 255.f), 0.f);
-				color.g = std::max(std::min(newValues[1], 255.f), 0.f);
-				color.b = std::max(std::min(newValues[2], 255.f), 0.f);
-				color.a = T::getFillColor().a;
-				T::setFillColor(color);
-				break;
-			}
-			case FILL_COLOR_ALPHA: {
-				cpp3ds::Color color = T::getFillColor();
-				color.a = std::max(std::min(newValues[0], 255.f), 0.f);
-				T::setFillColor(color);
-				break;
-			}
-			case OUTLINE_COLOR_RGB: {
-				cpp3ds::Color color;
-				color.r = std::max(std::min(newValues[0], 255.f), 0.f);
-				color.g = std::max(std::min(newValues[1], 255.f), 0.f);
-				color.b = std::max(std::min(newValues[2], 255.f), 0.f);
-				color.a = T::getOutlineColor().a;
-				T::setOutlineColor(color);
-				break;
-			}
-			case OUTLINE_COLOR_ALPHA: {
-				cpp3ds::Color color = T::getOutlineColor();
-				color.a = std::max(std::min(newValues[0], 255.f), 0.f);
-				T::setOutlineColor(color);
-				break;
-			}
-			case OUTLINE_THICKNESS: T::setOutlineThickness(newValues[0]); break;
 			case CHARACTER_SIZE: T::setCharacterSize(newValues[0]); break;
 			default:
-				TweenTransformable<T>::setValues(tweenType, newValues);
+				TweenShape<T>::setValues(tweenType, newValues);
 		}
 	}
 };

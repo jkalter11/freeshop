@@ -65,6 +65,8 @@ bool LoadingState::update(float delta)
 		m_icon.rotate(45);
 		m_rotateClock.restart();
 	}
+
+	LoadInformations::getInstance().update(delta);
 	return true;
 }
 

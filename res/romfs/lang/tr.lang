@@ -77,7 +77,7 @@ Demo
 Demo
 
 You are deleting the demo for this title:\n\n%s
-Demoyu\nbu başlık için siliyorsunuz :\n\n%s
+Demoyu bu başlık için siliyorsunuz :\n\n%s
 
 Deleted demo: %s
 Demo silindi: %s
@@ -86,7 +86,7 @@ Queued demo: %s
 Sıraya girmiş demo: %s
 
 You are deleting this game, including all save data:\n\n%s
-Bu oyunu siliyorsunuz,\nbütün kayıt verisiyle:\n\n%s
+Bu oyunu siliyorsunuz, bütün kayıt verisiyle:\n\n%s
 
 Deleted: %s
 Silindi: %s
@@ -109,7 +109,7 @@ Queued
 Sıraya girdi
 
 %s\n\nAre you sure you want to cancel this installation and lose all progress?
-%s\n\nBu yüklemeyi iptal edip bütün ilerlemeyi\nkaydetmek istediğinizden emin misiniz?
+%s\n\nBu yüklemeyi iptal edip bütün ilerlemeyi kaydetmek istediğinizden emin misiniz?
 
 Canceling...
 İptal ediliyor...
@@ -176,7 +176,7 @@ DLC
 DLC
 
 You are deleting updates for this title:\n\n%s
-Bu\noyun için güncellemeleri siliyorsunuz:\n\n%s
+Bu oyun için güncellemeleri siliyorsunuz:\n\n%s
 
 Deleted update: %s
 Silinmiş güncelleme: %s
@@ -185,7 +185,7 @@ Queued update: %s
 Sıraya girmiş güncelleme: %s
 
 You are deleting DLC for this title:\n\n%s
-Bu\noyun için DLC'leri siliyorsunuz:\n\n%s
+Bu oyun için DLC'leri siliyorsunuz:\n\n%s
 
 Deleted DLC: %s
 Silinmiş DLC: %s
@@ -407,4 +407,4 @@ Remote title key URL(s)
 Başlık anahtarı URL'sini/lerini kontrol et
 
 You need to restart freeShop for %s to be loaded.\n\nWould you like to do this now?
-%s'in\nbaşlaması için freeShop'un yeniden başlatılması gerekli.\n\nBunu şimdi yapmak istediğinizden emin misiniz?
+%s'in başlaması için freeShop'un yeniden başlatılması gerekli.\n\nBunu şimdi yapmak istediğinizden emin misiniz?

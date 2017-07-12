@@ -101,7 +101,7 @@ Demo
 Demó
 
 You are deleting the demo for this title:\n\n%s
-Biztosan ki akarod törölni\nennek a szoftvernek a demóját?\n\n%s
+Biztosan ki akarod törölni ennek a szoftvernek a demóját?\n\n%s
 
 Deleted demo: %s
 %s demója kitörölve.
@@ -110,7 +110,7 @@ Queued demo: %s
 %s demójának telepítése...
 
 You are deleting this game, including all save data:\n\n%s
-Biztosan ki akarod törölni\nezt a játékot a mentéssel együtt?\n\n%s
+Biztosan ki akarod törölni ezt a játékot a mentéssel együtt?\n\n%s
 
 Deleted: %s
 %s törölve.
@@ -133,7 +133,7 @@ Queued
 A szoftver sorba került
 
 %s\n\nAre you sure you want to cancel this installation and lose all progress?
-%s\n\nBiztosan félbe akarod hagyni\na telepítést?
+%s\n\nBiztosan félbe akarod hagyni a telepítést?
 
 Canceling...
 Félbehagyás...
@@ -246,7 +246,7 @@ DLC
 DLC
 
 You are deleting updates for this title:\n\n%s
-Biztosan ki akarod törölni\nennek a játéknak\a frissítéseit?\n\n%s
+Biztosan ki akarod törölni ennek a játéknak\a frissítéseit?\n\n%s
 
 Deleted update: %s
 %s frissítése kitörölve
@@ -255,7 +255,7 @@ Queued update: %s
 %s frissítése bekerült a sorba.
 
 You are deleting DLC for this title:\n\n%s
-Biztosan ki akarod törölni\nennek a szoftvernek\na DLC-jét?\n\n%s
+Biztosan ki akarod törölni ennek a szoftvernek a DLC-jét?\n\n%s
 
 Deleted DLC: %s
 %s DLC-je kitörölve.
@@ -487,7 +487,7 @@ Remote title key URL(s)
 Szoftverkulcs URL(-ek)
 
 You need to restart freeShop for %s to be loaded.\n\nWould you like to do this now?
-A %s nyelv beállításához\nújra kell indítanod a freeShopot.\n\nSzeretnéd ez most megtenni?
+A %s nyelv beállításához újra kell indítanod a freeShopot.\n\nSzeretnéd ez most megtenni?
 
 Keyboard:
 Billentyűzet:
@@ -574,7 +574,7 @@ Update eShop music
 eShop-zene frissítése
 
 You need to restart freeShop to update the eShop music\n\nWould you like to do this now?
-Az eShop-zene frissítéséhez újra\n kell indítanod a freeShopot.\n\nSzeretnéd ezt most megtenni?
+Az eShop-zene frissítéséhez újra kell indítanod a freeShopot.\n\nSzeretnéd ezt most megtenni?
 
 Allow music on inactivity mode
 Zene engedélyezése inaktivitás során

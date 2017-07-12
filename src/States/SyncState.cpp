@@ -317,8 +317,6 @@ void SyncState::sync()
 		download.run();
 	}
 
-	setStatus(_("Loading game list..."));
-
 	// TODO: Figure out why browse state won't load without this sleep
 	cpp3ds::sleep(cpp3ds::milliseconds(100));
 	requestStackPush(States::Browse);
@@ -775,9 +773,7 @@ bool SyncState::updateEshopMusic()
 
 void SyncState::setStatus(const std::string &message)
 {
-	m_textStatus.setString(message);
-	cpp3ds::FloatRect rect = m_textStatus.getLocalBounds();
-	m_textStatus.setOrigin(rect.width / 2.f, rect.height / 2.f);
+	LoadInformations::getInstance().setStatus(message);
 }
 
 void SyncState::startupSound()

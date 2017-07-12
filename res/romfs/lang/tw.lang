@@ -86,7 +86,7 @@ Queued demo: %s
 帶安裝的Demo: %s
 
 You are deleting this game, including all save data:\n\n%s
-你正在刪除這個遊戲,\n以及他的存檔數據:\n\n%s
+你正在刪除這個遊戲, 以及他的存檔數據:\n\n%s
 
 Deleted: %s
 已刪除: %s
@@ -109,7 +109,7 @@ Queued
 已加入列表
 
 %s\n\nAre you sure you want to cancel this installation and lose all progress?
-%s\n\n你確定要取消\n這次安裝並且\n放棄全部進度嗎?
+%s\n\n你確定要取消 這次安裝並且 放棄全部進度嗎?
 
 Canceling...
 正在取消...

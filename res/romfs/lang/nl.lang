@@ -101,7 +101,7 @@ Demo
 Demo
 
 You are deleting the demo for this title:\n\n%s
-Je verwijdert de demo voor\ndeze titel:\n\n%s
+Je verwijdert de demo voor deze titel:\n\n%s
 
 Deleted demo: %s
 Demo verwijderd: %s
@@ -110,7 +110,7 @@ Queued demo: %s
 Demo wachtrij: %s
 
 You are deleting this game, including all save data:\n\n%s
-Je verwijdert dit spel,\ninclusief al je save data:\n\n%s
+Je verwijdert dit spel, inclusief al je save data:\n\n%s
 
 Deleted: %s
 Verwijderd: %s
@@ -133,7 +133,7 @@ Queued
 Wachtrij
 
 %s\n\nAre you sure you want to cancel this installation and lose all progress?
-%s\n\nWeet je zeker dat je wilt annuleren\nen alle voortgang wilt verliezen?
+%s\n\nWeet je zeker dat je wilt annuleren en alle voortgang wilt verliezen?
 
 Canceling...
 Annuleren...
@@ -246,7 +246,7 @@ DLC
 DLC
 
 You are deleting updates for this title:\n\n%s
-Je verwijdert updates voor\ndeze game:\n\n%s
+Je verwijdert updates voor deze game:\n\n%s
 
 Deleted update: %s
 Update verwijderd: %s
@@ -255,7 +255,7 @@ Queued update: %s
 Update in wachtrij: %s
 
 You are deleting DLC for this title:\n\n%s
-Je verwijdert de DLC voor\ndeze game:\n\n%s
+Je verwijdert de DLC voor deze game:\n\n%s
 
 Deleted DLC: %s
 DLC verwijderd: %s
@@ -487,7 +487,7 @@ Remote title key URL(s)
 Title key URL
 
 You need to restart freeShop for %s to be loaded.\n\nWould you like to do this now?
-freeShop moet opnieuw worden opgestart voor\nom geladen te worden %s.\n\nWil je dit nu doen?
+freeShop moet opnieuw worden opgestart voor om geladen te worden %s.\n\nWil je dit nu doen?
 
 Keyboard :
 Toetsenbord :
@@ -571,7 +571,7 @@ Update eShop music
 Update eShop muziek.
 
 You need to restart freeShop to update the eShop music\n\nWould you like to do this now?
-Je moet freeShop herstarten om\nde muziek te updaten.\n\nZou je dit nu willen doen?
+Je moet freeShop herstarten om de muziek te updaten.\n\nZou je dit nu willen doen?
 
 Allow music on inactivity mode
 Sta muziek toe terwijl inactief.

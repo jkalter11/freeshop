@@ -10,6 +10,7 @@
 #include "../TitleKeys.hpp"
 #include "../FreeShop.hpp"
 #include "../Theme.hpp"
+#include "../LoadInformations.hpp"
 #ifndef EMULATION
 #include "../KeyboardApplet.hpp"
 #endif
@@ -42,6 +43,7 @@ BrowseState::BrowseState(StateStack& stack, Context& context, StateCallback call
 , m_isTIDKeyboard(false)
 , m_musicMode(0)
 , m_isSliderOff(false)
+, m_counter(1)
 {
 	g_browseState = this;
 	m_musicLoop.setLoop(true);
@@ -72,8 +74,14 @@ BrowseState::~BrowseState()
 void BrowseState::initialize()
 {
 	// Initialize AppList singleton first
+	LoadInformations::getInstance().setStatus(_("Loading game list..."));
 	AppList::getInstance().refresh();
+
+	LoadInformations::getInstance().setStatus(_("Loading installed game list..."));
+	LoadInformations::getInstance().updateLoadingPercentage(-1);
 	InstalledList::getInstance().refresh();
+
+	LoadInformations::getInstance().setStatus(_("Almost finished..."));
 
 	//Var init
 	m_ctrSdPath = "";
@@ -489,15 +497,15 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 		}
 		if (m_keyHistory.size() >= 10) {
 			if (m_keyHistory[0] == cpp3ds::Keyboard::DPadUp && m_keyHistory[1] == cpp3ds::Keyboard::DPadUp && m_keyHistory[2] == cpp3ds::Keyboard::DPadDown && m_keyHistory[3] == cpp3ds::Keyboard::DPadDown && m_keyHistory[4] == cpp3ds::Keyboard::DPadLeft && m_keyHistory[5] == cpp3ds::Keyboard::DPadRight && m_keyHistory[6] == cpp3ds::Keyboard::DPadLeft && m_keyHistory[7] == cpp3ds::Keyboard::DPadRight && m_keyHistory[8] == cpp3ds::Keyboard::B && m_keyHistory[9] == cpp3ds::Keyboard::A) {
-				if (!Config::get(Config::Skiddo).GetBool()) {
-					Notification::spawn(_("Skiddo!"));
-					Config::set(Config::Skiddo, true);
-					m_settingsGUI->addSkiddoLanguage();
-				} else {
-#ifdef RELEASE
-					Notification::spawn(_("freeShop " FREESHOP_VERSION " / " __DATE__ " " __TIME__));
-#endif
+				switch (m_counter) {
+					case 1: Notification::spawn(_("There are no Easter Eggs in this program.")); break;
+					case 2: Notification::spawn(_("There really are no Easter Eggs in this program.")); break;
+					case 3: Notification::spawn(_("Didn't I already tell you that\nthere are no Easter Eggs in this program?")); break;
+					case 4: Notification::spawn(_("All right, you win.\n\n                                    /----\\\n                           -------/      \\\n                          /                 \\\n                         /                   |\n   -----------------/                     --------\\\n   ----------------------------------------------")); break;
+					default: Notification::spawn(_("What is it? It's an elephant being eaten by a snake, of course.")); break;
 				}
+
+				m_counter++;
 			}
 		}
 

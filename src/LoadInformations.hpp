@@ -20,6 +20,7 @@ public:
 	static LoadInformations& getInstance();
 
 	void updateLoadingPercentage(int newPercentage);
+	void setStatus(const std::string& message);
 	void reset();
 
 protected:
@@ -27,6 +28,7 @@ protected:
 
 private:
 	cpp3ds::Text m_textLoadingPercentage;
+	util3ds::TweenText m_textStatus;
 
 	int m_loadingPercentage;
 

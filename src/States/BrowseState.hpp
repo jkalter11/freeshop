@@ -96,6 +96,8 @@ private:
 	ScrollBar m_scrollbarInstalledList;
 	ScrollBar m_scrollbarDownloadQueue;
 
+	int m_counter;
+
 	// Sounds
 	cpp3ds::Sound  m_soundClick;
 	cpp3ds::Sound  m_soundLoading;

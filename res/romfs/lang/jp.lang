@@ -109,7 +109,7 @@ Queued
 順番を待っています
 
 %s\n\nAre you sure you want to cancel this installation and lose all progress?
-%s\n\nインストールを中止すると\n作業中のファイルが失われますが宜しいですか
+%s\n\nインストールを中止すると 作業中のファイルが失われますが宜しいですか
 
 Canceling...
 インストールをキャンセルしています

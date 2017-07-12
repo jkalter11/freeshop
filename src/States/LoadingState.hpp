@@ -27,8 +27,6 @@ private:
 	cpp3ds::RectangleShape m_background;
 	cpp3ds::Text m_icon;
 	cpp3ds::Clock m_rotateClock;
-
-	LoadInformations m_loadInfos;
 };
 
 } // namespace FreeShop

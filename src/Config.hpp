@@ -65,7 +65,6 @@ public:
 		InactivitySeconds,
 		// Other
 		TitleID,
-		Skiddo,
 		ShowBattery,
 		ShowGameCounter,
 		ShowGameDescription,
