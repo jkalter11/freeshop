@@ -12,6 +12,7 @@
 #include "FreeShop.hpp"
 #include "Theme.hpp"
 #include "Config.hpp"
+#include "LoadInformations.hpp"
 #include "States/DialogState.hpp"
 #include <sstream>
 #include <TweenEngine/Tween.h>
@@ -797,6 +798,8 @@ void AppInfo::setScreenshots(const rapidjson::Value &jsonScreenshots)
 	if (jsonScreenshots.IsArray())
 		for (int i = 0; i < jsonScreenshots.Size(); ++i)
 		{
+			LoadInformations::getInstance().setStatus(_("Loading screenshot #%i", i + 1));
+
 			if (jsonScreenshots[i]["image_url"].Size() == 2) {
 				addScreenshot(i, jsonScreenshots[i]["image_url"][0]);
 				addScreenshot(i, jsonScreenshots[i]["image_url"][1]);

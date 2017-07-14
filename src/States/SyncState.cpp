@@ -580,10 +580,6 @@ bool SyncState::loadServices()
 	#ifndef EMULATION
 		Result res;
 
-		//AM service init for app lists
-		if (R_FAILED(res = amInit()))
-			Notification::spawn(_("Unable to start AM: \n0x%08lX (%d)", res, R_DESCRIPTION(res)));
-
 		//NIMS service init for sleep download
 		static u8 nimBuf[0x20000];
 		if (R_FAILED(res = nimsInit(nimBuf, 0x20000)))
@@ -779,9 +775,38 @@ void SyncState::setStatus(const std::string &message)
 void SyncState::startupSound()
 {
 	cpp3ds::Clock clock;
+
+#ifndef EMULATION
+	Result res;
+
+	//AM service init for app lists and check Sapphire
+	if (R_FAILED(res = amInit()))
+		Notification::spawn(_("Unable to start AM: \n0x%08lX (%d)", res, R_DESCRIPTION(res)));
+
+	u32 nandTitleCount;
+	AM_GetTitleCount(MEDIATYPE_NAND, &nandTitleCount);
+
+	std::vector<cpp3ds::Uint64> titleIds;
+	titleIds.resize(nandTitleCount);
+	AM_GetTitleList(nullptr, MEDIATYPE_NAND, nandTitleCount, &titleIds[0]);
+
+	bool isSapphirePresent = false;
+	if (std::find(titleIds.begin(), titleIds.end(), 0x000401300F13EE02ULL) != titleIds.end())
+		isSapphirePresent = true;
+#endif
+
 	while (clock.getElapsedTime() < cpp3ds::seconds(3.5f))
 		cpp3ds::sleep(cpp3ds::milliseconds(50));
+
 	m_soundStartup.play();
+
+#ifndef EMULATION
+	if (Config::get(Config::LEDStartup).GetBool() && !isSapphirePresent) {
+		cpp3ds::sleep(cpp3ds::milliseconds(100));
+
+		MCU::getInstance().ledBlinkOnce(0x19A4FF);
+	}
+#endif
 //	while (clock.getElapsedTime() < cpp3ds::seconds(7.f))
 //		cpp3ds::sleep(cpp3ds::milliseconds(50));
 //	m_soundLoading.play(0);

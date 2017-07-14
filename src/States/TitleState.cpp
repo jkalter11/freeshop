@@ -115,15 +115,6 @@ TitleState::TitleState(StateStack& stack, Context& context, StateCallback callba
 	Tween::to(m_spriteEshop, TweenSprite::COLOR_RGB, 1.f)
 			.target(0, 0, 0)
 			.delay(3.5f)
-			.setCallback(TweenEngine::TweenCallback::BEGIN, [=](TweenEngine::BaseTween* source) {
-#ifndef EMULATION
-					if (Config::get(Config::LEDStartup).GetBool()) {
-						cpp3ds::sleep(cpp3ds::milliseconds(100));
-
-						MCU::getInstance().ledBlinkOnce(0x19A4FF);
-					}
-#endif
-				})
 			.start(m_manager);
 }
 
