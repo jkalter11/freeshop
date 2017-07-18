@@ -81,7 +81,7 @@ void BrowseState::initialize()
 	LoadInformations::getInstance().updateLoadingPercentage(-1);
 	InstalledList::getInstance().refresh();
 
-	LoadInformations::getInstance().setStatus(_("Almost finished..."));
+	LoadInformations::getInstance().setStatus(_("Welcome, %s", getUsername().toAnsiString().c_str()));
 
 	//Var init
 	m_ctrSdPath = "";

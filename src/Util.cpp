@@ -28,8 +28,8 @@ bool pathExists(const char* path, bool escape)
 }
 
 bool fileExists (const std::string& name) {
-	struct stat buffer;   
-	return (stat (name.c_str(), &buffer) == 0); 
+	struct stat buffer;
+	return (stat (name.c_str(), &buffer) == 0);
 }
 
 void makeDirectory(const char *dir, mode_t mode)
@@ -147,7 +147,7 @@ uint32_t getTicketVersion(cpp3ds::Uint64 tid) // len == 4708
 	snprintf(uri, 100, "http://ccs.cdn.c.shop.nintendowifi.net/ccs/download/%016llX/tmd", tid);
 	Download tmd(uri, tmdTempFile);
 	tmd.run();
-	
+
 	std::ifstream tmdfs;
 	tmdfs.open(FREESHOP_DIR "/tmp/last.tmd", std::ofstream::out | std::ofstream::in | std::ofstream::binary);
 	tmdfs.seekg(top + 0x9C, std::ios::beg);
@@ -180,6 +180,25 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
 		start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
 	}
 	return str;
+}
+
+cpp3ds::String getUsername()
+{
+#ifndef EMULATION
+	if (R_SUCCEEDED(cfguInit())) {
+		u16 *userOut = static_cast<u16*>(malloc(0x1C));
+		CFGU_GetConfigInfoBlk2(0x1C, 0xA0000, (u8*)userOut);
+
+		cfguExit();
+
+		cpp3ds::String username = cpp3ds::String::fromUtf16(userOut, userOut + 0x1C);
+		free(userOut);
+
+		return username;
+	}
+#else
+	return "emu3ds";
+#endif
 }
 
 } // namespace FreeShop
