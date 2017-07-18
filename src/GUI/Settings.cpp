@@ -1061,7 +1061,7 @@ void Settings::sortClearClicked(Gwen::Controls::Base *base)
 	loadSort(Config::SortInstalledListDirection, m_sortInstalledListRadioButtonsDirection);
 
 	Config::saveToFile();
-	Notification::spawn(_("Sorting settings resetted"));
+	Notification::spawn(_("Sorting settings reset"));
 }
 
 void Settings::saveSort(Config::Key key, std::vector<Gwen::Controls::LabeledRadioButton*> &radioArray)

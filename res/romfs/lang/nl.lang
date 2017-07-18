@@ -42,6 +42,9 @@ Druk op de A knop om WiFi aan te zetten
 The freeShop wasn't closed correctly the last time.\nDelete the %s folder\nand/or reinstall freeShop if the problem persists.
 freeShop was de vorige keer niet correct afgesloten.\nVerwijder de %s map\nand/of herinstalleer freeShop als het probleem blijft aanhouden.
 
+Press the B button to open System Settings
+Druk op de B knop om de Systeeminstellingen te openen
+
 # src/States/BrowseState.cpp
 ############################
 No title keys found.\nMake sure you have keys in\n%s\n\nManually copy keys to the directory\nor check settings to enter a URL\nfor downloading title keys.
@@ -67,6 +70,41 @@ Typ een Title ID...
 
 This song file type isn't supported.
 Dit filetype muziek word niet ondersteund.
+
+Loading installed game list...
+Lijst van geinstalleerde games aan het laden...
+
+Welcome, %s
+Welkom, %s
+
+# src/AppStats.cpp
+##################
+Ratings
+Reviews
+
+Preferences
+Voorkeuren
+
+• Who do you think this title appeals to?
+• Voor wie vind je dat deze titel het meest geschikt is?
+
+• What kind of play style is this title more suited for?
+• Hoe zou je de ervaring van het spelen omschrijven?
+
+Everyone - %i%%
+Iedereen - %i%%
+
+Casual - %i%%
+Casual - %i%%
+
+%i%% - Gamers
+%i%% - Gamers
+
+%i%% - Intense
+%i%% - Intensief
+
+Average score
+Gemiddelde score
 
 # src/States/DialogState.cpp
 ############################
@@ -137,6 +175,15 @@ Wachtrij
 
 Canceling...
 Annuleren...
+
+Delete a demo
+Verwijder een demo
+
+Loading screenshot #%i
+Screenshot #%i aan het laden
+
+Press Select to open the Ratings screen
+Druk op Select om het Beoordelingenschrerm te openen.
 
 # src/DownloadQueue.cpp
 #######################
@@ -212,6 +259,15 @@ Slaapstand download verwerken: \n%s
 The game %s (%s) has been installed on \n%s
 De game %s is geinstalleerd op \n%s
 
+Incomplete installation
+Incomplete installatie
+
+Not enough space on NAND to install: \n%s
+Niet voldoende ruimte op het NAND om \n%s \nte installeren.
+
+Not enough space on SD card to install: \n%s
+Niet voldoende ruimte op de SD-kaart om \n%s \nte installeren.
+
 # src/AppItem.cpp
 #################
 Already queued for sleep installation: \n%s
@@ -228,6 +284,29 @@ Slaapstand download geannuleerd: \n%s
 
 A system update is required to download in sleep mode.
 Een systeemupdate is vereist om in de slaapstand te downloaden.
+
+Players
+Spelers
+
+Languages
+Talen
+
+Genre
+Genre
+
+Compatible Features/Accessories
+Ondersteunde Functies/Accesoires
+
+NEW - 
+NIEUW - 
+
+Cancel a download
+Annuleer een download
+
+# src/InstalledList.cpp
+#######################
+Search...
+Zoeken...
 
 # src/InstalledItem.cpp
 #######################
@@ -262,6 +341,16 @@ DLC verwijderd: %s
 
 Queued DLC: %s
 DLC in wachtrij: %s
+
+
+Uninstall a game
+Verwijder een game
+
+Uninstall a DLC
+Verwijder een DLC
+
+Uninstall an update
+Verwijder een update
 
 # src/Installer.cpp
 ###################
@@ -320,10 +409,19 @@ Ongeldige URL.
 Battery power is running low
 Batterijlading is laag.
 
+The console is disconnected from the internet
+De console is niet verbonden met het internet
+
 # src/BotInformations.cpp
 #########################
 %i sleep download pending\nClose the software with the Start button and close\nthe lid of your console.
 %i slaapstand download voorbereid\nSluit de software af met de Start knop en sluit\nde console.
+
+TWL NAND - Storage almost full
+TWL NAND - Opslag bijna vol
+
+SD - Storage almost full
+SD - Opslag bijna vol
 
 # src/GUI/Settings.cpp
 ######################
@@ -575,3 +673,30 @@ Je moet freeShop herstarten om de muziek te updaten.\n\nZou je dit nu willen doe
 
 Allow music on inactivity mode
 Sta muziek toe terwijl inactief.
+
+Feature
+Functies
+
+Publisher
+Uitgever
+
+Installed
+Geinstalleerd
+
+Game List
+Gamelijst
+
+Sorting settings saved
+Sorteerinstellingen opgeslagen
+
+Sorting settings reset
+Sorteerinstellingen gereset
+
+Download title keys from multiple URLs
+Download title keys van meerdere URLs
+
+Show game informations in game info screen
+Toon game informatie op het game info scherm
+
+Restart freeShop
+Herstart freeShop

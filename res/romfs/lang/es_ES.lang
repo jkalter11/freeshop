@@ -42,6 +42,9 @@ Pulsa el botón A para activar el WiFi
 The freeShop wasn't closed correctly the last time.\nDelete the %s folder\nand/or reinstall freeShop if the problem persists.
 La freeShop no se cerró correctamente la última vez.\nBorra la carpeta %s\ny/o reinstala la freeShop si el problema persiste.
 
+Press the B button to open System Settings
+Pulsa el botón B para abrir los Ajustes de Sistema
+
 # src/States/BrowseState.cpp
 ############################
 No title keys found.\nMake sure you have keys in\n%s\n\nManually copy keys to the directory\nor check settings to enter a URL\nfor downloading title keys.
@@ -67,6 +70,41 @@ Escribe el Title ID de un juego...
 
 This song file type isn't supported.
 El tipo de este archivo de audio no está soportado. 
+
+Loading installed game list...
+Cargando lista de juegos instalados...
+
+Welcome, %s
+Bienvenido/a, %s
+
+# src/AppStats.cpp
+##################
+Ratings
+Valoraciones
+
+Preferences
+Preferencias
+
+• Who do you think this title appeals to?
+¿A quién crees que le puede gustar este título?
+
+• What kind of play style is this title more suited for?
+¿Qué estilo de juego le pega más a este título?
+
+Everyone - %i%%
+Todo el mundo - %i%%
+
+Casual - %i%%
+Casual - %i%%
+
+%i%% - Gamers
+%i%% - Jugadores Habituales
+
+%i%% - Intense
+%u%% - Intenso
+
+Average score
+Puntuación media
 
 # src/States/DialogState.cpp
 ############################
@@ -114,6 +152,16 @@ Está borrando este juego, incluyendo todos sus datos guardados:\n\n%s
 
 Deleted: %s
 Borrado: %s
+
+
+Delete a demo
+Borrar una demo
+
+Loading screenshot #%i
+Cargando screenshot #%i
+
+Press Select to open the Ratings screen
+Pulsa Select para abrir la pantalla de Valoraciones
 
 # src/Download.cpp
 ##################
@@ -209,6 +257,20 @@ Se ha instalado %s
 The game %s (%s) has been installed on \n%s
 El juego %s (%s) se ha instalado en \n%s
 
+Incomplete installation
+Instalación incompleta
+
+Not enough space on NAND to install: \n%s
+No hay suficiente espacio en la NAND para instalar: \n%s
+
+Not enough space on SD card to install: \n%s
+No hay suficiente espacio en la Tarjeta SD para instalar: \n%s
+
+# src/InstalledList.cpp
+#######################
+Search...
+Buscando...
+
 # src/AppItem.cpp
 #################
 Already queued for sleep installation: \n%s
@@ -225,6 +287,24 @@ Descarga en modo reposo cancelada: \n%s
 
 A system update is required to download in sleep mode.
 Hace falta una actualización del sistema para descargar en modo reposo.
+
+Players
+Jugadores
+
+Languages
+Idiomas
+
+Genre
+Género
+
+Compatible Features/Accessories
+Características/Accesorios Compatibles
+
+NEW - 
+NUEVO - 
+
+Cancel a download
+Cancelar una descarga
 
 # src/InstalledItem.cpp
 #######################
@@ -259,6 +339,15 @@ DLC borrado: %s
 
 Queued DLC: %s
 DLC en cola: %s
+
+Uninstall a game
+Desinstalar un juego
+
+Uninstall a DLC
+desinstalar un DLC
+
+Uninstall an update
+Desinstalar una actualización
 
 # src/Installer.cpp
 ###################
@@ -317,10 +406,19 @@ URL inválida.
 Battery power is running low
 Queda poca batería
 
+The console is disconnected from the internet
+La consola no tiene conexión a internet
+
 # src/BotInformations.cpp
 #########################
 %i sleep download pending\nClose the software with the Start button and close\nthe lid of your console.
 %i de descarga en modo reposo pendiente\nCierra el programa con el botón Start y cierra\nla tapa de la consola.
+
+TWL NAND - Storage almost full
+TWL NAND - Almacenamiento casi lleno
+
+SD - Storage almost full
+SD - Almacenamiento casi lleno
 
 # src/GUI/Settings.cpp
 ######################
@@ -572,3 +670,30 @@ Necesitas reiniciar la freeShop para actualizar la música de eShop\n\n¿Te gust
 
 Allow music on inactivity mode
 Permitir música en modo de inactividad
+
+Feature
+Característica
+
+Publisher
+Distribuidora
+
+Installed
+Instalado
+
+Game List
+Lista de Juegos
+
+Sorting settings saved
+Opciones de ordenación guardadas
+
+Sorting settings reset
+Opciones de ordenación reseteadas
+
+Download title keys from multiple URLs
+Descargar title keys de múltiples URLs
+
+Show game informations in game info screen
+Mostrar información de juego en la pantalla de información
+
+Restart freeShop
+Reiniciar freeShop

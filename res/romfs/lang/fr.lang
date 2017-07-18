@@ -42,6 +42,9 @@ Appuyez sur le bouton A pour activer le WiFi
 The freeShop wasn't closed correctly the last time.\nDelete the %s folder\nand/or reinstall freeShop if the problem persists.
 Le freeShop n'a pas été fermé correctement la dernière fois.\nSupprimez le dossier %s\net/ou réinstallez le freeShop si le problème persiste.
 
+Press the B button to open System Settings
+Appuyez sur le bouton B pour ouvrir les Paramètres de la console
+
 # src/States/BrowseState.cpp
 ############################
 No title keys found.\nMake sure you have keys in\n%s\n\nManually copy keys to the directory\nor check settings to enter a URL\nfor downloading title keys.
@@ -67,6 +70,41 @@ Ecrivez le Title ID d'un jeu...
 
 This song file type isn't supported.
 Ce type de fichier son n'est pas supporté.
+
+Loading installed game list...
+Chargement de la liste des jeux installés...
+
+Welcome, %s
+Bienvenue, %s
+
+# src/AppStats.cpp
+##################
+Ratings
+Evaluations
+
+Preferences
+Recommandations
+
+• Who do you think this title appeals to?
+• À qui s'adresse ce logiciel ?
+
+• What kind of play style is this title more suited for?
+• À quelle utilisation ce logiciel est-il destiné ?
+
+Everyone - %i%%
+Tout le monde - %i%%
+
+Casual - %i%%
+Occasionnelle - %i%%
+
+%i%% - Gamers
+%i%% - Joueurs confirmés
+
+%i%% - Intense
+%i%% - Intense
+
+Average score
+Score moyen
 
 # src/States/DialogState.cpp
 ############################
@@ -114,6 +152,15 @@ Vous allez effacer ce jeu, et toutes ses données de sauvegarde :\n\n%s
 
 Deleted: %s
 Effacé : %s
+
+Delete a demo
+Effacer une démo
+
+Loading screenshot #%i
+Chargement du screenshot #%i
+
+Press Select to open the Ratings screen
+Appuyez sur Select pour ouvrir l'écran des Evaluations
 
 # src/Download.cpp
 ##################
@@ -212,6 +259,15 @@ Enregistré pour l'installation en veille : \n%s
 The game %s (%s) has been installed on \n%s
 Le jeu %s (%s) à été installé le \n%s
 
+Incomplete installation
+Installation incomplete
+
+Not enough space on NAND to install: \n%s
+Pas assez d'espace sur la NAND pour installer: \n%s
+
+Not enough space on SD card to install: \n%s
+Pas assez d'espace sur la carte SD pour installer: \n%s
+
 # src/AppItem.cpp
 #################
 Already queued for sleep installation: \n%s
@@ -228,6 +284,24 @@ Téléchargement en veille annulé : \n%s
 
 A system update is required to download in sleep mode.
 Une mise à jour système est requise pour l'installation\nen veille.
+
+Players
+Joueurs
+
+Languages
+Langues
+
+Genre
+Genre
+
+Compatible Features/Accessories
+Fonctions et accessoires compatibles
+
+NEW - 
+NOUVEAU - 
+
+Cancel a download
+Annuler un téléchargement
 
 # src/InstalledItem.cpp
 #######################
@@ -262,6 +336,20 @@ Effacement du DLC : %s
 
 Queued DLC: %s
 DLC en attente : %s
+
+Uninstall a game
+Désinstaller un jeu
+
+Uninstall a DLC
+Désinstaller un DLC
+
+Uninstall an update
+Désinstaller une mise à jour
+
+# src/InstalledList.cpp
+#######################
+Search...
+Rechercher...
 
 # src/Installer.cpp
 ###################
@@ -317,15 +405,22 @@ URL invalide.
 
 # src/BotInformations.cpp
 #########################
-
 %i sleep download pending\nClose the software with the Start button and close\nthe lid of your console.
 %i téléchargement(s) en veille\nFermez ce logiciel avec le bouton Start, puis\nmettez votre console en veille.
 
+TWL NAND - Storage almost full
+TWL NAND - Stockage presque saturé
+
+SD - Storage almost full
+SD - Stockage presque saturé
+
 # src/TopInformations.cpp
 #########################
-
 Battery power is running low
 Le niveau de batterie est faible
+
+The console is disconnected from the internet
+La console à été déconnectée d'Internet
 
 # src/GUI/Settings.cpp
 ######################
@@ -583,3 +678,30 @@ Fonctions
 
 Publisher
 Editeur
+
+Feature
+Fonctions
+
+Publisher
+Editeur
+
+Installed
+Installés
+
+Game List
+Liste de jeu
+
+Sorting settings saved
+Paramètres de tri sauvegardés
+
+Sorting settings reset
+Paramètres de tri réinitialisés
+
+Download title keys from multiple URLs
+Télécharger les title keys depuis plusieurs URLs
+
+Show game informations in game info screen
+Afficher les infos du jeu dans l'écran d'info de jeu
+
+Restart freeShop
+Redémarrer le freeShop
