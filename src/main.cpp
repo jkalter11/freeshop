@@ -40,6 +40,7 @@ void aptHookFunc(APT_HookType hookType, void *param)
 			FreeShop::SleepState::clock.restart();
 			FreeShop::BrowseState::clockDownloadInactivity.restart();
 			FreeShop::DownloadQueue::getInstance().resume();
+			FreeShop::g_browseState->wokeUp();
 			break;
 		case APTHOOK_ONEXIT:
 			FreeShop::SyncState::exitRequired = true;

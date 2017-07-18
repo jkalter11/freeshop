@@ -23,6 +23,7 @@ public:
 	void setTextMode(int newMode);
 	void setModeChangeEnabled(bool newMode);
 	void resetModeTimer();
+	void wokeUp();
 
 	TopInformations();
 	~TopInformations();
@@ -41,6 +42,7 @@ private:
 
 	cpp3ds::Clock m_switchClock;
 	cpp3ds::Clock m_updateClock;
+	cpp3ds::Clock m_wokeUpClock;
 	int m_textClockMode;
 
 	int m_batteryPercent;
@@ -55,6 +57,7 @@ private:
 
 	bool m_lowBatteryNotified;
 	bool m_noInternetNotified;
+	bool m_justWokeUp;
 
 #ifndef EMULATION
 	Result PTMU_GetAdapterState(u8 *out);

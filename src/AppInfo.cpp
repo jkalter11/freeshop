@@ -31,6 +31,7 @@ AppInfo::AppInfo()
 , m_descriptionVelocity(0.f)
 , m_isDemoInstalled(false)
 , m_isBannerLoaded(false)
+, m_showAppStats(false)
 {
 	m_textDownload.setFillColor(cpp3ds::Color::White);
 	m_textDownload.setOutlineColor(cpp3ds::Color(0, 0, 0, 200));
@@ -91,7 +92,8 @@ AppInfo::AppInfo()
 	m_textScreenshotsEmpty.useSystemFont();
 	m_textScreenshotsEmpty.setString(_("No Screenshots"));
 	cpp3ds::FloatRect textRect = m_textScreenshotsEmpty.getLocalBounds();
-	m_textScreenshotsEmpty.setPosition(2.f, 168.f);
+	m_textScreenshotsEmpty.setOrigin(m_textScreenshotsEmpty.getLocalBounds().width / 2, m_textScreenshotsEmpty.getLocalBounds().height / 2);
+	m_textScreenshotsEmpty.setPosition(92.f, 199.f);
 
 	m_textNothingSelected.setString(_("Select a game to start"));
 	m_textNothingSelected.setCharacterSize(16);
@@ -194,6 +196,8 @@ void AppInfo::drawTop(cpp3ds::Window &window)
 		window.draw(m_gameBanner);
 		window.draw(m_topIcon);
 	}
+
+	m_appStats.drawTop(window);
 }
 
 void AppInfo::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) const
@@ -214,7 +218,7 @@ void AppInfo::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) co
 		if (Config::get(Config::TitleID).GetBool())
 			target.draw(m_textTitleId, states);
 
-		states.scissor = cpp3ds::UintRect(0, 55, 320, 111);
+		states.scissor = cpp3ds::UintRect(0, 55, 320, 109);
 		target.draw(m_textDescriptionDrawn, states);
 		target.draw(m_scrollbar);
 		states.scissor = cpp3ds::UintRect();
@@ -253,6 +257,8 @@ void AppInfo::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) co
 		}
 
 		target.draw(m_fadeRect, states);
+
+		target.draw(m_appStats, states);
 	}
 	else
 	{
@@ -302,6 +308,7 @@ void AppInfo::loadApp(std::shared_ptr<AppItem> appItem)
 		return;
 
 	m_appItem = appItem;
+	m_appStats.setVisible(false);
 
 	if (appItem)
 	{
@@ -381,6 +388,12 @@ void AppInfo::loadApp(std::shared_ptr<AppItem> appItem)
 				m_textDescription.setPosition(2.f, 55.f);
 				m_textDescriptionDrawn.setPosition(2.f, 55.f);
 
+				if (doc["title"].HasMember("star_rating_info"))
+					m_appStats.loadApp(appItem, doc["title"]["star_rating_info"]);
+
+				if (doc["title"].HasMember("preference"))
+					m_appStats.loadPreferences(doc["title"]["preference"]);
+
 				m_textTitle.setString(appItem->getTitle());
 
 				if (doc["title"].HasMember("copyright")) {
@@ -400,7 +413,17 @@ void AppInfo::loadApp(std::shared_ptr<AppItem> appItem)
 				cpp3ds::String textLittleDescription;
 				if (doc["title"].HasMember("new") && doc["title"]["new"].GetBool())
 					textLittleDescription.insert(textLittleDescription.getSize(), _("NEW - "));
+
 				textLittleDescription.insert(textLittleDescription.getSize(), _("%s - %s", tempSizeHolder.toAnsiString().c_str(), timeTextFmt));
+
+				if (doc["title"].HasMember("rating_info")) {
+					if (doc["title"]["rating_info"].HasMember("rating_system") && doc["title"]["rating_info"].HasMember("rating")) {
+						if (doc["title"]["rating_info"]["rating_system"].HasMember("name") && doc["title"]["rating_info"]["rating"].HasMember("name")) {
+							textLittleDescription.insert(textLittleDescription.getSize(), _(" - %s %s", doc["title"]["rating_info"]["rating_system"]["name"].GetString(), doc["title"]["rating_info"]["rating"]["name"].GetString()));
+						}
+					}
+				}
+
 				m_textLittleDescription.setString(_("%s", textLittleDescription.toAnsiString().c_str()));
 
 				// Shorten the app name if it's out of the screen
@@ -584,6 +607,12 @@ bool AppInfo::processEvent(const cpp3ds::Event &event)
 		return true;
 
 	m_scrollbar.processEvent(event);
+
+	if (!m_currentScreenshot)
+		m_appStats.processEvent(event);
+
+	if (m_appStats.isVisible())
+		return false;
 
 	if (m_currentScreenshot)
 	{
@@ -771,6 +800,8 @@ void AppInfo::update(float delta)
 
 	m_scrollbar.update(delta);
 	m_tweenManager.update(delta);
+
+	m_appStats.update(delta);
 }
 
 void AppInfo::setDescription(const rapidjson::Value &jsonDescription)
@@ -1068,6 +1099,14 @@ void AppInfo::addInfoToDescription(const rapidjson::Value &jsonTitle)
 
 		m_textDescriptionDrawn << calculateWordWrapping(tempFeaturesStorage);
 	}
+
+	// Put indication to open AppStats in description
+	m_textDescriptionDrawn << "\n\n";
+	if (Theme::isTextThemed)
+		m_textDescriptionDrawn << Theme::primaryTextColor;
+	else
+		m_textDescriptionDrawn << cpp3ds::Color::Black;
+	m_textDescriptionDrawn << _("Press Select to open the Ratings screen").toAnsiString();
 }
 
 cpp3ds::String AppInfo::calculateWordWrapping(cpp3ds::String sentence)
@@ -1103,14 +1142,14 @@ cpp3ds::String AppInfo::calculateWordWrapping(cpp3ds::String sentence)
 
 void AppInfo::setBanner(const rapidjson::Value &jsonBanner)
 {
-	m_isBannerLoaded = true;
-
 	std::string bannerURL = jsonBanner.GetString();
 	std::string bannerPath = _(FREESHOP_DIR "/tmp/%s/banner.jpg", m_appItem->getTitleIdStr().c_str());
 
 	Download download(bannerURL, bannerPath);
 	download.setField("Accept", "application/json");
 	download.run();
+
+	m_isBannerLoaded = true;
 
 	m_gameBannerTexture.loadFromFile(bannerPath);
 	m_gameBanner.setPosition(200.f, 120.f);
@@ -1145,6 +1184,8 @@ void AppInfo::setBanner(const rapidjson::Value &jsonBanner)
 
 void AppInfo::closeBanner()
 {
+	m_tweenManager.killAll();
+
 	TweenEngine::Tween::to(m_gameBanner, util3ds::TweenSprite::COLOR_ALPHA, 0.2f)
 		.target(0.f)
 		.setCallback(TweenEngine::TweenCallback::COMPLETE, [&](TweenEngine::BaseTween* source) {

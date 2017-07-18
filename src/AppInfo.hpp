@@ -9,6 +9,7 @@
 #include "TweenObjects.hpp"
 #include "AppItem.hpp"
 #include "RichText.hpp"
+#include "AppStats.hpp"
 #include <cpp3ds/Window/Window.hpp>
 #include "States/State.hpp"
 #include "TweenObjects.hpp"
@@ -104,6 +105,9 @@ private:
 	util3ds::TweenSprite m_topIcon;
 
 	std::shared_ptr<AppItem> m_appItem;
+
+	AppStats m_appStats;
+	bool m_showAppStats;
 
 	TweenEngine::TweenManager m_tweenManager;
 

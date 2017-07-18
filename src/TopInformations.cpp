@@ -24,6 +24,7 @@ TopInformations::TopInformations()
 , m_canTransition(false)
 , m_lowBatteryNotified(false)
 , m_noInternetNotified(false)
+, m_justWokeUp(false)
 {
 	//Start the clock
 	m_switchClock.restart();
@@ -117,7 +118,6 @@ void TopInformations::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates st
 
 	//Draw signal
 	target.draw(m_signalIcon);
-
 }
 
 void TopInformations::update(float delta)
@@ -134,6 +134,9 @@ void TopInformations::update(float delta)
 	strftime(timeTextFmt, 12, "%H %M", timeinfo);
 
 	m_tweenManager.update(delta);
+
+	if (m_wokeUpClock.getElapsedTime() >= cpp3ds::seconds(10) && m_justWokeUp)
+		m_justWokeUp = false;
 
 	//Update battery and signal icons
 	if (m_updateClock.getElapsedTime() >= cpp3ds::seconds(2)) {
@@ -209,7 +212,7 @@ void TopInformations::updateIcons(std::string timeTextFmt)
 	} else {
     signalPath = "wifi_disconnected.png";
 
-		if (!m_noInternetNotified) {
+		if (!m_noInternetNotified && !m_justWokeUp) {
 			m_noInternetNotified = true;
 			Notification::spawn(_("The console is disconnected from the internet"));
 		}
@@ -362,6 +365,12 @@ void TopInformations::setModeChangeEnabled(bool newMode)
 void TopInformations::resetModeTimer()
 {
 	m_switchClock.restart();
+}
+
+void TopInformations::wokeUp()
+{
+	m_justWokeUp = true;
+	m_wokeUpClock.restart();
 }
 
 #ifndef EMULATION

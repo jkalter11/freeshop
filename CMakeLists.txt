@@ -49,6 +49,7 @@ set(SOURCE_FILES
 	${PROJECT_SOURCE_DIR}/src/AppItem.cpp
 	${PROJECT_SOURCE_DIR}/src/AppList.cpp
 	${PROJECT_SOURCE_DIR}/src/AppInfo.cpp
+	${PROJECT_SOURCE_DIR}/src/AppStats.cpp
 	${PROJECT_SOURCE_DIR}/src/Config.cpp
 	${PROJECT_SOURCE_DIR}/src/IconSet.cpp
 	${PROJECT_SOURCE_DIR}/src/InstalledItem.cpp

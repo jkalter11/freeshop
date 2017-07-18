@@ -1,6 +1,7 @@
 #ifndef FREESHOP_STATE_HPP
 #define FREESHOP_STATE_HPP
 
+#include <functional>
 #include "StateIdentifiers.hpp"
 #include <cpp3ds/System/Time.hpp>
 #include <cpp3ds/Window/Event.hpp>

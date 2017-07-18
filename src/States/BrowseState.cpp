@@ -910,4 +910,9 @@ void BrowseState::setInstalledListSearchText(std::string text)
 	m_textSearchInstalledList.setOrigin(m_textSearchInstalledList.getGlobalBounds().width / 2, 0);
 }
 
+void BrowseState::wokeUp()
+{
+	m_topInfos.wokeUp();
+}
+
 } // namespace FreeShop

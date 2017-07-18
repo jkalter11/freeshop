@@ -3,6 +3,8 @@ The WOW-Too-Many-Informations update
 • Further improvements to overall system
   stability and other minor adjustments.
 • Reworked game description screen.
+  You can also press the Select button
+  to open the ratings screen for a game.
 • The installed list can now be sorted
   and the sorting options can be saved,
   like the filter list.

@@ -53,6 +53,7 @@ public:
 	void setInstalledListSearchText(std::string text);
 
 	static cpp3ds::Clock clockDownloadInactivity;
+	void wokeUp();
 
 	std::string getCtrSdPath();
 
