@@ -1481,37 +1481,47 @@ void Settings::updateEnabledState(Gwen::Controls::Base *control)
 
 void Settings::updateSorting(Gwen::Controls::Base *control)
 {
-	AppList::SortType sortType;
-	std::string sortTypeName(m_radioSortType->GetSelectedName());
-	bool isAscending = (m_radioSortDirection->GetSelectedName() == "Ascending");
-	if (sortTypeName == "Name")
-		sortType = AppList::Name;
-	else if (sortTypeName == "Size")
-		sortType = AppList::Size;
-	else if (sortTypeName == "Vote Score")
-		sortType = AppList::VoteScore;
-	else if (sortTypeName == "Vote Count")
-		sortType = AppList::VoteCount;
-	else
-		sortType = AppList::ReleaseDate;
+	std::string sortName;
+	if (control)
+		sortName = control->GetParent()->GetParent()->GetName();
 
-	AppList::getInstance().setSortType(sortType, isAscending);
+	bool isAscending;
 
-	InstalledList::SortType sortTypeInstalled;
-	std::string sortTypeNameInstalled(m_radioSortTypeInstalled->GetSelectedName());
-	isAscending = (m_radioSortDirectionInstalled->GetSelectedName() == "Ascending");
-	if (sortTypeNameInstalled == "Name")
-		sortTypeInstalled = InstalledList::Name;
-	else if (sortTypeNameInstalled == "Size")
-		sortTypeInstalled = InstalledList::Size;
-	else if (sortTypeNameInstalled == "Vote Score")
-		sortTypeInstalled = InstalledList::VoteScore;
-	else if (sortTypeNameInstalled == "Vote Count")
-		sortTypeInstalled = InstalledList::VoteCount;
-	else
-		sortTypeInstalled = InstalledList::ReleaseDate;
+	if (!control || sortName == "Game List") {
+		AppList::SortType sortType;
+		std::string sortTypeName(m_radioSortType->GetSelectedName());
+		isAscending = (m_radioSortDirection->GetSelectedName() == "Ascending");
+		if (sortTypeName == "Name")
+			sortType = AppList::Name;
+		else if (sortTypeName == "Size")
+			sortType = AppList::Size;
+		else if (sortTypeName == "Vote Score")
+			sortType = AppList::VoteScore;
+		else if (sortTypeName == "Vote Count")
+			sortType = AppList::VoteCount;
+		else
+			sortType = AppList::ReleaseDate;
 
-	InstalledList::getInstance().setSortType(sortTypeInstalled, isAscending);
+		AppList::getInstance().setSortType(sortType, isAscending);
+	}
+
+	if (!control || sortName == "Installed") {
+		InstalledList::SortType sortTypeInstalled;
+		std::string sortTypeNameInstalled(m_radioSortTypeInstalled->GetSelectedName());
+		isAscending = (m_radioSortDirectionInstalled->GetSelectedName() == "Ascending");
+		if (sortTypeNameInstalled == "Name")
+			sortTypeInstalled = InstalledList::Name;
+		else if (sortTypeNameInstalled == "Size")
+			sortTypeInstalled = InstalledList::Size;
+		else if (sortTypeNameInstalled == "Vote Score")
+			sortTypeInstalled = InstalledList::VoteScore;
+		else if (sortTypeNameInstalled == "Vote Count")
+			sortTypeInstalled = InstalledList::VoteCount;
+		else
+			sortTypeInstalled = InstalledList::ReleaseDate;
+
+		InstalledList::getInstance().setSortType(sortTypeInstalled, isAscending);
+	}
 }
 
 void Settings::musicComboChanged(Gwen::Controls::Base *combobox)
