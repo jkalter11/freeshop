@@ -28,7 +28,13 @@ Extracting latest cache...
 Estrazione cache più recente...
 
 Downloading title keys...
-Scaricamento chiavi titolo...
+Scaricamento title keys...
+
+Loading services...
+Avviando servizi...
+
+Loading theme manager...
+Avviando manager temi...
 
 Press the A button to enable WiFi
 Premi il bottone A per abilitare il WiFi.
@@ -36,12 +42,8 @@ Premi il bottone A per abilitare il WiFi.
 The freeShop wasn't closed correctly the last time.\nDelete the %s folder\nand/or reinstall freeShop if the problem persists.
 freeShop non è stato chiuso correttamente l'ultima volta.\nElimina la %s cartella\nand/o reinstalla freeShop se il problema persiste.
 
-
-Loading theme manager...
-Avviando manager temi...
-
-Loading services...
-Avviando servizi...
+Press the B button to open System Settings
+Premi il pulsante B per aprire le Impostazioni del Sistema
 
 # src/States/BrowseState.cpp
 ############################
@@ -57,6 +59,8 @@ Elemento accodato: %s
 Already installed: %s
 Già installato: %s
 
+Already in downloading: \n%s
+Stai già scaricando: \n%s
 
 Type a game name...
 Scrivi il nome di un gioco...
@@ -64,15 +68,48 @@ Scrivi il nome di un gioco...
 Type a game Title ID...
 Scrivi il Title ID di un gioco...
 
-
 This song file type isn't supported.
 Il formato del file di questa canzone non è supportato.
 
+Loading installed game list...
+Caricamento della lista dei giochi installati...
+
+Welcome, %s
+Benvenuto, %s
+
+# src/AppStats.cpp
+##################
+Ratings
+Valutazioni
+
+Preferences
+Preferenze
+
+• Who do you think this title appeals to?
+• A chi è più adatto?
+
+• What kind of play style is this title more suited for?
+• Che stile di gioco richiede?
+
+Everyone - %i%%
+A tutti - %i%%
+
+Casual - %i%%
+Poco impegnativo - %i%%
+
+%i%% - Gamers
+%i%% - A giocatori esperti
+
+%i%% - Intense
+%i%% - Molto impegnativo
+
+Average score
+Valutazione media
 
 # src/States/DialogState.cpp
 ############################
  Ok
- Ok
+ OK
 
  Cancel
  Annulla
@@ -93,7 +130,7 @@ Sei sicuro di voler continuare?
 # src/AppInfo.cpp
 #################
 No Screenshots
-Niente Screenshots
+Nessuno Screenshot
 
 Select a game to start
 Seleziona un gioco per avviarlo
@@ -116,16 +153,25 @@ Stai per cancellare questo gioco, incluso ogni salvataggio:\n\n%s
 Deleted: %s
 Cancellato: %s
 
+Delete a demo
+Elimina una demo
+
+Loading screenshot #%i
+Caricamento screenshot #%i
+
+Press Select to open the Ratings screen
+Premi Select per aprire la schermata delle Valutazioni
+
 # src/Download.cpp
 ##################
 Waiting for internet...
-Attendendo internet...
+In attesa di una connessione ad Internet...
 
 Failed
 Fallito
 
 Retry attempts exceeded
-Limite tentativi superato
+Numero di tentativi superato
 
 Retrying... %d
 Nuovo tentativo... %d
@@ -160,16 +206,13 @@ Installing TMD...
 Installazione TMD...
 
 Importing content...
-Aggiunta contenuti....
+Aggiunta contenuti...
 
 Installing %d/%d... %.1f%% (%.0f KB/s) %dm %02ds
-Installazione %d/%d... %.1f%% (%.0f KB/s) %dm %02ds
+Installando %d/%d... %.1f%% (%.0f KB/s) %dm %02ds
 
 Suspended
 Sospeso
-
-Installed
-Installato
 
 Completed: %s
 Completato: %s
@@ -187,26 +230,28 @@ Not enough space on SD
 Spazio insufficente nella SD
 
 Wrong title key
-Chiave titolo errata
+Title key errata
 
 Ready for sleep installation: \n%s
 Pronto per installazione in modalità riposo: \n%s
 
 Processing sleep installation: \n%s
-Processando installazione in modalità riposo: \n%s
+Elaborazione dell' installazione in modalità riposo: \n%s
 
-Can't install ticket: \n%s
-Impossibile installare ticket: \n%s
+Can't install ticket: \n%saaa
+Impossibile installare il ticket: \n%s
 
 Can't install seed: \n%s
-Impossibile installare seed: \n%s
+Impossibile installare il seed: \n%s
 
 Sleep installation failed: \n%s
-Installazione modalità riposo fallita: \n%s
+Installazione in modalità riposo fallita: \n%s
 
 Processing for sleep download: \n%s
 Elaborazione del download in modalità riposo: \n%s
 
+Registered for sleep download: \n%s
+Registrato per il download in modalità riposo: \n%s
 
 %s has been installed
 %s è stato installato.
@@ -214,17 +259,25 @@ Elaborazione del download in modalità riposo: \n%s
 The game %s (%s) has been installed on \n%s
 Il gioco %s (%s) è stato installato su \n%s.
 
+Incomplete installation
+Installazione incompleta
+
+Not enough space on NAND to install: \n%s
+Spazio nella NAND insufficiente per installare: \n%s
+
+Not enough space on SD card to install: \n%s
+Spazio nella Scheda SD insufficiente per installare: \n%s
 
 # src/AppItem.cpp
 #################
 Already queued for sleep installation: \n%s
-Già pianificato per installazione in modalità riposo: \n%s
+Già in coda per l'installazione in modalità riposo: \n%s
 
 Preparing for sleep installation: \n%s
-Preparazione per installazione in modalità riposo: \n%s
+In preparazione l'per installazione in modalità riposo: \n%s
 
 Ready for sleep installation: \n%s
-Pronto per installazione in modalità riposo: \n%s
+Pronto per l'installazione in modalità riposo: \n%s
 
 Sleep download canceled: \n%s
 Il download in modalità riposo è stato cancellato: \n%s
@@ -232,6 +285,23 @@ Il download in modalità riposo è stato cancellato: \n%s
 A system update is required to download in sleep mode.
 Il download in modalità riposo richiede un aggiornamento del sistema.
 
+Players
+Giocatori
+
+Languages
+Lingue
+
+Genre
+Genere
+
+Compatible Features/Accessories
+Funzioni/Accessori compatibili
+
+NEW - 
+NUOVO - 
+
+Cancel a download
+Cancella un download
 
 # src/InstalledItem.cpp
 #######################
@@ -239,7 +309,7 @@ Il download in modalità riposo richiede un aggiornamento del sistema.
  - Titolo di sistema
 
 # src/InstalledOptions.cpp
-#########################
+##########################
 Game
 Gioco
 
@@ -253,27 +323,41 @@ You are deleting updates for this title:\n\n%s
 Stai per cancellare gli aggiornamenti per questo titolo:\n\n%s
 
 Deleted update: %s
-Aggiornamento cancellato: %s
+Aggiornamento eliminato: %s
 
 Queued update: %s
 Aggiornamento in coda: %s
 
 You are deleting DLC for this title:\n\n%s
-Stai per cancellare i DLC per questo titolo:\n\n%s
+Stai per eliminare i DLC per questo titolo:\n\n%s
 
 Deleted DLC: %s
-DLC cancellato: %s
+DLC eliminato: %s
 
 Queued DLC: %s
 DLC in coda: %s
 
+Uninstall a game
+Disinstalla un gioco
+
+Uninstall a DLC
+Disinstalla un DLC
+
+Uninstall an update
+Disinstalla un aggiornamento
+
+# src/InstalledList.cpp
+#######################
+Search...
+Ricerca...
+
 # src/Installer.cpp
 ###################
 Failed to install ticket: 0x%08lX
-Installazione ticket fallita: 0x%08lX
+Installazione del ticket fallita: 0x%08lX
 
 Failed to get seed: HTTP %d
-Ricezione seed fallita: HTTP %d
+Ricezione del seed fallita: HTTP %d
 
 Need FW 9.6+, Seed failed: %016llX
 FW 9.6+ necessario, seed fallito: %016llX
@@ -288,7 +372,7 @@ Failed to suspend: 0x%08lX
 Sospensione fallita: 0x%08lX
 
 Failed to commit title: 0x%08lX
-Finalizzazione del titolo fallita: 0x%08lX
+Installazione del titolo fallita: 0x%08lX
 
 Failed to finalize TMD: 0x%08lX
 Finalizzazione TMD fallita: 0x%08lX
@@ -297,13 +381,13 @@ Failed to finalize content: 0x%08lX
 Finalizzazione contenuti fallita: 0x%08lX
 
 Failed to import contents: 0x%08lX
-Aggiungimento contenuti fallito: 0x%08lX
+Importazione di contenuti fallita: 0x%08lX
 
 Failed to install TMD: 0x%08lX
-Installazione TMD fallita: 0x%08lX
+Installazione del TMD fallita: 0x%08lX: 0x%08lX
 
 Failed to install content: 0x%08lX
-Installazione contenuti fallita: 0x%08lX
+Installazione dei contenuti fallita: 0x%08lX
 
 # src/TitleKeys.cpp
 ###################
@@ -311,7 +395,7 @@ Failed.\n\nHTTP Status: %d
 Fallito.\n\nStato HTTP: %d
 
 Invalid title key format.
-Formato chiave titolo non valido.
+Formato title key non valido.
 
 Request timed out.\nTry again.
 Richiesta scaduta.\nRiprova.
@@ -319,16 +403,24 @@ Richiesta scaduta.\nRiprova.
 Invalid URL.
 URL non valido.
 
+# src/BotInformations.cpp
+#########################
+%i sleep download pending\nClose the software with the Start button and close\nthe lid of your console.
+%i Download in modalità riposo in attesa\nChiudi il software con il bottone Start\ne chiudi il coperchio della console.
+
+TWL NAND - Storage almost full
+TWL NAND - Memoria quasi piena
+
+SD - Storage almost full
+SD - Memoria quasi piena
+
 # src/TopInformations.cpp
 #########################
 Battery power is running low
 La batteria si sta scaricando.
 
-# src/BotInformations.cpp
-#########################
-%i sleep download pending\nClose the software with the Select button and close\nthe lid of your console.
-%i Download in modalità riposo sospeso\nChiudi il software premendo il bottone Select e\nchiudi il coperchio della tua console.
-
+The console is disconnected from the internet
+La console non è connessa ad Internet
 
 # src/GUI/Settings.cpp
 ######################
@@ -348,7 +440,7 @@ Platform
 Piattaforma
 
 Sort
-Ordina
+Ordine
 
 Update
 Aggiornamento
@@ -360,7 +452,7 @@ Music
 Musica
 
 Other
-Altri
+Altro
 
 (Never checked)
 (Mai verificato)
@@ -372,7 +464,7 @@ Japan
 Giappone
 
 USA
-America
+USA
 
 Europe
 Europa
@@ -381,10 +473,10 @@ Australia
 Australia
 
 China
-China
+Cina
 
 Korea
-Korea
+Corea
 
 Taiwan
 Taiwan
@@ -417,31 +509,31 @@ Russian
 Russo
 
 Filter settings saved
-Impostazioni filtri salvate
+Opzioni dei filtri salvate
 
 Cleared saved filter settings
-Impostazioni filtri eliminate
+Opzioni dei filtri resettate
 
 Select All
-Seleziona tutto
+Seleziona Tutto
 
 Select None
-Deseleziona tutto
+Nessuna Selezione
 
 Name
 Nome
 
 Size
-Peso
+Dimensione
 
 Vote Score
 Punteggio voti
 
 Vote Count
-Conteggio voti
+Numero di voti
 
 Release Date
-Data di rilascio
+Data di Rilascio
 
 Ascending
 Crescente
@@ -456,13 +548,13 @@ Auto-update freeShop
 Aggiorna automaticamente freeShop
 
 Refresh Cache
-Ricarica cache
+Ricarica la cache
 
 Play sound when queue finishes
-Riproduci suono quando la coda è terminata
+Riproduci un suono quando la coda è terminata
 
 Power off after download inactivity
-Spegni dopo inattività di download
+Spegni il 3DS dopo inattività di download
 
 1 minute
 1 minuto
@@ -471,44 +563,64 @@ Spegni dopo inattività di download
 %d minuti
 
 Use Defaults
-Usa predefinite
+Usa Predefinite
 
 HTTP Timeout: %.0fs
-Tempo limite HTTP: %.0fs
+HTTP Timeout: %.0fs
 
 Buffer size: %u KB
 Dimensione buffer: %u KB
 
 Disable music
-Disabilita la musica
+Disattiva la musica
 
 Play eShop music
-Riproduzione della musica di eShop
+Riproduci la musica dell'eShop
 
 Play random track
-Riproduzione casuale delle tracce
+Riproduzione casuale
 
 Play selected track
-Riproduzione della traccia selezionata
+Riproduci la traccia selezionata
 
 Language:
-Lingua:
+Lingua :
 
 Auto-detect
-Trova automaticamente
+Rilevamento automatico
 
 View news (%s)
-Visualizza notizie (%s)
-
-Enable screen sleep after inactivity
-Attiva riposo schermo per inattività
+Vedi news (%s)
 
 Remote title key URL(s)
-URL(s) remoto delle title keys
+URL(s) delle title key
 
 You need to restart freeShop for %s to be loaded.\n\nWould you like to do this now?
 Devi riavviare freeShop per caricare %s.\n\nDesideri farlo ora?
 
+Keyboard:
+Tastiera
+
+Keyboard changed to: %s
+Tastiera cambiata in: %s
+
+Show Title ID in game description screen
+Mostra il Title ID del gioco selezionato
+
+Locales
+Lingue
+
+Audio Service: Enabled
+Servizi audio: Abilitati
+
+Audio Service: Disabled, please dump your DSP
+Servizi audio: Disabilitati. Per favore estrai il tuo DSP
+
+Use system keyboard
+Usa la tastiera del sistema
+
+Show battery percentage and clock
+Mostra la percentuale della batteria e l'orologio
 
 Notifiers
 Notifiche
@@ -535,16 +647,16 @@ Inactivity
 Inattività
 
 Enable top screen sleep after inactivity
-Spegni lo schermo superiore dopo l'inattività
+Spegni lo schermo superiore se inattivo
 
 Enable bottom screen sleep after inactivity
-Spegni lo schermo inferiore dopo l'inattività
+Spegni lo schermo inferiore se inattivo
 
 Dim the LEDs after inactivity
-Disabilita il led dopo l'inattività
+Disabilita il led se inattivo
 
 Allow sounds on inactivity mode
-Abilita i suoni sulla modalità di inattività
+Abilita i suoni in modalità di inattività
 
 Go into inactivity mode after %.0fs
 Vai in modalità di inattività dopo %.0fs.
@@ -561,17 +673,35 @@ Devi riavviare freeShop per aggiornare la musica dell'eShop.\n\nDesideri farlo o
 Allow music on inactivity mode
 Riproduci la musica in modalità di inattività
 
-Keyboard:
-Tastiera :
+Feature
+Funzioni
 
-Keyboard changed to: %s
-Tastiera cambiata in: %s
+Publisher
+Publisher
 
-Show Title ID in game description screen
-Mostra ID Titolo nella descrizione del gioco
+Feature
+Funzioni
 
-Audio Service: Enabled
-Servizi audio: Abilitati
+Publisher
+Publisher
 
-Audio Service: Disabled, please dump your DSP
-Servizi audio: Disabilitati. Perfavore estrai il tuo DSP
+Installed
+Installato
+
+Game List
+Lista dei giochi
+
+Sorting settings saved
+Opzioni dell'ordinamento salvate
+
+Sorting settings reset
+Reset delle opzioni dell'ordinamento
+
+Download title keys from multiple URLs
+Scarica le title keys da multiple URL
+
+Show game informations in game info screen
+Mostra le informazioni nella schermata delle informazioni del gioco
+
+Restart freeShop
+Riavvia freeShop
