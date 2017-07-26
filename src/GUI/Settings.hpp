@@ -108,6 +108,8 @@ namespace FreeShop
 
 			void showNews(Gwen::Controls::Base* base);
 
+			void askUserToRestartApp();
+
 		private:
 			cpp3ds::Vector2f m_position;
 

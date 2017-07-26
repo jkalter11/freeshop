@@ -346,18 +346,9 @@ void Download::fillFromAppItem(std::shared_ptr<AppItem> app)
 		m_textProgress.setFillColor(cpp3ds::Color(130, 130, 130, 255));
 	m_textProgress.move(0.f, 12.f);
 
-	cpp3ds::Color progressColor = cpp3ds::Color(0, 0, 0, 192);
-	cpp3ds::Color middleColor   = app->getIcon(textureRect)->copyToImage().getPixel(textureRect.left + 24, textureRect.top + 24);
-
-	progressColor.r = middleColor.r;
-	progressColor.g = middleColor.g;
-	progressColor.b = middleColor.b;
-
-	m_progressBar.setFillColor(progressColor);
-	m_progressBar.setOutlineColor(cpp3ds::Color(158, 158, 158, 128));
-	m_progressBar.setOutlineThickness(1.f);
+	m_progressBar.setFillColor(cpp3ds::Color(33, 33, 33, 156));
+	m_progressBar.setOutlineColor(cpp3ds::Color(66, 66, 66, 128));
 }
-
 
 void Download::processEvent(const cpp3ds::Event &event)
 {

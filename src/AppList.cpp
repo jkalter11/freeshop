@@ -515,6 +515,10 @@ bool AppList::isCollapsed() const
 
 void AppList::filterBySearch(const std::string &searchTerm, std::vector<util3ds::RichText> &textMatches)
 {
+	if (searchTerm == m_currentSearchTerm)
+	 return;
+
+	m_currentSearchTerm = searchTerm;
 	m_tweenManager.killAll();
 	for (auto& item : m_guiAppItems)
 	{

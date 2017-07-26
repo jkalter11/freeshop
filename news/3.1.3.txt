@@ -22,6 +22,21 @@ The WOW-Too-Many-Informations update
   SD/NAND for sleep downloads.
 • Message if storage is almost full
   in storage bars.
+• Modified dialogs/news screen, and
+  cleaned animations.
+• The "Refresh Cache"/"Update" 
+  buttons now asks for a confirmation
+  before rebooting the app.
+• The storage informations now tell you
+  if there's less than 5% of free storage
+  in your SD/NAND.
+• A notification is sent when the console
+  is disconnected from the internet.
+• The system settings can be launched when
+  there is no internet connection at
+  startup.
+• The game list is not updated on a search
+  when the search term didn't change.
 • Modified dialogs, and cleaned
   animations.
 • Added a 3DSX auto-updater.

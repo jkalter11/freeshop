@@ -78,6 +78,7 @@ private:
 	int m_indexDelta;
 	bool m_processedFirstKey;
 	bool m_startKeyRepeat;
+	std::string m_currentSearchTerm;
 
 	std::vector<int> m_filterGenres;
 	std::vector<int> m_filterPlatforms;

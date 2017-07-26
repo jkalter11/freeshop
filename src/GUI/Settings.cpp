@@ -1392,13 +1392,13 @@ void Settings::updateQrClicked(Gwen::Controls::Base *button)
 void Settings::updateCheckUpdateClicked(Gwen::Controls::Base *button)
 {
 	Config::set(Config::TriggerUpdateFlag, true);
-	g_requestJump = 0x400000F12EE00;
+	askUserToRestartApp();
 }
 
 void Settings::updateRefreshCacheClicked(Gwen::Controls::Base *button)
 {
 	Config::set(Config::CacheVersion, "");
-	g_requestJump = 0x400000F12EE00;
+	askUserToRestartApp();
 }
 
 void Settings::updateKeyboardClicked(Gwen::Controls::Base *textbox)
@@ -1584,33 +1584,7 @@ void Settings::languageChange(Gwen::Controls::Base *base)
 	std::string langCode = m_listboxLanguages->GetSelectedRowName();
 	if (!langCode.empty() && langCode != Config::get(Config::Language).GetString())
 	{
-		g_browseState->requestStackPush(States::Dialog, false, [=](void *data) mutable {
-			auto event = reinterpret_cast<DialogState::Event*>(data);
-			if (event->type == DialogState::GetText)
-			{
-				auto str = reinterpret_cast<cpp3ds::String*>(event->data);
-				*str = _("You need to restart freeShop for %s to be loaded.\n\nWould you like to do this now?", m_listboxLanguages->GetSelectedRow()->GetText(0).c_str());
-				return true;
-			}
-			else if (event->type == DialogState::GetTitle) {
-				auto str = reinterpret_cast<cpp3ds::String *>(event->data);
-				*str = _("Restart freeShop");
-				return true;
-			}
-			else if (event->type == DialogState::Response)
-			{
-				bool *accepted = reinterpret_cast<bool*>(event->data);
-				if (*accepted)
-				{
-					// Restart freeShop
-					Config::set(Config::Language, langCode.c_str());
-					Config::saveToFile();
-					g_requestJump = 0x400000F12EE00;
-				}
-				return true;
-			}
-			return false;
-		});
+		askUserToRestartApp();
 	}
 }
 
@@ -1716,7 +1690,12 @@ void Settings::resetEshopMusicClicked(Gwen::Controls::Base *button)
 {
 #ifndef EMULATION
 	Config::set(Config::ResetEshopMusic, true);
+	askUserToRestartApp();
+#endif
+}
 
+void Settings::askUserToRestartApp()
+{
 	g_browseState->requestStackPush(States::Dialog, false, [=](void *data) mutable {
 		auto event = reinterpret_cast<DialogState::Event*>(data);
 		if (event->type == DialogState::GetText)
@@ -1743,7 +1722,6 @@ void Settings::resetEshopMusicClicked(Gwen::Controls::Base *button)
 		}
 		return false;
 	});
-#endif
 }
 
 } // namespace GUI
