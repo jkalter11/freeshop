@@ -93,16 +93,46 @@ void Notification::animate()
 void Notification::sendNews(cpp3ds::String title, cpp3ds::String message)
 {
 #ifndef EMULATION
-	u16 utfTitle[256];
-	u16 utfMessage[2048];
+	// Check if the title is too long
+	if (title.getSize() >= 32) {
+		title = title.substring(0, 28);
+		title.insert(title.getSize(), "...");
+	}
 
-	copy(title.begin(), title.end(), utfTitle);
-  utfTitle[title.getSize()] = 0;
+	// Calculate word-wrapping
+	int startPos = 0;
+	int lastSpace = 0;
+	auto s = message.toUtf16();
+	cpp3ds::Text tmpText;
+	tmpText.useSystemFont();
+	tmpText.setCharacterSize(14);
+	for (int i = 0; i < s.size(); ++i)
+	{
+		if (s[i] == ' ')
+			lastSpace = i;
+		tmpText.setString(cpp3ds::String::fromUtf16(s.begin() + startPos, s.begin() + i));
+		if (tmpText.getLocalBounds().width > 254)
+		{
+			if (lastSpace != 0)
+			{
+				s[lastSpace] = '\n';
+				i = startPos = lastSpace + 1;
+				lastSpace = 0;
+			}
+			else
+			{
+				s.insert(s.begin() + i, '\n');
+				startPos = ++i;
+			}
+		}
+	}
 
-	copy(message.begin(), message.end(), utfMessage);
-  utfMessage[message.getSize()] = 0;
+	message = cpp3ds::String::fromUtf16(s.begin(), s.end());
 
-	NEWS_AddNotification(utfTitle, 256, utfMessage, 2048, NULL, 0, false);
+	auto utfTitle = title.toUtf16();
+	auto utfMessage = message.toUtf16();
+
+	NEWS_AddNotification(utfTitle.c_str(), title.getSize(), utfMessage.c_str(), message.getSize(), NULL, 0, false);
 #endif
 }
 

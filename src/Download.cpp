@@ -346,8 +346,8 @@ void Download::fillFromAppItem(std::shared_ptr<AppItem> app)
 		m_textProgress.setFillColor(cpp3ds::Color(130, 130, 130, 255));
 	m_textProgress.move(0.f, 12.f);
 
-	m_progressBar.setFillColor(cpp3ds::Color(33, 33, 33, 156));
-	m_progressBar.setOutlineColor(cpp3ds::Color(66, 66, 66, 128));
+	m_progressBar.setFillColor(cpp3ds::Color(97, 97, 97));
+	m_progressBar.setOutlineColor(cpp3ds::Color(66, 66, 66));
 }
 
 void Download::processEvent(const cpp3ds::Event &event)
