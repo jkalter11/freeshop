@@ -42,6 +42,9 @@ Pressione o botão A para ativar o WiFi
 The freeShop wasn't closed correctly the last time.\nDelete the %s folder\nand/or reinstall freeShop if the problem persists.
 A freeShop não foi fechada corretamente na última vez.\nExclua a pasta %s\ne/ou reinstale a freeShop se o problema persistir.
 
+Press the B button to open System Settings
+Pressione o botão B para abrir as Configurações do Sistema
+
 # src/States/BrowseState.cpp
 ############################
 No title keys found.\nMake sure you have keys in\n%s\n\nManually copy keys to the directory\nor check settings to enter a URL\nfor downloading title keys.
@@ -68,6 +71,40 @@ Digite um nome de jogo...
 Type a game Title ID...
 Digite uma ID de Título de jogo...
 
+Loading installed game list...
+Carregando lista de jogos instalados...
+
+Welcome, %s
+Bem-vindo(a), %s
+
+# src/AppStats.cpp
+##################
+Ratings
+Avaliações
+
+Preferences
+Preferências
+
+• Who do you think this title appeals to?
+• A quem recomendaria este título?
+
+• What kind of play style is this title more suited for?
+• Como é o jogo?
+
+Everyone - %i%%
+Todos - %i%%
+
+Casual - %i%%
+Leve - %i%%
+
+%i%% - Gamers
+%i%% - Jogadores experientes
+
+%i%% - Intense
+%i%% - Intenso
+
+Average score
+Pontuação média
 
 # src/States/DialogState.cpp
 ############################
@@ -118,6 +155,15 @@ Excluiu: %s
 
 Select a game to start
 Selecione um jogo para começar
+
+Delete a demo
+Excluir uma versão demo
+
+Loading screenshot #%i
+Carregando captura de tela #%i
+
+Press Select to open the Ratings screen
+Pressione Select para abrir a tela de Avaliações
 
 # src/Download.cpp
 ##################
@@ -216,6 +262,20 @@ O jogo %s (%s) foi instalado em \n%s
 Processing for sleep download: \n%s
 Processando para o download em modo de descanso: \n%s
 
+Incomplete installation
+Instalação incompleta
+
+Not enough space on NAND to install: \n%s
+Espaço insuficiente na NAND para instalar: \n%s
+
+Not enough space on SD card to install: \n%s
+Espaço insuficiente no cartão SD para instalar: \n%s
+
+# src/InstalledList.cpp
+#######################
+Search...
+Buscar...
+
 # src/AppItem.cpp
 #################
 Already queued for sleep installation: \n%s
@@ -232,6 +292,24 @@ Download em modo de descanso cancelado: \n%s
 
 A system update is required to download in sleep mode.
 Uma atualização do sistema é necessária para baixar em modo de descanso.
+
+Players
+Jogadores
+
+Languages
+Idiomas
+
+Genre
+Gênero
+
+Compatible Features/Accessories
+Funções e acessórios compatíveis
+
+NEW -
+NOVO -
+
+Cancel a download
+Cancelar um download
 
 # src/InstalledItem.cpp
 #######################
@@ -266,6 +344,15 @@ DLC excluído: %s
 
 Queued DLC: %s
 DLC em fila: %s
+
+Uninstall a game
+Desinstalar um jogo
+
+Uninstall a DLC
+Desinstalar uma DLC
+
+Uninstall an update
+Desinstalar uma atualização
 
 # src/Installer.cpp
 ###################
@@ -324,10 +411,20 @@ URL inválido.
 Battery power is running low
 A bateria está baixa
 
+
+The console is disconnected from the internet
+O console está desconectado da internet
+
 # src/BotInformations.cpp
 #########################
 %i sleep download pending\nClose the software with the Start button and close\nthe lid of your console.
 %i download(s) em modo de descanso pendente(s)\nFeche o software com o botão Start e feche\na tampa do seu console.
+
+TWL NAND - Storage almost full
+TWL NAND - Armazenamento quase cheio
+
+SD - Storage almost full
+SD - Armazenamento quase cheio
 
 # src/GUI/Settings.cpp
 ######################
@@ -579,3 +676,30 @@ Você precisa reiniciar a freeShop para atualizar a música da eShop\n\nVocê go
 
 Allow music on inactivity mode
 Permitir música no modo de inatividade
+
+Feature
+Função
+
+Publisher
+Fabricante
+
+Installed
+Instalado
+
+Game List
+Lista de jogos
+
+Sorting settings saved
+Configurações de classificação salvas
+
+Sorting settings reset
+Configurações de classificação redefinidas
+
+Download title keys from multiple URLs
+Baixar as chaves de títulos a partir de vários URLs
+
+Show game informations in game info screen
+Exibir as informações do jogo na tela de info do jogo
+
+Restart freeShop
+Reiniciar a freeShop
