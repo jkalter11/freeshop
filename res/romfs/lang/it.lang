@@ -4,16 +4,16 @@ Waiting for internet connection... %.0fs
 In attesa di connessione internet... %.0fs
 
 Fetching news for %s ...
-Ricerca notizie su %s ...
+Ricerca di notizie su %s ...
 
 Loading game list...
-Caricamento lista giochi...
+Caricamento della lista dei giochi...
 
 Looking for freeShop update...
 Ricerca di un nuovo aggiornamento...
 
 Installing freeShop %s ...
-Installazione freeShop %s ...
+Installazione di freeShop %s ...
 
 Failed to install update: 0x%08lX
 Installazione aggiornamento fallita: 0x%08lX
@@ -31,10 +31,10 @@ Downloading title keys...
 Scaricamento title keys...
 
 Loading services...
-Avviando servizi...
+Caricamento dei servizi...
 
 Loading theme manager...
-Avviando manager temi...
+Caricamento manager dei temi...
 
 Press the A button to enable WiFi
 Premi il bottone A per abilitare il WiFi.
@@ -75,7 +75,7 @@ Loading installed game list...
 Caricamento della lista dei giochi installati...
 
 Welcome, %s
-Benvenuto, %s
+Benvenuto/a, %s
 
 # src/AppStats.cpp
 ##################
@@ -464,7 +464,7 @@ Japan
 Giappone
 
 USA
-USA
+America
 
 Europe
 Europa
@@ -518,7 +518,7 @@ Select All
 Seleziona Tutto
 
 Select None
-Nessuna Selezione
+Deseleziona Tutto
 
 Name
 Nome
@@ -608,7 +608,7 @@ Show Title ID in game description screen
 Mostra il Title ID del gioco selezionato
 
 Locales
-Lingue
+Lingua
 
 Audio Service: Enabled
 Servizi audio: Abilitati
@@ -653,7 +653,7 @@ Enable bottom screen sleep after inactivity
 Spegni lo schermo inferiore se inattivo
 
 Dim the LEDs after inactivity
-Disabilita il led se inattivo
+Disabilita il led in modalità di inattività
 
 Allow sounds on inactivity mode
 Abilita i suoni in modalità di inattività
@@ -662,7 +662,7 @@ Go into inactivity mode after %.0fs
 Vai in modalità di inattività dopo %.0fs.
 
 Turn off the music if the volume slider is too low
-Spegni la musica se il regolatore del volume è troppo basso.
+Spegni la musica se il volume è troppo basso.
 
 Update eShop music
 Aggiorna la musica dell'eShop.
@@ -686,7 +686,7 @@ Publisher
 Publisher
 
 Installed
-Installato
+Installati
 
 Game List
 Lista dei giochi
@@ -701,7 +701,7 @@ Download title keys from multiple URLs
 Scarica le title keys da multiple URL
 
 Show game informations in game info screen
-Mostra le informazioni nella schermata delle informazioni del gioco
+Mostra info nella schermata delle info del gioco
 
 Restart freeShop
 Riavvia freeShop

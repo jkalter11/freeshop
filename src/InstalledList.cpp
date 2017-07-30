@@ -451,6 +451,7 @@ void InstalledList::filterBySearch(std::string search)
 		}
 
 		sort();
+		expandItem(nullptr);
 	}
 }
 
