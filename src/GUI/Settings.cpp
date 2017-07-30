@@ -1701,7 +1701,7 @@ void Settings::askUserToRestartApp()
 		if (event->type == DialogState::GetText)
 		{
 			auto str = reinterpret_cast<cpp3ds::String*>(event->data);
-			*str = _("You need to restart freeShop to update the eShop music\n\nWould you like to do this now?");
+			*str = _("You need to restart freeShop\n\nWould you like to do this now?");
 			return true;
 		}
 		else if (event->type == DialogState::GetTitle) {

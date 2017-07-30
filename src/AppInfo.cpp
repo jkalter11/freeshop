@@ -1239,7 +1239,7 @@ void AppInfo::uninstallDemo()
 	g_browseState->requestStackPop();
 	g_browseState->blockControls(false);
 	setCanDraw(true);
-	
+
 	InstalledList::getInstance().refresh();
 	updateInfo();
 }

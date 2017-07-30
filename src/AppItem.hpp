@@ -80,7 +80,7 @@ public:
 	const std::string &getProductCode() const;
 
 	void queueForInstall();
-	void queueForSleepInstall(bool installRelated = true);
+	void queueForSleepInstall(bool installRelated = true, bool isDemo = false);
 	void queueForSleepInstallThread();
 
 	void removeSleepInstall(bool removeRelated = true);
@@ -117,6 +117,7 @@ private:
 	std::string m_productCode;
 	bool m_isSleepBusy;
 	bool m_sleepInstallRelated;
+	bool m_sleepInstallDemo;
 	bool m_removeSleepRelated;
 
 	std::vector<cpp3ds::Uint64> m_updates;

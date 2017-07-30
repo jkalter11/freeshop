@@ -75,6 +75,12 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 {
 	cpp3ds::Lock lock(m_mutexRefresh);
 
+	cpp3ds::Uint32 type = titleId >> 32;
+	if (cpp3ds::Keyboard::isKeyDown(cpp3ds::Keyboard::Select)) {
+		app->queueForSleepInstall(false, type == TitleKeys::Demo);
+		return;
+	}
+
 	if (titleId == 0)
 	{
 		if (app->isInstalled()) // Don't allow reinstalling without deleting
@@ -97,7 +103,6 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 #endif
 
 	cpp3ds::String title = app->getTitle();
-	cpp3ds::Uint32 type = titleId >> 32;
 	if (type != TitleKeys::Game)
 	{
 		if (type == TitleKeys::Update)
@@ -106,11 +111,6 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 			title = _("[Demo] %s", title.toAnsiString().c_str());
 		else if (type == TitleKeys::DLC)
 			title = _("[DLC] %s", title.toAnsiString().c_str());
-	}
-
-	if (cpp3ds::Keyboard::isKeyDown(cpp3ds::Keyboard::Select)) {
-		addSleepDownload(app, titleId);
-		return;
 	}
 
 	std::string url = _("http://ccs.cdn.c.shop.nintendowifi.net/ccs/download/%016llX/tmd", titleId);

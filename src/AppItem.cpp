@@ -62,6 +62,8 @@ AppItem::AppItem()
 	, m_iconRect(cpp3ds::IntRect(0, 0, 48, 48))
 	, m_systemIconTexture(nullptr)
 	, m_threadSleepInstall(&AppItem::queueForSleepInstallThread, this)
+  , m_sleepInstallDemo(false)
+  , m_sleepInstallRelated(false)
 {
 	if (Theme::isMissingIconThemed) {
 		cpp3ds::Texture &texture = AssetManager<cpp3ds::Texture>::get(FREESHOP_DIR "/theme/images/missing-icon.png");
@@ -350,7 +352,7 @@ void AppItem::queueForInstall()
 		DownloadQueue::getInstance().addDownload(shared_from_this(), id);
 }
 
-void AppItem::queueForSleepInstall(bool installRelated)
+void AppItem::queueForSleepInstall(bool installRelated, bool isDemo)
 {
 #ifndef EMULATION
 	if (g_isLatestFirmwareVersion) {
@@ -358,6 +360,7 @@ void AppItem::queueForSleepInstall(bool installRelated)
 			Notification::spawn(_("Already queued for sleep installation: \n%s", m_title.toAnsiString().c_str()));
 		} else {
 			m_sleepInstallRelated = installRelated;
+      m_sleepInstallDemo = isDemo;
 			m_threadSleepInstall.launch();
 		}
 	} else {
@@ -372,7 +375,10 @@ void AppItem::queueForSleepInstallThread()
 	m_isSleepBusy = true;
 
 	Notification::spawn(_("Preparing for sleep installation: \n%s", m_title.toAnsiString().c_str()));
-	DownloadQueue::getInstance().addSleepDownload(shared_from_this(), m_titleId, m_title);
+  if (!m_sleepInstallDemo)
+	 DownloadQueue::getInstance().addSleepDownload(shared_from_this(), m_titleId, m_title);
+  else
+    DownloadQueue::getInstance().addSleepDownload(shared_from_this(), getDemos()[0], m_title);
 
 	if (m_sleepInstallRelated) {
 		for (auto &id : m_updates)
