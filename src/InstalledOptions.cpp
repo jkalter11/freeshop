@@ -13,6 +13,9 @@ namespace FreeShop {
 
 InstalledOptions::InstalledOptions()
 : m_installedItem(nullptr)
+, m_threadUninstallGame(&InstalledOptions::uninstallGame, this)
+, m_threadUninstallUpdate(&InstalledOptions::uninstallUpdate, this)
+, m_threadUninstallDLC(&InstalledOptions::uninstallDLC, this)
 {
 	m_textGame.setString(_("Game"));
 	if (Theme::isTextThemed)
@@ -127,12 +130,7 @@ void InstalledOptions::processTouchEvent(const cpp3ds::Event &event)
 				else if (event->type == DialogState::Response) {
 					bool *accepted = reinterpret_cast<bool *>(event->data);
 					if (*accepted) {
-#ifdef _3DS
-						AM_DeleteTitle(m_mediaType, titleId);
-#endif
-						m_installedItem->getAppItem()->setInstalled(false);
-						Notification::spawn(_("Deleted: %s", appTitle.toAnsiString().c_str()));
-						InstalledList::getInstance().refresh();
+						m_threadUninstallGame.launch();
 					}
 					return true;
 				}
@@ -162,15 +160,7 @@ void InstalledOptions::processTouchEvent(const cpp3ds::Event &event)
 					bool *accepted = reinterpret_cast<bool*>(event->data);
 					if (*accepted)
 					{
-						for (auto &id : m_installedItem->getAppItem()->getUpdates()) {
-#ifdef _3DS
-							AM_DeleteTitle(m_mediaType, id);
-#endif
-							m_installedItem->setUpdateStatus(id, false);
-						}
-						m_updatesInstalled = false;
-						Notification::spawn(_("Deleted update: %s", appTitle.toAnsiString().c_str()));
-						update();
+						m_threadUninstallUpdate.launch();
 					}
 					return true;
 				}
@@ -214,15 +204,7 @@ void InstalledOptions::processTouchEvent(const cpp3ds::Event &event)
 					bool *accepted = reinterpret_cast<bool*>(event->data);
 					if (*accepted)
 					{
-						for (auto &id : m_installedItem->getAppItem()->getDLC()) {
-#ifdef _3DS
-							AM_DeleteTitle(m_mediaType, id);
-#endif
-							m_installedItem->setDLCStatus(id, false);
-						}
-						m_dlcInstalled = false;
-						Notification::spawn(_("Deleted DLC: %s", appTitle.toAnsiString().c_str()));
-						update();
+						m_threadUninstallDLC.launch();
 					}
 					return true;
 				}
@@ -293,5 +275,74 @@ void InstalledOptions::update()
 	m_installedItem->updateGameTitle();
 }
 
+void InstalledOptions::uninstallGame()
+{
+	InstalledList::getInstance().setDrawList(false);
+	g_browseState->blockControls(true);
+	g_browseState->requestStackPush(States::Loading);
+
+	cpp3ds::String appTitle = m_installedItem->getAppItem()->getTitle();
+	cpp3ds::Uint64 titleId = m_installedItem->getTitleId();
+
+#ifdef _3DS
+	AM_DeleteTitle(m_mediaType, titleId);
+#endif
+	m_installedItem->getAppItem()->setInstalled(false);
+	Notification::spawn(_("Deleted: %s", appTitle.toAnsiString().c_str()));
+
+	g_browseState->requestStackPop();
+	InstalledList::getInstance().setDrawList(true);
+	g_browseState->blockControls(false);
+	
+	InstalledList::getInstance().refresh();
+}
+
+void InstalledOptions::uninstallUpdate()
+{
+	InstalledList::getInstance().setDrawList(false);
+	g_browseState->blockControls(true);
+	g_browseState->requestStackPush(States::Loading);
+
+	cpp3ds::String appTitle = m_installedItem->getAppItem()->getTitle();
+
+	for (auto &id : m_installedItem->getAppItem()->getUpdates()) {
+#ifdef _3DS
+		AM_DeleteTitle(m_mediaType, id);
+#endif
+		m_installedItem->setUpdateStatus(id, false);
+	}
+	m_updatesInstalled = false;
+	Notification::spawn(_("Deleted update: %s", appTitle.toAnsiString().c_str()));
+
+	g_browseState->requestStackPop();
+	InstalledList::getInstance().setDrawList(true);
+	g_browseState->blockControls(false);
+
+	update();
+}
+
+void InstalledOptions::uninstallDLC()
+{
+	InstalledList::getInstance().setDrawList(false);
+	g_browseState->blockControls(true);
+	g_browseState->requestStackPush(States::Loading);
+
+	cpp3ds::String appTitle = m_installedItem->getAppItem()->getTitle();
+
+	for (auto &id : m_installedItem->getAppItem()->getDLC()) {
+#ifdef _3DS
+		AM_DeleteTitle(m_mediaType, id);
+#endif
+		m_installedItem->setDLCStatus(id, false);
+	}
+	m_dlcInstalled = false;
+	Notification::spawn(_("Deleted DLC: %s", appTitle.toAnsiString().c_str()));
+
+	g_browseState->requestStackPop();
+	InstalledList::getInstance().setDrawList(true);
+	g_browseState->blockControls(false);
+
+	update();
+}
 
 } // namespace FreeShop

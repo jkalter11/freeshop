@@ -57,6 +57,9 @@ public:
 
 	std::string getCtrSdPath();
 
+	void blockControls(bool isControlsBlocked);
+	bool isControlsBlocked();
+
 	void settingsSaveToConfig();
 
 private:
@@ -98,6 +101,7 @@ private:
 	ScrollBar m_scrollbarDownloadQueue;
 
 	int m_counter;
+	bool m_isControlsBlocked;
 
 	// Sounds
 	cpp3ds::Sound  m_soundClick;

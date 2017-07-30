@@ -4,6 +4,7 @@
 #include <cpp3ds/Graphics/Drawable.hpp>
 #include <cpp3ds/Graphics/Text.hpp>
 #include <cpp3ds/Window/Event.hpp>
+#include <cpp3ds/System/Thread.hpp>
 #include "TweenObjects.hpp"
 #include "States/BrowseState.hpp"
 #include "TitleKeys.hpp"
@@ -43,6 +44,13 @@ private:
 	bool m_dlcAvailable;
 	bool m_updatesInstalled;
 	bool m_dlcInstalled;
+
+	cpp3ds::Thread m_threadUninstallGame;
+	cpp3ds::Thread m_threadUninstallUpdate;
+	cpp3ds::Thread m_threadUninstallDLC;
+	void uninstallGame();
+	void uninstallUpdate();
+	void uninstallDLC();
 
 	TitleKeys::TitleType m_titleType;
 #ifdef _3DS

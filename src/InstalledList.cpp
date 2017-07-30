@@ -21,6 +21,7 @@ InstalledList::InstalledList()
 , m_gameCount(0)
 , m_sortType(Name)
 , m_sortAscending(true)
+, m_canDrawList(true)
 {
 	// Make install options initially transparent for fade in
 	TweenEngine::Tween::set(m_options, InstalledOptions::ALPHA)
@@ -204,6 +205,9 @@ void InstalledList::refresh()
 
 void InstalledList::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) const
 {
+	if (!m_canDrawList)
+		return;
+
 	states.transform *= getTransform();
 	states.scissor = cpp3ds::UintRect(0, 50, 320, 190);
 
@@ -453,6 +457,16 @@ void InstalledList::filterBySearch(std::string search)
 		sort();
 		expandItem(nullptr);
 	}
+}
+
+void InstalledList::setDrawList(bool canDrawList)
+{
+	m_canDrawList = canDrawList;
+}
+
+bool InstalledList::canDrawList()
+{
+	return m_canDrawList;
 }
 
 } // namespace FreeShop

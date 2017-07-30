@@ -6,6 +6,7 @@
 #include <cpp3ds/Graphics/Sprite.hpp>
 #include <TweenEngine/TweenManager.h>
 #include <cpp3ds/Window/Event.hpp>
+#include <cpp3ds/System/Thread.hpp>
 #include "TweenObjects.hpp"
 #include "AppItem.hpp"
 #include "RichText.hpp"
@@ -40,6 +41,9 @@ public:
 	virtual void setScroll(float position);
 	virtual float getScroll();
 	virtual const cpp3ds::Vector2f &getScrollSize();
+
+	void setCanDraw(bool canDraw);
+	bool canDraw();
 
 protected:
 	virtual void draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) const;
@@ -108,6 +112,13 @@ private:
 
 	AppStats m_appStats;
 	bool m_showAppStats;
+
+	cpp3ds::Thread m_threadUninstallGame;
+	cpp3ds::Thread m_threadUninstallDemo;
+	void uninstallGame();
+	void uninstallDemo();
+
+	bool m_canDraw;
 
 	TweenEngine::TweenManager m_tweenManager;
 

@@ -32,6 +32,9 @@ AppInfo::AppInfo()
 , m_isDemoInstalled(false)
 , m_isBannerLoaded(false)
 , m_showAppStats(false)
+, m_threadUninstallGame(&AppInfo::uninstallGame, this)
+, m_threadUninstallDemo(&AppInfo::uninstallDemo, this)
+, m_canDraw(true)
 {
 	m_textDownload.setFillColor(cpp3ds::Color::White);
 	m_textDownload.setOutlineColor(cpp3ds::Color(0, 0, 0, 200));
@@ -202,6 +205,9 @@ void AppInfo::drawTop(cpp3ds::Window &window)
 
 void AppInfo::draw(cpp3ds::RenderTarget &target, cpp3ds::RenderStates states) const
 {
+	if (!m_canDraw)
+		return;
+
 	states.transform *= getTransform();
 
 	if (m_appItem)
@@ -682,12 +688,7 @@ bool AppInfo::processEvent(const cpp3ds::Event &event)
 							bool *accepted = reinterpret_cast<bool*>(event->data);
 							if (*accepted)
 							{
-#ifdef _3DS
-								AM_DeleteTitle(MEDIATYPE_SD, demoTitleId);
-#endif
-								Notification::spawn(_("Deleted demo: %s", appTitle.toAnsiString().c_str()));
-								InstalledList::getInstance().refresh();
-								updateInfo();
+								m_threadUninstallDemo.launch();
 							}
 							return true;
 						}
@@ -730,14 +731,7 @@ bool AppInfo::processEvent(const cpp3ds::Event &event)
 						bool *accepted = reinterpret_cast<bool*>(event->data);
 						if (*accepted)
 						{
-#ifdef _3DS
-							FS_MediaType mediaType = ((m_appItem->getTitleId() >> 32) == TitleKeys::DSiWare) ? MEDIATYPE_NAND : MEDIATYPE_SD;
-							AM_DeleteTitle(mediaType, m_appItem->getTitleId());
-#endif
-							m_appItem->setInstalled(false);
-							Notification::spawn(_("Deleted: %s", appTitle.toAnsiString().c_str()));
-							InstalledList::getInstance().refresh();
-							updateInfo();
+							m_threadUninstallGame.launch();
 						}
 						return true;
 					}
@@ -1203,6 +1197,61 @@ void AppInfo::closeBanner()
 	TweenEngine::Tween::to(m_topIcon, util3ds::TweenSprite::COLOR_ALPHA, 0.2f)
 		.target(0.f)
 		.start(m_tweenManager);
+}
+
+void AppInfo::uninstallGame()
+{
+	cpp3ds::String appTitle = m_appItem->getTitle();
+
+	g_browseState->blockControls(true);
+	setCanDraw(false);
+	g_browseState->requestStackPush(States::Loading);
+
+#ifdef _3DS
+	FS_MediaType mediaType = ((m_appItem->getTitleId() >> 32) == TitleKeys::DSiWare) ? MEDIATYPE_NAND : MEDIATYPE_SD;
+	AM_DeleteTitle(mediaType, m_appItem->getTitleId());
+#endif
+	m_appItem->setInstalled(false);
+	Notification::spawn(_("Deleted: %s", appTitle.toAnsiString().c_str()));
+
+	g_browseState->requestStackPop();
+	g_browseState->blockControls(false);
+	setCanDraw(true);
+
+	InstalledList::getInstance().refresh();
+	updateInfo();
+}
+
+void AppInfo::uninstallDemo()
+{
+	cpp3ds::Uint64 demoTitleId = m_appItem->getDemos()[0];
+	cpp3ds::String appTitle = m_appItem->getTitle();
+
+	g_browseState->blockControls(true);
+	setCanDraw(false);
+	g_browseState->requestStackPush(States::Loading);
+
+#ifdef _3DS
+	AM_DeleteTitle(MEDIATYPE_SD, demoTitleId);
+#endif
+	Notification::spawn(_("Deleted demo: %s", appTitle.toAnsiString().c_str()));
+
+	g_browseState->requestStackPop();
+	g_browseState->blockControls(false);
+	setCanDraw(true);
+	
+	InstalledList::getInstance().refresh();
+	updateInfo();
+}
+
+void AppInfo::setCanDraw(bool canDraw)
+{
+	m_canDraw = canDraw;
+}
+
+bool AppInfo::canDraw()
+{
+	return m_canDraw;
 }
 
 } // namespace FreeShop

@@ -44,6 +44,7 @@ BrowseState::BrowseState(StateStack& stack, Context& context, StateCallback call
 , m_musicMode(0)
 , m_isSliderOff(false)
 , m_counter(1)
+, m_isControlsBlocked(false)
 {
 	g_browseState = this;
 	m_musicLoop.setLoop(true);
@@ -436,7 +437,7 @@ bool BrowseState::processEvent(const cpp3ds::Event& event)
 	SleepState::clock.restart();
 	clockDownloadInactivity.restart();
 
-	if (m_threadBusy || !g_syncComplete || !g_browserLoaded)
+	if (m_threadBusy || !g_syncComplete || !g_browserLoaded || m_isControlsBlocked)
 		return false;
 
 	if (m_mode == App) {
@@ -913,6 +914,16 @@ void BrowseState::setInstalledListSearchText(std::string text)
 void BrowseState::wokeUp()
 {
 	m_topInfos.wokeUp();
+}
+
+void BrowseState::blockControls(bool isControlsBlocked)
+{
+	m_isControlsBlocked = isControlsBlocked;
+}
+
+bool BrowseState::isControlsBlocked()
+{
+	return m_isControlsBlocked;
 }
 
 } // namespace FreeShop

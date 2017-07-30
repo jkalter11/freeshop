@@ -38,6 +38,9 @@ public:
 	static bool isInstalled(cpp3ds::Uint64 titleId);
 	std::vector<std::shared_ptr<InstalledItem>> &getList() { return m_installedItems; }
 
+	void setDrawList(bool canDrawList);
+	bool canDrawList();
+
 	int getGameCount();
 
 protected:
@@ -62,6 +65,7 @@ private:
 
 	bool m_isUpdatingList;
 	int m_gameCount;
+	bool m_canDrawList;
 
 	SortType m_sortType;
 	bool m_sortAscending;
