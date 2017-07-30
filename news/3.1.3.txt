@@ -40,6 +40,8 @@ The WOW-Too-Many-Informations update
 • Modified dialogs, and cleaned
   animations.
 • Added a 3DSX auto-updater.
+• Press and hold Select to sleep-download
+  every downloadable content.
 • Bugfix + improved the notifications (on
   the news list)
 • Bugfix: Start button wasn't closing the

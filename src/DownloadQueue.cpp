@@ -108,6 +108,11 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 			title = _("[DLC] %s", title.toAnsiString().c_str());
 	}
 
+	if (cpp3ds::Keyboard::isKeyDown(cpp3ds::Keyboard::Select)) {
+		addSleepDownload(app, titleId);
+		return;
+	}
+
 	std::string url = _("http://ccs.cdn.c.shop.nintendowifi.net/ccs/download/%016llX/tmd", titleId);
 	Download* download = new Download(url);
 	download->fillFromAppItem(app);

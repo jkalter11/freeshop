@@ -244,7 +244,7 @@ bool AppStats::processEvent(const cpp3ds::Event &event)
 		else if (event.type == cpp3ds::Event::TouchEnded)
 			setVisible(false);
 	} else {
-		if (event.type == cpp3ds::Event::KeyPressed && event.key.code == cpp3ds::Keyboard::Select)
+		if (event.type == cpp3ds::Event::KeyReleased && event.key.code == cpp3ds::Keyboard::Select)
 			setVisible(true);
 	}
 
