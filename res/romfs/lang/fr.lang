@@ -160,7 +160,7 @@ Loading screenshot #%i
 Chargement du screenshot #%i
 
 Press Select to open the Ratings screen
-Appuyez sur Select pour ouvrir l'écran des Evaluations
+Appuyez sur Select pour ouvrir\nl'écran des Evaluations
 
 # src/Download.cpp
 ##################
@@ -421,6 +421,11 @@ Le niveau de batterie est faible
 
 The console is disconnected from the internet
 La console à été déconnectée d'Internet
+
+# src/Theme.cpp
+###############
+The default theme of freeShop.\nMade by arc13 / Cruel.
+Le thème par défaut du freeShop.\nFait par: arc13 / Cruel.
 
 # src/GUI/Settings.cpp
 ######################
@@ -705,3 +710,6 @@ Afficher les infos du jeu dans l'écran d'info de jeu
 
 Restart freeShop
 Redémarrer le freeShop
+
+You need to restart freeShop\n\nWould you like to do this now?
+Vous devez redémarrer le freeShop\n\nRedémarrer maintenant ?

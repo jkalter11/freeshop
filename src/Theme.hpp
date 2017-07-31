@@ -34,6 +34,7 @@ public:
 	static bool loadFromFile(const std::string& filename = FREESHOP_DIR "/theme/texts.json");
 	static void saveToFile(const std::string& filename = FREESHOP_DIR "/theme/texts.json");
 	static const rapidjson::Value &get(std::string key);
+	static void loadNameDesc();
 
 	static bool isTextThemed;
 	static cpp3ds::Color primaryTextColor;

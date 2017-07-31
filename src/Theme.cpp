@@ -1,4 +1,5 @@
 #include <cpp3ds/System/FileSystem.hpp>
+#include <cpp3ds/System/I18n.hpp>
 #include <fstream>
 #include <rapidjson/ostreamwrapper.h>
 #include <rapidjson/writer.h>
@@ -45,8 +46,8 @@ cpp3ds::Color Theme::dialogButton = cpp3ds::Color(158, 158, 158, 0);
 cpp3ds::Color Theme::dialogButtonText = cpp3ds::Color(3, 169, 244, 0);
 
 //Theme informations
-std::string Theme::themeName = "Classic";
-std::string Theme::themeDesc = "The default theme of freeShop.\nMade by arc13 / Cruel.";
+std::string Theme::themeName = _("Classic").toAnsiString();
+std::string Theme::themeDesc = _("The default theme of freeShop.\nMade by arc13 / Cruel.").toAnsiString();
 std::string Theme::themeVersion = FREESHOP_VERSION;
 
 Theme &Theme::getInstance()
@@ -114,6 +115,12 @@ void Theme::saveToFile(const std::string &filename)
 	rapidjson::OStreamWrapper osw(file);
 	rapidjson::Writer<rapidjson::OStreamWrapper> writer(osw);
 	getInstance().m_json.Accept(writer);
+}
+
+void Theme::loadNameDesc()
+{
+	themeName = _("Classic").toAnsiString();
+	themeDesc = _("The default theme of freeShop.\nMade by arc13 / Cruel.").toAnsiString();
 }
 
 } // namespace FreeShop

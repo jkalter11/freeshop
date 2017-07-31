@@ -454,6 +454,8 @@ bool SyncState::loadThemeManagement()
 	setStatus(_("Loading theme manager..."));
 	std::string path;
 
+	Theme::loadNameDesc();
+
 	path = cpp3ds::FileSystem::getFilePath(FREESHOP_DIR "/theme/images/flags.png");
 	if (pathExists(path.c_str(), false))
 		Theme::isFlagsThemed = true;
