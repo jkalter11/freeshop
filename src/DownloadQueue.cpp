@@ -199,6 +199,7 @@ void DownloadQueue::addDownload(std::shared_ptr<AppItem> app, cpp3ds::Uint64 tit
 						if (!installer->installTicket(titleVersion))
 							return false;
 					}
+					cpp3ds::Uint32 type = titleId >> 32;
 					if (!download->isCanceled() && type == TitleKeys::Game && !app->getSeed().empty())
 					{
 						download->setProgressMessage(_("Installing seed..."));
